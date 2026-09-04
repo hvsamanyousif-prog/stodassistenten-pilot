@@ -6,320 +6,65 @@
 <meta name="theme-color" content="#f7f3ea">
 <title>Stödassistenten – Pilot</title>
 <style>
-:root{--bg:#f7f3ea;--paper:#fffdf8;--ink:#26322e;--muted:#6e7772;--line:#e8dfd0;--sage:#35675c;--soft:#e9f1ed;--warm:#fff2d7;--rose:#fff0ea}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
-.app{max-width:620px;margin:auto;padding:14px 14px 100px}
-.top{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 12px}
-.logo{font-weight:900}.pilot{font-size:11px;background:var(--warm);padding:6px 9px;border-radius:999px}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:26px;padding:19px;margin:10px 0;box-shadow:0 8px 25px #40372a12}
-.hero{padding:23px 19px}
-h1{font-size:34px;line-height:1.06;margin:4px 0 10px}h2{font-size:24px;margin:0 0 12px}h3{margin:0 0 8px}
-p{line-height:1.5}.muted{color:var(--muted)}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--sage)}
-.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:15px 0}
-.lang,.choice,.demo,.btn,.fb,.mini{font:inherit;border:1px solid var(--line);background:white;color:var(--ink);border-radius:16px;padding:13px;cursor:pointer;font-weight:750}
-.lang.active{background:var(--soft);border-color:#a9c5bb}.primary{background:var(--sage);color:white;border:0;width:100%}
-.demo{width:100%;text-align:start;margin:6px 0}.demo small{display:block;color:var(--muted);margin-top:3px;font-weight:600}
-.demo.general{background:var(--soft);border-color:#b7cec5}
-.choice{display:block;width:100%;text-align:start;margin:8px 0}
-.back{border:0;background:none;color:var(--sage);font-weight:800;padding:6px 0;cursor:pointer}
-.notice{background:var(--warm);border-radius:15px;padding:11px;font-size:13px}.privacy{background:var(--soft);border-radius:15px;padding:11px;font-size:13px}
-.example{background:#f4f6f0;border-radius:14px;padding:11px;margin:8px 0;font-size:14px}
-.result{border:1px solid var(--line);background:white;border-radius:19px;padding:15px;margin:9px 0}
-.rhead{display:flex;justify-content:space-between;gap:8px}.tag{background:var(--soft);color:#28584c;border-radius:999px;padding:5px 7px;font-size:11px;font-weight:900;white-space:nowrap}
-.result p{font-size:14px;color:var(--muted)}.info{background:#f4f6f0;border-radius:13px;padding:10px;font-size:13px;margin:7px 0}
-.feedback{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.fbs{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.fb{font-size:12px;padding:8px 10px}.fb.selected{background:var(--soft);border-color:#8fb5a8}
-.source{color:var(--sage);font-weight:800;text-decoration:none;font-size:13px}.share{margin-top:14px}
-.finalq{margin:14px 0;padding:14px;background:#f8f5ef;border-radius:18px}.finalq b{display:block;margin-bottom:7px}
-.summary{background:var(--rose);padding:12px;border-radius:15px;font-size:13px}
-.progress{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:7px}
-.rtl{direction:rtl;text-align:right}.rtl .demo,.rtl .choice{text-align:right}.rtl .rhead{flex-direction:row-reverse}
-@media(max-width:420px){h1{font-size:30px}.langs{grid-template-columns:1fr}.app{padding-left:11px;padding-right:11px}}
+:root{--bg:#f7f3ea;--paper:#fffdf8;--ink:#26322e;--muted:#6e7772;--line:#e8dfd0;--sage:#35675c;--soft:#e9f1ed;--warm:#fff2d7;--rose:#fff0ea;--danger:#8d3e32}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.app{max-width:620px;margin:auto;padding:14px 14px 100px}.top{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 12px}.logo{font-weight:900}.pilot{font-size:11px;background:var(--warm);padding:6px 9px;border-radius:999px}.card{background:var(--paper);border:1px solid var(--line);border-radius:26px;padding:19px;margin:10px 0;box-shadow:0 8px 25px #40372a12}.hero{padding:23px 19px}h1{font-size:34px;line-height:1.06;margin:4px 0 10px}h2{font-size:24px;margin:0 0 12px}h3{margin:0 0 8px}p{line-height:1.5}.muted{color:var(--muted)}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--sage)}.langs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:15px 0}.lang,.choice,.demo,.btn,.fb{font:inherit;border:1px solid var(--line);background:white;color:var(--ink);border-radius:16px;padding:13px;cursor:pointer;font-weight:750}.lang.active{background:var(--soft);border-color:#a9c5bb}.primary{background:var(--sage);color:white;border:0;width:100%}.primary:disabled{opacity:.6;cursor:default}.demo{width:100%;text-align:start;margin:6px 0}.demo small{display:block;color:var(--muted);margin-top:3px;font-weight:600}.demo.general{background:var(--soft);border-color:#b7cec5}.choice{display:block;width:100%;text-align:start;margin:8px 0}.back{border:0;background:none;color:var(--sage);font-weight:800;padding:6px 0;cursor:pointer}.notice{background:var(--warm);border-radius:15px;padding:11px;font-size:13px}.privacy{background:var(--soft);border-radius:15px;padding:11px;font-size:13px}.example{background:#f4f6f0;border-radius:14px;padding:11px;margin:8px 0;font-size:14px}.result{border:1px solid var(--line);background:white;border-radius:19px;padding:15px;margin:9px 0}.rhead{display:flex;justify-content:space-between;gap:8px}.tag{background:var(--soft);color:#28584c;border-radius:999px;padding:5px 7px;font-size:11px;font-weight:900;white-space:nowrap}.result p{font-size:14px;color:var(--muted)}.info{background:#f4f6f0;border-radius:13px;padding:10px;font-size:13px;margin:7px 0}.feedback{border-top:1px solid var(--line);padding-top:9px;margin-top:9px}.fbs{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.fb{font-size:12px;padding:8px 10px}.fb.selected{background:var(--soft);border-color:#8fb5a8}.source{color:var(--sage);font-weight:800;text-decoration:none;font-size:13px}.share{margin-top:14px}.finalq{margin:14px 0;padding:14px;background:#f8f5ef;border-radius:18px}.finalq b{display:block;margin-bottom:7px}.summary{background:var(--rose);padding:12px;border-radius:15px;font-size:13px}.progress{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:7px}.status{margin-top:10px;padding:11px;border-radius:14px;font-size:13px;font-weight:700}.status.ok{background:var(--soft)}.status.err{background:var(--rose);color:var(--danger)}.rtl{direction:rtl;text-align:right}.rtl .demo,.rtl .choice{text-align:right}.rtl .rhead{flex-direction:row-reverse}@media(max-width:420px){h1{font-size:30px}.langs{grid-template-columns:1fr}.app{padding-left:11px;padding-right:11px}}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="top"><div class="logo" id="logo"></div><div class="pilot" id="pilot"></div></div>
-  <main id="main"></main>
-</div>
+<div class="app"><div class="top"><div class="logo" id="logo"></div><div class="pilot" id="pilot"></div></div><main id="main"></main></div>
 <script>
+const APP_VERSION='0.5.0';
+const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const T={
-sv:{
- app:'🧭 Stödassistenten',pilot:'Privat pilot',eyebrow:'Hitta stöd utifrån din situation',
- hello:'Berätta din situation. Vi hjälper dig hitta stöd och nästa steg.',
- sub:'Du behöver inte veta vilket bidrag eller stöd du ska söka. Börja med det som bäst beskriver dig.',
- privacy:'I den här piloten sparas inte dina svar om hälsa eller ekonomi centralt.',
- choose:'Välj det som passar bäst',
- general:'✨ Min situation passar inte exemplen',generalD:'Svara på några korta frågor så letar vi bredare.',
- pension:'👴 Pensionär',pensionD:'Låg pension, hög hyra eller tandvård',
- family:'🧩 Familj med autism/NPF',familyD:'Extra omvårdnad, tillsyn eller kostnader',
- org:'⚽ Förening eller litet företag',orgD:'Bidrag, projektstöd eller offentliga affärer',
- ex1:'“Jag jobbar deltid och är sjukskriven resten.”',ex2:'“Jag är arbetslös och får a-kassa.”',ex3:'“Pengarna räcker inte till efter hyran.”',
- back:'Tillbaka',next:'Fortsätt',home:'Börja om',
- municipality:'Vilken typ av område gäller det?',municipalityOpts:['Storstad','Mellanstor kommun','Mindre kommun','Vet inte / spelar ingen roll'],
- alone:'Bor personen ensam?',dental:'Finns ett konkret behov av tandvård?',
- childAge:'Är barnet under 18 år?',extra:'Vad tar mest extra tid i vardagen?',
- orgType:'Vad gäller det?',orgNeed:'Vad behöver ni hjälp med?',
- yes:'Ja',no:'Nej',unsure:'Vet inte',
- morning:'Morgon, hygien och påklädning',supervision:'Tillsyn och säkerhet',school:'Skola, kommunikation och övergångar',
- association:'Ideell förening / idrottsförening',company:'Litet företag',funding:'Bidrag eller finansiering',facility:'Lokal, anläggning eller utrustning',procurement:'Offentlig upphandling / anbud',
- workStatus:'Vad beskriver din arbetssituation bäst?',full:'Jobbar heltid',part:'Jobbar deltid',sickPart:'Jobbar deltid + sjukskriven deltid',sickFull:'Sjukskriven helt',unemployed:'Arbetslös / söker jobb',akassa:'Arbetslös och får a-kassa',student:'Studerar',other:'Annat / osäker',
- money:'Hur känns ekonomin efter boende och nödvändiga utgifter?',tight:'Mycket pressad',someTight:'Lite pressad',ok:'Okej just nu',
- children:'Finns barn i hushållet?',healthImpact:'Påverkar sjukdom eller funktionsnedsättning arbete eller vardag?',
- housing:'Är boendekostnaden en stor del av ekonomin?',
- results:'Det här är värt att kontrollera först',
- disclaimer:'Piloten avgör inte om du har rätt till stöd. Vi visar möjliga vägar som måste verifieras mot aktuella regler och originalkällor.',
- good:'Bra träff',check:'Värt att kolla',why:'Varför det kan vara relevant',
- feedback:'Stämmer detta med din situation?',rel:'Relevant',known:'Kände redan till',notrel:'Inte relevant',
- source:'Officiell källa',finish:'Hur bra var hjälpen?',newQ:'Fick du reda på något nytt?',usefulQ:'Var resultatet användbart för din situation?',clearQ:'Var det tydligt vad du skulle göra härnäst?',
- yesNew:'Ja',some:'Delvis',noNew:'Nej',
- share:'Dela anonym pilotfeedback',shareNote:'Det som delas innehåller inte dina svar om sjukdom, ekonomi eller familj – bara hur bra träffarna och upplevelsen var.',
- shared:'Pilotfeedbacken är klar. Välj hur du vill dela den.',
- thanks:'Tack – den här feedbacken hjälper oss förbättra matchningen.'
-},
-ar:{
- app:'🧭 مساعد الدعم',pilot:'تجربة خاصة',eyebrow:'اعثر على الدعم بحسب وضعك',
- hello:'احكِ لنا عن وضعك. نساعدك في العثور على الدعم والخطوة التالية.',
- sub:'لا تحتاج إلى معرفة اسم المنحة أو الدعم. ابدأ بما يصف وضعك بشكل أفضل.',
- privacy:'في هذه التجربة لا يتم حفظ إجاباتك الصحية أو المالية مركزياً.',
- choose:'اختر ما يناسبك أكثر',
- general:'✨ وضعي لا يطابق الأمثلة',generalD:'أجب عن بعض الأسئلة القصيرة لنبحث بشكل أوسع.',
- pension:'👴 متقاعد',pensionD:'معاش محدود أو إيجار مرتفع أو علاج أسنان',
- family:'🧩 عائلة لديها طفل مع توحد/NPF',familyD:'رعاية أو مراقبة أو تكاليف إضافية',
- org:'⚽ جمعية أو شركة صغيرة',orgD:'منح أو تمويل مشاريع أو فرص عامة',
- ex1:'«أعمل بدوام جزئي وأنا في إجازة مرضية جزئياً.»',ex2:'«أنا عاطل وأحصل على تعويض بطالة.»',ex3:'«لا يكفي المال بعد الإيجار.»',
- back:'رجوع',next:'متابعة',home:'ابدأ من جديد',
- municipality:'ما نوع المنطقة؟',municipalityOpts:['مدينة كبيرة','بلدية متوسطة','بلدية صغيرة','لا أعرف / غير مهم'],
- alone:'هل يعيش الشخص وحده؟',dental:'هل توجد حاجة فعلية لعلاج الأسنان؟',
- childAge:'هل الطفل تحت 18 سنة؟',extra:'ما الذي يحتاج وقتاً إضافياً في الحياة اليومية؟',
- orgType:'ما نوع الجهة؟',orgNeed:'ما نوع المساعدة المطلوبة؟',
- yes:'نعم',no:'لا',unsure:'لا أعرف',
- morning:'الصباح والنظافة واللباس',supervision:'المراقبة والسلامة',school:'المدرسة والتواصل والانتقال',
- association:'جمعية / نادٍ رياضي',company:'شركة صغيرة',funding:'منح أو تمويل',facility:'مقر أو منشأة أو معدات',procurement:'مناقصة / عرض عام',
- workStatus:'ما الذي يصف وضعك في العمل؟',full:'أعمل بدوام كامل',part:'أعمل بدوام جزئي',sickPart:'أعمل جزئياً + إجازة مرضية جزئية',sickFull:'إجازة مرضية كاملة',unemployed:'عاطل / أبحث عن عمل',akassa:'عاطل وأحصل على تعويض بطالة',student:'أدرس',other:'أمر آخر / غير متأكد',
- money:'كيف هو وضعك المالي بعد السكن والمصاريف الضرورية؟',tight:'صعب جداً',someTight:'صعب إلى حد ما',ok:'مقبول حالياً',
- children:'هل يوجد أطفال في الأسرة؟',healthImpact:'هل يؤثر المرض أو الإعاقة على العمل أو الحياة اليومية؟',housing:'هل تكلفة السكن جزء كبير من ميزانيتك؟',
- results:'هذه أهم الأمور التي تستحق التحقق',disclaimer:'هذه التجربة لا تقرر الاستحقاق. نعرض مسارات محتملة يجب التحقق منها وفق القواعد الحالية والمصادر الأصلية.',
- good:'تطابق جيد',check:'يستحق التحقق',why:'لماذا قد يكون مناسباً',feedback:'هل يطابق وضعك؟',rel:'مناسب',known:'كنت أعرفه',notrel:'غير مناسب',
- source:'المصدر الرسمي',finish:'كيف كانت المساعدة؟',newQ:'هل عرفت شيئاً جديداً؟',usefulQ:'هل كانت النتيجة مفيدة لوضعك؟',clearQ:'هل كان واضحاً ما الخطوة التالية؟',
- yesNew:'نعم',some:'جزئياً',noNew:'لا',share:'مشاركة ملاحظات مجهولة',shareNote:'لن تتضمن المشاركة إجاباتك عن المرض أو المال أو الأسرة، بل فقط تقييم النتائج والتجربة.',shared:'الملاحظات جاهزة. اختر طريقة المشاركة.',thanks:'شكراً – تساعدنا ملاحظاتك على تحسين المطابقة.'
-},
-fa:{
- app:'🧭 دستیار حمایت',pilot:'پایلوت خصوصی',eyebrow:'حمایت را بر اساس شرایط خود پیدا کنید',
- hello:'شرایطت را بگو. ما کمک می‌کنیم حمایت و قدم بعدی را پیدا کنی.',
- sub:'لازم نیست اسم کمک‌هزینه یا حمایت را بدانی. با گزینه‌ای شروع کن که بیشتر شبیه شرایط توست.',
- privacy:'در این پایلوت پاسخ‌های مربوط به سلامت یا اقتصاد شما به‌صورت مرکزی ذخیره نمی‌شود.',
- choose:'گزینه مناسب‌تر را انتخاب کن',
- general:'✨ شرایط من با مثال‌ها جور نیست',generalD:'به چند سؤال کوتاه جواب بده تا گسترده‌تر بررسی کنیم.',
- pension:'👴 بازنشسته',pensionD:'مستمری کم، اجاره بالا یا دندانپزشکی',
- family:'🧩 خانواده با کودک اوتیسم/NPF',familyD:'مراقبت، نظارت یا هزینه‌های اضافه',
- org:'⚽ انجمن یا شرکت کوچک',orgD:'کمک‌هزینه، پروژه یا فرصت‌های عمومی',
- ex1:'«نیمه‌وقت کار می‌کنم و نیمه‌وقت مرخصی بیماری دارم.»',ex2:'«بیکارم و بیمه بیکاری می‌گیرم.»',ex3:'«بعد از اجاره پول کافی نمی‌ماند.»',
- back:'برگشت',next:'ادامه',home:'از اول',
- municipality:'چه نوع منطقه‌ای است؟',municipalityOpts:['شهر بزرگ','شهرداری متوسط','شهرداری کوچک','نمی‌دانم / مهم نیست'],
- alone:'آیا فرد تنها زندگی می‌کند؟',dental:'آیا نیاز مشخص به دندانپزشکی وجود دارد؟',
- childAge:'آیا کودک زیر ۱۸ سال است؟',extra:'کدام بخش روزمره زمان بیشتری می‌گیرد؟',
- orgType:'موضوع مربوط به چیست؟',orgNeed:'به چه کمکی نیاز دارید؟',
- yes:'بله',no:'نه',unsure:'نمی‌دانم',
- morning:'صبح، بهداشت و لباس',supervision:'نظارت و ایمنی',school:'مدرسه، ارتباط و تغییر فعالیت',
- association:'انجمن / باشگاه ورزشی',company:'شرکت کوچک',funding:'کمک‌هزینه یا تأمین مالی',facility:'محل، تأسیسات یا تجهیزات',procurement:'مناقصه / پیشنهاد عمومی',
- workStatus:'کدام گزینه وضعیت کاری شما را بهتر توضیح می‌دهد؟',full:'تمام‌وقت کار می‌کنم',part:'پاره‌وقت کار می‌کنم',sickPart:'پاره‌وقت کار + پاره‌وقت مرخصی بیماری',sickFull:'کاملاً در مرخصی بیماری',unemployed:'بیکار / جویای کار',akassa:'بیکار و دریافت‌کننده بیمه بیکاری',student:'دانشجو',other:'سایر / مطمئن نیستم',
- money:'بعد از مسکن و هزینه‌های ضروری وضعیت مالی چگونه است؟',tight:'خیلی تحت فشار',someTight:'تا حدی تحت فشار',ok:'فعلاً قابل مدیریت',
- children:'آیا در خانواده کودک وجود دارد؟',healthImpact:'آیا بیماری یا ناتوانی بر کار یا زندگی روزانه اثر دارد؟',housing:'آیا هزینه مسکن بخش بزرگی از بودجه است؟',
- results:'این موارد ارزش بررسی دارند',disclaimer:'این پایلوت تعیین نمی‌کند که واجد شرایط هستید. مسیرهای احتمالی باید با قوانین و منابع اصلی فعلی بررسی شوند.',
- good:'تطابق خوب',check:'ارزش بررسی دارد',why:'چرا ممکن است مرتبط باشد',feedback:'آیا با شرایط شما مطابقت دارد؟',rel:'مرتبط',known:'از قبل می‌دانستم',notrel:'نامرتبط',
- source:'منبع رسمی',finish:'کمک چطور بود؟',newQ:'آیا چیز جدیدی یاد گرفتید؟',usefulQ:'آیا نتیجه برای شرایط شما مفید بود؟',clearQ:'آیا قدم بعدی واضح بود؟',
- yesNew:'بله',some:'تا حدی',noNew:'نه',share:'اشتراک بازخورد ناشناس',shareNote:'اطلاعاتی درباره بیماری، اقتصاد یا خانواده شما ارسال نمی‌شود؛ فقط ارزیابی نتایج و تجربه.',shared:'بازخورد آماده است. روش اشتراک‌گذاری را انتخاب کنید.',thanks:'ممنون – این بازخورد به بهبود تطبیق کمک می‌کند.'
-}
+sv:{app:'🧭 Stödassistenten',pilot:'Privat pilot',eyebrow:'Hitta stöd utifrån din situation',hello:'Berätta din situation. Vi hjälper dig hitta stöd och nästa steg.',sub:'Du behöver inte veta vilket bidrag eller stöd du ska söka. Börja med det som bäst beskriver dig.',privacy:'Piloten sparar inte dina situationssvar centralt. Om du skickar feedback sparas bara anonym produktfeedback om hur väl hjälpen fungerade.',choose:'Välj det som passar bäst',general:'✨ Min situation passar inte exemplen',generalD:'Svara på några korta frågor så letar vi bredare.',pension:'👴 Pensionär',pensionD:'Låg pension, hög hyra eller tandvård',family:'🧩 Familj med autism/NPF',familyD:'Extra omvårdnad, tillsyn eller kostnader',org:'⚽ Förening eller litet företag',orgD:'Bidrag, projektstöd eller offentliga affärer',ex1:'“Jag jobbar deltid och är sjukskriven resten.”',ex2:'“Jag är arbetslös och får a-kassa.”',ex3:'“Pengarna räcker inte till efter hyran.”',back:'Tillbaka',next:'Fortsätt',home:'Börja om',area:'Vilken typ av område gäller det?',bigCity:'Storstad',midTown:'Mellanstor kommun',smallTown:'Mindre kommun',areaUnknown:'Vet inte / spelar ingen roll',alone:'Bor personen ensam?',dental:'Finns ett konkret behov av tandvård?',childAge:'Är barnet under 18 år?',extra:'Vad tar mest extra tid i vardagen?',orgType:'Vad gäller det?',orgNeed:'Vad behöver ni hjälp med?',yes:'Ja',no:'Nej',unsure:'Vet inte',morning:'Morgon, hygien och påklädning',supervision:'Tillsyn och säkerhet',school:'Skola, kommunikation och övergångar',association:'Ideell förening / idrottsförening',company:'Litet företag',funding:'Bidrag eller finansiering',facility:'Lokal, anläggning eller utrustning',procurement:'Offentlig upphandling / anbud',workStatus:'Vad beskriver din arbetssituation bäst?',full:'Jobbar heltid',part:'Jobbar deltid',sickPart:'Jobbar deltid + sjukskriven deltid',sickFull:'Sjukskriven helt',unemployed:'Arbetslös / söker jobb',akassa:'Arbetslös och får a-kassa',student:'Studerar',other:'Annat / osäker',money:'Hur känns ekonomin efter boende och nödvändiga utgifter?',tight:'Mycket pressad',someTight:'Lite pressad',ok:'Okej just nu',children:'Finns barn i hushållet?',healthImpact:'Påverkar sjukdom eller funktionsnedsättning arbete eller vardag?',housing:'Är boendekostnaden en stor del av ekonomin?',results:'Det här är värt att kontrollera först',disclaimer:'Piloten avgör inte om du har rätt till stöd. Vi visar möjliga vägar som måste verifieras mot aktuella regler och originalkällor.',good:'Bra träff',check:'Värt att kolla',why:'Varför det kan vara relevant',feedback:'Hur stämmer den här träffen?',rel:'Relevant',known:'Kände redan till',notrel:'Inte relevant',source:'Officiell källa',finish:'Hjälp oss förbättra piloten',newQ:'Fick du reda på något nytt?',usefulQ:'Var resultatet användbart för din situation?',clearQ:'Var det tydligt vad du skulle göra härnäst?',send:'Skicka anonym feedback',sendNote:'Vi skickar inte dina svar om arbete, sjukdom, ekonomi, barn eller boende. Endast språk, pilotflöde och dina bedömningar skickas.',needAnswers:'Svara på de tre frågorna ovan innan du skickar.',sending:'Skickar feedback…',sent:'Tack! Din anonyma feedback är sparad.',sendError:'Feedbacken kunde inte skickas just nu. Försök igen senare.',thanks:'Din feedback hjälper oss förbättra matchningen.'},
+ar:{app:'🧭 مساعد الدعم',pilot:'تجربة خاصة',eyebrow:'اعثر على الدعم بحسب وضعك',hello:'احكِ لنا عن وضعك. نساعدك في العثور على الدعم والخطوة التالية.',sub:'لا تحتاج إلى معرفة اسم المنحة أو الدعم. ابدأ بما يصف وضعك بشكل أفضل.',privacy:'لا تحفظ التجربة إجابات وضعك مركزياً. إذا أرسلت ملاحظات، نحفظ فقط ملاحظات مجهولة عن جودة المساعدة.',choose:'اختر ما يناسبك أكثر',general:'✨ وضعي لا يطابق الأمثلة',generalD:'أجب عن بعض الأسئلة القصيرة لنبحث بشكل أوسع.',pension:'👴 متقاعد',pensionD:'معاش محدود أو إيجار مرتفع أو علاج أسنان',family:'🧩 عائلة لديها طفل مع توحد/NPF',familyD:'رعاية أو مراقبة أو تكاليف إضافية',org:'⚽ جمعية أو شركة صغيرة',orgD:'منح أو تمويل مشاريع أو فرص عامة',ex1:'«أعمل بدوام جزئي وأنا في إجازة مرضية جزئياً.»',ex2:'«أنا عاطل وأحصل على تعويض بطالة.»',ex3:'«لا يكفي المال بعد الإيجار.»',back:'رجوع',next:'متابعة',home:'ابدأ من جديد',area:'ما نوع المنطقة؟',bigCity:'مدينة كبيرة',midTown:'بلدية متوسطة',smallTown:'بلدية صغيرة',areaUnknown:'لا أعرف / غير مهم',alone:'هل يعيش الشخص وحده؟',dental:'هل توجد حاجة فعلية لعلاج الأسنان؟',childAge:'هل الطفل تحت 18 سنة؟',extra:'ما الذي يحتاج وقتاً إضافياً في الحياة اليومية؟',orgType:'ما نوع الجهة؟',orgNeed:'ما نوع المساعدة المطلوبة؟',yes:'نعم',no:'لا',unsure:'لا أعرف',morning:'الصباح والنظافة واللباس',supervision:'المراقبة والسلامة',school:'المدرسة والتواصل والانتقال',association:'جمعية / نادٍ رياضي',company:'شركة صغيرة',funding:'منح أو تمويل',facility:'مقر أو منشأة أو معدات',procurement:'مناقصة / عرض عام',workStatus:'ما الذي يصف وضعك في العمل؟',full:'أعمل بدوام كامل',part:'أعمل بدوام جزئي',sickPart:'أعمل جزئياً + إجازة مرضية جزئية',sickFull:'إجازة مرضية كاملة',unemployed:'عاطل / أبحث عن عمل',akassa:'عاطل وأحصل على تعويض بطالة',student:'أدرس',other:'أمر آخر / غير متأكد',money:'كيف هو وضعك المالي بعد السكن والمصاريف الضرورية؟',tight:'صعب جداً',someTight:'صعب إلى حد ما',ok:'مقبول حالياً',children:'هل يوجد أطفال في الأسرة؟',healthImpact:'هل يؤثر المرض أو الإعاقة على العمل أو الحياة اليومية؟',housing:'هل تكلفة السكن جزء كبير من ميزانيتك؟',results:'هذه أهم الأمور التي تستحق التحقق',disclaimer:'هذه التجربة لا تقرر الاستحقاق. نعرض مسارات محتملة يجب التحقق منها وفق القواعد الحالية والمصادر الأصلية.',good:'تطابق جيد',check:'يستحق التحقق',why:'لماذا قد يكون مناسباً',feedback:'إلى أي مدى تطابق هذه النتيجة وضعك؟',rel:'مناسب',known:'كنت أعرفه',notrel:'غير مناسب',source:'المصدر الرسمي',finish:'ساعدنا في تحسين التجربة',newQ:'هل عرفت شيئاً جديداً؟',usefulQ:'هل كانت النتيجة مفيدة لوضعك؟',clearQ:'هل كان واضحاً ما الخطوة التالية؟',send:'إرسال ملاحظات مجهولة',sendNote:'لن نرسل إجاباتك عن العمل أو المرض أو المال أو الأطفال أو السكن. نرسل فقط اللغة ومسار التجربة وتقييمك.',needAnswers:'أجب عن الأسئلة الثلاثة أعلاه قبل الإرسال.',sending:'جارٍ إرسال الملاحظات…',sent:'شكراً! تم حفظ ملاحظاتك المجهولة.',sendError:'تعذر إرسال الملاحظات الآن. حاول مرة أخرى لاحقاً.',thanks:'ملاحظاتك تساعدنا على تحسين المطابقة.'},
+fa:{app:'🧭 دستیار حمایت',pilot:'پایلوت خصوصی',eyebrow:'حمایت را بر اساس شرایط خود پیدا کنید',hello:'شرایطت را بگو. ما کمک می‌کنیم حمایت و قدم بعدی را پیدا کنی.',sub:'لازم نیست اسم کمک‌هزینه یا حمایت را بدانی. با گزینه‌ای شروع کن که بیشتر شبیه شرایط توست.',privacy:'این پایلوت پاسخ‌های مربوط به شرایط شما را به‌صورت مرکزی ذخیره نمی‌کند. اگر بازخورد بفرستید فقط بازخورد ناشناس درباره کیفیت کمک ذخیره می‌شود.',choose:'گزینه مناسب‌تر را انتخاب کن',general:'✨ شرایط من با مثال‌ها جور نیست',generalD:'به چند سؤال کوتاه جواب بده تا گسترده‌تر بررسی کنیم.',pension:'👴 بازنشسته',pensionD:'مستمری کم، اجاره بالا یا دندانپزشکی',family:'🧩 خانواده با کودک اوتیسم/NPF',familyD:'مراقبت، نظارت یا هزینه‌های اضافه',org:'⚽ انجمن یا شرکت کوچک',orgD:'کمک‌هزینه، پروژه یا فرصت‌های عمومی',ex1:'«نیمه‌وقت کار می‌کنم و نیمه‌وقت مرخصی بیماری دارم.»',ex2:'«بیکارم و بیمه بیکاری می‌گیرم.»',ex3:'«بعد از اجاره پول کافی نمی‌ماند.»',back:'برگشت',next:'ادامه',home:'از اول',area:'چه نوع منطقه‌ای است؟',bigCity:'شهر بزرگ',midTown:'شهرداری متوسط',smallTown:'شهرداری کوچک',areaUnknown:'نمی‌دانم / مهم نیست',alone:'آیا فرد تنها زندگی می‌کند؟',dental:'آیا نیاز مشخص به دندانپزشکی وجود دارد؟',childAge:'آیا کودک زیر ۱۸ سال است؟',extra:'کدام بخش روزمره زمان بیشتری می‌گیرد؟',orgType:'موضوع مربوط به چیست؟',orgNeed:'به چه کمکی نیاز دارید؟',yes:'بله',no:'نه',unsure:'نمی‌دانم',morning:'صبح، بهداشت و لباس',supervision:'نظارت و ایمنی',school:'مدرسه، ارتباط و تغییر فعالیت',association:'انجمن / باشگاه ورزشی',company:'شرکت کوچک',funding:'کمک‌هزینه یا تأمین مالی',facility:'محل، تأسیسات یا تجهیزات',procurement:'مناقصه / پیشنهاد عمومی',workStatus:'کدام گزینه وضعیت کاری شما را بهتر توضیح می‌دهد؟',full:'تمام‌وقت کار می‌کنم',part:'پاره‌وقت کار می‌کنم',sickPart:'پاره‌وقت کار + پاره‌وقت مرخصی بیماری',sickFull:'کاملاً در مرخصی بیماری',unemployed:'بیکار / جویای کار',akassa:'بیکار و دریافت‌کننده بیمه بیکاری',student:'دانشجو',other:'سایر / مطمئن نیستم',money:'بعد از مسکن و هزینه‌های ضروری وضعیت مالی چگونه است؟',tight:'خیلی تحت فشار',someTight:'تا حدی تحت فشار',ok:'فعلاً قابل مدیریت',children:'آیا در خانواده کودک وجود دارد؟',healthImpact:'آیا بیماری یا ناتوانی بر کار یا زندگی روزانه اثر دارد؟',housing:'آیا هزینه مسکن بخش بزرگی از بودجه است؟',results:'این موارد ارزش بررسی دارند',disclaimer:'این پایلوت تعیین نمی‌کند که واجد شرایط هستید. مسیرهای احتمالی باید با قوانین و منابع اصلی فعلی بررسی شوند.',good:'تطابق خوب',check:'ارزش بررسی دارد',why:'چرا ممکن است مرتبط باشد',feedback:'این نتیجه چقدر با شرایط شما مطابقت دارد؟',rel:'مرتبط',known:'از قبل می‌دانستم',notrel:'نامرتبط',source:'منبع رسمی',finish:'به بهبود پایلوت کمک کنید',newQ:'آیا چیز جدیدی یاد گرفتید؟',usefulQ:'آیا نتیجه برای شرایط شما مفید بود؟',clearQ:'آیا قدم بعدی واضح بود؟',send:'ارسال بازخورد ناشناس',sendNote:'پاسخ‌های شما درباره کار، بیماری، اقتصاد، کودکان یا مسکن ارسال نمی‌شود. فقط زبان، مسیر پایلوت و ارزیابی‌ها ارسال می‌شود.',needAnswers:'پیش از ارسال به سه سؤال بالا پاسخ دهید.',sending:'در حال ارسال بازخورد…',sent:'ممنون! بازخورد ناشناس شما ذخیره شد.',sendError:'فعلاً ارسال بازخورد ممکن نیست. بعداً دوباره تلاش کنید.',thanks:'بازخورد شما به بهبود تطبیق کمک می‌کند.'}
 };
-
 const S={
- pension:[
-  ['Bostadstillägg','Kan vara relevant för pensionärer beroende på boendekostnad, inkomster och tillgångar.','https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg'],
-  ['Tandvårdsstöd','Olika tandvårdsstöd kan vara relevanta beroende på ålder och behandling.','https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod'],
-  ['Äldreförsörjningsstöd','Kan vara relevant vid mycket låg pension och svag ekonomi.','https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-aldreforsorjningsstod'],
-  ['Lokala stiftelser','Lokala stiftelser kan ibland komplettera offentliga stöd för konkreta behov.','https://stiftelser.lansstyrelsen.se/']
- ],
- family:[
-  ['Omvårdnadsbidrag','Kan vara relevant när ett barn behöver extra omvårdnad och tillsyn jämfört med barn i samma ålder.','https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag'],
-  ['Merkostnadsersättning för barn','Kan vara relevant om funktionsnedsättningen medför godtagbara extra kostnader.','https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn'],
-  ['Majblommans stöd','Kan vara relevant för barnfamiljer med pressad ekonomi och ett konkret behov.','https://majblomman.se/sok-stod/sok-har/'],
-  ['Kommunala/LSS-relaterade stödvägar','Kommunala insatser kan vara relevanta beroende på barnets individuella behov.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/funktionshinder/lss/']
- ],
- org:[
-  ['LOK-stöd','För RF-anslutna idrottsföreningar med barn- och ungdomsverksamhet.','https://www.rf.se/bidrag-och-stod/lok-stod'],
-  ['RF:s anläggningsstöd','Kan vara relevant för vissa projekt kring idrottsmiljö och tillgänglighet.','https://www.rf.se/bidrag-och-stod/stod-till-anlaggningar-och-idrottsmiljoer'],
-  ['Allmänna arvsfonden','Kan vara relevant för utvecklingsprojekt som uppfyller fondens krav och målgrupper.','https://www.arvsfonden.se/ansokan'],
-  ['Offentliga upphandlingar','Små företag kan undersöka offentliga affärer som matchar företagets kapacitet.','https://www.upphandlingsmyndigheten.se/foretagare/']
- ]
+pension:[['Bostadstillägg','Kan vara relevant för pensionärer beroende på boendekostnad, inkomster och tillgångar.','https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg'],['Tandvårdsstöd','Olika tandvårdsstöd kan vara relevanta beroende på ålder och behandling.','https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod'],['Äldreförsörjningsstöd','Kan vara relevant vid mycket låg pension och svag ekonomi.','https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-aldreforsorjningsstod'],['Lokala stiftelser','Lokala stiftelser kan ibland komplettera offentliga stöd för konkreta behov.','https://stiftelser.lansstyrelsen.se/']],
+family:[['Omvårdnadsbidrag','Kan vara relevant när ett barn behöver extra omvårdnad och tillsyn jämfört med barn i samma ålder.','https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag'],['Merkostnadsersättning för barn','Kan vara relevant om funktionsnedsättningen medför godtagbara extra kostnader.','https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn'],['Majblommans stöd','Kan vara relevant för barnfamiljer med pressad ekonomi och ett konkret behov.','https://majblomman.se/sok-stod/sok-har/'],['Kommunala/LSS-relaterade stödvägar','Kommunala insatser kan vara relevanta beroende på barnets individuella behov.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/funktionshinder/lss/']],
+org:[['LOK-stöd','För RF-anslutna idrottsföreningar med barn- och ungdomsverksamhet.','https://www.rf.se/bidrag-och-stod/lok-stod'],['RF:s anläggningsstöd','Kan vara relevant för vissa projekt kring idrottsmiljö och tillgänglighet.','https://www.rf.se/bidrag-och-stod/stod-till-anlaggningar-och-idrottsmiljoer'],['Allmänna arvsfonden','Kan vara relevant för utvecklingsprojekt som uppfyller fondens krav och målgrupper.','https://www.arvsfonden.se/ansokan'],['Offentliga upphandlingar','Små företag kan undersöka offentliga affärer som matchar företagets kapacitet.','https://www.upphandlingsmyndigheten.se/foretagare/']]
 };
-
-const generalSupports={
- sick:[
-  ['Sjukpenning och omfattning','Om du arbetar en del och är sjukskriven en del kan det vara viktigt att kontrollera att sjukpenning, sjukskrivningsgrad och aktuellt beslut hänger ihop med din arbetstid.','https://www.forsakringskassan.se/privatperson/sjuk/anstalld/sjukpenning-for-anstallda'],
-  ['Plan för återgång och arbetsanpassning','Vid längre eller återkommande sjukfrånvaro kan arbetsanpassning och planering för återgång i arbete vara relevant.','https://www.forsakringskassan.se/privatperson/sjuk/anstalld/rehabilitering-och-stod-vid-sjukdom'],
-  ['Ekonomiskt stöd vid pressad ekonomi','Om inkomsten inte räcker kan det vara värt att kontrollera kommunala stödvägar. Bedömningen är individuell och tar hänsyn till hela hushållets ekonomi.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']
- ],
- unemployed:[
-  ['A-kassa – villkor och ersättning','Om du är arbetslös eller får a-kassa kan det vara värt att kontrollera att medlemskap, arbetsvillkor, aktivitetskrav och ersättningsperiod stämmer med din situation.','https://www.sverigesakassor.se/sv/ga-med-i-a-kassan/sa-fungerar-a-kassan'],
-  ['Arbetsförmedlingens stöd','Vilket stöd som kan vara relevant beror på din situation, hur länge du varit arbetslös och vilka hinder eller behov du har.','https://arbetsformedlingen.se/for-arbetssokande/extra-stod'],
-  ['Ekonomiskt stöd vid pressad ekonomi','Om a-kassa eller annan inkomst inte räcker kan kommunalt ekonomiskt bistånd vara värt att kontrollera. Bedömningen är individuell.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']
- ],
- working:[
-  ['Ekonomiskt stöd vid pressad ekonomi','Även personer som arbetar kan i vissa situationer behöva kontrollera andra stödvägar. Kommunalt ekonomiskt bistånd bedöms utifrån hela hushållets ekonomi.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/'],
-  ['Lokala stiftelser','Vid ett konkret behov kan vissa lokala stiftelser vara värda att kontrollera. Villkoren varierar mellan stiftelser.','https://stiftelser.lansstyrelsen.se/']
- ],
- student:[
-  ['CSN – tillägg och särskilda stöd','Beroende på familjesituation, ålder och behov kan det finnas tillägg eller andra delar av studiestödet att kontrollera.','https://www.csn.se/bidrag-och-lan/studiestod.html'],
-  ['Ekonomiskt stöd vid pressad ekonomi','Vid mycket pressad ekonomi kan andra stödvägar behöva kontrolleras beroende på hushållets situation.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']
- ],
- other:[
-  ['Kommunal vägledning och ekonomiskt bistånd','Om inget färdigt exempel passar kan kommunen vara en viktig väg för att kontrollera vilket stöd eller vilken rådgivning som finns lokalt.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/'],
-  ['Lokala stiftelser','Vid konkreta behov kan lokala stiftelser vara värda att kontrollera.','https://stiftelser.lansstyrelsen.se/']
- ]
+const G={
+sick:[['Sjukpenning och omfattning','Om du arbetar en del och är sjukskriven en del kan det vara viktigt att kontrollera att sjukpenning, sjukskrivningsgrad och aktuellt beslut hänger ihop med din arbetstid.','https://www.forsakringskassan.se/privatperson/sjuk/anstalld/sjukpenning-for-anstallda'],['Plan för återgång och arbetsanpassning','Vid längre eller återkommande sjukfrånvaro kan arbetsanpassning och planering för återgång i arbete vara relevant.','https://www.forsakringskassan.se/privatperson/sjuk/anstalld/rehabilitering-och-stod-vid-sjukdom'],['Ekonomiskt stöd vid pressad ekonomi','Om inkomsten inte räcker kan det vara värt att kontrollera kommunala stödvägar. Bedömningen är individuell och tar hänsyn till hela hushållets ekonomi.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']],
+unemployed:[['A-kassa – villkor och ersättning','Om du är arbetslös eller får a-kassa kan det vara värt att kontrollera att medlemskap, arbetsvillkor, aktivitetskrav och ersättningsperiod stämmer med din situation.','https://www.sverigesakassor.se/sv/ga-med-i-a-kassan/sa-fungerar-a-kassan'],['Arbetsförmedlingens stöd','Vilket stöd som kan vara relevant beror på din situation, hur länge du varit arbetslös och vilka hinder eller behov du har.','https://arbetsformedlingen.se/for-arbetssokande/extra-stod'],['Ekonomiskt stöd vid pressad ekonomi','Om a-kassa eller annan inkomst inte räcker kan kommunalt ekonomiskt bistånd vara värt att kontrollera. Bedömningen är individuell.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']],
+working:[['Ekonomiskt stöd vid pressad ekonomi','Även personer som arbetar kan i vissa situationer behöva kontrollera andra stödvägar. Kommunalt ekonomiskt bistånd bedöms utifrån hela hushållets ekonomi.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/'],['Lokala stiftelser','Vid ett konkret behov kan vissa lokala stiftelser vara värda att kontrollera. Villkoren varierar mellan stiftelser.','https://stiftelser.lansstyrelsen.se/']],
+student:[['CSN – tillägg och särskilda stöd','Beroende på familjesituation, ålder och behov kan det finnas tillägg eller andra delar av studiestödet att kontrollera.','https://www.csn.se/bidrag-och-lan/studiestod.html'],['Ekonomiskt stöd vid pressad ekonomi','Vid mycket pressad ekonomi kan andra stödvägar behöva kontrolleras beroende på hushållets situation.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/']],
+other:[['Kommunal vägledning och ekonomiskt bistånd','Om inget färdigt exempel passar kan kommunen vara en viktig väg för att kontrollera vilket stöd eller vilken rådgivning som finns lokalt.','https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/'],['Lokala stiftelser','Vid konkreta behov kan lokala stiftelser vara värda att kontrollera.','https://stiftelser.lansstyrelsen.se/']]
 };
-
-let lang='sv',screen='home',scenario=null,answers={},feedback={},finalFeedback={};
-const tr=k=>T[lang][k]||k;
-const main=()=>document.getElementById('main');
-
-function setLang(l){
- lang=l;
- document.documentElement.lang=l;
- document.body.classList.toggle('rtl',l==='ar'||l==='fa');
- render();
-}
+let lang='sv',screen='home',scenario=null,answers={},matchRatings={},finalFeedback={},submitState='idle';
+const tr=k=>T[lang][k]||k, main=()=>document.getElementById('main');
+function setLang(l){lang=l;document.documentElement.lang=l;document.body.classList.toggle('rtl',l==='ar'||l==='fa');render()}
 function go(s){screen=s;render();window.scrollTo({top:0,behavior:'smooth'})}
 function chooseAnswer(key,val,next){answers[key]=val;go(next)}
-function start(s){scenario=s;answers={};feedback={};finalFeedback={};go(s==='general'?'general1':s+'1')}
-
-function back(prev='home'){
- return `<button class="back" onclick="go('${prev}')">${lang==='sv'?'←':'→'} ${tr('back')}</button>`
-}
-function btn(label,next,key,val){
- const action=key?`chooseAnswer('${key}','${val}','${next}')`:`go('${next}')`;
- return `<button class="choice" onclick="${action}">${label}</button>`;
-}
-function q(title,opts,prev,step){
- return `${back(prev)}<section class="card">${step?`<div class="progress">${step}</div>`:''}<h2>${tr(title)}</h2>${opts.map(o=>btn(tr(o[0]),o[1],o[2],o[3])).join('')}</section>`;
-}
-
-function home(){
- return `<section class="card hero">
- <div class="eyebrow">${tr('eyebrow')}</div>
- <h1>${tr('hello')}</h1>
- <p class="muted">${tr('sub')}</p>
- <div class="langs">
-   ${[['sv','Svenska'],['ar','العربية'],['fa','فارسی']].map(x=>`<button class="lang ${lang===x[0]?'active':''}" onclick="setLang('${x[0]}')">${x[1]}</button>`).join('')}
- </div>
- <div class="privacy">🔒 ${tr('privacy')}</div>
- </section>
- <section class="card">
- <h2>${tr('choose')}</h2>
- <button class="demo general" onclick="start('general')">${tr('general')}<small>${tr('generalD')}</small></button>
- <button class="demo" onclick="start('pension')">${tr('pension')}<small>${tr('pensionD')}</small></button>
- <button class="demo" onclick="start('family')">${tr('family')}<small>${tr('familyD')}</small></button>
- <button class="demo" onclick="start('org')">${tr('org')}<small>${tr('orgD')}</small></button>
- </section>
- <section class="card">
- <h3>${lang==='sv'?'Till exempel':lang==='ar'?'مثلاً':'مثلاً'}</h3>
- <div class="example">${tr('ex1')}</div><div class="example">${tr('ex2')}</div><div class="example">${tr('ex3')}</div>
- </section>`;
-}
-
+function start(s){scenario=s;answers={};matchRatings={};finalFeedback={};submitState='idle';go(s==='general'?'general1':s+'1')}
+function back(prev='home'){return `<button class="back" onclick="go('${prev}')">${lang==='sv'?'←':'→'} ${tr('back')}</button>`}
+function btn(label,next,key,val){const action=key?`chooseAnswer('${key}','${val}','${next}')`:`go('${next}')`;return `<button class="choice" onclick="${action}">${label}</button>`}
+function q(title,opts,prev,step){return `${back(prev)}<section class="card">${step?`<div class="progress">${step}</div>`:''}<h2>${tr(title)}</h2>${opts.map(o=>btn(tr(o[0]),o[1],o[2],o[3])).join('')}</section>`}
+function home(){return `<section class="card hero"><div class="eyebrow">${tr('eyebrow')}</div><h1>${tr('hello')}</h1><p class="muted">${tr('sub')}</p><div class="langs">${[['sv','Svenska'],['ar','العربية'],['fa','فارسی']].map(x=>`<button class="lang ${lang===x[0]?'active':''}" onclick="setLang('${x[0]}')">${x[1]}</button>`).join('')}</div><div class="privacy">🔒 ${tr('privacy')}</div></section><section class="card"><h2>${tr('choose')}</h2><button class="demo general" onclick="start('general')">${tr('general')}<small>${tr('generalD')}</small></button><button class="demo" onclick="start('pension')">${tr('pension')}<small>${tr('pensionD')}</small></button><button class="demo" onclick="start('family')">${tr('family')}<small>${tr('familyD')}</small></button><button class="demo" onclick="start('org')">${tr('org')}<small>${tr('orgD')}</small></button></section><section class="card"><h3>${lang==='sv'?'Till exempel':lang==='ar'?'مثلاً':'مثلاً'}</h3><div class="example">${tr('ex1')}</div><div class="example">${tr('ex2')}</div><div class="example">${tr('ex3')}</div></section>`}
 function flow(){
- if(screen==='pension1') return q('municipality',[['next','pension2','area','unknown']],'home','1 / 3');
- if(screen==='pension2') return q('alone',[['yes','pension3','alone','yes'],['no','pension3','alone','no'],['unsure','pension3','alone','unsure']],'pension1','2 / 3');
- if(screen==='pension3') return q('dental',[['yes','pensionR','dental','yes'],['no','pensionR','dental','no'],['unsure','pensionR','dental','unsure']],'pension2','3 / 3');
- if(screen==='family1') return q('childAge',[['yes','family2','child','yes'],['no','family2','child','no'],['unsure','family2','child','unsure']],'home','1 / 2');
- if(screen==='family2') return q('extra',[['morning','familyR','extra','morning'],['supervision','familyR','extra','supervision'],['school','familyR','extra','school']],'family1','2 / 2');
- if(screen==='org1') return q('orgType',[['association','org2','orgType','association'],['company','org2','orgType','company']],'home','1 / 2');
- if(screen==='org2') return q('orgNeed',[['funding','orgR','orgNeed','funding'],['facility','orgR','orgNeed','facility'],['procurement','orgR','orgNeed','procurement']],'org1','2 / 2');
-
- if(screen==='general1') return q('workStatus',[
-   ['full','general2','work','full'],['part','general2','work','part'],['sickPart','general2','work','sickPart'],['sickFull','general2','work','sickFull'],
-   ['unemployed','general2','work','unemployed'],['akassa','general2','work','akassa'],['student','general2','work','student'],['other','general2','work','other']
- ],'home','1 / 5');
- if(screen==='general2') return q('money',[['tight','general3','money','tight'],['someTight','general3','money','some'],['ok','general3','money','ok']],'general1','2 / 5');
- if(screen==='general3') return q('children',[['yes','general4','children','yes'],['no','general4','children','no'],['unsure','general4','children','unsure']],'general2','3 / 5');
- if(screen==='general4') return q('healthImpact',[['yes','general5','health','yes'],['no','general5','health','no'],['unsure','general5','health','unsure']],'general3','4 / 5');
- if(screen==='general5') return q('housing',[['yes','generalR','housing','yes'],['no','generalR','housing','no'],['unsure','generalR','housing','unsure']],'general4','5 / 5');
+ if(screen==='pension1')return q('area',[['bigCity','pension2','area','big'],['midTown','pension2','area','mid'],['smallTown','pension2','area','small'],['areaUnknown','pension2','area','unknown']],'home','1 / 3');
+ if(screen==='pension2')return q('alone',[['yes','pension3','alone','yes'],['no','pension3','alone','no'],['unsure','pension3','alone','unsure']],'pension1','2 / 3');
+ if(screen==='pension3')return q('dental',[['yes','pensionR','dental','yes'],['no','pensionR','dental','no'],['unsure','pensionR','dental','unsure']],'pension2','3 / 3');
+ if(screen==='family1')return q('childAge',[['yes','family2','child','yes'],['no','family2','child','no'],['unsure','family2','child','unsure']],'home','1 / 2');
+ if(screen==='family2')return q('extra',[['morning','familyR','extra','morning'],['supervision','familyR','extra','supervision'],['school','familyR','extra','school']],'family1','2 / 2');
+ if(screen==='org1')return q('orgType',[['association','org2','orgType','association'],['company','org2','orgType','company']],'home','1 / 2');
+ if(screen==='org2')return q('orgNeed',[['funding','orgR','orgNeed','funding'],['facility','orgR','orgNeed','facility'],['procurement','orgR','orgNeed','procurement']],'org1','2 / 2');
+ if(screen==='general1')return q('workStatus',[['full','general2','work','full'],['part','general2','work','part'],['sickPart','general2','work','sickPart'],['sickFull','general2','work','sickFull'],['unemployed','general2','work','unemployed'],['akassa','general2','work','akassa'],['student','general2','work','student'],['other','general2','work','other']],'home','1 / 5');
+ if(screen==='general2')return q('money',[['tight','general3','money','tight'],['someTight','general3','money','some'],['ok','general3','money','ok']],'general1','2 / 5');
+ if(screen==='general3')return q('children',[['yes','general4','children','yes'],['no','general4','children','no'],['unsure','general4','children','unsure']],'general2','3 / 5');
+ if(screen==='general4')return q('healthImpact',[['yes','general5','health','yes'],['no','general5','health','no'],['unsure','general5','health','unsure']],'general3','4 / 5');
+ if(screen==='general5')return q('housing',[['yes','generalR','housing','yes'],['no','generalR','housing','no'],['unsure','generalR','housing','unsure']],'general4','5 / 5');
 }
-
-function getRows(){
- if(scenario!=='general') return S[scenario];
- const w=answers.work;
- let rows;
- if(w==='sickPart'||w==='sickFull') rows=[...generalSupports.sick];
- else if(w==='unemployed'||w==='akassa') rows=[...generalSupports.unemployed];
- else if(w==='student') rows=[...generalSupports.student];
- else if(w==='full'||w==='part') rows=[...generalSupports.working];
- else rows=[...generalSupports.other];
-
- if(answers.money!=='ok' && !rows.some(r=>r[0].includes('Ekonomiskt stöd'))) {
-   rows.push(generalSupports.other[0]);
- }
- if(answers.money!=='ok' && !rows.some(r=>r[0].includes('Lokala stiftelser'))) {
-   rows.push(generalSupports.other[1]);
- }
- return rows.slice(0,4);
-}
-
-function fb(id,val){feedback[id]=val;render()}
-function setFinal(key,val){finalFeedback[key]=val;render()}
-
-function finalQuestion(key,label){
- const vals=[['yesNew','yes'],['some','some'],['noNew','no']];
- return `<div class="finalq"><b>${tr(label)}</b><div class="fbs">${vals.map(v=>`<button class="fb ${finalFeedback[key]===v[1]?'selected':''}" onclick="setFinal('${key}','${v[1]}')">${tr(v[0])}</button>`).join('')}</div></div>`;
-}
-
-function results(){
- const rows=getRows();
- return `${back()}<section class="card"><h1>${tr('results')}</h1><div class="notice">${tr('disclaimer')}</div></section>
- ${rows.map((r,i)=>`<article class="result">
-   <div class="rhead"><b>${r[0]}</b><span class="tag">${tr(i<2?'good':'check')}</span></div>
-   <p>${r[1]}</p>
-   <div class="info"><b>${tr('why')}</b><br>${r[1]}</div>
-   <a class="source" target="_blank" rel="noopener" href="${r[2]}">↗ ${tr('source')}</a>
-   <div class="feedback"><small>${tr('feedback')}</small><div class="fbs">
-    ${[['rel','rel'],['known','known'],['notrel','notrel']].map(v=>`<button class="fb ${feedback[r[0]]===v[1]?'selected':''}" onclick="fb(${JSON.stringify(r[0])},'${v[1]}')">${tr(v[0])}</button>`).join('')}
-   </div></div>
- </article>`).join('')}
- <section class="card"><h2>${tr('finish')}</h2>
- ${finalQuestion('new','newQ')}
- ${finalQuestion('useful','usefulQ')}
- ${finalQuestion('clear','clearQ')}
- <div class="summary">${tr('shareNote')}</div>
- <button class="btn primary share" onclick="shareFeedback()">${tr('share')}</button>
- </section>`;
-}
-
-async function shareFeedback(){
- const ratings=Object.entries(feedback).map(([support,rating])=>({support,rating}));
- const data={
-   pilot:'v0.4',
-   language:lang,
-   scenario,
-   ratings,
-   experience:finalFeedback,
-   timestamp:new Date().toISOString()
- };
- const text='Stödassistenten – anonym pilotfeedback\n'+JSON.stringify(data,null,2);
- try{
-   if(navigator.share) await navigator.share({title:'Stödassistenten pilotfeedback',text});
-   else if(navigator.clipboard){await navigator.clipboard.writeText(text);alert(tr('shared'))}
-   else alert(text);
- }catch(e){}
-}
-
-function render(){
- document.getElementById('logo').textContent=tr('app');
- document.getElementById('pilot').textContent=tr('pilot');
- if(screen==='home') main().innerHTML=home();
- else if(screen.endsWith('R')) main().innerHTML=results();
- else main().innerHTML=flow()||home();
-}
+function getRows(){if(scenario!=='general')return S[scenario];const w=answers.work;let rows;if(w==='sickPart'||w==='sickFull')rows=[...G.sick];else if(w==='unemployed'||w==='akassa')rows=[...G.unemployed];else if(w==='student')rows=[...G.student];else if(w==='full'||w==='part')rows=[...G.working];else rows=[...G.other];if(answers.money!=='ok'&&!rows.some(r=>r[0].includes('Ekonomiskt stöd')))rows.push(G.other[0]);if(answers.money!=='ok'&&!rows.some(r=>r[0].includes('Lokala stiftelser')))rows.push(G.other[1]);return rows.slice(0,4)}
+function setMatch(i,val){matchRatings['m'+(i+1)]=val;submitState='idle';render()}
+function setFinal(key,val){finalFeedback[key]=val;submitState='idle';render()}
+function finalQuestion(key,label){return `<div class="finalq"><b>${tr(label)}</b><div class="fbs"><button class="fb ${finalFeedback[key]===true?'selected':''}" onclick="setFinal('${key}',true)">${tr('yes')}</button><button class="fb ${finalFeedback[key]===false?'selected':''}" onclick="setFinal('${key}',false)">${tr('no')}</button></div></div>`}
+function resultCard(r,i){return `<article class="result"><div class="rhead"><b>${r[0]}</b><span class="tag">${tr(i<2?'good':'check')}</span></div><p>${r[1]}</p><div class="info"><b>${tr('why')}</b><br>${r[1]}</div><a class="source" target="_blank" rel="noopener" href="${r[2]}">↗ ${tr('source')}</a><div class="feedback"><small>${tr('feedback')}</small><div class="fbs"><button class="fb ${matchRatings['m'+(i+1)]===5?'selected':''}" onclick="setMatch(${i},5)">${tr('rel')}</button><button class="fb ${matchRatings['m'+(i+1)]===3?'selected':''}" onclick="setMatch(${i},3)">${tr('known')}</button><button class="fb ${matchRatings['m'+(i+1)]===1?'selected':''}" onclick="setMatch(${i},1)">${tr('notrel')}</button></div></div></article>`}
+function statusHtml(){if(submitState==='sending')return `<div class="status">${tr('sending')}</div>`;if(submitState==='sent')return `<div class="status ok">✓ ${tr('sent')} ${tr('thanks')}</div>`;if(submitState==='error')return `<div class="status err">${tr('sendError')}</div>`;if(submitState==='missing')return `<div class="status err">${tr('needAnswers')}</div>`;return ''}
+function results(){const rows=getRows();return `${back()}<section class="card"><h1>${tr('results')}</h1><div class="notice">${tr('disclaimer')}</div></section>${rows.map(resultCard).join('')}<section class="card"><h2>${tr('finish')}</h2>${finalQuestion('new','newQ')}${finalQuestion('useful','usefulQ')}${finalQuestion('clear','clearQ')}<div class="summary">🔒 ${tr('sendNote')}</div><button class="btn primary share" ${submitState==='sending'||submitState==='sent'?'disabled':''} onclick="submitFeedback()">${tr('send')}</button>${statusHtml()}</section>`}
+async function submitFeedback(){if(typeof finalFeedback.new!=='boolean'||typeof finalFeedback.useful!=='boolean'||typeof finalFeedback.clear!=='boolean'){submitState='missing';render();return}submitState='sending';render();const payload={app_version:APP_VERSION,language:lang,flow:scenario,learned_new:finalFeedback.new,useful:finalFeedback.useful,next_step_clear:finalFeedback.clear,ratings:matchRatings};try{const res=await fetch(FEEDBACK_ENDPOINT,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('HTTP '+res.status);submitState='sent'}catch(e){submitState='error'}render()}
+function render(){document.getElementById('logo').textContent=tr('app');document.getElementById('pilot').textContent=tr('pilot');if(screen==='home')main().innerHTML=home();else if(screen.endsWith('R'))main().innerHTML=results();else main().innerHTML=flow()||home()}
 render();
 </script>
 </body>
