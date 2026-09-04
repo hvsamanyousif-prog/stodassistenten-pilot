@@ -66,6 +66,12 @@ Inte tillåtet i publikt repo eller klientkod:
 - autentiseringshemligheter
 - framtida proprietär regelmotor som bör ligga privat
 
+## Nuvarande feedbackarkitektur
+
+V0.5 använder automatisk anonym pilotfeedback via serverfunktion och EU-baserad Supabase-databas i Stockholm-regionen.
+
+Frontend skickar endast produktfeedback: version, språk, flöde, om något nytt lärdes, användbarhet, tydlighet och numeriska resultatomdömen. Situationssvar om arbete, sjukdom, ekonomi, barn och boende skickas inte till feedbackdatabasen.
+
 ## Kommande arkitektur
 
 Publik frontend → eget API-lager → utbytbara tjänster/databaser.
@@ -73,6 +79,10 @@ Publik frontend → eget API-lager → utbytbara tjänster/databaser.
 Det gör att Supabase kan användas i pilot och senare bytas mot annan EU/svensk drift utan att frontend byggs om.
 
 AI ska senare ligga bakom servern och användas för språk, intervju, struktur, dokumentförklaring och utkast. Verifierade regler och källor ska avgöra stödmatchning.
+
+## Expert review
+
+Större versioner ska granskas enligt `docs/EXPERT_REVIEW_COUNCIL.md`, med relevanta perspektiv från socialförsäkring/offentlig sektor, GDPR, säkerhet, AI, tillgänglighet, UX, analytics och kommersiell strategi.
 
 ## Definition of done för varje pilotversion
 
@@ -87,9 +97,9 @@ En version är klar när:
 
 ## Versionsplan
 
-V0.4: generell situation + rikare pilotfeedback.
-V0.5: fler verkliga livssituationer, bättre startsida och förbättrad matchning utifrån pilotdata.
-V0.6: automatisk anonym feedback-backend + enkel intern statistik.
+V0.4: generell situation + rikare pilotfeedback — klar.
+V0.5: automatisk anonym feedback-backend + förbättrad generell pilot — live.
+V0.6: verifierade stödspår för a-kassa, sjukskrivning och allvarlig sjukdom + första analysdashboard.
 V0.7: separerad stöddata/regler/UI för enklare underhåll.
 V0.8+: privat backend, verifierad stöddatabas och senare AI-intervju.
 
