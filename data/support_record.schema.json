@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/support-record-1.0.0.json",
+  "title": "Stödassistenten Support Record",
+  "description": "Normalized metadata for a support, benefit, right, service, grant or funding opportunity. This schema describes support rules and sources, never an individual user's case data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "support_id",
+    "name",
+    "category",
+    "provider",
+    "geography",
+    "eligibility",
+    "application",
+    "source",
+    "verification",
+    "lifecycle"
+  ],
+  "properties": {
+    "support_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 240
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "family_children",
+        "sickness_rehabilitation",
+        "disability",
+        "work_unemployment",
+        "pension_survivor",
+        "education",
+        "housing_energy",
+        "social_assistance",
+        "health_dental",
+        "caregiver_relative",
+        "migration_establishment",
+        "foundation_scholarship",
+        "association_sport",
+        "culture",
+        "business_financing",
+        "municipal_regional",
+        "eu_programme",
+        "other"
+      ]
+    },
+    "subtype": {
+      "type": ["string", "null"],
+      "maxLength": 120
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "provider_type"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "provider_type": {
+          "type": "string",
+          "enum": [
+            "national_agency",
+            "municipality",
+            "region",
+            "government_fund",
+            "foundation",
+            "association",
+            "company",
+            "eu_body",
+            "other"
+          ]
+        },
+        "organisation_identifier": {"type": ["string", "null"], "maxLength": 80}
+      }
+    },
+    "geography": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["national", "region", "municipality", "multi_area", "eu", "other"]
+        },
+        "country_code": {"type": "string", "const": "SE"},
+        "region_codes": {
+          "type": "array",
+          "items": {"type": "string", "maxLength": 20},
+          "uniqueItems": true
+        },
+        "municipality_codes": {
+          "type": "array",
+          "items": {"type": "string", "maxLength": 20},
+          "uniqueItems": true
+        },
+        "free_text": {"type": ["string", "null"], "maxLength": 300}
+      }
+    },
+    "audience": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "segments": {
+          "type": "array",
+          "items": {"type": "string", "maxLength": 80},
+          "uniqueItems": true
+        },
+        "age_min": {"type": ["integer", "null"], "minimum": 0, "maximum": 120},
+        "age_max": {"type": ["integer", "null"], "minimum": 0, "maximum": 120}
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conditions", "exclusions", "missing_information_questions"],
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/rule"}
+        },
+        "exclusions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/rule"}
+        },
+        "missing_information_questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question_id", "prompt", "reason"],
+            "properties": {
+              "question_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+              "prompt": {"type": "string", "minLength": 1, "maxLength": 300},
+              "reason": {"type": "string", "minLength": 1, "maxLength": 300}
+            }
+          }
+        }
+      }
+    },
+    "benefit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["cash", "reimbursement", "loan", "service", "equipment", "tax", "advice", "programme", "mixed", "other"]
+        },
+        "amount_text": {"type": ["string", "null"], "maxLength": 400},
+        "calculation_text": {"type": ["string", "null"], "maxLength": 800},
+        "recurrence": {
+          "type": ["string", "null"],
+          "enum": ["one_off", "daily", "weekly", "monthly", "annual", "periodic", "variable", null]
+        }
+      }
+    },
+    "documents": {
+      "type": "array",
+      "items": {"type": "string", "maxLength": 240},
+      "uniqueItems": true
+    },
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method"],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["online", "paper", "municipality_contact", "provider_contact", "automatic", "invitation", "mixed", "unknown"]
+        },
+        "url": {"type": ["string", "null"], "format": "uri", "maxLength": 1000},
+        "deadline_text": {"type": ["string", "null"], "maxLength": 300},
+        "next_step": {"type": ["string", "null"], "maxLength": 500}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "url", "source_type", "retrieved_at"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+        "url": {"type": "string", "format": "uri", "maxLength": 1000},
+        "source_type": {
+          "type": "string",
+          "enum": ["official_api", "official_open_data", "official_web", "official_pdf", "provider_web", "registry", "other"]
+        },
+        "published_at": {"type": ["string", "null"], "format": "date-time"},
+        "updated_at": {"type": ["string", "null"], "format": "date-time"},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "content_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "last_verified_at", "human_review_required"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["DISCOVERED", "PARSED", "NEEDS_REVIEW", "VERIFIED", "CHANGED", "EXPIRED", "ARCHIVED"]
+        },
+        "last_verified_at": {"type": ["string", "null"], "format": "date-time"},
+        "human_review_required": {"type": "boolean"},
+        "review_notes": {"type": ["string", "null"], "maxLength": 1000},
+        "material_fields_verified": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "provider", "target_group", "eligibility", "exclusions", "amount", "deadline", "documents", "application", "geography"]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["first_seen_at", "last_seen_at", "version"],
+      "properties": {
+        "first_seen_at": {"type": "string", "format": "date-time"},
+        "last_seen_at": {"type": "string", "format": "date-time"},
+        "valid_from": {"type": ["string", "null"], "format": "date"},
+        "valid_to": {"type": ["string", "null"], "format": "date"},
+        "version": {"type": "integer", "minimum": 1},
+        "change_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "field", "operator", "value", "source_url"],
+      "properties": {
+        "rule_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+        "field": {"type": "string", "minLength": 1, "maxLength": 120},
+        "operator": {
+          "type": "string",
+          "enum": ["eq", "neq", "in", "not_in", "gte", "lte", "between", "exists", "not_exists", "text_condition"]
+        },
+        "value": {},
+        "source_url": {"type": "string", "format": "uri", "maxLength": 1000},
+        "notes": {"type": ["string", "null"], "maxLength": 500}
+      }
+    }
+  }
+}
