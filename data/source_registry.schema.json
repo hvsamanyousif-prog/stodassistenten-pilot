@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/source-registry-1.0.0.json",
+  "title": "Stödassistenten Source Registry",
+  "description": "Metadata contract for public support-discovery sources. The registry contains source metadata only and must never contain user case data or secrets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "purpose",
+    "automation_guardrails",
+    "sources"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1200
+    },
+    "automation_guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "robots_and_terms_review_required_before_crawling",
+        "prefer_api_or_structured_data_when_available",
+        "no_personal_data",
+        "no_user_case_data",
+        "product_use_requires_verified_support_records"
+      ],
+      "properties": {
+        "robots_and_terms_review_required_before_crawling": {"const": true},
+        "prefer_api_or_structured_data_when_available": {"const": true},
+        "no_personal_data": {"const": true},
+        "no_user_case_data": {"const": true},
+        "product_use_requires_verified_support_records": {"const": true}
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "owner",
+        "authority_type",
+        "url",
+        "geography",
+        "coverage",
+        "source_type",
+        "ingestion_method",
+        "priority",
+        "suggested_review_frequency_days",
+        "source_verification_status",
+        "last_source_check",
+        "adapter_state"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200
+        },
+        "authority_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,79}$"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "maxLength": 1000
+        },
+        "geography": {
+          "type": "string",
+          "const": "SE"
+        },
+        "coverage": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,79}$"
+          }
+        },
+        "source_type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,79}$"
+        },
+        "ingestion_method": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,79}$"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2"]
+        },
+        "suggested_review_frequency_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "source_verification_status": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CANDIDATE",
+            "SOURCE_VERIFIED",
+            "SOURCE_CHANGED",
+            "SOURCE_BLOCKED",
+            "SOURCE_RETIRED"
+          ]
+        },
+        "last_source_check": {
+          "type": "string",
+          "format": "date"
+        },
+        "adapter_state": {
+          "type": "string",
+          "enum": [
+            "CANDIDATE",
+            "READY_FOR_PRIVATE_ADAPTER",
+            "ACTIVE",
+            "PAUSED",
+            "BLOCKED",
+            "SPECIAL_HANDLING_REQUIRED"
+          ]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1200
+        }
+      }
+    }
+  }
+}
