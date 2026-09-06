@@ -1,0 +1,32 @@
+name: Validate matching eval benchmark
+
+on:
+  push:
+    paths:
+      - 'data/evals/**'
+      - 'scripts/evaluate_matching.py'
+      - '.github/workflows/matching-evals.yml'
+  pull_request:
+    paths:
+      - 'data/evals/**'
+      - 'scripts/evaluate_matching.py'
+      - '.github/workflows/matching-evals.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate benchmark dataset and locked baseline
+        run: python scripts/evaluate_matching.py --validate-only
+      - name: Test benchmark metric implementation
+        run: python scripts/evaluate_matching.py --validate-only --self-test
