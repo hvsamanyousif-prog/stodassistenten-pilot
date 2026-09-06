@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for cancer and serious-illness support matching.",
+  "cases": [
+    {
+      "case_id": "cancer-001",
+      "segment": "cancer",
+      "language": "sv",
+      "story": "Jag har nyligen fått ett cancerbesked och är sjukskriven. Jag vet inte hur ekonomin kommer påverkas.",
+      "known_facts": {"actor": "affected", "serious_illness": true, "sick_leave": true},
+      "unknown_facts": ["employment_type", "benefit_status", "insurance_coverage", "household"],
+      "expected_support_areas": ["sickness_benefit", "insurance_compensation", "patient_support", "foundation_grants"],
+      "must_not_claim": ["medical_advice", "guaranteed_benefit", "guaranteed_insurance_compensation"],
+      "expected_questions": ["q_employment_type", "q_benefit_status", "q_insurance", "q_household"],
+      "expected_next_actions": ["check_sickness_benefit", "check_insurances", "check_patient_support"],
+      "risk_flags": ["health_sensitive", "income_loss"],
+      "source_requirements": ["Försäkringskassan", "insurance", "patient_org"]
+    },
+    {
+      "case_id": "cancer-002",
+      "segment": "cancer",
+      "language": "sv",
+      "story": "Jag går på behandling långt från hemmet och resorna kostar mycket.",
+      "known_facts": {"actor": "affected", "treatment_travel": true},
+      "unknown_facts": ["region", "travel_distance", "treatment_provider"],
+      "expected_support_areas": ["patient_travel", "foundation_grants"],
+      "must_not_claim": ["guaranteed_travel_reimbursement", "medical_advice"],
+      "expected_questions": ["q_region", "q_travel_distance", "q_provider"],
+      "expected_next_actions": ["check_region_patient_travel_rules", "check_foundations_if_gap"],
+      "risk_flags": ["health_sensitive"],
+      "source_requirements": ["region", "stiftelse"]
+    },
+    {
+      "case_id": "cancer-003",
+      "segment": "cancer",
+      "language": "sv",
+      "story": "Jag har cancer och små barn hemma. Vi behöver praktiskt stöd och hjälp att förstå vad som finns.",
+      "known_facts": {"actor": "affected", "children_at_home": true},
+      "unknown_facts": ["children_ages", "municipality", "support_network", "work_status"],
+      "expected_support_areas": ["municipal_family_support", "sickness_benefit", "patient_support", "foundation_grants"],
+      "must_not_claim": ["guaranteed_municipal_service", "medical_advice"],
+      "expected_questions": ["q_children_ages", "q_municipality", "q_support_network", "q_work_status"],
+      "expected_next_actions": ["check_municipal_family_support", "check_patient_org_support", "check_income_supports"],
+      "risk_flags": ["health_sensitive", "child_sensitive"],
+      "source_requirements": ["kommun", "Försäkringskassan", "patient_org"]
+    },
+    {
+      "case_id": "cancer-004",
+      "segment": "cancer",
+      "language": "sv",
+      "story": "Jag har avslutat behandling och försöker komma tillbaka till jobbet stegvis.",
+      "known_facts": {"actor": "affected", "return_to_work": true},
+      "unknown_facts": ["employment_type", "current_work_capacity", "rehab_plan"],
+      "expected_support_areas": ["work_rehabilitation", "employer_rehabilitation", "sickness_benefit"],
+      "must_not_claim": ["medical_advice", "guaranteed_work_adjustment"],
+      "expected_questions": ["q_employment_type", "q_work_capacity", "q_rehab_plan"],
+      "expected_next_actions": ["coordinate_return_to_work_plan", "check_benefit_effects"],
+      "risk_flags": ["health_sensitive", "return_to_work"],
+      "source_requirements": ["Försäkringskassan", "employer"]
+    },
+    {
+      "case_id": "cancer-005",
+      "segment": "cancer",
+      "language": "sv",
+      "story": "Jag har fått ett svårt sjukdomsbesked och vill veta om min arbetsplats eller försäkring kan ge extra ersättning.",
+      "known_facts": {"actor": "affected", "employment_status": "employed", "serious_illness": true},
+      "unknown_facts": ["collective_agreement", "insurance_policies", "benefit_status"],
+      "expected_support_areas": ["insurance_compensation", "sickness_benefit", "employer_support"],
+      "must_not_claim": ["guaranteed_insurance_compensation", "guaranteed_amount"],
+      "expected_questions": ["q_collective_agreement", "q_insurance_policies", "q_benefit_status"],
+      "expected_next_actions": ["check_collective_insurance", "check_private_insurance", "check_public_benefit"],
+      "risk_flags": ["health_sensitive"],
+      "source_requirements": ["insurance", "Försäkringskassan", "employer"]
+    }
+  ]
+}
