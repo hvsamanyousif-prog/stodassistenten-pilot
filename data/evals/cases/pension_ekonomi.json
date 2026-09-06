@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for pension, low-income and housing support matching.",
+  "cases": [
+    {
+      "case_id": "pension-001",
+      "segment": "pension_ekonomi",
+      "language": "sv",
+      "story": "Jag är 74 år, bor ensam i hyresrätt och pensionen räcker knappt efter hyran.",
+      "known_facts": {"age": 74, "housing": "rental", "household": "single", "income_type": "pension"},
+      "unknown_facts": ["monthly_housing_cost", "total_pension_income", "other_assets"],
+      "expected_support_areas": ["housing_supplement_pension", "elderly_income_support", "municipal_financial_guidance"],
+      "must_not_claim": ["guaranteed_eligibility", "guaranteed_amount"],
+      "expected_questions": ["q_housing_cost", "q_pension_income", "q_assets"],
+      "expected_next_actions": ["check_pension_authority_supports", "prepare_income_housing_documents"],
+      "risk_flags": ["economic_vulnerability"],
+      "source_requirements": ["Pensionsmyndigheten", "kommun"]
+    },
+    {
+      "case_id": "pension-002",
+      "segment": "pension_ekonomi",
+      "language": "sv",
+      "story": "Jag är pensionär och skjuter upp tandläkarbesök för att jag inte har råd.",
+      "known_facts": {"income_type": "pension", "need": "dental_care"},
+      "unknown_facts": ["age", "dental_treatment_plan", "income_level"],
+      "expected_support_areas": ["dental_support", "foundation_grants", "municipal_financial_guidance"],
+      "must_not_claim": ["guaranteed_dental_reimbursement", "guaranteed_foundation_grant"],
+      "expected_questions": ["q_age", "q_dental_plan", "q_income_level"],
+      "expected_next_actions": ["check_dental_support_rules", "check_local_foundations"],
+      "risk_flags": ["health_related_expense"],
+      "source_requirements": ["Försäkringskassan", "region", "stiftelse"]
+    },
+    {
+      "case_id": "pension-003",
+      "segment": "pension_ekonomi",
+      "language": "sv",
+      "story": "Vi är två pensionärer i villa med låg sammanlagd pension och höga boendekostnader.",
+      "known_facts": {"household": "couple", "housing": "owned_house", "income_type": "pension"},
+      "unknown_facts": ["combined_pension_income", "housing_costs", "assets"],
+      "expected_support_areas": ["housing_supplement_pension", "elderly_income_support", "energy_advice_municipality"],
+      "must_not_claim": ["guaranteed_eligibility", "guaranteed_amount"],
+      "expected_questions": ["q_combined_income", "q_housing_cost", "q_assets"],
+      "expected_next_actions": ["check_pension_authority_supports", "check_municipal_energy_advice"],
+      "risk_flags": ["economic_vulnerability"],
+      "source_requirements": ["Pensionsmyndigheten", "kommun"]
+    },
+    {
+      "case_id": "pension-004",
+      "segment": "pension_ekonomi",
+      "language": "sv",
+      "story": "Jag är 68 år, nyligen pensionerad och förstår inte vilka stöd som kan ändras när arbetsinkomsten försvinner.",
+      "known_facts": {"age": 68, "transition": "recent_retirement"},
+      "unknown_facts": ["pension_income", "housing", "household"],
+      "expected_support_areas": ["housing_supplement_pension", "tax_guidance", "municipal_financial_guidance"],
+      "must_not_claim": ["guaranteed_eligibility", "tax_outcome_without_source"],
+      "expected_questions": ["q_pension_income", "q_housing", "q_household"],
+      "expected_next_actions": ["check_pension_supports", "check_tax_information"],
+      "risk_flags": ["life_transition"],
+      "source_requirements": ["Pensionsmyndigheten", "Skatteverket"]
+    },
+    {
+      "case_id": "pension-005",
+      "segment": "pension_ekonomi",
+      "language": "sv",
+      "story": "Min pappa är 82 år och bor ensam. Jag hjälper honom med ekonomin men vet inte om han missar något stöd.",
+      "known_facts": {"age": 82, "household": "single", "actor": "relative_helping"},
+      "unknown_facts": ["housing_cost", "pension_income", "assets", "consent_or_authority"],
+      "expected_support_areas": ["housing_supplement_pension", "elderly_income_support", "caregiver_support_municipality"],
+      "must_not_claim": ["guaranteed_eligibility", "authority_to_act_without_check"],
+      "expected_questions": ["q_housing_cost", "q_pension_income", "q_assets", "q_authority_to_help"],
+      "expected_next_actions": ["check_pension_supports", "clarify_authority_to_assist"],
+      "risk_flags": ["representation_risk"],
+      "source_requirements": ["Pensionsmyndigheten", "kommun"]
+    }
+  ]
+}
