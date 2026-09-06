@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for NPF and disability support matching.",
+  "cases": [
+    {
+      "case_id": "npf-001",
+      "segment": "npf_funktionsnedsattning",
+      "language": "sv",
+      "story": "Mitt barn har stora behov av tillsyn hemma och i vardagen. Jag vet inte vilka stöd familjen kan söka.",
+      "known_facts": {"actor": "parent", "child_support_need": "high_supervision"},
+      "unknown_facts": ["child_age", "duration_of_needs", "extra_costs", "existing_supports"],
+      "expected_support_areas": ["care_allowance", "additional_cost_allowance", "lss_support", "municipal_family_support"],
+      "must_not_claim": ["guaranteed_eligibility", "medical_diagnosis_required_claim"],
+      "expected_questions": ["q_child_age", "q_duration", "q_extra_costs", "q_existing_supports"],
+      "expected_next_actions": ["check_family_benefit_supports", "check_municipal_lss_path"],
+      "risk_flags": ["child_sensitive", "health_sensitive"],
+      "source_requirements": ["Försäkringskassan", "kommun"]
+    },
+    {
+      "case_id": "npf-002",
+      "segment": "npf_funktionsnedsattning",
+      "language": "sv",
+      "story": "Skolan fungerar dåligt för mitt barn med NPF och vi behöver förstå vilket stöd skolan ska utreda.",
+      "known_facts": {"actor": "parent", "context": "school_support"},
+      "unknown_facts": ["school_stage", "current_adjustments", "documented_needs"],
+      "expected_support_areas": ["school_support", "student_health_support", "municipal_family_support"],
+      "must_not_claim": ["guaranteed_specific_school_measure", "legal_outcome_without_source"],
+      "expected_questions": ["q_school_stage", "q_current_adjustments", "q_documented_needs"],
+      "expected_next_actions": ["request_school_support_review", "document_current_support_gaps"],
+      "risk_flags": ["child_sensitive"],
+      "source_requirements": ["Skolverket", "school"]
+    },
+    {
+      "case_id": "npf-003",
+      "segment": "npf_funktionsnedsattning",
+      "language": "sv",
+      "story": "Jag är vuxen med funktionsnedsättning och behöver mer stöd för att klara vardagen hemma.",
+      "known_facts": {"actor": "adult", "need": "daily_living_support"},
+      "unknown_facts": ["municipality", "functional_needs", "existing_services"],
+      "expected_support_areas": ["lss_support", "social_services_support", "housing_adaptation"],
+      "must_not_claim": ["guaranteed_lss_eligibility", "guaranteed_specific_service"],
+      "expected_questions": ["q_municipality", "q_functional_needs", "q_existing_services"],
+      "expected_next_actions": ["check_municipal_support_path", "check_housing_adaptation_if_relevant"],
+      "risk_flags": ["health_sensitive"],
+      "source_requirements": ["kommun", "Boverket"]
+    },
+    {
+      "case_id": "npf-004",
+      "segment": "npf_funktionsnedsattning",
+      "language": "sv",
+      "story": "Vi har stora extra utgifter kopplade till vårt barns funktionsnedsättning.",
+      "known_facts": {"actor": "parent", "extra_costs": true},
+      "unknown_facts": ["types_of_costs", "duration", "existing_benefits"],
+      "expected_support_areas": ["additional_cost_allowance", "care_allowance", "foundation_grants"],
+      "must_not_claim": ["guaranteed_amount", "guaranteed_foundation_grant"],
+      "expected_questions": ["q_cost_types", "q_duration", "q_existing_benefits"],
+      "expected_next_actions": ["document_extra_costs", "check_social_insurance_supports", "check_foundations"],
+      "risk_flags": ["child_sensitive", "health_sensitive"],
+      "source_requirements": ["Försäkringskassan", "stiftelse"]
+    },
+    {
+      "case_id": "npf-005",
+      "segment": "npf_funktionsnedsattning",
+      "language": "sv",
+      "story": "Min vuxna syster har svårt att sköta myndighetskontakter och jag försöker hjälpa henne.",
+      "known_facts": {"actor": "relative_helping", "adult_relative": true},
+      "unknown_facts": ["consent_or_authority", "support_needs", "municipality"],
+      "expected_support_areas": ["municipal_support", "good_man_guidance", "lss_support"],
+      "must_not_claim": ["authority_to_act_without_check", "guaranteed_guardianship"],
+      "expected_questions": ["q_authority_to_help", "q_support_needs", "q_municipality"],
+      "expected_next_actions": ["clarify_consent_or_authority", "check_municipal_support", "check_guardianship_information_if_needed"],
+      "risk_flags": ["representation_risk", "health_sensitive"],
+      "source_requirements": ["kommun", "överförmyndare"]
+    }
+  ]
+}
