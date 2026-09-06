@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for small-business support and procurement matching.",
+  "cases": [
+    {
+      "case_id": "biz-001",
+      "segment": "foretag",
+      "language": "sv",
+      "story": "Jag driver ett litet tillverkningsföretag och vill investera i energieffektiv utrustning.",
+      "known_facts": {"organization": "small_business", "goal": "energy_investment"},
+      "unknown_facts": ["region", "company_size", "investment_type", "budget"],
+      "expected_support_areas": ["regional_business_support", "green_transition_support", "energy_advice_business"],
+      "must_not_claim": ["guaranteed_business_grant", "guaranteed_amount"],
+      "expected_questions": ["q_region", "q_company_size", "q_investment_type", "q_budget"],
+      "expected_next_actions": ["check_regional_supports", "check_energy_programs", "prepare_investment_case"],
+      "risk_flags": ["state_aid_rules"],
+      "source_requirements": ["region", "Tillväxtverket", "Energimyndigheten"]
+    },
+    {
+      "case_id": "biz-002",
+      "segment": "foretag",
+      "language": "sv",
+      "story": "Jag har en ny digital tjänst och söker finansiering för att testa den på marknaden.",
+      "known_facts": {"organization": "startup", "goal": "market_validation"},
+      "unknown_facts": ["company_age", "innovation_level", "region", "funding_need"],
+      "expected_support_areas": ["innovation_funding", "regional_business_support", "loan_financing"],
+      "must_not_claim": ["guaranteed_innovation_grant", "guaranteed_loan"],
+      "expected_questions": ["q_company_age", "q_innovation_level", "q_region", "q_funding_need"],
+      "expected_next_actions": ["check_innovation_programs", "check_regional_supports", "prepare_validation_plan"],
+      "risk_flags": ["commercial_risk"],
+      "source_requirements": ["Vinnova", "region", "Almi"]
+    },
+    {
+      "case_id": "biz-003",
+      "segment": "foretag",
+      "language": "sv",
+      "story": "Mitt företag vill börja exportera men vi har aldrig gjort det tidigare.",
+      "known_facts": {"organization": "small_business", "goal": "export"},
+      "unknown_facts": ["target_markets", "product_type", "company_size"],
+      "expected_support_areas": ["export_support", "regional_business_support", "advisory_support"],
+      "must_not_claim": ["guaranteed_export_grant", "guaranteed_sales_result"],
+      "expected_questions": ["q_target_markets", "q_product_type", "q_company_size"],
+      "expected_next_actions": ["check_export_advisory", "check_regional_export_programs"],
+      "risk_flags": ["market_risk"],
+      "source_requirements": ["Business Sweden", "region"]
+    },
+    {
+      "case_id": "biz-004",
+      "segment": "foretag",
+      "language": "sv",
+      "story": "Jag driver restaurang och behöver investera efter nya krav på lokalen. Finns det stöd?",
+      "known_facts": {"organization": "small_business", "sector": "restaurant", "goal": "compliance_investment"},
+      "unknown_facts": ["requirement_type", "municipality", "investment_size", "company_size"],
+      "expected_support_areas": ["regional_business_support", "loan_financing", "municipal_business_advice"],
+      "must_not_claim": ["guaranteed_grant", "legal_requirement_interpretation_without_source"],
+      "expected_questions": ["q_requirement_type", "q_municipality", "q_investment_size", "q_company_size"],
+      "expected_next_actions": ["verify_requirement_source", "check_regional_support", "contact_business_advice"],
+      "risk_flags": ["regulatory"],
+      "source_requirements": ["kommun", "region", "Almi"]
+    },
+    {
+      "case_id": "biz-005",
+      "segment": "foretag",
+      "language": "sv",
+      "story": "Vi är ett litet konsultbolag och vill börja sälja till kommuner.",
+      "known_facts": {"organization": "small_business", "goal": "public_procurement"},
+      "unknown_facts": ["services", "geography", "references", "procurement_experience"],
+      "expected_support_areas": ["public_procurement_support", "business_advisory_support"],
+      "must_not_claim": ["guaranteed_contract", "legal_procurement_advice_as_binding"],
+      "expected_questions": ["q_services", "q_geography", "q_references", "q_procurement_experience"],
+      "expected_next_actions": ["find_relevant_procurements", "review_basic_procurement_requirements", "prepare_evidence_library"],
+      "risk_flags": ["procurement_compliance"],
+      "source_requirements": ["Upphandlingsmyndigheten", "kommun"]
+    }
+  ]
+}
