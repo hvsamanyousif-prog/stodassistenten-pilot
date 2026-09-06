@@ -17,7 +17,7 @@ Stödassistenten ska kunna lanseras smalt och samtidigt utvecklas mot Bas, Pro/A
 
 ## Capability resolution
 
-Den framtida privata kärnan ska ta ansvar för att lösa vilka capabilities som är tillåtna. Den publika klienten ska endast få ett minimalt resultat, konceptuellt:
+Den framtida privata kärnan ska ta ansvar för att lösa vilka capabilities som är tillåtna. Den publika klienten ska endast få ett minimalt resultat enligt `config/capability_resolution.schema.json`:
 
 ```json
 {
@@ -29,7 +29,9 @@ Den framtida privata kärnan ska ta ansvar för att lösa vilka capabilities som
 }
 ```
 
-En sådan payload får inte innehålla pris, abonnemangsnamn, interna regler, backend-URL:er, databasidentifierare, tokens eller orsaker som avslöjar privat implementation. När privat backend byggs ska kontraktet få ett separat strikt schema och server-side authorization-test.
+Payloaden får endast innehålla `capability_id` och `enabled` per capability. Den får inte bära pris, abonnemangsnamn, entitlementorsaker, interna regler, användar-/case-ID:n, backend-URL:er, databasidentifierare eller tokens. `scripts/validate_capabilities.py` har negativa tester som avvisar sådant läckage.
+
+Det här resolved-svaret är fortfarande **inte authorization**. När privat backend byggs måste varje server-auktoritativ operation kontrollera identitet, relation, roll och resursåtkomst på serversidan oavsett vad klienten visar.
 
 ## Modulgränser
 
@@ -85,7 +87,7 @@ Individdata får inte läcka till aggregat. `analytics` är server-auktoritativ 
 ### Fas 1 – capability adapter i klienten
 
 - UI slutar hårdkoda framtida produktpaket
-- en liten lokal resolver kan tillfälligt returnera endast publika pilot-capabilities
+- en liten lokal resolver kan tillfälligt returnera endast publika pilot-capabilities enligt resolved-schemat
 - samma komponenter kan senare konsumera ett privat resolved-capability-svar
 - ingen privat data introduceras
 
@@ -118,12 +120,13 @@ Individdata får inte läcka till aggregat. `analytics` är server-auktoritativ 
 - att privat/aggregate data alltid kräver server-auktoritet
 - att förbjudna pris-/secret-/endpointfält inte smyger in i publikt kontrakt
 - att säkerhetsinvarianterna inte kan stängas av
+- att resolved payload inte får läcka backendfält, entitlementinfo eller okända capability-ID:n
 
-Nästa steg efter v0.1 är ett strikt schema för resolved-capability-payloaden och ett klientadapter-test som bevisar att en disabled capability varken renderar privat UI-data eller triggar privata anrop. Den testen ska byggas när klienten faktiskt har separerats från dagens statiska pilotlogik; innan dess skulle den ge falsk trygghet.
+Nästa steg är ett verkligt klientadapter-test som bevisar att en disabled capability varken renderar privat UI-data eller triggar privata anrop. Den testen ska byggas när klienten faktiskt har separerats från dagens statiska pilotlogik; innan dess skulle den ge falsk trygghet.
 
 ## Säkerhetsgräns
 
-Detta dokument och capability-katalogen är avsiktligt publika arkitekturkontrakt. De ska inte innehålla:
+Detta dokument och capability-kontrakten är avsiktligt publika arkitekturkontrakt. De ska inte innehålla:
 
 - verkliga användar- eller case-data
 - API-nycklar, tokens eller secrets
