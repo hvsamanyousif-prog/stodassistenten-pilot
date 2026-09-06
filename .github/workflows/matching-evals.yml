@@ -5,11 +5,13 @@ on:
     paths:
       - 'data/evals/**'
       - 'scripts/evaluate_matching.py'
+      - 'scripts/evaluate_matching_segments.py'
       - '.github/workflows/matching-evals.yml'
   pull_request:
     paths:
       - 'data/evals/**'
       - 'scripts/evaluate_matching.py'
+      - 'scripts/evaluate_matching_segments.py'
       - '.github/workflows/matching-evals.yml'
 
 permissions:
@@ -30,3 +32,7 @@ jobs:
         run: python scripts/evaluate_matching.py --validate-only
       - name: Test benchmark metric implementation
         run: python scripts/evaluate_matching.py --validate-only --self-test
+      - name: Validate per-segment quality policy
+        run: python scripts/evaluate_matching_segments.py --validate-only
+      - name: Test per-segment fail-closed guard
+        run: python scripts/evaluate_matching_segments.py --validate-only --self-test
