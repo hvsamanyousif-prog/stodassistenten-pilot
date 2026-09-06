@@ -1,0 +1,112 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Stable public identifiers for Stödassistenten capabilities. The catalog describes module boundaries and enforcement requirements, not pricing, subscriptions, user entitlements or private implementation details.",
+  "security_invariants": {
+    "no_pricing_logic": true,
+    "client_flags_are_not_authorization": true,
+    "private_capabilities_require_server_enforcement": true,
+    "no_secrets_or_endpoints": true,
+    "no_user_or_case_data": true
+  },
+  "capabilities": [
+    {
+      "capability_id": "match_basic",
+      "module": "matching",
+      "description": "Basic situations-based matching against the limited verified support set exposed by the current public product surface.",
+      "execution_surface": "public_ui",
+      "enforcement": "client_visibility",
+      "data_scope": "no_case_data",
+      "dependencies": []
+    },
+    {
+      "capability_id": "source_details",
+      "module": "sources",
+      "description": "Show safe public source metadata, verification context and next-step links for a displayed support candidate.",
+      "execution_surface": "public_ui",
+      "enforcement": "client_visibility",
+      "data_scope": "no_case_data",
+      "dependencies": ["match_basic"]
+    },
+    {
+      "capability_id": "match_extended",
+      "module": "matching",
+      "description": "Extended matching that can use the private verified support corpus and server-side matching logic when available.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "no_case_data",
+      "dependencies": ["match_basic"]
+    },
+    {
+      "capability_id": "watchlists",
+      "module": "watchlists",
+      "description": "Persist selected support opportunities or monitoring preferences for an authenticated user or organization.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["match_basic"]
+    },
+    {
+      "capability_id": "documents",
+      "module": "documents",
+      "description": "Create and manage private document checklists, drafts or uploaded document references for an authorized case context.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["match_basic"]
+    },
+    {
+      "capability_id": "document_analysis",
+      "module": "documents",
+      "description": "Analyze an authorized private document to explain content or identify missing information without exposing the private implementation.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["documents"]
+    },
+    {
+      "capability_id": "cases",
+      "module": "cases",
+      "description": "Maintain private case state, progress and next actions for an authenticated subject with explicit authorization.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["match_basic"]
+    },
+    {
+      "capability_id": "case_history",
+      "module": "cases",
+      "description": "Read authorized case history and status transitions while preserving auditability and case isolation.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["cases"]
+    },
+    {
+      "capability_id": "professional_collab",
+      "module": "collaboration",
+      "description": "Allow authorized professional collaboration around a case with role-based access and explicit relationship checks.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "private_case_data",
+      "dependencies": ["cases"]
+    },
+    {
+      "capability_id": "analytics",
+      "module": "analytics",
+      "description": "Provide privacy-preserving aggregate product or organizational analytics without exposing individual case records.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "aggregate_only",
+      "dependencies": ["cases"]
+    },
+    {
+      "capability_id": "api_access",
+      "module": "api",
+      "description": "Allow authenticated machine-to-machine access to explicitly authorized product functions through a private API layer.",
+      "execution_surface": "private_service",
+      "enforcement": "server_authoritative",
+      "data_scope": "no_case_data",
+      "dependencies": []
+    }
+  ]
+}

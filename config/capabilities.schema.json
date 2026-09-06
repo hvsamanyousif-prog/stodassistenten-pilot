@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/capabilities-0.1.0.json",
+  "title": "Stödassistenten capability catalog",
+  "description": "Public, pricing-neutral contract for product capabilities. Authorization and private entitlement resolution belong in the private service layer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "purpose",
+    "security_invariants",
+    "capabilities"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1000
+    },
+    "security_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "no_pricing_logic",
+        "client_flags_are_not_authorization",
+        "private_capabilities_require_server_enforcement",
+        "no_secrets_or_endpoints",
+        "no_user_or_case_data"
+      ],
+      "properties": {
+        "no_pricing_logic": {"const": true},
+        "client_flags_are_not_authorization": {"const": true},
+        "private_capabilities_require_server_enforcement": {"const": true},
+        "no_secrets_or_endpoints": {"const": true},
+        "no_user_or_case_data": {"const": true}
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/capability"}
+    }
+  },
+  "$defs": {
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "module",
+        "description",
+        "execution_surface",
+        "enforcement",
+        "data_scope",
+        "dependencies"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,79}$"
+        },
+        "module": {
+          "type": "string",
+          "enum": [
+            "matching",
+            "sources",
+            "watchlists",
+            "documents",
+            "cases",
+            "collaboration",
+            "analytics",
+            "api"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 400
+        },
+        "execution_surface": {
+          "type": "string",
+          "enum": ["public_ui", "private_service"]
+        },
+        "enforcement": {
+          "type": "string",
+          "enum": ["client_visibility", "server_authoritative"]
+        },
+        "data_scope": {
+          "type": "string",
+          "enum": ["no_case_data", "private_case_data", "aggregate_only"]
+        },
+        "dependencies": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{2,79}$"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"execution_surface": {"const": "private_service"}},
+            "required": ["execution_surface"]
+          },
+          "then": {
+            "properties": {"enforcement": {"const": "server_authoritative"}}
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "data_scope": {"enum": ["private_case_data", "aggregate_only"]}
+            },
+            "required": ["data_scope"]
+          },
+          "then": {
+            "properties": {"enforcement": {"const": "server_authoritative"}}
+          }
+        },
+        {
+          "if": {
+            "properties": {"enforcement": {"const": "client_visibility"}},
+            "required": ["enforcement"]
+          },
+          "then": {
+            "properties": {
+              "execution_surface": {"const": "public_ui"},
+              "data_scope": {"const": "no_case_data"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

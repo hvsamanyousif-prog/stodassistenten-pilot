@@ -1,0 +1,36 @@
+name: Validate capability contracts
+
+on:
+  push:
+    paths:
+      - 'config/capabilities.json'
+      - 'config/capabilities.schema.json'
+      - 'config/capability_resolution.schema.json'
+      - 'scripts/validate_capabilities.py'
+      - 'docs/CAPABILITY_ARCHITECTURE.md'
+      - '.github/workflows/capability-contracts.yml'
+  pull_request:
+    paths:
+      - 'config/capabilities.json'
+      - 'config/capabilities.schema.json'
+      - 'config/capability_resolution.schema.json'
+      - 'scripts/validate_capabilities.py'
+      - 'docs/CAPABILITY_ARCHITECTURE.md'
+      - '.github/workflows/capability-contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate pricing-neutral capability contracts
+        run: python scripts/validate_capabilities.py --self-test
