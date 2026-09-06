@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1.0",
+  "dataset_sha256": "b1db865b134268c41f7e9fb0eab5e43d7ddd6c6aaadf070d2a3a1b71c9db381c",
+  "expected_case_count": 45,
+  "expected_cases_per_segment": 5,
+  "minimum_metrics": {
+    "support_recall": 0.90,
+    "support_precision": 0.85,
+    "unsafe_claim_rate": 0.00,
+    "question_efficiency": 0.75,
+    "next_action_recall": 0.80
+  },
+  "change_reason": "Initial public synthetic benchmark baseline for issue #13. Any semantic benchmark change must update this fingerprint and explain why."
+}
