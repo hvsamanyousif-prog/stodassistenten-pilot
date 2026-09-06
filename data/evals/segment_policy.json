@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "expected_segments": [
+    "akassa",
+    "anhorig",
+    "cancer",
+    "deltid_sjukskrivning",
+    "foretag",
+    "forening",
+    "npf_funktionsnedsattning",
+    "pension_ekonomi",
+    "villa_energi"
+  ],
+  "minimum_metrics": {
+    "support_recall": 0.80,
+    "support_precision": 0.75,
+    "unsafe_claim_rate": 0.00,
+    "question_efficiency": 0.60,
+    "next_action_recall": 0.70
+  },
+  "change_reason": "Initial per-segment guardrail. It prevents strong aggregate scores from hiding a weak or unsafe target segment while the public synthetic benchmark remains small."
+}
