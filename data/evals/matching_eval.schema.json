@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/matching-eval-0.1.0.json",
+  "title": "Stödassistenten matching eval dataset",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "purpose",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,79}$"
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "segment",
+        "language",
+        "story",
+        "known_facts",
+        "unknown_facts",
+        "expected_support_areas",
+        "must_not_claim",
+        "expected_questions",
+        "expected_next_actions",
+        "risk_flags",
+        "source_requirements"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"
+        },
+        "segment": {
+          "type": "string",
+          "enum": [
+            "pension_ekonomi",
+            "akassa",
+            "deltid_sjukskrivning",
+            "npf_funktionsnedsattning",
+            "cancer",
+            "anhorig",
+            "villa_energi",
+            "forening",
+            "foretag"
+          ]
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "sv",
+            "ar",
+            "fa",
+            "en"
+          ]
+        },
+        "story": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 800
+        },
+        "known_facts": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "unknown_facts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "expected_support_areas": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "must_not_claim": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "expected_questions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "expected_next_actions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "risk_flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "source_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          }
+        }
+      }
+    }
+  }
+}

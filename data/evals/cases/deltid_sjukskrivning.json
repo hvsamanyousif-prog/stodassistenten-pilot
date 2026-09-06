@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for part-time work and sickness support matching.",
+  "cases": [
+    {
+      "case_id": "sick-001",
+      "segment": "deltid_sjukskrivning",
+      "language": "sv",
+      "story": "Jag arbetar 50 procent och är sjukskriven resten. Inkomsten har sjunkit mycket.",
+      "known_facts": {"work_percent": 50, "sick_leave_percent": 50},
+      "unknown_facts": ["employment_type", "sickness_benefit_status", "collective_insurance"],
+      "expected_support_areas": ["sickness_benefit", "insurance_compensation", "work_rehabilitation"],
+      "must_not_claim": ["guaranteed_sickness_benefit", "medical_advice", "guaranteed_insurance_compensation"],
+      "expected_questions": ["q_employment_type", "q_sickness_benefit_status", "q_collective_insurance"],
+      "expected_next_actions": ["check_sickness_benefit_case", "check_collective_insurance", "check_rehabilitation_plan"],
+      "risk_flags": ["health_sensitive", "income_loss"],
+      "source_requirements": ["Försäkringskassan", "employer", "insurance"]
+    },
+    {
+      "case_id": "sick-002",
+      "segment": "deltid_sjukskrivning",
+      "language": "sv",
+      "story": "Jag är timanställd och sjukskriven deltid. Jag vet inte hur min varierande arbetstid påverkar ersättningen.",
+      "known_facts": {"employment_type": "hourly", "sick_leave": "part_time"},
+      "unknown_facts": ["normal_work_pattern", "sickness_benefit_status", "income_basis"],
+      "expected_support_areas": ["sickness_benefit", "work_rehabilitation"],
+      "must_not_claim": ["guaranteed_amount", "medical_advice"],
+      "expected_questions": ["q_normal_work_pattern", "q_sickness_benefit_status", "q_income_basis"],
+      "expected_next_actions": ["check_income_basis_rules", "check_sickness_benefit_case"],
+      "risk_flags": ["health_sensitive", "variable_income"],
+      "source_requirements": ["Försäkringskassan"]
+    },
+    {
+      "case_id": "sick-003",
+      "segment": "deltid_sjukskrivning",
+      "language": "sv",
+      "story": "Jag har varit deltidssjukskriven länge och arbetsgivaren pratar om rehabilitering.",
+      "known_facts": {"sick_leave": "long_term_part_time", "employer_rehab": "mentioned"},
+      "unknown_facts": ["rehab_plan_status", "work_capacity_changes", "benefit_status"],
+      "expected_support_areas": ["work_rehabilitation", "employer_rehabilitation", "sickness_benefit"],
+      "must_not_claim": ["medical_advice", "guaranteed_work_adjustment"],
+      "expected_questions": ["q_rehab_plan", "q_work_capacity", "q_benefit_status"],
+      "expected_next_actions": ["request_rehab_plan_clarity", "check_sickness_benefit_status"],
+      "risk_flags": ["health_sensitive", "employment_risk"],
+      "source_requirements": ["Försäkringskassan", "employer"]
+    },
+    {
+      "case_id": "sick-004",
+      "segment": "deltid_sjukskrivning",
+      "language": "sv",
+      "story": "Jag jobbar deltid och är sjukskriven deltid men har också en privat sjukförsäkring.",
+      "known_facts": {"work_status": "part_time", "sick_leave": "part_time", "private_insurance": true},
+      "unknown_facts": ["policy_terms", "benefit_status", "income_loss"],
+      "expected_support_areas": ["sickness_benefit", "insurance_compensation"],
+      "must_not_claim": ["guaranteed_insurance_compensation", "guaranteed_amount"],
+      "expected_questions": ["q_policy_terms", "q_benefit_status", "q_income_loss"],
+      "expected_next_actions": ["check_public_benefit", "review_insurance_terms"],
+      "risk_flags": ["health_sensitive"],
+      "source_requirements": ["Försäkringskassan", "insurance"]
+    },
+    {
+      "case_id": "sick-005",
+      "segment": "deltid_sjukskrivning",
+      "language": "sv",
+      "story": "Jag försöker börja jobba mer efter en längre sjukskrivning men vet inte vilka steg som är viktiga.",
+      "known_facts": {"return_to_work": "gradual"},
+      "unknown_facts": ["current_sick_leave_percent", "rehab_plan", "employer_contact"],
+      "expected_support_areas": ["work_rehabilitation", "employer_rehabilitation", "sickness_benefit"],
+      "must_not_claim": ["medical_advice", "guaranteed_benefit_continuation"],
+      "expected_questions": ["q_current_percent", "q_rehab_plan", "q_employer_contact"],
+      "expected_next_actions": ["coordinate_rehab_plan", "check_benefit_effects_before_change"],
+      "risk_flags": ["health_sensitive", "return_to_work"],
+      "source_requirements": ["Försäkringskassan", "employer"]
+    }
+  ]
+}

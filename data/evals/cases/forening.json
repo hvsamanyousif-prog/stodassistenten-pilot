@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for nonprofit association support matching.",
+  "cases": [
+    {
+      "case_id": "assoc-001",
+      "segment": "forening",
+      "language": "sv",
+      "story": "Vår idrottsförening vill köpa utrustning för att starta verksamhet för barn med funktionsnedsättning.",
+      "known_facts": {"organization": "nonprofit_sports_association", "goal": "adaptive_sports"},
+      "unknown_facts": ["municipality", "rf_affiliation", "budget", "target_group"],
+      "expected_support_areas": ["sports_grants", "accessibility_grant", "municipal_association_grant", "inheritance_fund"],
+      "must_not_claim": ["guaranteed_grant", "guaranteed_amount"],
+      "expected_questions": ["q_municipality", "q_rf_affiliation", "q_budget", "q_target_group"],
+      "expected_next_actions": ["check_sports_grants", "check_municipal_grants", "check_inheritance_fund_fit"],
+      "risk_flags": ["child_target_group"],
+      "source_requirements": ["Riksidrottsförbundet", "kommun", "Allmänna arvsfonden"]
+    },
+    {
+      "case_id": "assoc-002",
+      "segment": "forening",
+      "language": "sv",
+      "story": "Vi driver en liten kulturförening och behöver pengar till ett projekt nästa år.",
+      "known_facts": {"organization": "nonprofit_cultural_association", "goal": "project_funding"},
+      "unknown_facts": ["project_scope", "municipality", "budget", "participants"],
+      "expected_support_areas": ["municipal_association_grant", "cultural_project_grants", "foundation_grants"],
+      "must_not_claim": ["guaranteed_grant", "guaranteed_amount"],
+      "expected_questions": ["q_project_scope", "q_municipality", "q_budget", "q_participants"],
+      "expected_next_actions": ["map_project_grant_deadlines", "check_municipal_culture_grants", "check_foundations"],
+      "risk_flags": ["deadline_sensitive"],
+      "source_requirements": ["kommun", "Kulturrådet", "stiftelse"]
+    },
+    {
+      "case_id": "assoc-003",
+      "segment": "forening",
+      "language": "sv",
+      "story": "Vår föreningslokal behöver en ramp och bättre tillgänglighet.",
+      "known_facts": {"organization": "nonprofit_association", "need": "premises_accessibility"},
+      "unknown_facts": ["ownership_or_lease", "municipality", "planned_measures", "target_group"],
+      "expected_support_areas": ["accessibility_grant", "municipal_association_grant", "inheritance_fund"],
+      "must_not_claim": ["guaranteed_grant", "guaranteed_building_approval"],
+      "expected_questions": ["q_premises_status", "q_municipality", "q_measures", "q_target_group"],
+      "expected_next_actions": ["check_accessibility_funding", "check_landlord_or_permission", "check_inheritance_fund"],
+      "risk_flags": ["property_permission"],
+      "source_requirements": ["kommun", "Allmänna arvsfonden"]
+    },
+    {
+      "case_id": "assoc-004",
+      "segment": "forening",
+      "language": "sv",
+      "story": "Vi har precis startat en ungdomsförening och vet inte vilka löpande bidrag som finns.",
+      "known_facts": {"organization": "new_youth_association"},
+      "unknown_facts": ["municipality", "member_count", "ages", "organization_form"],
+      "expected_support_areas": ["municipal_association_grant", "youth_grants", "foundation_grants"],
+      "must_not_claim": ["guaranteed_grant", "guaranteed_amount"],
+      "expected_questions": ["q_municipality", "q_member_count", "q_ages", "q_org_form"],
+      "expected_next_actions": ["check_municipal_registration", "map_youth_grants", "prepare_governance_documents"],
+      "risk_flags": ["new_organization"],
+      "source_requirements": ["kommun", "MUCF", "stiftelse"]
+    },
+    {
+      "case_id": "assoc-005",
+      "segment": "forening",
+      "language": "sv",
+      "story": "Föreningen vill anställa en person för att utveckla verksamheten men ekonomin är begränsad.",
+      "known_facts": {"organization": "nonprofit_association", "goal": "employment"},
+      "unknown_facts": ["role", "candidate_status", "budget", "municipality"],
+      "expected_support_areas": ["employment_support", "project_grants", "municipal_association_grant"],
+      "must_not_claim": ["guaranteed_employment_subsidy", "guaranteed_grant"],
+      "expected_questions": ["q_role", "q_candidate_status", "q_budget", "q_municipality"],
+      "expected_next_actions": ["check_employment_support_rules", "check_project_funding"],
+      "risk_flags": ["employment_commitment"],
+      "source_requirements": ["Arbetsförmedlingen", "kommun"]
+    }
+  ]
+}

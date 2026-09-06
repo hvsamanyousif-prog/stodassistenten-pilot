@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for home, renovation and energy support matching.",
+  "cases": [
+    {
+      "case_id": "energy-001",
+      "segment": "villa_energi",
+      "language": "sv",
+      "story": "Jag äger en äldre villa och vill sänka uppvärmningskostnaden genom att energieffektivisera.",
+      "known_facts": {"housing": "owned_house", "goal": "energy_efficiency"},
+      "unknown_facts": ["building_year", "heating_system", "planned_measures", "municipality"],
+      "expected_support_areas": ["energy_efficiency_grant", "energy_advice_municipality", "rot_deduction"],
+      "must_not_claim": ["guaranteed_energy_grant", "guaranteed_amount", "tax_deduction_compatibility_without_check"],
+      "expected_questions": ["q_building_year", "q_heating_system", "q_planned_measures", "q_municipality"],
+      "expected_next_actions": ["check_current_energy_grants", "contact_energy_advice", "check_tax_compatibility"],
+      "risk_flags": ["time_limited_program"],
+      "source_requirements": ["Boverket", "kommun", "Skatteverket"]
+    },
+    {
+      "case_id": "energy-002",
+      "segment": "villa_energi",
+      "language": "sv",
+      "story": "Vi ska byta värmesystem i villan och undrar vilka stöd eller avdrag som kan vara relevanta.",
+      "known_facts": {"housing": "owned_house", "planned_measure": "heating_system"},
+      "unknown_facts": ["current_system", "new_system", "building_year", "installation_timing"],
+      "expected_support_areas": ["energy_efficiency_grant", "green_technology_deduction", "rot_deduction", "energy_advice_municipality"],
+      "must_not_claim": ["guaranteed_deduction", "guaranteed_grant", "double_support_compatibility_without_check"],
+      "expected_questions": ["q_current_system", "q_new_system", "q_building_year", "q_timing"],
+      "expected_next_actions": ["check_current_support_rules", "check_tax_deduction_rules", "contact_energy_advice"],
+      "risk_flags": ["tax_compatibility"],
+      "source_requirements": ["Boverket", "Skatteverket", "kommun"]
+    },
+    {
+      "case_id": "energy-003",
+      "segment": "villa_energi",
+      "language": "sv",
+      "story": "Jag vill installera solceller och batteri hemma.",
+      "known_facts": {"housing": "owned_house", "planned_measure": "solar_battery"},
+      "unknown_facts": ["ownership", "installation_type", "contractor"],
+      "expected_support_areas": ["green_technology_deduction", "energy_advice_municipality"],
+      "must_not_claim": ["guaranteed_deduction", "guaranteed_amount"],
+      "expected_questions": ["q_ownership", "q_installation_type", "q_contractor"],
+      "expected_next_actions": ["check_green_technology_rules", "contact_energy_advice"],
+      "risk_flags": ["tax_rule_change"],
+      "source_requirements": ["Skatteverket", "kommun"]
+    },
+    {
+      "case_id": "energy-004",
+      "segment": "villa_energi",
+      "language": "sv",
+      "story": "Mitt barn använder rullstol och vi behöver bygga om entrén till villan.",
+      "known_facts": {"housing": "owned_house", "need": "accessibility_adaptation"},
+      "unknown_facts": ["municipality", "functional_need", "planned_adaptation"],
+      "expected_support_areas": ["housing_adaptation", "municipal_support"],
+      "must_not_claim": ["guaranteed_housing_adaptation", "medical_advice"],
+      "expected_questions": ["q_municipality", "q_functional_need", "q_planned_adaptation"],
+      "expected_next_actions": ["check_housing_adaptation_process", "collect_required_certificates"],
+      "risk_flags": ["health_sensitive", "child_sensitive"],
+      "source_requirements": ["kommun", "Boverket"]
+    },
+    {
+      "case_id": "energy-005",
+      "segment": "villa_energi",
+      "language": "sv",
+      "story": "Vi renoverar ett gammalt hus och vill förstå skillnaden mellan bidrag, ROT och energistöd.",
+      "known_facts": {"housing": "owned_house", "project": "renovation"},
+      "unknown_facts": ["planned_measures", "building_year", "heating_system", "tax_situation"],
+      "expected_support_areas": ["rot_deduction", "energy_efficiency_grant", "energy_advice_municipality"],
+      "must_not_claim": ["guaranteed_deduction", "guaranteed_grant", "double_support_compatibility_without_check"],
+      "expected_questions": ["q_planned_measures", "q_building_year", "q_heating_system", "q_tax_situation"],
+      "expected_next_actions": ["separate_grant_and_tax_rules", "check_current_programs", "contact_energy_advice"],
+      "risk_flags": ["tax_compatibility"],
+      "source_requirements": ["Skatteverket", "Boverket", "kommun"]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for unemployment and a-kassa matching.",
+  "cases": [
+    {
+      "case_id": "akassa-001",
+      "segment": "akassa",
+      "language": "sv",
+      "story": "Jag blev arbetslös förra veckan efter en tillsvidareanställning och vet inte var jag ska börja.",
+      "known_facts": {"employment_status": "unemployed", "previous_job": "permanent"},
+      "unknown_facts": ["membership_unemployment_fund", "work_history", "registration_status"],
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "municipal_economic_assistance"],
+      "must_not_claim": ["guaranteed_unemployment_benefit", "guaranteed_amount"],
+      "expected_questions": ["q_fund_membership", "q_work_history", "q_registered_employment_service"],
+      "expected_next_actions": ["register_employment_service", "check_unemployment_fund_rules"],
+      "risk_flags": ["income_loss"],
+      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "kommun"]
+    },
+    {
+      "case_id": "akassa-002",
+      "segment": "akassa",
+      "language": "sv",
+      "story": "Jag jobbar några timmar i veckan men får inte ihop ekonomin och undrar om a-kassa kan kombineras med deltidsjobb.",
+      "known_facts": {"employment_status": "part_time"},
+      "unknown_facts": ["hours_worked", "unemployment_fund_status", "benefit_history"],
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "municipal_economic_assistance"],
+      "must_not_claim": ["guaranteed_combination", "guaranteed_amount"],
+      "expected_questions": ["q_hours_worked", "q_fund_status", "q_benefit_history"],
+      "expected_next_actions": ["check_part_time_unemployment_rules", "check_employment_service_options"],
+      "risk_flags": ["mixed_income"],
+      "source_requirements": ["a-kassa", "Arbetsförmedlingen"]
+    },
+    {
+      "case_id": "akassa-003",
+      "segment": "akassa",
+      "language": "sv",
+      "story": "Jag har sagt upp mig själv och är nu utan jobb.",
+      "known_facts": {"employment_status": "unemployed", "separation": "self_resigned"},
+      "unknown_facts": ["reason_for_resignation", "fund_membership", "work_history"],
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support"],
+      "must_not_claim": ["no_waiting_period_claim", "guaranteed_eligibility"],
+      "expected_questions": ["q_resignation_reason", "q_fund_membership", "q_work_history"],
+      "expected_next_actions": ["check_unemployment_fund_sanction_rules", "register_employment_service"],
+      "risk_flags": ["sanction_risk"],
+      "source_requirements": ["a-kassa", "Arbetsförmedlingen"]
+    },
+    {
+      "case_id": "akassa-004",
+      "segment": "akassa",
+      "language": "sv",
+      "story": "Mitt visstidsjobb tar slut om två veckor. Jag vill veta vad jag behöver ordna innan dess.",
+      "known_facts": {"employment_status": "employed_ending", "contract": "fixed_term"},
+      "unknown_facts": ["end_date", "fund_membership", "work_history"],
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "transition_support"],
+      "must_not_claim": ["guaranteed_eligibility", "guaranteed_transition_support"],
+      "expected_questions": ["q_end_date", "q_fund_membership", "q_work_history"],
+      "expected_next_actions": ["prepare_employment_documents", "check_registration_timing", "check_transition_support"],
+      "risk_flags": ["upcoming_income_loss"],
+      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "omställningsorganisation"]
+    },
+    {
+      "case_id": "akassa-005",
+      "segment": "akassa",
+      "language": "sv",
+      "story": "Jag har varit arbetslös länge och min ersättningsperiod verkar snart ta slut.",
+      "known_facts": {"employment_status": "long_term_unemployed"},
+      "unknown_facts": ["remaining_benefit_days", "program_participation", "household_finances"],
+      "expected_support_areas": ["employment_service_support", "activity_support", "municipal_economic_assistance"],
+      "must_not_claim": ["guaranteed_activity_support", "guaranteed_social_assistance"],
+      "expected_questions": ["q_remaining_days", "q_program_participation", "q_household_finances"],
+      "expected_next_actions": ["contact_employment_service", "check_activity_support_rules", "check_municipal_assistance_if_needed"],
+      "risk_flags": ["benefit_exhaustion"],
+      "source_requirements": ["Arbetsförmedlingen", "Försäkringskassan", "kommun"]
+    }
+  ]
+}
