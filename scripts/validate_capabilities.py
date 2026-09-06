@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Stödassistenten's public capability catalog.
+"""Validate Stödassistenten's public capability contracts.
 
 This validator deliberately uses only the Python standard library. It protects
 architecture and security invariants without embedding pricing, entitlements,
@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config"
 CATALOG_PATH = CONFIG / "capabilities.json"
 SCHEMA_PATH = CONFIG / "capabilities.schema.json"
+RESOLUTION_SCHEMA_PATH = CONFIG / "capability_resolution.schema.json"
 
 CAPABILITY_ID_RE = re.compile(r"^[a-z][a-z0-9_]{2,79}$")
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
@@ -52,12 +53,15 @@ CAPABILITY_KEYS = {
     "data_scope",
     "dependencies",
 }
+RESOLUTION_TOP_LEVEL_KEYS = {"schema_version", "capabilities"}
+RESOLUTION_ITEM_KEYS = {"capability_id", "enabled"}
 FORBIDDEN_KEYS = {
     "plan",
     "tier",
     "price",
     "pricing",
     "billing",
+    "entitlement",
     "secret",
     "token",
     "api_key",
@@ -65,6 +69,10 @@ FORBIDDEN_KEYS = {
     "backend_url",
     "database_url",
     "connection_string",
+    "user_id",
+    "case_id",
+    "organization_id",
+    "internal_rule",
 }
 
 
@@ -103,6 +111,7 @@ def validate_schema_contract(schema) -> None:
         schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
         "capability schema must use JSON Schema draft 2020-12",
     )
+    require(schema.get("additionalProperties") is False, "capability schema must deny top-level additional properties")
     require(set(schema.get("required", [])) == TOP_LEVEL_KEYS, "schema top-level required fields drifted")
     try:
         item = schema["$defs"]["capability"]
@@ -110,6 +119,27 @@ def validate_schema_contract(schema) -> None:
         raise ValidationError("schema is missing $defs.capability") from exc
     require(set(item.get("required", [])) == CAPABILITY_KEYS, "schema capability required fields drifted")
     require(item.get("additionalProperties") is False, "capability schema must deny additional properties")
+
+
+def validate_resolution_schema_contract(schema) -> None:
+    require(isinstance(schema, dict), "capability_resolution.schema.json must contain an object")
+    require(
+        schema.get("$schema") == "https://json-schema.org/draft/2020-12/schema",
+        "resolution schema must use JSON Schema draft 2020-12",
+    )
+    require(schema.get("additionalProperties") is False, "resolution schema must deny top-level additional properties")
+    require(
+        set(schema.get("required", [])) == RESOLUTION_TOP_LEVEL_KEYS,
+        "resolution schema top-level required fields drifted",
+    )
+    try:
+        item = schema["properties"]["capabilities"]["items"]
+    except (KeyError, TypeError) as exc:
+        raise ValidationError("resolution schema is missing capabilities.items") from exc
+    require(item.get("additionalProperties") is False, "resolution item must deny additional properties")
+    require(set(item.get("required", [])) == RESOLUTION_ITEM_KEYS, "resolution item required fields drifted")
+    require(set(item.get("properties", {})) == RESOLUTION_ITEM_KEYS, "resolution item public fields drifted")
+    reject_forbidden_keys(schema)
 
 
 def validate_catalog(catalog) -> None:
@@ -190,6 +220,28 @@ def validate_catalog(catalog) -> None:
         visit(cap_id)
 
 
+def validate_resolution_payload(payload, catalog) -> None:
+    require(isinstance(payload, dict), "resolved capability payload must be an object")
+    reject_forbidden_keys(payload)
+    require(set(payload) == RESOLUTION_TOP_LEVEL_KEYS, "resolved payload top-level fields drifted")
+    version = payload["schema_version"]
+    require(isinstance(version, str) and SEMVER_RE.fullmatch(version), "resolved payload schema_version invalid")
+    items = payload["capabilities"]
+    require(isinstance(items, list) and items, "resolved payload capabilities must be non-empty")
+    catalog_ids = {item["capability_id"] for item in catalog["capabilities"]}
+    seen: set[str] = set()
+    for index, item in enumerate(items):
+        prefix = f"resolved.capabilities[{index}]"
+        require(isinstance(item, dict), f"{prefix} must be an object")
+        require(set(item) == RESOLUTION_ITEM_KEYS, f"{prefix} public fields drifted")
+        cap_id = item["capability_id"]
+        require(isinstance(cap_id, str) and CAPABILITY_ID_RE.fullmatch(cap_id), f"{prefix}.capability_id invalid")
+        require(cap_id in catalog_ids, f"resolved payload contains unknown capability: {cap_id}")
+        require(cap_id not in seen, f"resolved payload duplicates capability: {cap_id}")
+        seen.add(cap_id)
+        require(type(item["enabled"]) is bool, f"{prefix}.enabled must be boolean")
+
+
 def expect_invalid(catalog, expected_fragment: str) -> None:
     try:
         validate_catalog(catalog)
@@ -197,6 +249,15 @@ def expect_invalid(catalog, expected_fragment: str) -> None:
         require(expected_fragment in str(exc), f"self-test expected {expected_fragment!r}, got {str(exc)!r}")
         return
     raise ValidationError(f"self-test expected invalid catalog containing: {expected_fragment}")
+
+
+def expect_invalid_resolution(payload, catalog, expected_fragment: str) -> None:
+    try:
+        validate_resolution_payload(payload, catalog)
+    except ValidationError as exc:
+        require(expected_fragment in str(exc), f"resolution self-test expected {expected_fragment!r}, got {str(exc)!r}")
+        return
+    raise ValidationError(f"resolution self-test expected invalid payload containing: {expected_fragment}")
 
 
 def self_test(valid_catalog) -> None:
@@ -223,6 +284,27 @@ def self_test(valid_catalog) -> None:
     pricing_leak["capabilities"][0]["tier"] = "pro"
     expect_invalid(pricing_leak, "forbidden public key: tier")
 
+    safe_resolution = {
+        "schema_version": "0.1.0",
+        "capabilities": [
+            {"capability_id": "match_basic", "enabled": True},
+            {"capability_id": "documents", "enabled": False},
+        ],
+    }
+    validate_resolution_payload(safe_resolution, valid_catalog)
+
+    leaking_resolution = copy.deepcopy(safe_resolution)
+    leaking_resolution["capabilities"][1]["backend_url"] = "https://private.invalid"
+    expect_invalid_resolution(leaking_resolution, valid_catalog, "forbidden public key: backend_url")
+
+    entitlement_leak = copy.deepcopy(safe_resolution)
+    entitlement_leak["capabilities"][1]["entitlement"] = "paid"
+    expect_invalid_resolution(entitlement_leak, valid_catalog, "forbidden public key: entitlement")
+
+    unknown_capability = copy.deepcopy(safe_resolution)
+    unknown_capability["capabilities"][1]["capability_id"] = "private_future_feature"
+    expect_invalid_resolution(unknown_capability, valid_catalog, "unknown capability")
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -231,8 +313,10 @@ def main() -> int:
 
     try:
         schema = load_json(SCHEMA_PATH)
+        resolution_schema = load_json(RESOLUTION_SCHEMA_PATH)
         catalog = load_json(CATALOG_PATH)
         validate_schema_contract(schema)
+        validate_resolution_schema_contract(resolution_schema)
         validate_catalog(catalog)
         if args.self_test:
             self_test(catalog)
@@ -241,7 +325,7 @@ def main() -> int:
         return 1
 
     suffix = " + self-tests" if args.self_test else ""
-    print(f"OK: validated {len(catalog['capabilities'])} capabilities{suffix}")
+    print(f"OK: validated {len(catalog['capabilities'])} capabilities and resolution contract{suffix}")
     return 0
 
 
