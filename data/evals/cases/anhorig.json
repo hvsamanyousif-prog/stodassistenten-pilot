@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-06",
+  "purpose": "Synthetic benchmark cases for relatives and caregiver support matching.",
+  "cases": [
+    {
+      "case_id": "caregiver-001",
+      "segment": "anhorig",
+      "language": "sv",
+      "story": "Min mamma har blivit svårt sjuk och jag sköter nästan alla kontakter åt henne.",
+      "known_facts": {"actor": "relative_helping", "relative": "mother", "care_coordination": true},
+      "unknown_facts": ["consent_or_authority", "municipality", "care_need"],
+      "expected_support_areas": ["caregiver_support_municipality", "power_of_attorney_guidance", "patient_support"],
+      "must_not_claim": ["authority_to_act_without_check", "guaranteed_specific_support"],
+      "expected_questions": ["q_authority_to_help", "q_municipality", "q_care_need"],
+      "expected_next_actions": ["clarify_authority", "check_municipal_caregiver_support", "check_patient_support"],
+      "risk_flags": ["representation_risk", "health_sensitive"],
+      "source_requirements": ["kommun", "patient_org"]
+    },
+    {
+      "case_id": "caregiver-002",
+      "segment": "anhorig",
+      "language": "sv",
+      "story": "Jag vårdar min partner hemma och har behövt gå ner i arbetstid.",
+      "known_facts": {"actor": "caregiver", "work_reduction": true},
+      "unknown_facts": ["relative_condition_context", "employment_status", "municipality"],
+      "expected_support_areas": ["relative_care_benefits", "caregiver_support_municipality", "employer_support"],
+      "must_not_claim": ["guaranteed_relative_care_benefit", "medical_advice"],
+      "expected_questions": ["q_care_context", "q_employment_status", "q_municipality"],
+      "expected_next_actions": ["check_relative_care_benefit_rules", "check_municipal_caregiver_support"],
+      "risk_flags": ["health_sensitive", "income_loss"],
+      "source_requirements": ["Försäkringskassan", "kommun"]
+    },
+    {
+      "case_id": "caregiver-003",
+      "segment": "anhorig",
+      "language": "sv",
+      "story": "Min pappa har demens och jag är orolig för att han missar räkningar och myndighetsbrev.",
+      "known_facts": {"actor": "relative_helping", "relative_need": "cognitive_support"},
+      "unknown_facts": ["consent_or_authority", "municipality", "financial_risk"],
+      "expected_support_areas": ["good_man_guidance", "caregiver_support_municipality", "municipal_support"],
+      "must_not_claim": ["guaranteed_guardianship", "authority_to_act_without_check"],
+      "expected_questions": ["q_authority_to_help", "q_municipality", "q_financial_risk"],
+      "expected_next_actions": ["clarify_authority", "check_guardianship_information", "check_caregiver_support"],
+      "risk_flags": ["representation_risk", "financial_harm_risk"],
+      "source_requirements": ["överförmyndare", "kommun"]
+    },
+    {
+      "case_id": "caregiver-004",
+      "segment": "anhorig",
+      "language": "sv",
+      "story": "Jag hjälper mitt vuxna barn med funktionsnedsättning och behöver själv avlastning.",
+      "known_facts": {"actor": "caregiver", "relative": "adult_child", "need": "respite"},
+      "unknown_facts": ["municipality", "existing_services", "care_intensity"],
+      "expected_support_areas": ["caregiver_support_municipality", "lss_support", "respite_support"],
+      "must_not_claim": ["guaranteed_respite_service", "guaranteed_lss_eligibility"],
+      "expected_questions": ["q_municipality", "q_existing_services", "q_care_intensity"],
+      "expected_next_actions": ["check_municipal_caregiver_support", "check_existing_case_options"],
+      "risk_flags": ["health_sensitive"],
+      "source_requirements": ["kommun"]
+    },
+    {
+      "case_id": "caregiver-005",
+      "segment": "anhorig",
+      "language": "sv",
+      "story": "Jag bor långt från min sjuka syster och försöker samordna stöd på distans.",
+      "known_facts": {"actor": "relative_helping", "distance_care": true},
+      "unknown_facts": ["sister_municipality", "consent_or_authority", "existing_contacts"],
+      "expected_support_areas": ["caregiver_support_municipality", "patient_support", "power_of_attorney_guidance"],
+      "must_not_claim": ["authority_to_act_without_check", "guaranteed_specific_support"],
+      "expected_questions": ["q_municipality", "q_authority_to_help", "q_existing_contacts"],
+      "expected_next_actions": ["clarify_authority", "identify_local_contact_points", "check_caregiver_support"],
+      "risk_flags": ["representation_risk"],
+      "source_requirements": ["kommun", "patient_org"]
+    }
+  ]
+}
