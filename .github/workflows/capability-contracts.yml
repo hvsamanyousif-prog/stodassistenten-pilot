@@ -6,6 +6,8 @@ on:
       - 'config/capabilities.json'
       - 'config/capabilities.schema.json'
       - 'config/capability_resolution.schema.json'
+      - 'client/capabilities.js'
+      - 'client/capabilities.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -14,6 +16,8 @@ on:
       - 'config/capabilities.json'
       - 'config/capabilities.schema.json'
       - 'config/capability_resolution.schema.json'
+      - 'client/capabilities.js'
+      - 'client/capabilities.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -34,3 +38,9 @@ jobs:
           python-version: '3.12'
       - name: Validate pricing-neutral capability contracts
         run: python scripts/validate_capabilities.py --self-test
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Test fail-closed client capability adapter
+        run: node client/capabilities.test.cjs
