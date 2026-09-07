@@ -14,6 +14,8 @@ on:
       - 'client/public-pilot-resolution.test.cjs'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-ui-gate.test.cjs'
+      - 'client/public-pilot-wiring.js'
+      - 'client/public-pilot-wiring.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -30,6 +32,8 @@ on:
       - 'client/public-pilot-resolution.test.cjs'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-ui-gate.test.cjs'
+      - 'client/public-pilot-wiring.js'
+      - 'client/public-pilot-wiring.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -62,3 +66,5 @@ jobs:
         run: node client/public-pilot-resolution.test.cjs
       - name: Test public pilot UI capability runtime
         run: node client/public-pilot-ui-gate.test.cjs
+      - name: Test public pilot UI wiring bindings
+        run: node client/public-pilot-wiring.test.cjs
