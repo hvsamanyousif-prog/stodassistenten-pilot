@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1.0",
+  "expected_case_count": 45,
+  "expected_segments": [
+    "akassa",
+    "anhorig",
+    "cancer",
+    "deltid_sjukskrivning",
+    "forening",
+    "foretag",
+    "npf_funktionsnedsattning",
+    "pension_ekonomi",
+    "villa_energi"
+  ],
+  "minimum_metrics": {
+    "source_requirement_recall": 0.95,
+    "source_requirement_precision": 0.8,
+    "risk_ack_recall": 1.0,
+    "verification_gate_rate": 1.0
+  },
+  "per_segment_minimums": {
+    "source_requirement_recall": 0.9,
+    "risk_ack_recall": 1.0,
+    "verification_gate_rate": 1.0
+  },
+  "change_reason": "Initial public grounding and risk-gate policy for structured private-core prediction exports."
+}
