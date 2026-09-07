@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "capabilities": [
+    {
+      "capability_id": "match_basic",
+      "enabled": true
+    },
+    {
+      "capability_id": "source_details",
+      "enabled": true
+    }
+  ]
+}
