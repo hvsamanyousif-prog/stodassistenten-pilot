@@ -12,6 +12,8 @@ on:
       - 'client/pilot-surface.js'
       - 'client/pilot-surface.test.cjs'
       - 'client/public-pilot-resolution.test.cjs'
+      - 'client/public-pilot-ui-gate.js'
+      - 'client/public-pilot-ui-gate.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -26,6 +28,8 @@ on:
       - 'client/pilot-surface.js'
       - 'client/pilot-surface.test.cjs'
       - 'client/public-pilot-resolution.test.cjs'
+      - 'client/public-pilot-ui-gate.js'
+      - 'client/public-pilot-ui-gate.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -56,3 +60,5 @@ jobs:
         run: node client/pilot-surface.test.cjs
       - name: Test explicit public pilot capability profile
         run: node client/public-pilot-resolution.test.cjs
+      - name: Test public pilot UI capability runtime
+        run: node client/public-pilot-ui-gate.test.cjs
