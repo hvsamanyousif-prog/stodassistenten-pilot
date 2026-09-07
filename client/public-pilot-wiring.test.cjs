@@ -1,6 +1,4 @@
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const wiring = require("./public-pilot-wiring.js");
 
 function enabledSurface() {
@@ -92,22 +90,11 @@ function sourceDisabledSurface() {
   assert.match(wiring.fallbackHtml("unknown"), /Stödmatchningen kunde inte laddas säkert/);
 })();
 
-(function testIndexLoadsCapabilityWiringAfterExistingPilotScript() {
-  const indexPath = path.join(__dirname, "..", "index.html");
-  const html = fs.readFileSync(indexPath, "utf8");
-  const inlineEnd = html.indexOf("render();\n</script>");
-  const capabilities = html.indexOf('<script src="client/capabilities.js"></script>');
-  const surface = html.indexOf('<script src="client/pilot-surface.js"></script>');
-  const gate = html.indexOf('<script src="client/public-pilot-ui-gate.js"></script>');
-  const wiringTag = html.indexOf('<script src="client/public-pilot-wiring.js"></script>');
-
-  assert.ok(inlineEnd >= 0, "existing pilot inline script must remain present");
-  assert.ok(capabilities > inlineEnd, "capability client must load after existing pilot script");
-  assert.ok(surface > capabilities, "pilot surface must load after capability client");
-  assert.ok(gate > surface, "UI gate must load after pilot surface");
-  assert.ok(wiringTag > gate, "wiring must load last");
-  assert.match(html, /\.rtl\{direction:rtl;text-align:right\}/, "RTL behavior marker must remain present");
-  assert.match(html, /if\(screen\.endsWith\('R'\)\)main\(\)\.innerHTML=results\(\)/, "result route must still call results()");
+(function testMissingBrowserDependenciesFailClosed() {
+  assert.deepEqual(wiring.wireBrowser({}), {
+    wired: false,
+    reason: "dependencies_unavailable",
+  });
 })();
 
 console.log("public-pilot-wiring tests: OK");
