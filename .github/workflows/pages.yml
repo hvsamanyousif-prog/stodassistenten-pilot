@@ -20,9 +20,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build minimal public pilot artifact
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify capability wiring before deployment
+        run: python scripts/test_public_pilot_build.py --site _site
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
@@ -30,7 +39,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4
