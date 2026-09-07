@@ -6,10 +6,12 @@ on:
       - 'config/capabilities.json'
       - 'config/capabilities.schema.json'
       - 'config/capability_resolution.schema.json'
+      - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/capabilities.test.cjs'
       - 'client/pilot-surface.js'
       - 'client/pilot-surface.test.cjs'
+      - 'client/public-pilot-resolution.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -18,10 +20,12 @@ on:
       - 'config/capabilities.json'
       - 'config/capabilities.schema.json'
       - 'config/capability_resolution.schema.json'
+      - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/capabilities.test.cjs'
       - 'client/pilot-surface.js'
       - 'client/pilot-surface.test.cjs'
+      - 'client/public-pilot-resolution.test.cjs'
       - 'scripts/validate_capabilities.py'
       - 'docs/CAPABILITY_ARCHITECTURE.md'
       - '.github/workflows/capability-contracts.yml'
@@ -50,3 +54,5 @@ jobs:
         run: node client/capabilities.test.cjs
       - name: Test public pilot capability surface
         run: node client/pilot-surface.test.cjs
+      - name: Test explicit public pilot capability profile
+        run: node client/public-pilot-resolution.test.cjs
