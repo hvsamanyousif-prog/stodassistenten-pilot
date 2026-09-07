@@ -84,7 +84,13 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     require(built_html.replace(block, "", 1) == source_html, "repository build changed pilot HTML outside wiring block")
 
     # Existing multilingual/RTL pilot invariants must survive byte-for-byte because only the block is injected.
-    for token in ("sv:{", "ar:{", "fa:{", ".rtl{direction:rtl", "document.documentElement.dir"):
+    for token in (
+        "sv:{",
+        "ar:{",
+        "fa:{",
+        ".rtl{direction:rtl",
+        "document.body.classList.toggle('rtl',l==='ar'||l==='fa')",
+    ):
         require(token in source_html, f"source pilot invariant missing: {token}")
         require(token in built_html, f"built pilot invariant missing: {token}")
 
