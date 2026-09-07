@@ -9,9 +9,14 @@ const ROOT = path.resolve(__dirname, '..');
 const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'capabilities.json'), 'utf8'));
 const resolution = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'public_pilot_capabilities.json'), 'utf8'));
 
-const parsed = capabilityClient.parseResolution(resolution);
+const catalogIds = new Set(catalog.capabilities.map((item) => item.capability_id));
+const parsed = capabilityClient.parseResolution(resolution, catalogIds);
 const byId = new Map(catalog.capabilities.map((item) => [item.capability_id, item]));
-const enabled = new Set(parsed.capabilities.filter((item) => item.enabled).map((item) => item.capability_id));
+const enabled = new Set(
+  Object.entries(parsed.capabilities)
+    .filter(([, isEnabled]) => isEnabled === true)
+    .map(([capabilityId]) => capabilityId),
+);
 const publicUi = new Set(
   catalog.capabilities
     .filter((item) => item.execution_surface === 'public_ui' && item.enforcement === 'client_visibility')
