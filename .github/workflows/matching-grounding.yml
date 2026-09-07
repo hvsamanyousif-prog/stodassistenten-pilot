@@ -1,0 +1,38 @@
+name: Validate matching grounding and risk gates
+
+on:
+  push:
+    paths:
+      - 'data/evals/cases/**'
+      - 'data/evals/grounding_policy.json'
+      - 'data/evals/GROUNDING_AND_RISK.md'
+      - 'scripts/evaluate_grounding.py'
+      - '.github/workflows/matching-grounding.yml'
+  pull_request:
+    paths:
+      - 'data/evals/cases/**'
+      - 'data/evals/grounding_policy.json'
+      - 'data/evals/GROUNDING_AND_RISK.md'
+      - 'scripts/evaluate_grounding.py'
+      - '.github/workflows/matching-grounding.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  grounding-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate canonical matching benchmark first
+        run: python scripts/evaluate_matching.py --validate-only
+      - name: Validate grounding contract and policy
+        run: python scripts/evaluate_grounding.py --validate-only
+      - name: Test grounding and risk metric implementation
+        run: python scripts/evaluate_grounding.py --validate-only --self-test
