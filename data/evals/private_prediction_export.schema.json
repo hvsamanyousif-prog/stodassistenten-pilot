@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/private-prediction-export-1.0.0.json",
+  "title": "Stödassistenten Private Prediction Export",
+  "description": "Minimal offline bridge from a private matching core to the public synthetic benchmark harness. It must not contain user data, prompts, internal scores, rule IDs, chain-of-thought, endpoints, tokens or secrets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_dataset_sha256", "predictions"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "benchmark_dataset_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "predictions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/prediction"}
+    }
+  },
+  "$defs": {
+    "token": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{1,79}$"
+    },
+    "tokenList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/token"}
+    },
+    "prediction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "case_id",
+        "predicted_support_areas",
+        "asked_questions",
+        "next_actions",
+        "claims",
+        "source_requirements",
+        "risk_acknowledgements",
+        "verification_required"
+      ],
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"
+        },
+        "predicted_support_areas": {"$ref": "#/$defs/tokenList"},
+        "asked_questions": {"$ref": "#/$defs/tokenList"},
+        "next_actions": {"$ref": "#/$defs/tokenList"},
+        "claims": {"$ref": "#/$defs/tokenList"},
+        "source_requirements": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          }
+        },
+        "risk_acknowledgements": {"$ref": "#/$defs/tokenList"},
+        "verification_required": {"type": "boolean"}
+      }
+    }
+  }
+}
