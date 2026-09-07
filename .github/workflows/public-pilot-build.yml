@@ -1,0 +1,65 @@
+name: Validate public pilot build
+
+on:
+  push:
+    paths:
+      - 'index.html'
+      - 'config/public_pilot_capabilities.json'
+      - 'client/capabilities.js'
+      - 'client/pilot-surface.js'
+      - 'client/public-pilot-ui-gate.js'
+      - 'client/public-pilot-wiring.js'
+      - 'client/*.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_public_pilot_build.py'
+      - '.github/workflows/public-pilot-build.yml'
+      - '.github/workflows/pages.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'config/public_pilot_capabilities.json'
+      - 'client/capabilities.js'
+      - 'client/pilot-surface.js'
+      - 'client/public-pilot-ui-gate.js'
+      - 'client/public-pilot-wiring.js'
+      - 'client/*.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_public_pilot_build.py'
+      - '.github/workflows/public-pilot-build.yml'
+      - '.github/workflows/pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build minimal public pilot artifact
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify build mutation, script order and multilingual invariants
+        run: python scripts/test_public_pilot_build.py --site _site
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check capability runtime JavaScript syntax
+        run: |
+          node --check client/capabilities.js
+          node --check client/pilot-surface.js
+          node --check client/public-pilot-ui-gate.js
+          node --check client/public-pilot-wiring.js
+      - name: Re-run capability runtime tests used by deployed artifact
+        run: |
+          node client/capabilities.test.cjs
+          node client/pilot-surface.test.cjs
+          node client/public-pilot-resolution.test.cjs
+          node client/public-pilot-ui-gate.test.cjs
+          node client/public-pilot-wiring.test.cjs
