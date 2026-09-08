@@ -240,7 +240,7 @@ def run_self_test(boundary, catalog) -> None:
     bad = copy.deepcopy(boundary)
     case = next(item for item in bad["operations"] if item["operation_id"] == "cases")
     case["auth_requirement"] = "none"
-    expect_invalid(bad, catalog, "private case data requires authentication")
+    expect_invalid(bad, catalog, "resource authorization requires authentication")
 
     bad = copy.deepcopy(boundary)
     match = next(item for item in bad["operations"] if item["operation_id"] == "match")
