@@ -1,0 +1,36 @@
+name: Validate API boundary contracts
+
+on:
+  push:
+    paths:
+      - 'config/api_boundary.json'
+      - 'config/api_boundary.schema.json'
+      - 'config/capabilities.json'
+      - 'scripts/validate_api_boundary.py'
+      - '.github/workflows/api-boundary.yml'
+  pull_request:
+    paths:
+      - 'config/api_boundary.json'
+      - 'config/api_boundary.schema.json'
+      - 'config/capabilities.json'
+      - 'scripts/validate_api_boundary.py'
+      - '.github/workflows/api-boundary.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate API boundary
+        run: python scripts/validate_api_boundary.py
+      - name: Run negative security self-tests
+        run: python scripts/validate_api_boundary.py --self-test
