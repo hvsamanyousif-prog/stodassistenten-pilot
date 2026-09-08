@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/api-boundary-0.1.0.json",
+  "title": "Stödassistenten public/private API boundary",
+  "description": "Implementation-neutral public security contract for operation classes. It intentionally contains no endpoints, secrets, real user data or private matching logic.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "purpose", "security_invariants", "operations"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1200
+    },
+    "security_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "no_endpoints_or_secrets",
+        "deny_by_default",
+        "client_flags_are_not_authorization",
+        "sensitive_input_ephemeral_by_default",
+        "public_responses_minimized",
+        "no_sensitive_payloads_in_logs",
+        "no_real_user_or_case_data_in_public_repo"
+      ],
+      "properties": {
+        "no_endpoints_or_secrets": {"const": true},
+        "deny_by_default": {"const": true},
+        "client_flags_are_not_authorization": {"const": true},
+        "sensitive_input_ephemeral_by_default": {"const": true},
+        "public_responses_minimized": {"const": true},
+        "no_sensitive_payloads_in_logs": {"const": true},
+        "no_real_user_or_case_data_in_public_repo": {"const": true}
+      }
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {"$ref": "#/$defs/operation"}
+    }
+  },
+  "$defs": {
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation_id",
+        "purpose",
+        "capability_id",
+        "execution_surface",
+        "auth_requirement",
+        "authorization_requirement",
+        "request_data_class",
+        "response_data_class",
+        "persistence",
+        "logging",
+        "safety_controls"
+      ],
+      "properties": {
+        "operation_id": {
+          "type": "string",
+          "enum": ["match", "sources", "feedback", "interview", "cases"]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 600
+        },
+        "capability_id": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9_]{2,79}$"
+        },
+        "execution_surface": {
+          "type": "string",
+          "enum": ["public_safe_service", "private_service"]
+        },
+        "auth_requirement": {
+          "type": "string",
+          "enum": ["none", "optional", "required"]
+        },
+        "authorization_requirement": {
+          "type": "string",
+          "enum": ["none", "resource_required"]
+        },
+        "request_data_class": {
+          "type": "string",
+          "enum": ["public_metadata", "anonymous_product_metrics", "ephemeral_sensitive", "private_case_data"]
+        },
+        "response_data_class": {
+          "type": "string",
+          "enum": ["public_metadata", "anonymous_ack", "derived_support_results", "interview_prompts", "private_case_data"]
+        },
+        "persistence": {
+          "type": "string",
+          "enum": ["none", "metadata_only", "private_store_only"]
+        },
+        "logging": {
+          "type": "string",
+          "enum": ["none", "metadata_only", "audit_metadata"]
+        },
+        "safety_controls": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{2,79}$"
+          }
+        }
+      }
+    }
+  }
+}
