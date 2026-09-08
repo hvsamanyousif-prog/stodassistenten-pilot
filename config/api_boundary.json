@@ -1,0 +1,104 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Public, implementation-neutral security contract for the boundary between Stödassistenten's public pilot and future private services. It defines data classes and enforcement expectations without exposing endpoints, secrets, private rules, pricing or real user data.",
+  "security_invariants": {
+    "no_endpoints_or_secrets": true,
+    "deny_by_default": true,
+    "client_flags_are_not_authorization": true,
+    "sensitive_input_ephemeral_by_default": true,
+    "public_responses_minimized": true,
+    "no_sensitive_payloads_in_logs": true,
+    "no_real_user_or_case_data_in_public_repo": true
+  },
+  "operations": [
+    {
+      "operation_id": "match",
+      "purpose": "Return source-grounded support candidates from the future private matching core without exposing private ranking, rules or prompts.",
+      "capability_id": "match_extended",
+      "execution_surface": "private_service",
+      "auth_requirement": "optional",
+      "authorization_requirement": "none",
+      "request_data_class": "ephemeral_sensitive",
+      "response_data_class": "derived_support_results",
+      "persistence": "none",
+      "logging": "metadata_only",
+      "safety_controls": [
+        "verified_sources_only",
+        "no_rights_guarantee",
+        "fail_closed_on_unverified_rules",
+        "prediction_bridge_compatible",
+        "no_raw_input_logging"
+      ]
+    },
+    {
+      "operation_id": "sources",
+      "purpose": "Return minimized public source and verification metadata for a displayed support candidate.",
+      "capability_id": "source_details",
+      "execution_surface": "public_safe_service",
+      "auth_requirement": "none",
+      "authorization_requirement": "none",
+      "request_data_class": "public_metadata",
+      "response_data_class": "public_metadata",
+      "persistence": "none",
+      "logging": "metadata_only",
+      "safety_controls": [
+        "verified_source_metadata_only",
+        "no_internal_registry_notes"
+      ]
+    },
+    {
+      "operation_id": "feedback",
+      "purpose": "Accept anonymous product-quality signals while excluding the user's underlying situation, free text and direct identifiers.",
+      "capability_id": null,
+      "execution_surface": "public_safe_service",
+      "auth_requirement": "none",
+      "authorization_requirement": "none",
+      "request_data_class": "anonymous_product_metrics",
+      "response_data_class": "anonymous_ack",
+      "persistence": "private_store_only",
+      "logging": "metadata_only",
+      "safety_controls": [
+        "no_free_text",
+        "no_situation_answers",
+        "no_identifiers",
+        "rate_limit_required"
+      ]
+    },
+    {
+      "operation_id": "interview",
+      "purpose": "Generate only the next necessary follow-up questions from ephemeral situation signals without persisting raw sensitive input by default.",
+      "capability_id": "match_extended",
+      "execution_surface": "private_service",
+      "auth_requirement": "optional",
+      "authorization_requirement": "none",
+      "request_data_class": "ephemeral_sensitive",
+      "response_data_class": "interview_prompts",
+      "persistence": "none",
+      "logging": "metadata_only",
+      "safety_controls": [
+        "data_minimization",
+        "ask_only_needed_questions",
+        "no_raw_input_logging",
+        "no_diagnostic_inference"
+      ]
+    },
+    {
+      "operation_id": "cases",
+      "purpose": "Read or change persisted private case state only after server-side authentication, resource authorization and case-isolation checks.",
+      "capability_id": "cases",
+      "execution_surface": "private_service",
+      "auth_requirement": "required",
+      "authorization_requirement": "resource_required",
+      "request_data_class": "private_case_data",
+      "response_data_class": "private_case_data",
+      "persistence": "private_store_only",
+      "logging": "audit_metadata",
+      "safety_controls": [
+        "case_isolation",
+        "server_authorization_required",
+        "audit_without_sensitive_payload",
+        "deny_by_default"
+      ]
+    }
+  ]
+}
