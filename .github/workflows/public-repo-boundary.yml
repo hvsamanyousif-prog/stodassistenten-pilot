@@ -1,0 +1,24 @@
+name: Guard public repository boundary
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run boundary guard self-test
+        run: python scripts/validate_public_repo_boundary.py --self-test
+      - name: Scan public repository
+        run: python scripts/validate_public_repo_boundary.py .
