@@ -28,12 +28,21 @@ Positionering: inte en bidragsdatabas, utan en handlingsmotor mellan ett livspro
 
 ## Språk och tillgänglighet
 
-Pilot: svenska, arabiska och persiska.
+Pilotens första språk är svenska, arabiska och persiska. Detta är en pilotavgränsning, inte produktens långsiktiga språkgräns.
 
-- Full RTL för arabiska och persiska.
-- Röst ska vara en central ingång.
-- Senare: foto av brev/dokument, uppläsning, enklare språk och fler språk.
-- Formella ansökningar ska kunna produceras på svenska även om användaren talar ett annat språk.
+Långsiktigt mål: Stödassistenten ska vara byggd för många språk och inte hårdkodas kring ett fåtal språk. En användare ska i möjligaste mån kunna beskriva sin situation på sitt starkaste språk, medan verifierade svenska regler och källor fortsatt utgör sanningslagret.
+
+Arkitekturprinciper:
+- språk ska vara konfigurerbara resurser/moduler, inte inbyggda specialfall i kärnlogiken,
+- nya språk ska kunna läggas till utan att matchningsregler eller stöddataset dupliceras,
+- AI får användas för samtal, översättning, förenkling och formell svensk sluttext, men får inte ändra verifierade sakförhållanden,
+- RTL ska stödjas generellt där språket kräver det, inte endast för arabiska och persiska,
+- språkversioner ska kvalitetstestas för betydelsebevarande, särskilt kring belopp, villkor, undantag, deadlines och juridiska formuleringar,
+- formella ansökningar och myndighetskommunikation ska kunna produceras på korrekt svenska även när användaren samtalar på ett annat språk,
+- röst, uppläsning, foto/dokumentförklaring och enklare språk ska vara generella tillgänglighetsfunktioner,
+- språkval får inte påverka vilka stöd som matchas; samma underliggande situation ska ge samma verifierade kandidatlogik oavsett samtalsspråk.
+
+Språk ska prioriteras stegvis efter faktisk användarnytta, målgrupper och pilotdata. Målet är skalbar flerspråkighet, inte maximal språkbredd från första lanseringen.
 
 ## Viktiga användarspår
 
