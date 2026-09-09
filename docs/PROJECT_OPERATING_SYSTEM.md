@@ -84,6 +84,32 @@ AI ska senare ligga bakom servern och användas för språk, intervju, struktur,
 
 Större versioner ska granskas enligt `docs/EXPERT_REVIEW_COUNCIL.md`, med relevanta perspektiv från socialförsäkring/offentlig sektor, GDPR, säkerhet, AI, tillgänglighet, UX, analytics och kommersiell strategi.
 
+## Resurspolicy – Astra som delad spetsresurs
+
+Huvudmannabeslut: Astra är en delad spetsresurs mellan flera projekt och får inte bli en exklusiv eller nödvändig beroendepunkt för Stödassistenten.
+
+Astra ska prioriteras när högre kapacitet förväntas ge tydlig mätbar hävstång, särskilt för:
+- större sammanhängande BUILD-pass
+- komplex arkitektur
+- avancerad felsökning
+- repository-wide analys
+- säkerhetskritisk granskning
+- Red Team
+- teststrategi och svåra edge cases
+- längre Work/Codex-uppdrag där högre kapacitet kan påverka kvalitet, risk eller leveranstid tydligt
+
+Astra ska inte användas för lågkomplexa rutinuppgifter, enkel textproduktion, små kodändringar, standardgranskningar eller arbete som kan göras lika bra med Sol, vanlig Chat, automationer eller andra snabbare/billigare resurser.
+
+Projektet får inte bli beroende av Astra-tillgänglighet eller Astra-kvot. Om Astra inte är tillgänglig ska arbetet fortsätta via ordinarie Chat/Work/Codex/automation/GitHub-kedja utan avbrott.
+
+Stående princip: **maximal effekt per Astra-körning, inte maximal Astra-användning.**
+
+Om flera möjliga Astra-uppgifter konkurrerar om kapaciteten ska den användas där den förväntade effekten på kvalitet, riskreduktion, teknisk svårighetsgrad eller leveranstid är störst.
+
+Alla Astra-resultat är preliminära tills de verifierats genom projektets ordinarie sanningskedja: GitHub, tester, CI och aktuell pilot/publiceringsmiljö där relevant.
+
+Denna policy ändrar inte projektets organisation, säkerhetsgränser eller huvudmannens tidigare beslut. Det är en resursprioritering, inte en omstart.
+
 ## Definition of done för varje pilotversion
 
 En version är klar när:
