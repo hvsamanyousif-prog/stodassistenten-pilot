@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "canonical_rule_locale": "sv-SE",
+  "fallback_ui_locale": "sv-SE",
+  "locales": [
+    {
+      "locale_id": "sv-SE",
+      "ui_key": "sv",
+      "display_name": "Svenska",
+      "direction": "ltr",
+      "pilot_active": true
+    },
+    {
+      "locale_id": "ar",
+      "ui_key": "ar",
+      "display_name": "العربية",
+      "direction": "rtl",
+      "pilot_active": true
+    },
+    {
+      "locale_id": "fa",
+      "ui_key": "fa",
+      "display_name": "فارسی",
+      "direction": "rtl",
+      "pilot_active": true
+    }
+  ]
+}
