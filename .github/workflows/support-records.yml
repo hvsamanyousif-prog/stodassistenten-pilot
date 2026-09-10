@@ -1,0 +1,31 @@
+name: Validate support records
+
+on:
+  push:
+    paths:
+      - 'data/supports/**'
+      - 'data/source_registry.json'
+      - 'data/support_record.schema.json'
+      - 'scripts/validate_support_records.py'
+      - '.github/workflows/support-records.yml'
+  pull_request:
+    paths:
+      - 'data/supports/**'
+      - 'data/source_registry.json'
+      - 'data/support_record.schema.json'
+      - 'scripts/validate_support_records.py'
+      - '.github/workflows/support-records.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate normalized support records
+        run: python3 scripts/validate_support_records.py
+      - name: Run negative self-tests
+        run: python3 scripts/validate_support_records.py --self-test

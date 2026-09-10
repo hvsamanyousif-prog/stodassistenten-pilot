@@ -1,0 +1,105 @@
+{
+  "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+  "name": "Ekonomiskt bistånd / försörjningsstöd",
+  "category": "social_assistance",
+  "subtype": "municipal_financial_assistance",
+  "provider": {
+    "name": "Kommunens socialtjänst",
+    "provider_type": "municipality",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": "Nationella grundregler med individuell prövning hos den egna kommunen."
+  },
+  "audience": {
+    "segments": ["low_income", "household_financial_need"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "eb.financial_need",
+        "field": "household_financial_need",
+        "operator": "text_condition",
+        "value": "Stödet kan vara aktuellt när personen eller familjen har problem att försörja sig och behovet inte kan tillgodoses på annat sätt.",
+        "source_url": "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+        "notes": "Rätten prövas alltid individuellt av socialtjänsten."
+      },
+      {
+        "rule_id": "eb.other_benefits_first",
+        "field": "other_available_benefits",
+        "operator": "text_condition",
+        "value": "Andra bidrag och ersättningar som personen kan få ska normalt sökas först.",
+        "source_url": "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+        "notes": "Socialstyrelsen nämner exempelvis sjukpenning, föräldrapenning, bostadsbidrag och underhållsstöd."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "eb.household",
+        "prompt": "Vilka personer ingår i hushållet och vilka inkomster har hushållet efter skatt?",
+        "reason": "Hushållet är som huvudregel den ekonomiska enheten i beräkningen."
+      },
+      {
+        "question_id": "eb.assets",
+        "prompt": "Finns pengar på banken eller andra tillgångar som kan användas till försörjningen?",
+        "reason": "Tillgångar kan påverka rätten till ekonomiskt bistånd."
+      },
+      {
+        "question_id": "eb.costs",
+        "prompt": "Vilka nödvändiga kostnader har hushållet, till exempel boende, hushållsel och hemförsäkring?",
+        "reason": "Skäliga kostnader utanför riksnormen kan ingå i behovsbedömningen."
+      },
+      {
+        "question_id": "eb.work_capacity",
+        "prompt": "Kan du arbeta eller finns sjukdom eller annat hinder som påverkar din arbetsförmåga?",
+        "reason": "Arbetsförmåga och aktivitet kan påverka bedömningen och underlagskraven."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Kommunen gör en individuell behovsprövning. Försörjningsstödet bygger bland annat på riksnormen, skäliga hushållskostnader och hushållets inkomster och tillgångar.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Underlag om boende och hushållsförhållanden",
+    "Underlag om inkomster, tillgångar och utgifter",
+    "Exempelvis hyreskontrakt eller kontoutdrag när kommunen behöver styrka uppgifterna"
+  ],
+  "application": {
+    "method": "municipality_contact",
+    "url": "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+    "deadline_text": null,
+    "next_step": "Kontakta socialtjänsten i din kommun för att ansöka. Socialstyrelsen anger att du alltid har rätt att ansöka och få ett beslut; den faktiska rätten till bistånd avgörs efter individuell prövning."
+  },
+  "source": {
+    "source_id": "se-socialstyrelsen-financial-assistance",
+    "url": "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2025-09-17T00:00:00Z",
+    "retrieved_at": "2026-09-10T13:05:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-10. Socialstyrelsens områdessida anger regelförändringar inom ekonomiskt bistånd från 1 juli 2026; mänsklig granskning av aktuella regler och lokal tillämpning krävs innan VERIFIED eller produktionsbruk.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-10T13:05:00Z",
+    "last_seen_at": "2026-09-10T13:05:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
