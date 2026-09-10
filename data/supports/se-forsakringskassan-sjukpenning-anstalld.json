@@ -1,0 +1,106 @@
+{
+  "support_id": "se-forsakringskassan-sjukpenning-anstalld",
+  "name": "Sjukpenning för anställd",
+  "category": "sickness_rehabilitation",
+  "subtype": "sickness_benefit",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["employee", "sickness", "income_loss"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "sp.work_capacity_25",
+        "field": "work_capacity_reduction_fraction",
+        "operator": "gte",
+        "value": 0.25,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "notes": "Försäkringskassan anger att arbetsförmågan ska vara nedsatt med minst en fjärdedel på grund av sjukdom eller skada."
+      },
+      {
+        "rule_id": "sp.income_loss",
+        "field": "income_loss_due_to_sickness",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "notes": "Inkomstförlust är ett uttryckligt villkor på den aktuella sidan."
+      },
+      {
+        "rule_id": "sp.sgi",
+        "field": "sgi",
+        "operator": "exists",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "notes": "Sjukpenninggrundande inkomst (SGI) anges som villkor."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "sp.employment",
+        "prompt": "Är du anställd och har du normalt sjuklön från arbetsgivaren i början av sjukperioden?",
+        "reason": "Flödet skiljer sig beroende på anställnings- och sjuklönesituation."
+      },
+      {
+        "question_id": "sp.work_capacity",
+        "prompt": "Hur stor del av ditt vanliga arbete kan du inte utföra på grund av sjukdom eller skada?",
+        "reason": "Sjukskrivningsgraden påverkar om och i vilken omfattning sjukpenning kan vara relevant."
+      },
+      {
+        "question_id": "sp.income_loss",
+        "prompt": "Förlorar du arbetsinkomst när du inte kan arbeta?",
+        "reason": "Inkomstförlust är ett centralt villkor."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Ersättningen beror bland annat på SGI och sjukskrivningsgrad. Exakta belopp och tak ska hämtas från aktuell Försäkringskassekälla vid användning.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Läkarintyg med de uppgifter Försäkringskassan behöver för prövningen när det krävs i ärendet"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+    "deadline_text": null,
+    "next_step": "Följ Försäkringskassans aktuella steg för anställda: meddela arbetsgivaren, säkerställ nödvändigt läkarintyg och ansök om sjukpenning när Försäkringskassans del av sjukperioden blir aktuell."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-10T13:05:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-10. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-10T13:05:00Z",
+    "last_seen_at": "2026-09-10T13:05:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
