@@ -1,0 +1,118 @@
+{
+  "support_id": "se-pensionsmyndigheten-bostadstillagg-pensionarer",
+  "name": "Bostadstillägg för pensionärer",
+  "category": "pension_survivor",
+  "subtype": "housing_supplement",
+  "provider": {
+    "name": "Pensionsmyndigheten",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["pensioner", "low_income", "housing_cost"],
+    "age_min": 67,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "bt.residence.se",
+        "field": "residence_country",
+        "operator": "eq",
+        "value": "SE",
+        "source_url": "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+        "notes": "Grundvillkor på Pensionsmyndighetens ansökningssida för pensionärer."
+      },
+      {
+        "rule_id": "bt.age.67",
+        "field": "age",
+        "operator": "gte",
+        "value": 67,
+        "source_url": "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+        "notes": "Huvudregeln på den aktuella ansökningssidan är 67 år eller äldre; specialfall finns och ska hanteras separat."
+      },
+      {
+        "rule_id": "bt.full_general_pension",
+        "field": "general_pension_withdrawal_percent",
+        "operator": "eq",
+        "value": 100,
+        "source_url": "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+        "notes": "För pensionärsspåret krävs helt uttag av allmän pension inklusive premiepension."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "bt.age",
+        "prompt": "Har du fyllt 67 år?",
+        "reason": "Ålder är ett centralt villkor i pensionärsspåret."
+      },
+      {
+        "question_id": "bt.full_pension",
+        "prompt": "Tar du ut hela din allmänna pension inklusive premiepension?",
+        "reason": "Helt pensionsuttag är ett centralt villkor i pensionärsspåret."
+      },
+      {
+        "question_id": "bt.household",
+        "prompt": "Är du gift eller sambo och bor ni tillsammans?",
+        "reason": "Familjesituationen påverkar ansökan och beräkningen."
+      },
+      {
+        "question_id": "bt.housing_cost",
+        "prompt": "Vad är din aktuella bostadskostnad per månad?",
+        "reason": "Bostadskostnaden påverkar beräkningen."
+      },
+      {
+        "question_id": "bt.income_assets",
+        "prompt": "Vilka aktuella inkomster och relevanta tillgångar har hushållet?",
+        "reason": "Hela ekonomin vägs in i prövningen."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": "Pensionsmyndigheten anger vid hämtningen att bostadstillägget kan vara upp till 7 290 kronor per månad.",
+    "calculation_text": "Beloppet beror bland annat på bostadskostnad, familjesituation, inkomster och förmögenhet.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Aktuella uppgifter om bostadskostnad",
+    "Aktuella inkomstuppgifter före skatt",
+    "Uppgifter om relevanta tillgångar och skulder enligt ansökningsanvisningen"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+    "deadline_text": "Pensionsmyndigheten anger att bostadstillägg kan sökas upp till tre månader bakåt, men tidigast från den månad då ålders- och pensionsuttagsvillkoren är uppfyllda.",
+    "next_step": "Gör först Pensionsmyndighetens preliminära beräkning och gå därefter vidare till webbansökan. Den som saknar e-legitimation kan använda blankett eller få hjälp via servicekontor/kundservice."
+  },
+  "source": {
+    "source_id": "se-pensionsmyndigheten-pensioner-support",
+    "url": "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-10T13:05:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-10. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-10T13:05:00Z",
+    "last_seen_at": "2026-09-10T13:05:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
