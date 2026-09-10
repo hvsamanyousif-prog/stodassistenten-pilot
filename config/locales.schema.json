@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/locales-1.0.0.json",
+  "title": "Stödassistenten locale registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "canonical_rule_locale",
+    "fallback_ui_locale",
+    "locales"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "canonical_rule_locale": {
+      "$ref": "#/$defs/localeId"
+    },
+    "fallback_ui_locale": {
+      "$ref": "#/$defs/localeId"
+    },
+    "locales": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/locale"
+      }
+    }
+  },
+  "$defs": {
+    "localeId": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+    },
+    "locale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "locale_id",
+        "ui_key",
+        "display_name",
+        "direction",
+        "pilot_active"
+      ],
+      "properties": {
+        "locale_id": {
+          "$ref": "#/$defs/localeId"
+        },
+        "ui_key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]{1,31}$"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["ltr", "rtl"]
+        },
+        "pilot_active": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

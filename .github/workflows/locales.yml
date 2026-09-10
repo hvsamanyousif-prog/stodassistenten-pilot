@@ -1,0 +1,34 @@
+name: Validate locale registry
+
+on:
+  push:
+    paths:
+      - "config/locales.json"
+      - "config/locales.schema.json"
+      - "scripts/validate_locales.py"
+      - "docs/LOCALE_REGISTRY.md"
+      - "docs/MULTILINGUAL_ARCHITECTURE.md"
+      - ".github/workflows/locales.yml"
+  pull_request:
+    paths:
+      - "config/locales.json"
+      - "config/locales.schema.json"
+      - "scripts/validate_locales.py"
+      - "docs/LOCALE_REGISTRY.md"
+      - "docs/MULTILINGUAL_ARCHITECTURE.md"
+      - ".github/workflows/locales.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-locales:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate locale registry and negative self-tests
+        run: python scripts/validate_locales.py --self-test
