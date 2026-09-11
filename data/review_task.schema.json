@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/review-task-1.0.0.json",
+  "title": "Stödassistenten Review Task",
+  "description": "Machine-readable human-review task for support knowledge. Contains support/source metadata only; never user case data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "support_id",
+    "trigger",
+    "status",
+    "priority",
+    "risk_class",
+    "reason_codes",
+    "changed_material_fields",
+    "requires_human_review",
+    "source_id",
+    "source_url",
+    "current_material_hash",
+    "created_at"
+  ],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^review_[a-z0-9._-]+_[a-f0-9]{12}$"},
+    "support_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+    "trigger": {"type": "string", "enum": ["NEEDS_REVIEW", "MATERIAL_CHANGE"]},
+    "status": {"type": "string", "const": "OPEN"},
+    "priority": {"type": "string", "enum": ["P0", "P1", "P2"]},
+    "risk_class": {"type": "string", "enum": ["UNASSESSED", "LOW", "MEDIUM", "HIGH"]},
+    "reason_codes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "INITIAL_HUMAN_REVIEW",
+          "ELIGIBILITY_CHANGED",
+          "BENEFIT_CHANGED",
+          "APPLICATION_CHANGED",
+          "PROVIDER_CHANGED",
+          "GEOGRAPHY_CHANGED",
+          "LIFECYCLE_CHANGED",
+          "AUDIENCE_CHANGED",
+          "DOCUMENTS_CHANGED",
+          "OTHER_MATERIAL_CHANGE"
+        ]
+      }
+    },
+    "changed_material_fields": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 160}
+    },
+    "requires_human_review": {"const": true},
+    "source_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+    "source_url": {"type": "string", "format": "uri", "pattern": "^https://", "maxLength": 1000},
+    "previous_material_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "current_material_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}
