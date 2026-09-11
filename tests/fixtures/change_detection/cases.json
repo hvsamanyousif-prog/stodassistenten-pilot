@@ -1,0 +1,74 @@
+{
+  "baseline": {
+    "support_id": "se-synthetic-change-detection",
+    "name": "Syntetiskt teststöd",
+    "category": "other",
+    "provider": {"name": "Testmyndighet", "provider_type": "national_agency"},
+    "geography": {"level": "national", "country_code": "SE"},
+    "audience": {"segments": ["synthetic"]},
+    "eligibility": {
+      "conditions": [{"rule_id": "synthetic.condition", "field": "synthetic_flag", "operator": "eq", "value": true, "source_url": "https://example.invalid/support"}],
+      "exclusions": []
+    },
+    "benefit": {"kind": "other", "amount_text": null, "calculation_text": null, "recurrence": null},
+    "documents": ["Syntetiskt underlag"],
+    "application": {"method": "provider_contact", "url": "https://example.invalid/support", "deadline_text": null, "next_step": "Kontrollera den syntetiska testkällan."},
+    "lifecycle": {"valid_from": null, "valid_to": null},
+    "source": {"retrieved_at": "2026-09-10T10:00:00Z"},
+    "verification": {"review_notes": "Synthetic baseline."}
+  },
+  "cosmetic_only": {
+    "support_id": "se-synthetic-change-detection",
+    "name": "Syntetiskt teststöd",
+    "category": "other",
+    "provider": {"name": "Testmyndighet", "provider_type": "national_agency"},
+    "geography": {"level": "national", "country_code": "SE"},
+    "audience": {"segments": ["synthetic"]},
+    "eligibility": {
+      "conditions": [{"rule_id": "synthetic.condition", "field": "synthetic_flag", "operator": "eq", "value": true, "source_url": "https://example.invalid/support"}],
+      "exclusions": []
+    },
+    "benefit": {"kind": "other", "amount_text": null, "calculation_text": null, "recurrence": null},
+    "documents": ["Syntetiskt underlag"],
+    "application": {"method": "provider_contact", "url": "https://example.invalid/support", "deadline_text": null, "next_step": "Kontrollera den syntetiska testkällan."},
+    "lifecycle": {"valid_from": null, "valid_to": null},
+    "source": {"retrieved_at": "2026-09-11T08:00:00Z"},
+    "verification": {"review_notes": "Editorial-only synthetic refresh."}
+  },
+  "eligibility_changed": {
+    "support_id": "se-synthetic-change-detection",
+    "name": "Syntetiskt teststöd",
+    "category": "other",
+    "provider": {"name": "Testmyndighet", "provider_type": "national_agency"},
+    "geography": {"level": "national", "country_code": "SE"},
+    "audience": {"segments": ["synthetic"]},
+    "eligibility": {
+      "conditions": [{"rule_id": "synthetic.condition", "field": "synthetic_flag", "operator": "eq", "value": false, "source_url": "https://example.invalid/support"}],
+      "exclusions": []
+    },
+    "benefit": {"kind": "other", "amount_text": null, "calculation_text": null, "recurrence": null},
+    "documents": ["Syntetiskt underlag"],
+    "application": {"method": "provider_contact", "url": "https://example.invalid/support", "deadline_text": null, "next_step": "Kontrollera den syntetiska testkällan."},
+    "lifecycle": {"valid_from": null, "valid_to": null},
+    "source": {"retrieved_at": "2026-09-10T10:00:00Z"},
+    "verification": {"review_notes": "Synthetic baseline."}
+  },
+  "next_step_changed": {
+    "support_id": "se-synthetic-change-detection",
+    "name": "Syntetiskt teststöd",
+    "category": "other",
+    "provider": {"name": "Testmyndighet", "provider_type": "national_agency"},
+    "geography": {"level": "national", "country_code": "SE"},
+    "audience": {"segments": ["synthetic"]},
+    "eligibility": {
+      "conditions": [{"rule_id": "synthetic.condition", "field": "synthetic_flag", "operator": "eq", "value": true, "source_url": "https://example.invalid/support"}],
+      "exclusions": []
+    },
+    "benefit": {"kind": "other", "amount_text": null, "calculation_text": null, "recurrence": null},
+    "documents": ["Syntetiskt underlag"],
+    "application": {"method": "provider_contact", "url": "https://example.invalid/support", "deadline_text": null, "next_step": "Kontakta testmyndigheten via den syntetiska kanalen."},
+    "lifecycle": {"valid_from": null, "valid_to": null},
+    "source": {"retrieved_at": "2026-09-10T10:00:00Z"},
+    "verification": {"review_notes": "Synthetic baseline."}
+  }
+}
