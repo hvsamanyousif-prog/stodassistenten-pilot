@@ -1,0 +1,27 @@
+name: Validate change detection contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/test_change_detection.py"
+      - "tests/fixtures/change_detection/**"
+      - "data/support_record.schema.json"
+      - ".github/workflows/change-detection.yml"
+  pull_request:
+    paths:
+      - "scripts/test_change_detection.py"
+      - "tests/fixtures/change_detection/**"
+      - "data/support_record.schema.json"
+      - ".github/workflows/change-detection.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  change-detection:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run synthetic Red Team change-detection tests
+        run: python3 scripts/test_change_detection.py --self-test
