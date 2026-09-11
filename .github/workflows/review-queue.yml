@@ -1,0 +1,31 @@
+name: Validate review queue contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/test_review_queue.py"
+      - "scripts/test_change_detection.py"
+      - "data/review_task.schema.json"
+      - "data/supports/**"
+      - "tests/fixtures/change_detection/**"
+      - ".github/workflows/review-queue.yml"
+  pull_request:
+    paths:
+      - "scripts/test_review_queue.py"
+      - "scripts/test_change_detection.py"
+      - "data/review_task.schema.json"
+      - "data/supports/**"
+      - "tests/fixtures/change_detection/**"
+      - ".github/workflows/review-queue.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  review-queue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate machine-readable human review tasks
+        run: python3 scripts/test_review_queue.py --self-test
