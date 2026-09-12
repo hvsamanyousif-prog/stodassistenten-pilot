@@ -4,15 +4,18 @@ Detta katalogträd innehåller Stödassistentens publika, helt syntetiska benchm
 
 Syftet är att mäta om en framtida matchningsmotor hittar relevanta stödområden, undviker irrelevanta eller osäkra påståenden, ställer effektiva följdfrågor och leder vidare till rätt nästa handling. Benchmarken mäter struktur och beteende – inte hur övertygande AI-texten låter.
 
-## Nuvarande v0.1
+## Låst v0.1 + expansion v0.2
 
-- `matching_eval.schema.json` beskriver det maskinläsbara fallkontraktet.
-- `cases/*.json` innehåller 45 syntetiska fall, fem per segment.
-- `benchmark_baseline.json` låser benchmarkens semantiska SHA-256-fingerprint och minimipolicy.
-- `scripts/evaluate_matching.py` validerar datan och kan poängsätta fullständiga prediction-filer.
-- `.github/workflows/matching-evals.yml` kör integritetskontroll och metriksjälvtest i CI.
+- `matching_eval.schema.json` beskriver fallkontraktet.
+- `cases/*.json` är den låsta v0.1-baslinjen med 45 syntetiska fall, fem per segment. Den lämnas oförändrad för kompatibilitet med befintlig private-prediction bridge.
+- `benchmark_baseline.json` låser v0.1-baslinjens semantiska SHA-256-fingerprint och minimipolicy.
+- `expansion/*.json` lägger till 63 helt syntetiska v0.2-fall. Tillsammans innehåller benchmarken 108 fall, 12 per segment.
+- `benchmark_expansion_policy.json` låser expansionens fingerprint, populationsbalans och språk-/paritetskrav.
+- `scripts/evaluate_matching.py` validerar den låsta v0.1-baslinjen.
+- `scripts/evaluate_benchmark_expansion.py` validerar samtliga 108 fall och kan poängsätta kombinerade prediction-filer.
+- `.github/workflows/matching-expansion.yml` kör strukturkontroll och ett deterministiskt Red Team-test som måste avvisa språkdrift.
 
-Första segmenten är:
+Segmenten är:
 
 1. pension / låg ekonomi
 2. arbetslöshet / a-kassa
@@ -24,7 +27,11 @@ Första segmenten är:
 8. förening
 9. företag / finansiering och offentlig upphandling
 
-Språkbarriär och fler språk ska läggas till som tvärgående benchmarkdimension när den privata matchningskärnan kan generera strukturerade prediction-resultat.
+## Population-first och språkparitet
+
+Varje segment i v0.2-expansionen har sju nya fall: en semantiskt likvärdig kvartett på svenska, arabiska, persiska och engelska samt tre ytterligare edge cases. Kvartetten har samma strukturerade ground truth för kända/saknade fakta, stödområden, förbjudna claims, följdfrågor, nästa handling, riskflaggor och källkrav. Endast `case_id`, `language` och den översatta berättelsen skiljer sig.
+
+När en prediction-fil finns kräver evaluatorn samma strukturerade prediction över språk för varje paritetskvartett. En stark totalpoäng kan därför inte dölja att exempelvis arabiska eller persiska ger en annan kandidatlogik än svenska.
 
 ## Fallformat
 
@@ -47,31 +54,42 @@ Varje fall innehåller:
 
 ## Metriker
 
-Evaluatorn räknar:
+Evaluatorerna räknar bland annat:
 
 - support recall
 - support precision
-- antal missade stödområden
+- missade stödområden
 - osäkra/förbjudna claims
 - question efficiency = question recall × question precision
 - next-action recall
+- segmentnivå
+- språkmetrik på paritetsfallen
+- exakt cross-language prediction parity
 
-En full prediction-fil ska täcka samtliga benchmarkfall. `benchmark_baseline.json` anger minimigränser. Om själva benchmarkens förväntningar ändras bryts fingerprint-kontrollen tills baseline uppdateras med en synlig `change_reason`.
+En kombinerad prediction-fil för v0.2 ska täcka samtliga 108 benchmarkfall. Expansionen är fingerprint-låst; semantiska ändringar kräver en synlig `change_reason` och nytt fingerprint i samma review.
 
-Exempel när en strukturerad prediction-fil finns:
-
-```bash
-python scripts/evaluate_matching.py --predictions path/to/predictions.json
-```
-
-För ren datavalidering:
+Validera v0.1:
 
 ```bash
 python scripts/evaluate_matching.py --validate-only --self-test
 ```
 
+Validera hela 108-fallsbenchmarken och Red Team-paritetsgrinden:
+
+```bash
+python scripts/evaluate_benchmark_expansion.py --validate-only --self-test
+```
+
+Poängsätt en framtida kombinerad prediction-fil:
+
+```bash
+python scripts/evaluate_benchmark_expansion.py --predictions path/to/predictions.json
+```
+
+Det inbyggda oracle-testet bevisar endast att eval-ledningen och gränserna fungerar. Det är inte ett påstående om att den verkliga privata matchningsmotorn uppnår perfekta resultat.
+
 ## Säkerhetsgräns
 
 Alla fall i detta publika repo ska vara helt syntetiska. Verkliga användarberättelser, diagnoser, ekonomiska uppgifter, pilotdata, prompts, produktionsregler och proprietär rankinglogik får inte läggas här.
 
-Det publika benchmarklagret kan kontrollera kvalitet och regressionsdisciplin, men ska inte innehålla den privata motorn som producerar matchningarna.
+Det publika benchmarklagret kan kontrollera kvalitet, språkparitet och regressionsdisciplin, men ska inte innehålla den privata motorn som producerar matchningarna.
