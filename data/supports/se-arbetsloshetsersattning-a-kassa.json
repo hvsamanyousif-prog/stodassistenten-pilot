@@ -1,0 +1,124 @@
+{
+  "support_id": "se-arbetsloshetsersattning-a-kassa",
+  "name": "Arbetslöshetsersättning från a-kassa",
+  "category": "work_unemployment",
+  "subtype": "unemployment_insurance",
+  "provider": {
+    "name": "Arbetslöshetskassor (a-kassor)",
+    "provider_type": "other",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "unemployed",
+      "jobseeker",
+      "income_loss"
+    ],
+    "age_min": 20,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "ak.age_20",
+        "field": "age",
+        "operator": "gte",
+        "value": 20,
+        "source_url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+        "notes": "Arbetsförmedlingen anger 20 år som ett grundkrav för ersättning från a-kassa."
+      },
+      {
+        "rule_id": "ak.registered_jobseeker",
+        "field": "registered_with_arbetsformedlingen",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+        "notes": "Den sökande behöver vara inskriven på Arbetsförmedlingen; inskrivning bör göras första arbetslösa dagen."
+      },
+      {
+        "rule_id": "ak.available_for_work",
+        "field": "able_and_willing_to_take_work",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+        "notes": "Den sökande ska kunna och vilja ta ett arbete direkt och inte ha hinder som gör att arbete inte kan sökas eller tas."
+      },
+      {
+        "rule_id": "ak.income_condition",
+        "field": "income_condition",
+        "operator": "text_condition",
+        "value": "För nya ersättningsbeslut enligt reglerna från 1 oktober 2025 finns alternativa sätt att uppfylla inkomstvillkoret; a-kassan avgör vilket regelspår och vilka inkomster som får räknas.",
+        "source_url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+        "notes": "Villkoret har alternativa vägar och får inte modelleras som flera samtidiga hårda krav. Äldre pågående ersättningsperioder kan omfattas av tidigare regelverk."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "ak.first_unemployed_day",
+        "prompt": "Vilken dag blev du arbetslös, och skrev du in dig på Arbetsförmedlingen den dagen?",
+        "reason": "Inskrivningsdatumet är centralt för från vilken dag ersättning kan prövas."
+      },
+      {
+        "question_id": "ak.current_period",
+        "prompt": "Har du redan en pågående ersättningsperiod som beslutades före 1 oktober 2025?",
+        "reason": "Det finns parallella regelverk beroende på när ersättningsperioden beslutades."
+      },
+      {
+        "question_id": "ak.income_history",
+        "prompt": "Har du haft arbetsinkomster under de senaste tolv månaderna, och ungefär vilka månader hade du inkomst?",
+        "reason": "Inkomsthistoriken behövs för att a-kassan ska kunna bedöma inkomstvillkoret."
+      },
+      {
+        "question_id": "ak.membership",
+        "prompt": "Är du medlem i en a-kassa, och i så fall sedan när?",
+        "reason": "Medlemstiden kan påverka ersättningsnivån enligt det nya regelverket."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "För nya beslut enligt reglerna från 1 oktober 2025 baseras ersättningen på tidigare inkomster och påverkas av medlemstiden i a-kassan. Äldre pågående ersättningsperioder kan följa tidigare regler. Exakt nivå ska avgöras av a-kassan.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Arbetsgivarintyg från tidigare arbetsgivare när a-kassan begär det",
+    "De uppgifter som den aktuella a-kassan efterfrågar i ansökan"
+  ],
+  "application": {
+    "method": "provider_contact",
+    "url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+    "deadline_text": "Skriv in dig på Arbetsförmedlingen första arbetslösa dagen. För nya månadsbaserade ersättningsperioder behöver månadsuppgifter lämnas enligt a-kassans aktuella tidsfrister.",
+    "next_step": "Skriv in dig på Arbetsförmedlingen första arbetslösa dagen och ansök därefter hos din a-kassa. Om du inte är medlem kan du välja a-kassa eller ansöka via Alfa-kassan enligt Arbetsförmedlingens aktuella vägledning."
+  },
+  "source": {
+    "source_id": "se-arbetsformedlingen-support-a-z",
+    "url": "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-12T06:55:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell Arbetsförmedlingskälla 2026-09-12. Särskild mänsklig kontroll krävs eftersom två regelverk kan löpa parallellt beroende på när ersättningsperioden beslutades. Får inte användas som produktionssanning före granskning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-12T06:55:00Z",
+    "last_seen_at": "2026-09-12T06:55:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
