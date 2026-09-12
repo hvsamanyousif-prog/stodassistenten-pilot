@@ -1,0 +1,125 @@
+{
+  "support_id": "se-forsakringskassan-narstaendepenning",
+  "name": "Närståendepenning",
+  "category": "caregiver_relative",
+  "subtype": "caregiver_income_replacement",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": "Den närstående ska vårdas i Sverige, inom EU/EES eller i Storbritannien enligt Försäkringskassans aktuella villkor."
+  },
+  "audience": {
+    "segments": [
+      "caregiver",
+      "relative",
+      "friend",
+      "serious_illness",
+      "income_loss"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "np.life_threatening_condition",
+        "field": "relative_health_condition",
+        "operator": "text_condition",
+        "value": "livshotande_halsotillstand",
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "notes": "Försäkringskassan skiljer livshotande hälsotillstånd från mer långvarigt stödbehov som inte i sig är livshotande."
+      },
+      {
+        "rule_id": "np.foregone_income_or_benefit",
+        "field": "foregone_work_or_replacement_benefit",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "notes": "Den sökande behöver avstå arbete och inkomst, eller i vissa fall avstå a-kassa eller föräldrapenning."
+      },
+      {
+        "rule_id": "np.care_location",
+        "field": "care_location",
+        "operator": "in",
+        "value": [
+          "SE",
+          "EU",
+          "EES",
+          "GB"
+        ],
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "notes": "Den närstående ska vårdas i Sverige, EU/EES eller Storbritannien."
+      },
+      {
+        "rule_id": "np.insured_sweden",
+        "field": "insured_in_sweden",
+        "operator": "text_condition",
+        "value": "Sökanden och den närstående behöver omfattas av svensk försäkring enligt Försäkringskassans bedömning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "notes": "Försäkringstillhörighet är ett uttryckligt villkor och behöver prövas i det enskilda fallet."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "np.health_condition",
+        "prompt": "Har läkaren bedömt att din närstående har ett livshotande hälsotillstånd?",
+        "reason": "Livshotande hälsotillstånd är ett centralt villkor för närståendepenning."
+      },
+      {
+        "question_id": "np.foregone_income",
+        "prompt": "Behöver du avstå från arbete, a-kassa eller föräldrapenning för att vara nära och stödja personen?",
+        "reason": "Ersättningen är kopplad till att den sökande avstår arbete eller viss annan ersättning."
+      },
+      {
+        "question_id": "np.care_country",
+        "prompt": "I vilket land vårdas den närstående?",
+        "reason": "Vårdlandet påverkar om grundvillkoret om vårdplats är uppfyllt."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Ersättningen beror bland annat på den sökandes inkomst/SGI och hur stor del av dagen som arbete eller annan ersättning avstås. Försäkringskassan anger också ett gemensamt antal ersättningsdagar kopplat till den svårt sjuka personen.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Läkarutlåtande för den närstående som beskriver det livshotande hälsotillståndet"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+    "deadline_text": "Ansökan ska enligt Försäkringskassans aktuella sida göras inom 3 månader från den första dag som ersättning begärs för och gäller endast dagar som redan har varit.",
+    "next_step": "Be den närståendes läkare ordna läkarutlåtandet och ansök sedan om närståendepenning för de dagar som redan har passerat inom Försäkringskassans tidsgräns."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-04-30T00:00:00+02:00",
+    "retrieved_at": "2026-09-12T06:55:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkälla, kontrollerad 2026-09-12. Mänsklig sakgranskning krävs före VERIFIED, särskilt för försäkringstillhörighet, ersättningsomfattning och dokumentkrav.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-12T06:55:00Z",
+    "last_seen_at": "2026-09-12T06:55:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
