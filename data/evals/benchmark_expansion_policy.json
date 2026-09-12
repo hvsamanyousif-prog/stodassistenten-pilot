@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.2.0",
+  "expansion_sha256": "a0f93593496ecf24a8e9bbb494660fac307154857a5eb7671775a741b330bf44",
+  "expected_expansion_case_count": 63,
+  "expected_total_case_count": 108,
+  "expected_expansion_cases_per_segment": 7,
+  "expected_total_cases_per_segment": 12,
+  "required_languages_per_segment": [
+    "sv",
+    "ar",
+    "fa",
+    "en"
+  ],
+  "expected_parity_groups_per_segment": 1,
+  "minimum_prediction_parity_rate": 1.0,
+  "minimum_metrics": {
+    "support_recall": 0.8,
+    "support_precision": 0.75,
+    "unsafe_claim_rate": 0.0,
+    "question_efficiency": 0.6,
+    "next_action_recall": 0.7
+  },
+  "change_reason": "Expand the public synthetic benchmark beyond 100 cases while preserving the locked v0.1 baseline and adding explicit cross-language parity guardrails."
+}

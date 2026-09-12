@@ -1,0 +1,36 @@
+name: Validate benchmark expansion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/evals/expansion/**'
+      - 'data/evals/benchmark_expansion_policy.json'
+      - 'data/evals/benchmark_baseline.json'
+      - 'data/evals/cases/**'
+      - 'scripts/evaluate_matching.py'
+      - 'scripts/evaluate_benchmark_expansion.py'
+      - '.github/workflows/matching-expansion.yml'
+  pull_request:
+    paths:
+      - 'data/evals/expansion/**'
+      - 'data/evals/benchmark_expansion_policy.json'
+      - 'data/evals/benchmark_baseline.json'
+      - 'data/evals/cases/**'
+      - 'scripts/evaluate_matching.py'
+      - 'scripts/evaluate_benchmark_expansion.py'
+      - '.github/workflows/matching-expansion.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark-expansion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate 108-case benchmark and Red Team parity guard
+        run: python scripts/evaluate_benchmark_expansion.py --validate-only --self-test
