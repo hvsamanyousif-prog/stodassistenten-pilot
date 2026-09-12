@@ -1,0 +1,127 @@
+{
+  "support_id": "se-forsakringskassan-aktivitetsersattning-unga",
+  "name": "Aktivitetsersättning för unga vuxna med nedsatt arbetsförmåga",
+  "category": "disability",
+  "subtype": "activity_compensation_reduced_work_capacity",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "young_adult",
+      "disability",
+      "chronic_illness",
+      "reduced_work_capacity"
+    ],
+    "age_min": 19,
+    "age_max": 29
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "ae.age",
+        "field": "age",
+        "operator": "between",
+        "value": [
+          19,
+          29
+        ],
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "notes": "Aktivitetsersättning riktar sig till unga vuxna under 30 år; Försäkringskassan anger särskilda startregler under året personen fyller 19."
+      },
+      {
+        "rule_id": "ae.duration",
+        "field": "reduced_work_capacity_duration_months",
+        "operator": "gte",
+        "value": 12,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "notes": "Arbetsförmågan ska vara nedsatt under minst ett år framåt."
+      },
+      {
+        "rule_id": "ae.medical_cause",
+        "field": "medical_cause_for_reduced_work_capacity",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "notes": "Det ska finnas skada, sjukdom eller funktionsnedsättning som påverkar arbetsförmågan."
+      },
+      {
+        "rule_id": "ae.insured_sweden",
+        "field": "insured_in_sweden",
+        "operator": "text_condition",
+        "value": "Försäkringstillhörighet i Sverige behöver vara uppfylld enligt Försäkringskassans bedömning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "notes": "Försäkringskassan anger att den sökande ska vara försäkrad i Sverige."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "ae.age",
+        "prompt": "Hur gammal är du?",
+        "reason": "Aktivitetsersättning för nedsatt arbetsförmåga är åldersavgränsad."
+      },
+      {
+        "question_id": "ae.duration",
+        "prompt": "Bedöms din arbetsförmåga vara nedsatt under minst ett år framåt?",
+        "reason": "Varaktigheten på nedsättningen är ett centralt villkor."
+      },
+      {
+        "question_id": "ae.work_capacity",
+        "prompt": "Kan du arbeta heltid, deltid eller inte alls just nu?",
+        "reason": "Ersättningen kan ges på olika nivåer beroende på arbetsförmågan."
+      },
+      {
+        "question_id": "ae.medical_basis",
+        "prompt": "Finns det medicinskt underlag som beskriver hur sjukdom, skada eller funktionsnedsättning påverkar din arbetsförmåga?",
+        "reason": "Försäkringskassan behöver medicinskt underlag för prövningen."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Ersättningen kan vara inkomstrelaterad eller lämnas som garantiersättning och kan ges på olika nivåer beroende på hur mycket arbetsförmågan är nedsatt. Exakta belopp ska hämtas från aktuell Försäkringskassekälla.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Läkarutlåtande med information om sjukdom, skada eller funktionsnedsättning och hur arbetsförmågan påverkas"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+    "deadline_text": "Försäkringskassan anger att ansökan kan göras för upp till 3 månader bakåt från ansökningsmånaden om medicinskt underlag visar nedsatt arbetsförmåga under perioden.",
+    "next_step": "Säkerställ att Försäkringskassan har ett aktuellt läkarutlåtande och ansök sedan om aktivitetsersättning via e-tjänsten eller aktuell blankett."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-04-15T00:00:00+02:00",
+    "retrieved_at": "2026-09-12T06:55:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkälla, kontrollerad 2026-09-12. Mänsklig granskning krävs före VERIFIED, särskilt för åldersstart, nivåindelning, försäkringstillhörighet och retroaktivitet.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-12T06:55:00Z",
+    "last_seen_at": "2026-09-12T06:55:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
