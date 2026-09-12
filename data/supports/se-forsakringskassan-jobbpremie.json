@@ -1,0 +1,117 @@
+{
+  "support_id": "se-forsakringskassan-jobbpremie",
+  "name": "Jobbpremie",
+  "category": "work_unemployment",
+  "subtype": "employment_income_incentive",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "employee",
+      "former_social_assistance_recipient",
+      "low_income",
+      "employment_transition"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "jp.assistance_2025_h2",
+        "field": "received_social_assistance_jul_dec_2025",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "notes": "Försäkringskassan anger att försörjningsstöd ska ha betalats ut för samtliga månader juli–december 2025."
+      },
+      {
+        "rule_id": "jp.salary_current_month",
+        "field": "employment_salary_current_month",
+        "operator": "exists",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "notes": "Jobbpremie är kopplad till lön från anställning den månad som ansökan avser; hel- eller deltidsarbete kan omfattas."
+      },
+      {
+        "rule_id": "jp.no_current_social_assistance",
+        "field": "received_social_assistance_current_month",
+        "operator": "eq",
+        "value": false,
+        "source_url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "notes": "Den sökande kan inte få jobbpremie samma månad som hen får försörjningsstöd."
+      },
+      {
+        "rule_id": "jp.no_household_social_assistance",
+        "field": "household_member_receives_social_assistance_current_month",
+        "operator": "eq",
+        "value": false,
+        "source_url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "notes": "Försäkringskassan anger att ingen annan i hushållet får försörjningsstöd den aktuella månaden."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "jp.assistance_history",
+        "prompt": "Fick du försörjningsstöd från kommunen varje månad juli–december 2025?",
+        "reason": "Detta är ett centralt historiskt villkor för jobbpremien."
+      },
+      {
+        "question_id": "jp.salary",
+        "prompt": "Har du fått lön från en anställning den månad du vill söka jobbpremie för?",
+        "reason": "Jobbpremien är kopplad till lön från anställning den aktuella månaden."
+      },
+      {
+        "question_id": "jp.current_assistance",
+        "prompt": "Fick du eller någon annan i ditt hushåll försörjningsstöd samma månad?",
+        "reason": "Samtidigt försörjningsstöd i hushållet kan hindra jobbpremie för den månaden."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": "Försäkringskassans sida anger 15 procent av lönen före skatt, högst 3 750 kronor per månad.",
+    "calculation_text": "Premien beräknas utifrån lön från anställning den aktuella månaden och kan enligt aktuell källa betalas i högst 18 månader. Belopp och tidsgränser ska kontrolleras mot aktuell källa före produktionsanvändning.",
+    "recurrence": "monthly"
+  },
+  "documents": [],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+    "deadline_text": "Ansökan ska enligt Försäkringskassans aktuella sida ha kommit in senast 3 kalendermånader efter den månad som ansökan gäller. Den första stödberättigade månaden anges som mars 2026.",
+    "next_step": "Kontrollera att du uppfyllde försörjningsstödsvillkoret juli–december 2025 och att hushållet inte får försörjningsstöd den aktuella månaden; ansök sedan om jobbpremie för månaden inom tre kalendermånader."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/jobbpremie",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-06-29T00:00:00+02:00",
+    "retrieved_at": "2026-09-12T06:55:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkälla, kontrollerad 2026-09-12. Eftersom stödet är nytt 2026 och har fasta historiska villkor, belopp och tidsfrister krävs mänsklig kontroll före VERIFIED.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-12T06:55:00Z",
+    "last_seen_at": "2026-09-12T06:55:00Z",
+    "valid_from": "2026-03-01",
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
