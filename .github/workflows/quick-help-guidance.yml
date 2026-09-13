@@ -1,0 +1,41 @@
+name: Validate direct quick-help guidance
+
+on:
+  pull_request:
+    paths:
+      - 'client/quick-help-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_public_pilot_build.py'
+      - 'scripts/validate_quick_help_guidance.py'
+      - '.github/workflows/quick-help-guidance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/quick-help-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_public_pilot_build.py'
+      - 'scripts/validate_quick_help_guidance.py'
+      - '.github/workflows/quick-help-guidance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check direct guidance syntax
+        run: node --check client/quick-help-guidance.js
+      - name: Validate direct guidance invariants
+        run: python scripts/validate_quick_help_guidance.py
+      - name: Build exact public artifact
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify direct guidance is shipped
+        run: grep -q 'client/quick-help-guidance.js' _site/quick-help.html
