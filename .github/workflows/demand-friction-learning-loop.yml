@@ -1,0 +1,34 @@
+name: Validate demand/friction learning loop
+
+on:
+  pull_request:
+    paths:
+      - 'data/evals/demand_friction_signals_v*.json'
+      - 'data/evals/demand_friction_regression_map_v*.json'
+      - 'data/evals/scenario_lab_v01.json'
+      - 'data/evals/scenario_lab_websignals*.json'
+      - 'scripts/validate_demand_friction_learning_loop.py'
+      - '.github/workflows/demand-friction-learning-loop.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/evals/demand_friction_signals_v*.json'
+      - 'data/evals/demand_friction_regression_map_v*.json'
+      - 'data/evals/scenario_lab_v01.json'
+      - 'data/evals/scenario_lab_websignals*.json'
+      - 'scripts/validate_demand_friction_learning_loop.py'
+      - '.github/workflows/demand-friction-learning-loop.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/validate_demand_friction_learning_loop.py
+      - run: python scripts/validate_scenario_lab_all.py
