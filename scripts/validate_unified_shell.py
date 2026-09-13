@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import re
 import sys
 
 root = Path('index.html')
 person = Path('person-pilot.html')
 company = Path('company-pilot.html')
-for p in (root, person, company):
+quick = Path('quick-help.html')
+for p in (root, person, company, quick):
     if not p.exists():
         print(f'missing required unified-platform file: {p}', file=sys.stderr)
         raise SystemExit(1)
@@ -14,34 +14,32 @@ for p in (root, person, company):
 text = root.read_text(encoding='utf-8')
 required = [
     'En Stödassistenten – flera ingångar',
-    'Jag söker för mig själv',
-    'Jag hjälper någon',
-    'Student / ung vuxen',
-    'Anställd',
-    'Företag',
+    'id="situation"',
+    'function classify(text)',
+    'Situationsmotor',
+    'Tandvård',
+    'Synnedsättning',
+    'Studier & ung vuxen',
+    'Företag & offentlig affär',
     'Förening',
-    'actor_type=',
-    'person-pilot.html',
-    'company-pilot.html',
-    'En produkt. Ett sanningslager. Ett lärsystem.',
+    'person-pilot.html?actor_type=',
+    'company-pilot.html?actor_type=company',
+    'quick-help.html?mode=dental',
+    'quick-help.html?mode=vision',
+    'En produkt. En intelligens. Ett sanningslager. Ett lärsystem.',
 ]
 for marker in required:
     if marker not in text:
         print(f'missing unified-shell marker: {marker}', file=sys.stderr)
         raise SystemExit(1)
 
-actors = set(re.findall(r"entry\('([^']+)'", text))
-expected = {'private_person','relative','student','employee','company','association','other'}
-if actors != expected:
-    print(f'actor entry mismatch: got {sorted(actors)} expected {sorted(expected)}', file=sys.stderr)
-    raise SystemExit(1)
+for actor in ('private_person','relative','student','employee','company','association','other'):
+    if f'actor_type={actor}' not in text:
+        print(f'missing unified actor route: {actor}', file=sys.stderr)
+        raise SystemExit(1)
 
 if 'fetch(' in text or 'XMLHttpRequest' in text:
     print('unified shell must not transmit situation data', file=sys.stderr)
-    raise SystemExit(1)
-
-if 'company-pilot.html' not in text or "actor==='company'" not in text:
-    print('company module must route from common shell', file=sys.stderr)
     raise SystemExit(1)
 
 # The preserved person pilot must still contain existing privacy and feedback behavior.
