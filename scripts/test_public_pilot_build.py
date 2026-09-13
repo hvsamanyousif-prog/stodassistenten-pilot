@@ -17,11 +17,11 @@ def require(condition: bool, message: str) -> None:
 
 def make_fixture(root: Path) -> None:
     (root / "index.html").write_text(
-        '<!doctype html><html lang="sv"><body><main>shell</main></body></html>',
+        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar</main></body></html>',
         encoding="utf-8",
     )
     (root / builder.PERSON_PILOT_PATH).write_text(
-        '<!doctype html><html lang="sv"><body><main>pilot</main><script>function results(){};function resultCard(){};function render(){}</script></body></html>',
+        '<!doctype html><html lang="sv"><body><main>pilot</main><script>function results(){};function resultCard(){};function render(){};sv:{};ar:{};fa:{};/* .rtl{direction:rtl */ /* document.body.classList.toggle(\'rtl\',l===\'ar\'||l===\'fa\') */</script></body></html>',
         encoding="utf-8",
     )
     for relative in builder.MODULE_PILOT_PATHS:
@@ -81,7 +81,6 @@ def test_minimal_artifact() -> None:
         actual = {path.relative_to(site) for path in site.rglob("*") if path.is_file()}
         require(actual == expected, f"public artifact drifted: {sorted(str(p) for p in actual ^ expected)}")
 
-        # Missing one runtime dependency must block the build rather than deploy a partial gate.
         (root / builder.SCRIPT_PATHS[-1]).unlink()
         try:
             builder.build(root, site)
@@ -99,6 +98,9 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "En Stödassistenten – flera ingångar",
         "person-pilot.html",
         "company-pilot.html",
+        "quick-help.html",
+        "mode=dental",
+        "mode=vision",
         "actor_type=",
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
@@ -111,7 +113,6 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "person pilot build changed HTML outside wiring block",
     )
 
-    # Existing multilingual/RTL person-pilot invariants must survive byte-for-byte.
     for token in (
         "sv:{",
         "ar:{",
@@ -132,6 +133,18 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
             (site_root / module).read_bytes() == (source_root / module).read_bytes(),
             f"module must deploy byte-for-byte: {module}",
         )
+
+    quick = (site_root / "quick-help.html").read_text(encoding="utf-8")
+    for token in (
+        'id="main" tabindex="-1" aria-live="polite"',
+        'class="skip"',
+        "mode==='dental'",
+        "mode==='vision'",
+        "forsakringskassan.se/privatperson/tandvard/tandvardsstod",
+        "boverket.se/sv/babhandboken/for-dig-som-soker/vad-ar-bostadsanpassningsbidrag",
+        "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel",
+    ):
+        require(token in quick, f"quick-help accessibility/content invariant missing: {token}")
 
 
 def main() -> int:
