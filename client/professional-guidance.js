@@ -57,6 +57,7 @@
 
   function lang(){const l=document.documentElement.lang||'sv';return COPY[l]?l:'sv'}
   function c(){return COPY[lang()]}
+  function setText(el,text){if(el.textContent!==text)el.textContent=text}
   function routeKey(anchor){
     const u=new URL(anchor.href,location.href);
     const mode=(u.searchParams.get('mode')||'').toLowerCase();
@@ -73,7 +74,8 @@
       el.dataset.journeyRail='true';
       composer.before(el);
     }
-    el.innerHTML=c().steps.map((x,i)=>`<li><b>${i+1}</b><span>${x}</span></li>`).join('');
+    const html=c().steps.map((x,i)=>`<li><b>${i+1}</b><span>${x}</span></li>`).join('');
+    if(el.innerHTML!==html)el.innerHTML=html;
   }
   let applying=false;
   function enhance(){
@@ -91,7 +93,7 @@
         const interpret=box.querySelector('.interpret');
         if(interpret) interpret.after(summary); else box.prepend(summary);
       }
-      summary.textContent=c().found(routes.length);
+      setText(summary,c().found(routes.length));
       routes.forEach((a,i)=>{
         a.classList.add('route-card');
         a.classList.toggle('primary-route',i===0);
@@ -99,15 +101,15 @@
         if(!text) return;
         let badge=text.querySelector('[data-route-badge]');
         if(!badge){badge=document.createElement('span');badge.className='route-badge';badge.dataset.routeBadge='true';text.prepend(badge)}
-        badge.textContent=i===0?c().first:c().also;
+        setText(badge,i===0?c().first:c().also);
         let detail=text.querySelector('[data-route-detail]');
         if(!detail){detail=document.createElement('span');detail.className='route-detail';detail.dataset.routeDetail='true';text.appendChild(detail)}
         const key=routeKey(a);
-        detail.textContent=c().next[key]||c().next.general;
+        setText(detail,c().next[key]||c().next.general);
       });
       let footer=box.querySelector('[data-engine-footer]');
       if(!footer){footer=document.createElement('div');footer.className='engine-footer';footer.dataset.engineFooter='true';box.appendChild(footer)}
-      footer.textContent=c().footer;
+      setText(footer,c().footer);
     } finally { applying=false; }
   }
   new MutationObserver(()=>queueMicrotask(enhance)).observe(box,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
