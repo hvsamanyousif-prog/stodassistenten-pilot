@@ -14,8 +14,12 @@ assert rules['raw_situation_text_must_not_appear_in_navigation_url'] is True
 assert rules['coarse_flow_segmentation_required'] is True
 assert rules['actor_context_segmentation_required_for_shared_person_module'] is True
 assert rules['feedback_is_learning_signal_not_truth'] is True
+assert rules['incomplete_submission_must_explain_required_answers'] is True
+assert rules['answer_controls_must_expose_pressed_state'] is True
 person_surface=next(s for s in matrix['surfaces'] if s['surface']=='person_module')
 assert person_surface['status']=='present_actor_segmented', 'person feedback must preserve coarse actor context'
+shell_surface=next(s for s in matrix['surfaces'] if s['surface']=='shared_situation_engine')
+assert shell_surface['status']=='present_segmented_accessible', 'shared situation feedback must expose accessible completion state'
 
 person=Path('person-pilot.html').read_text(encoding='utf-8')
 company=Path('company-pilot.html').read_text(encoding='utf-8')
@@ -31,6 +35,11 @@ assert 'pilot-feedback' in shell_feedback
 assert 'situation_engine_' in shell_feedback
 assert 'primaryRoute' in shell_feedback
 assert 'situationText' not in shell_feedback and 'situation_text' not in shell_feedback
+for marker in ["needAnswers:'Svara på de tre frågorna ovan innan du skickar.'","needAnswers:'أجب عن الأسئلة الثلاثة أعلاه قبل الإرسال.'","needAnswers:'پیش از ارسال به هر سه پرسش بالا پاسخ دهید.'"]:
+    assert marker in shell_feedback, f'localized incomplete-feedback explanation missing: {marker}'
+assert "status.textContent=c('needAnswers')" in shell_feedback, 'incomplete shared feedback must not fail silently'
+assert 'aria-pressed="false"' in shell_feedback, 'feedback choices need an initial pressed state'
+assert 'firstButton.focus()' in shell_feedback, 'incomplete feedback should return focus to the first unanswered control'
 
 quick_feedback=Path('client/quick-help-feedback.js').read_text(encoding='utf-8')
 assert 'pilot-feedback' in quick_feedback
@@ -55,4 +64,4 @@ assert 'answers' not in person_context and 'situationText' not in person_context
 assert "pilot.textContent!==actorLabel" in person_context, 'actor label patch must not self-trigger endlessly'
 assert "actorEyebrow.textContent!==heading" in person_context, 'localized eyebrow patch must be idempotent'
 
-print('feedback coverage + privacy routing + canonical actor context: OK')
+print('feedback coverage + privacy routing + canonical actor context + accessible completion: OK')
