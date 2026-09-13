@@ -1,0 +1,130 @@
+{
+  "support_id": "se-forsakringskassan-assistansersattning-vuxna",
+  "name": "Assistansersättning för vuxna med omfattande hjälpbehov",
+  "category": "disability",
+  "subtype": "state_personal_assistance_compensation",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "adult",
+      "disability",
+      "personal_assistance",
+      "extensive_support_needs"
+    ],
+    "age_min": null,
+    "age_max": 66
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "assistans.lss_personkrets",
+        "field": "lss_personkrets",
+        "operator": "text_condition",
+        "value": "Funktionsnedsättningen ska omfattas av någon av personkretsarna i LSS enligt Försäkringskassans bedömning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "notes": "Diagnos eller funktionsnedsättning i sig är inte ett automatiskt beslut om rätt till assistansersättning."
+      },
+      {
+        "rule_id": "assistans.basic_needs_over_20h",
+        "field": "assessed_basic_needs_hours_per_week",
+        "operator": "text_condition",
+        "value": "Behovet av hjälp med grundläggande behov ska av Försäkringskassan bedömas till i genomsnitt mer än 20 timmar per vecka för den statliga assistansersättningen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "notes": "En egen uppskattning av timmar får inte behandlas som myndighetens bedömda antal timmar. Vid mindre än 20 timmar anger Försäkringskassan kommunen som stödväg."
+      },
+      {
+        "rule_id": "assistans.residence",
+        "field": "lives_in_sweden",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "notes": "Försäkringskassans aktuella vägledning anger att personen ska bo i Sverige."
+      },
+      {
+        "rule_id": "assistans.age",
+        "field": "age",
+        "operator": "lte",
+        "value": 66,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "notes": "Primärkällan anger för närvarande 66 år eller yngre. Åldersgränsen ska granskas särskilt före VERIFIED eftersom pensionsåldersrelaterade gränser kan ändras."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "assistans.activities",
+        "prompt": "Vilka grundläggande aktiviteter behöver du personlig hjälp med, till exempel hygien, måltider, av- och påklädning eller kommunikation?",
+        "reason": "Vilken typ av hjälp som behövs påverkar om behovet kan ingå i Försäkringskassans bedömning av grundläggande behov."
+      },
+      {
+        "question_id": "assistans.frequency_extent",
+        "prompt": "Hur ofta behöver du hjälpen och ungefär hur mycket tid tar den under en vanlig vecka?",
+        "reason": "Omfattningen avgör vilken myndighetsväg som behöver kontrolleras, men en egen tidsuppskattning är inte samma sak som ett beslut."
+      },
+      {
+        "question_id": "assistans.age",
+        "prompt": "Hur gammal är du?",
+        "reason": "Försäkringskassans aktuella vuxensida har en åldersgräns som behöver kontrolleras mot den sökandes situation."
+      },
+      {
+        "question_id": "assistans.residence",
+        "prompt": "Bor du i Sverige?",
+        "reason": "Bosättning i Sverige anges som ett villkor på Försäkringskassans aktuella sida."
+      },
+      {
+        "question_id": "assistans.existing_contact",
+        "prompt": "Har du redan kontakt, ansökan eller beslut hos kommunen eller Försäkringskassan om personlig assistans?",
+        "reason": "Befintlig handläggning kan ändra vilket nästa steg som är mest relevant och undvika dubbel eller felriktad kontakt."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Assistansersättning är pengar för att betala personlig assistans. Försäkringskassan bedömer först de grundläggande behoven och, om kraven är uppfyllda, även andra personliga behov. Timantal och aktuellt schablonbelopp ska alltid kontrolleras i aktuell primärkälla.",
+    "recurrence": null
+  },
+  "documents": [
+    "Läkarutlåtande som beskriver funktionsnedsättningen och hur den påverkar personen",
+    "Egen beskrivning av vilken hjälp som behövs, på vilket sätt, hur ofta och ungefär hur lång tid hjälpen tar"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+    "deadline_text": null,
+    "next_step": "Dokumentera vilka konkreta aktiviteter du behöver hjälp med, hur hjälpen ges, hur ofta och ungefär hur lång tid den tar. Ordna läkarutlåtande och kontrollera sedan om Försäkringskassans eller kommunens aktuella ansökningsväg är rätt innan du går vidare."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-04-15T00:00:00+02:00",
+    "retrieved_at": "2026-09-13T23:25:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkälla, kontrollerad 2026-09-14 lokal svensk tid. Mänsklig granskning krävs före VERIFIED. Särskilt ska åldersgränsen, LSS-personkretsen, gränsen mer än 20 timmar grundläggande behov och kommun/Försäkringskassan-routing kontrolleras. En användares egen timuppskattning får aldrig likställas med myndighetens bedömning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-13T23:25:00Z",
+    "last_seen_at": "2026-09-13T23:25:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
