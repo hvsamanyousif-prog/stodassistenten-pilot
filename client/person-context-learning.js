@@ -1,8 +1,10 @@
 (() => {
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const params=new URLSearchParams(window.location.search);
+  const ALLOWED_PERSON_ACTORS=new Set(['private_person','relative','student','employee','association','other']);
   const rawActor=params.get('actor_type')||'private_person';
-  const actor=String(rawActor).toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,32)||'private_person';
+  const sanitizedActor=String(rawActor).toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,32)||'private_person';
+  const actor=ALLOWED_PERSON_ACTORS.has(sanitizedActor)?sanitizedActor:'other';
   const copy={
     sv:{heading:'Din ingång',private_person:'Privatperson',relative:'Anhörig / hjälper någon',student:'Student / ung vuxen',employee:'Anställd',association:'Förening',other:'Bred ingång'},
     ar:{heading:'مدخلك',private_person:'فرد',relative:'قريب / أساعد شخصاً',student:'طالب / شاب بالغ',employee:'موظف',association:'جمعية',other:'مدخل عام'},
