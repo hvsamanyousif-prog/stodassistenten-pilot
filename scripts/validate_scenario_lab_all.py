@@ -34,8 +34,8 @@ for path in paths:
             assert isinstance(case[key], list) and case[key], f'{cid}: {key} must be non-empty list'
         cases.append(case)
 
-# 42 cases were already in the legacy canonical gate. v06-v08 add 5, v09 adds 2, v10 adds 2, v11 adds 2.
-assert len(cases) >= 53, f'expected at least 53 cases across the single scenario system, got {len(cases)}'
+# 53 cases were present after v12. v13 adds two new permanent transition/representation regressions.
+assert len(cases) >= 55, f'expected at least 55 cases across the single scenario system, got {len(cases)}'
 
 required_recent = {
     'lab-individual-v06-01',
@@ -49,6 +49,11 @@ required_recent = {
     'lab-rural-outofregion-sicktravel-v10-02',
     'lab-child-maintenance-v11-01',
     'lab-employee-partialsick-v11-01',
+    'lab-personal-assistance-authority-v12-01',
+    'lab-company-information-gain-v12-02',
+    'lab-young-housing-irregular-income-v12-03',
+    'lab-employee-varsel-transition-v13-01',
+    'lab-relative-housing-representation-v13-02',
 }
 missing_recent = sorted(required_recent - ids)
 assert not missing_recent, f'newer web-signal regressions outside canonical lab: {missing_recent}'
@@ -89,5 +94,17 @@ assert 'work_schedule_distribution' in partial_sick['expected_support_areas']
 assert 'employer_approval_alone_is_enough_for_partial_sick_leave_schedule' in partial_sick['must_not_claim']
 assert 'working_more_never_requires_informing_forsakringskassan' in partial_sick['must_not_claim']
 assert 'check_work_schedule_distribution_with_both_employer_and_forsakringskassan' in partial_sick['expected_next_actions']
+
+varsel = by_id['lab-employee-varsel-transition-v13-01']
+assert 'varsel_vs_actual_unemployment' in varsel['expected_support_areas']
+assert 'varsel_means_already_unemployed' in varsel['must_not_claim']
+assert 'union_membership_equals_a_kassa_membership' in varsel['must_not_claim']
+assert 'if_employment_ends_without_new_job_register_with_arbetsformedlingen_on_first_unemployed_day' in varsel['expected_next_actions']
+
+representation = by_id['lab-relative-housing-representation-v13-02']
+assert 'authorized_relative_boundary' in representation['expected_support_areas']
+assert 'helper_should_use_the_other_persons_bankid_or_credentials' in representation['must_not_claim']
+assert 'adult_child_relationship_alone_always_grants_representation_authority' in representation['must_not_claim']
+assert 'use_helpers_own_e_identification_only_when_current_official_authorized_relative_web_route_applies' in representation['expected_next_actions']
 
 print(f'canonical scenario lab: OK ({len(cases)} cases across {len(paths)} packs)')
