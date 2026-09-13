@@ -22,7 +22,8 @@ sv:{pilot:'Gemensam pilot',eyebrow:'En Stödassistenten – flera ingångar',hel
 ar:{pilot:'نسخة تجريبية موحّدة',eyebrow:'مساعد دعم واحد – مداخل متعددة',hello:'أخبرنا من أنت وما الذي تحاول حله.',sub:'نفس المنصة تساعد الأفراد والأقارب والطلاب والموظفين والشركات والجمعيات على العثور على مسارات مناسبة والخطوة التالية.',privacy:'لا يفترض أن تعرف مسبقاً اسم الدعم أو الجهة أو مصطلحات المشتريات الصحيحة.',choose:'اختر المدخل الأنسب',person:'أبحث لنفسي',personD:'الاقتصاد أو العمل أو المرض أو السكن أو حالة حياتية أخرى',relative:'أساعد شخصاً آخر',relativeD:'قريب أو شخص آخر يحتاج مساعدة للوصول إلى المسار الصحيح',student:'طالب / شاب بالغ',studentD:'الدراسة أو التخرج أو أول وظيفة أو الاقتصاد أو السكن',employee:'موظف',employeeD:'العمل أو الإجازة المرضية أو الحقوق أو دعم الحياة المهنية',company:'شركة',companyD:'المشتريات العامة والتمويل ودعم الشركات',association:'جمعية',associationD:'المشاريع والنشاط والمقر والتمويل والفرص العامة',other:'أمر آخر',otherD:'ابدأ بشكل واسع إذا لم يناسبك أي مدخل تماماً',principle:'منتج واحد. مصدر حقيقة واحد. نظام تعلم واحد. قد تختلف المداخل في الشكل، لكنها تقود إلى نفس مساعد الدعم.'},
 fa:{pilot:'پایلوت یکپارچه',eyebrow:'یک دستیار حمایت – چند ورودی',hello:'بگو چه کسی هستی و می‌خواهی چه مسئله‌ای را حل کنی.',sub:'همان پلتفرم باید به افراد، بستگان، دانشجویان، کارکنان، شرکت‌ها و انجمن‌ها کمک کند مسیرهای مرتبط و قدم بعدی را پیدا کنند.',privacy:'لازم نیست از قبل نام دقیق حمایت، نهاد یا اصطلاحات مناقصه را بدانید.',choose:'ورودی مناسب را انتخاب کنید',person:'برای خودم جست‌وجو می‌کنم',personD:'اقتصاد، کار، بیماری، مسکن یا وضعیت زندگی دیگر',relative:'به شخص دیگری کمک می‌کنم',relativeD:'خویشاوند یا فرد دیگری که برای پیدا کردن مسیر درست کمک می‌خواهد',student:'دانشجو / جوان',studentD:'تحصیل، فارغ‌التحصیلی، اولین کار، اقتصاد یا مسکن',employee:'کارمند',employeeD:'کار، مرخصی بیماری، حقوق یا حمایت‌های مربوط به زندگی کاری',company:'شرکت',companyD:'مناقصه عمومی، تأمین مالی و حمایت‌های کسب‌وکار',association:'انجمن',associationD:'پروژه، فعالیت، محل، تأمین مالی و فرصت‌های عمومی',other:'سایر',otherD:'اگر هیچ ورودی دقیقاً مناسب نیست، گسترده شروع کنید',principle:'یک محصول. یک لایه حقیقت. یک سیستم یادگیری. ورودی‌ها می‌توانند متفاوت باشند اما همگی به همان دستیار حمایت می‌رسند.'}
 };
-let lang='sv';
+let lang=new URLSearchParams(location.search).get('lang');
+if(!COPY[lang]) lang='sv';
 const tr=k=>COPY[lang][k]||k;
 const HOW_COPY={
 sv:{title:'Så hjälper Stödassistenten dig',a:'1. Berätta situationen',ad:'Börja med vem du är och vad som faktiskt händer – inte namnet på ett stöd.',b:'2. Få relevanta vägar',bd:'Vi visar möjliga stöd, rättigheter, tjänster eller möjligheter som är värda att kontrollera.',c:'3. Gå till nästa handling',cd:'Öppna originalkällan, kontrollera villkor och se vad du behöver göra eller ha redo.'},
@@ -30,10 +31,30 @@ ar:{title:'كيف يساعدك مساعد الدعم',a:'1. اشرح الوضع'
 fa:{title:'دستیار حمایت چگونه کمک می‌کند',a:'1. شرایط را بگو',ad:'با این شروع کن که چه کسی هستی و واقعاً چه اتفاقی افتاده، نه نام یک حمایت.',b:'2. مسیرهای مرتبط را ببین',bd:'حمایت‌ها، حقوق، خدمات یا فرصت‌هایی را که ارزش بررسی دارند نشان می‌دهیم.',c:'3. قدم بعدی را بردار',cd:'منبع اصلی را باز کن، شرایط را بررسی کن و ببین چه کاری یا چه مدارکی لازم است.'}
 };
 function howSection(){const h=HOW_COPY[lang]||HOW_COPY.sv;return `<section class="card"><h2>${h.title}</h2><div class="how"><div><b>${h.a}</b><small>${h.ad}</small></div><div><b>${h.b}</b><small>${h.bd}</small></div><div><b>${h.c}</b><small>${h.cd}</small></div></div></section>`}
-
 function target(actor){return actor==='company'?`company-pilot.html?actor_type=${actor}&lang=${lang}`:`person-pilot.html?actor_type=${actor}&lang=${lang}`}
 function entry(actor,title,desc,primary=false){return `<a class="entry ${primary?'primary':''}" href="${target(actor)}"><strong>${tr(title)}</strong><small>${tr(desc)}</small></a>`}
-function render(){document.documentElement.lang=lang;document.body.classList.toggle('rtl',lang==='ar'||lang==='fa');document.getElementById('pilot').textContent=tr('pilot');document.getElementById('main').innerHTML=`<section class="card hero"><div class="eyebrow">${tr('eyebrow')}</div><h1>${tr('hello')}</h1><p class="muted">${tr('sub')}</p><div class="langs">${[['sv','Svenska'],['ar','العربية'],['fa','فارسی']].map(x=>`<button class="lang ${lang===x[0]?'active':''}" onclick="lang='${x[0]}';render()">${x[1]}</button>`).join('')}</div><div class="privacy">🔒 ${tr('privacy')}</div></section><section class="card"><h2>${tr('choose')}</h2><div class="grid">${entry('private_person','person','personD',true)}${entry('relative','relative','relativeD')}${entry('student','student','studentD')}${entry('employee','employee','employeeD')}${entry('company','company','companyD')}${entry('association','association','associationD')}${entry('other','other','otherD')}</div><div class="principle">${tr('principle')}</div></section>${howSection()}`}
+function setLanguage(nextLang){
+  if(!COPY[nextLang]) return;
+  lang=nextLang;
+  const url=new URL(location.href);
+  url.searchParams.set('lang',lang);
+  history.replaceState(null,'',url);
+  render();
+}
+function bindLanguageButtons(){
+  document.querySelectorAll('.lang[data-lang]').forEach(button=>{
+    button.addEventListener('click',()=>setLanguage(button.dataset.lang));
+  });
+}
+function render(){
+  const rtl=lang==='ar'||lang==='fa';
+  document.documentElement.lang=lang;
+  document.documentElement.dir=rtl?'rtl':'ltr';
+  document.body.classList.toggle('rtl',rtl);
+  document.getElementById('pilot').textContent=tr('pilot');
+  document.getElementById('main').innerHTML=`<section class="card hero"><div class="eyebrow">${tr('eyebrow')}</div><h1>${tr('hello')}</h1><p class="muted">${tr('sub')}</p><div class="langs">${[['sv','Svenska'],['ar','العربية'],['fa','فارسی']].map(x=>`<button type="button" class="lang ${lang===x[0]?'active':''}" data-lang="${x[0]}" aria-pressed="${lang===x[0]?'true':'false'}">${x[1]}</button>`).join('')}</div><div class="privacy">🔒 ${tr('privacy')}</div></section><section class="card"><h2>${tr('choose')}</h2><div class="grid">${entry('private_person','person','personD',true)}${entry('relative','relative','relativeD')}${entry('student','student','studentD')}${entry('employee','employee','employeeD')}${entry('company','company','companyD')}${entry('association','association','associationD')}${entry('other','other','otherD')}</div><div class="principle">${tr('principle')}</div></section>${howSection()}`;
+  bindLanguageButtons();
+}
 render();
 </script>
 </body>
