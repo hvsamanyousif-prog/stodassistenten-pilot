@@ -1,0 +1,176 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified long-tail web-signal extensions for the same Stödassistenten scenario laboratory. Community material is discovery-only; all truth-bearing conditions are grounded in primary or issuing-authority sources. These synthetic cases are not entitlement claims and do not create a separate target-group engine.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-caregiver-support-is-not-the-same-as-narstaendepenning",
+      "observation": "Municipal caregiver support and Försäkringskassan near-relative allowance are separate paths. Municipal caregiver support can be relevant for long-term care or support and varies by municipality, while near-relative allowance requires giving up work to support a person with a life-threatening condition. Its 100-day pool belongs to the ill person and is shared among supporters. The product must distinguish these paths before suggesting money or leave.",
+      "discovery_note": "Open questions about caring for an older or chronically ill relative frequently collapse general caregiver support into a presumed cash benefit. No community identity or exact personal story is copied into eval data.",
+      "primary_sources": [
+        "https://www.1177.se/sa-fungerar-varden/anhorig---narstaende/anhorigstod---stod-for-dig-som-vardar-eller-stodjer-en-narstaende/",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende"
+      ]
+    },
+    {
+      "pattern_id": "signal-pension-housing-supplement-is-not-renter-only",
+      "observation": "Pension housing supplement is not limited to renters. Current Pensionsmyndigheten material assesses housing cost together with income, assets and family situation, and its 2026 material includes owner-occupied villa calculations. Current eligibility guidance also requires residence in Sweden, full public pension and age 67 or older. The product must not screen out an owner merely because the home is owned.",
+      "discovery_note": "Search and community discussion show recurring uncertainty about whether owning a house or having assets automatically excludes housing supplement. The scenario generalizes that misconception and relies on Pensionsmyndigheten for truth-bearing conditions.",
+      "primary_sources": [
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/fakta-om-bostadstillagg",
+        "https://www.pensionsmyndigheten.se/content/dam/pensionsmyndigheten/blanketter---broschyrer---faktablad/broschyrer-och-faktablad/faktablad/2025/PM-7607-Bostadstillagg-26-01.pdf"
+      ]
+    },
+    {
+      "pattern_id": "signal-f-dental-care-needs-functional-assessment-and-region-decision",
+      "observation": "Regional F-dental care is not a diagnosis-only entitlement. Current 1177 guidance requires assessment of how a long-term disease or disability affects oral hygiene or the ability to undergo treatment, normally uses a specific medical certificate, and the regional dental unit decides. The product must separate this regional route from state dental benefits and verify treatment scope before estimating cost.",
+      "discovery_note": "Dental-support searches reveal repeated ambiguity between general state dental benefits and regional dental support linked to functional impairment. The scenario is synthetic and contains no real patient details.",
+      "primary_sources": [
+        "https://www.1177.se/sa-fungerar-varden/kostnader-och-ersattningar/kostnader-och-ersattningar-inom-tandvard/tandvard-om-du-har-en-funktionsnedsattning/"
+      ]
+    },
+    {
+      "pattern_id": "signal-housing-benefit-2027-rules-must-not-be-backported",
+      "observation": "Housing-benefit income calculation changes on 1 January 2027. Current decisions under the existing system use estimated annual income and can create repayment risk if actual income is higher. Försäkringskassan states that the new monthly-income rules apply to decisions from 1 January 2027 and become relevant to an existing recipient when the current benefit period ends in 2027 and a new application is made. The product must not apply future rules to a current 2026 decision.",
+      "discovery_note": "Community questions about variable student and work income show persistent confusion about what is counted and when repayment arises. The timing rule below is grounded only in current Försäkringskassan guidance.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-relative-v05-01",
+      "actor_type": "relative",
+      "story": "Jag hjälper en äldre förälder flera dagar i veckan och har börjat gå ner i arbetstid. Föräldern behöver mycket stöd i vardagen men har inte fått besked om något livshotande tillstånd. Jag undrar om det finns anhörigstöd eller någon ersättning för mig.",
+      "expected_support_areas": [
+        "municipal_caregiver_support",
+        "narstaendepenning_boundary",
+        "caregiver_work_leave"
+      ],
+      "must_not_claim": [
+        "ordinary_long_term_care_automatically_qualifies_for_narstaendepenning",
+        "family_relationship_alone_guarantees_cash_benefit",
+        "narstaendepenning_100_days_are_per_caregiver",
+        "all_municipalities_offer_identical_caregiver_support"
+      ],
+      "expected_questions": [
+        "q_cared_person_condition_and_duration",
+        "q_life_threatening_near_term_condition",
+        "q_work_reduction_or_absence",
+        "q_home_municipality",
+        "q_cared_person_consent_and_existing_services"
+      ],
+      "expected_next_actions": [
+        "separate_municipal_caregiver_support_from_narstaendepenning",
+        "contact_municipality_caregiver_support_or_social_services",
+        "check_forsakringskassan_narstaendepenning_only_if_life_threatening_and_work_is_forgone",
+        "verify_shared_day_pool_before_assuming_available_days"
+      ],
+      "source_requirements": [
+        "1177",
+        "Försäkringskassan",
+        "relevant_municipality"
+      ]
+    },
+    {
+      "case_id": "lab-older-v05-01",
+      "actor_type": "older_person",
+      "story": "Jag är 70 år, tar ut hela min allmänna pension och bor kvar i ett småhus som jag äger. Pensionen är låg och boendekostnaderna är höga, men jag trodde att bostadstillägg bara var för den som hyr sin bostad.",
+      "expected_support_areas": [
+        "pension_housing_supplement",
+        "housing_cost_assessment",
+        "elder_support_automatic_review"
+      ],
+      "must_not_claim": [
+        "homeowners_are_excluded_from_bostadstillagg",
+        "low_pension_alone_guarantees_bostadstillagg",
+        "assets_income_or_partner_economy_are_irrelevant",
+        "partial_public_pension_is_enough_without_verification"
+      ],
+      "expected_questions": [
+        "q_age",
+        "q_full_public_pension_drawn",
+        "q_housing_form_and_cost",
+        "q_income_and_assets",
+        "q_partner_or_household"
+      ],
+      "expected_next_actions": [
+        "check_current_pensionsmyndigheten_conditions",
+        "calculate_housing_cost_for_owned_home",
+        "use_official_preliminary_calculator_or_application",
+        "allow_automatic_aldreforsorjningsstod_review_without_promising_outcome"
+      ],
+      "source_requirements": [
+        "Pensionsmyndigheten"
+      ]
+    },
+    {
+      "case_id": "lab-disability-v05-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag har en långvarig sjukdom som gör det svårt att sköta munhygienen och att genomgå vissa tandbehandlingar. Jag har hört om F-tandvård och undrar om diagnosen automatiskt betyder att jag får stödet och vem som i så fall beslutar.",
+      "expected_support_areas": [
+        "regional_f_dental_care",
+        "functional_dental_need_assessment",
+        "dental_support_scheme_boundary"
+      ],
+      "must_not_claim": [
+        "diagnosis_alone_guarantees_f_dental_care",
+        "forsakringskassan_decides_f_dental_care",
+        "all_dental_treatments_are_included_in_f_dental_care",
+        "medical_certificate_is_never_needed"
+      ],
+      "expected_questions": [
+        "q_condition_or_disability",
+        "q_functional_impact_on_oral_hygiene",
+        "q_functional_impact_on_treatment",
+        "q_home_region",
+        "q_medical_certificate_or_treating_doctor",
+        "q_planned_treatment_type"
+      ],
+      "expected_next_actions": [
+        "ask_treating_doctor_for_required_medical_certificate_if_applicable",
+        "contact_region_dental_unit_for_f_dental_care_assessment",
+        "separate_regional_f_dental_care_from_state_dental_benefits",
+        "verify_treatment_scope_before_estimating_cost"
+      ],
+      "source_requirements": [
+        "1177",
+        "relevant_region_dental_unit"
+      ]
+    },
+    {
+      "case_id": "lab-individual-v05-01",
+      "actor_type": "individual",
+      "story": "Jag får bostadsbidrag under 2026 och min inkomst varierar. Jag har läst att Försäkringskassan ska använda månadsinkomst 2027 och undrar om mitt nuvarande bidrag redan justeras automatiskt varje månad eller om jag fortfarande måste anmäla ändringar.",
+      "expected_support_areas": [
+        "housing_benefit_current_income_reporting",
+        "housing_benefit_2027_transition",
+        "repayment_risk"
+      ],
+      "must_not_claim": [
+        "2027_monthly_income_rules_already_apply_in_2026",
+        "existing_2026_decision_automatically_converts_on_2027_01_01",
+        "income_changes_can_be_ignored_until_final_reconciliation",
+        "no_repayment_risk_under_current_annual_estimate_system"
+      ],
+      "expected_questions": [
+        "q_current_housing_benefit_decision_period",
+        "q_current_annual_income_estimate",
+        "q_income_change",
+        "q_household_and_housing",
+        "q_self_employed_or_foreign_income"
+      ],
+      "expected_next_actions": [
+        "update_current_income_estimate_under_2026_rules_if_needed",
+        "verify_effective_date_before_using_2027_monthly_rules",
+        "check_transition_when_current_decision_ends_or_new_application_is_made",
+        "do_not_backport_future_rule_to_current_decision"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    }
+  ]
+}
