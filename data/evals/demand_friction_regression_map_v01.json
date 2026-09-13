@@ -32,6 +32,18 @@
       "product_miss": "Young users can treat all paid housing as equivalent or delay reporting income/household changes, increasing missed-support or repayment risk.",
       "fix_or_guardrail": "Preserve housing-form classification, current-income/change reporting and primary-source verification, including irregular-income handling that must not promise an amount or no repayment.",
       "regression_case_ids": ["lab-student-housing-v07-01", "lab-student-housing-v07-02", "lab-young-housing-irregular-income-v12-03"]
+    },
+    {
+      "signal_id": "df-varsel-unemployment-transition-v01",
+      "product_miss": "A person can treat a warning of possible redundancy as if unemployment has already started, or wait too long once employment actually ends because union, a-kassa and transition support are conflated.",
+      "fix_or_guardrail": "Establish current employment status first, separate preparation/transition support from first-unemployed-day registration, and keep union, a-kassa and transition routes distinct.",
+      "regression_case_ids": ["lab-employee-varsel-transition-v13-01"]
+    },
+    {
+      "signal_id": "df-relative-representation-housing-supplement-v01",
+      "product_miss": "A helper can assume family relationship alone authorizes representation or can be told to use the supported person's credentials instead of the correct representative route.",
+      "fix_or_guardrail": "Check relationship, capacity and existing representative arrangements; require own e-identification where the official authorized-relative web route applies and fail closed on representation authority.",
+      "regression_case_ids": ["lab-relative-housing-representation-v13-02"]
     }
   ]
 }
