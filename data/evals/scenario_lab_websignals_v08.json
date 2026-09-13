@@ -1,0 +1,94 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified synthetic web-signal extensions for the same Stödassistenten scenario laboratory. Community discussion is discovery-only; truth-bearing distinctions are grounded in current Försäkringskassan sources. No raw community story or identifying detail is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-aktivitetsstod-is-not-aktivitetsersattning",
+      "observation": "People can confuse aktivitetsstöd with aktivitetsersättning because the names are similar. Aktivitetsstöd or utvecklingsersättning is tied to participation in an Arbetsförmedlingen program, while aktivitetsersättning is a different social-insurance benefit for people aged 19–29 whose work capacity is reduced for at least one year because of illness, injury or disability. The product must disambiguate the term before giving eligibility, amount or application guidance.",
+      "discovery_note": "Recent public community discussion contained explicit confusion between the two benefits after a-kassa. The scenario below generalizes the terminology error and stores no community identity or exact personal story.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/arbetssokande/aktivitetsstod-eller-utvecklingsersattning-nar-du-deltar-i-arbetsformedlingens-program",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna"
+      ]
+    },
+    {
+      "pattern_id": "signal-current-study-options-with-aktivitetsersattning-have-changed",
+      "observation": "Current 2026 rules give people with aktivitetsersättning several distinct study paths, including prövotid for studies and, depending on circumstances, study with only part of the benefit made dormant. Old blanket advice that all aktivitetsersättning must always become fully dormant when studying is no longer safe. The product must ask what benefit is held, why it was granted, study degree and whether prövotid or another approved arrangement is relevant before advising action.",
+      "discovery_note": "The 2026 rule change creates a stale-advice risk: older articles and remembered rules can conflict with current official guidance. Only current Försäkringskassan guidance is truth-bearing here.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sa-funkar-det-nar-du-har-aktivitetsersattning",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-06-01-okade-mojligheter-att-studera-med-sjuk--eller-aktivitetsersattning"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-student-activity-v08-01",
+      "actor_type": "student",
+      "story": "Jag tar snart examen och mina a-kassedagar är nästan slut. Jag har hört att man då går över till aktivitetsersättning eller aktivitetsstöd, men jag förstår inte skillnaden eller om något av det sker automatiskt.",
+      "expected_support_areas": [
+        "unemployment_program_benefit",
+        "benefit_terminology_disambiguation",
+        "a_kassa_transition",
+        "employment_service_program_status"
+      ],
+      "must_not_claim": [
+        "aktivitetsstod_equals_aktivitetsersattning",
+        "a_kassa_exhaustion_automatically_creates_aktivitetsstod",
+        "unemployment_alone_creates_aktivitetsersattning",
+        "guaranteed_daily_amount_without_program_and_income_information"
+      ],
+      "expected_questions": [
+        "q_graduation_or_unemployment_start_date",
+        "q_a_kassa_status_or_remaining_days",
+        "q_registered_with_arbetsformedlingen",
+        "q_arbetsformedlingen_program_decision",
+        "q_long_term_reduced_work_capacity_if_aktivitetsersattning_is_mentioned"
+      ],
+      "expected_next_actions": [
+        "disambiguate_aktivitetsstod_from_aktivitetsersattning",
+        "verify_arbetsformedlingen_program_status_before_aktivitetsstod_guidance",
+        "use_forsakringskassan_program_benefit_path_only_when_program_participation_is_verified",
+        "do_not_route_to_disability_benefit_from_unemployment_alone"
+      ],
+      "source_requirements": [
+        "Försäkringskassan",
+        "Arbetsförmedlingen"
+      ]
+    },
+    {
+      "case_id": "lab-disability-study-v08-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag har aktivitetsersättning på grund av nedsatt arbetsförmåga och funderar på att prova deltidsstudier. Jag har fått höra att hela ersättningen alltid måste pausas om man börjar studera och vill veta vad som faktiskt gäller nu.",
+      "expected_support_areas": [
+        "activity_compensation_study_options",
+        "study_trial_period",
+        "partial_or_dormant_benefit_planning",
+        "current_rule_verification"
+      ],
+      "must_not_claim": [
+        "all_aktivitetsersattning_must_always_be_fully_dormant_when_studying",
+        "old_pre_2026_study_rule_is_current_without_verification",
+        "study_start_automatically_preserves_full_benefit",
+        "prövotid_is_automatic_without_conditions_or_application"
+      ],
+      "expected_questions": [
+        "q_activity_compensation_type",
+        "q_how_long_activity_compensation_has_been_received",
+        "q_planned_study_degree",
+        "q_study_start_date",
+        "q_previous_prövotid_or_dormant_period"
+      ],
+      "expected_next_actions": [
+        "verify_current_forsakringskassan_study_options",
+        "compare_prövotid_with_dormant_or_partial_benefit_path",
+        "check_required_application_or_notification_before_changing_activity",
+        "do_not_apply_stale_pre_change_rule"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    }
+  ]
+}
