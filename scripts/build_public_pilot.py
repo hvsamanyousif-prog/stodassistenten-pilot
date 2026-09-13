@@ -3,7 +3,7 @@
 
 The root ``index.html`` is the shared platform shell. The preserved person pilot
 lives at ``person-pilot.html`` and receives the public capability runtime at build
-time. Company and future module pilot pages remain explicit deep-link harnesses
+time. Company and focused quick-help pages remain explicit deep-link modules
 inside the same deployed site.
 """
 
@@ -23,7 +23,7 @@ SCRIPT_PATHS = (
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
-MODULE_PILOT_PATHS = ("company-pilot.html",)
+MODULE_PILOT_PATHS = ("company-pilot.html", "quick-help.html")
 
 
 def wiring_block() -> str:
