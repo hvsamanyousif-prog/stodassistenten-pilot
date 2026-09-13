@@ -17,9 +17,17 @@ def require(condition: bool, message: str) -> None:
 
 def make_fixture(root: Path) -> None:
     (root / "index.html").write_text(
+        '<!doctype html><html lang="sv"><body><main>shell</main></body></html>',
+        encoding="utf-8",
+    )
+    (root / builder.PERSON_PILOT_PATH).write_text(
         '<!doctype html><html lang="sv"><body><main>pilot</main><script>function results(){};function resultCard(){};function render(){}</script></body></html>',
         encoding="utf-8",
     )
+    for relative in builder.MODULE_PILOT_PATHS:
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('<!doctype html><html><body>module</body></html>', encoding="utf-8")
     for relative in builder.SCRIPT_PATHS:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -33,7 +41,7 @@ def test_injection_is_exact() -> None:
     source = '<html><body><script>window.keep="exact";</script></body></html>'
     built = builder.inject_wiring(source)
     block = builder.wiring_block() + "\n"
-    require(built.replace(block, "", 1) == source, "managed block must be the only HTML mutation")
+    require(built.replace(block, "", 1) == source, "managed block must be the only pilot HTML mutation")
     require(built.count(builder.MANAGED_START) == 1, "managed start marker must occur once")
     require(built.count(builder.MANAGED_END) == 1, "managed end marker must occur once")
 
@@ -63,7 +71,13 @@ def test_minimal_artifact() -> None:
         root.mkdir()
         make_fixture(root)
         builder.build(root, site)
-        expected = {Path("index.html"), Path(builder.PROFILE_PATH), *(Path(path) for path in builder.SCRIPT_PATHS)}
+        expected = {
+            Path("index.html"),
+            Path(builder.PERSON_PILOT_PATH),
+            Path(builder.PROFILE_PATH),
+            *(Path(path) for path in builder.MODULE_PILOT_PATHS),
+            *(Path(path) for path in builder.SCRIPT_PATHS),
+        }
         actual = {path.relative_to(site) for path in site.rglob("*") if path.is_file()}
         require(actual == expected, f"public artifact drifted: {sorted(str(p) for p in actual ^ expected)}")
 
@@ -78,12 +92,26 @@ def test_minimal_artifact() -> None:
 
 
 def verify_repository_build(source_root: Path, site_root: Path) -> None:
-    source_html = (source_root / "index.html").read_text(encoding="utf-8")
-    built_html = (site_root / "index.html").read_text(encoding="utf-8")
-    block = builder.wiring_block() + "\n"
-    require(built_html.replace(block, "", 1) == source_html, "repository build changed pilot HTML outside wiring block")
+    source_shell = (source_root / "index.html").read_text(encoding="utf-8")
+    built_shell = (site_root / "index.html").read_text(encoding="utf-8")
+    require(built_shell == source_shell, "shared shell must deploy byte-for-byte")
+    for token in (
+        "En Stödassistenten – flera ingångar",
+        "person-pilot.html",
+        "company-pilot.html",
+        "actor_type=",
+    ):
+        require(token in built_shell, f"shared shell invariant missing: {token}")
 
-    # Existing multilingual/RTL pilot invariants must survive byte-for-byte because only the block is injected.
+    source_person = (source_root / builder.PERSON_PILOT_PATH).read_text(encoding="utf-8")
+    built_person = (site_root / builder.PERSON_PILOT_PATH).read_text(encoding="utf-8")
+    block = builder.wiring_block() + "\n"
+    require(
+        built_person.replace(block, "", 1) == source_person,
+        "person pilot build changed HTML outside wiring block",
+    )
+
+    # Existing multilingual/RTL person-pilot invariants must survive byte-for-byte.
     for token in (
         "sv:{",
         "ar:{",
@@ -91,12 +119,19 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         ".rtl{direction:rtl",
         "document.body.classList.toggle('rtl',l==='ar'||l==='fa')",
     ):
-        require(token in source_html, f"source pilot invariant missing: {token}")
-        require(token in built_html, f"built pilot invariant missing: {token}")
+        require(token in source_person, f"source person-pilot invariant missing: {token}")
+        require(token in built_person, f"built person-pilot invariant missing: {token}")
 
-    positions = [built_html.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
-    require(positions == sorted(positions), "repository build script order drifted")
-    require(built_html.count(builder.MANAGED_START) == 1, "repository build must contain exactly one managed wiring block")
+    positions = [built_person.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
+    require(positions == sorted(positions), "person pilot script order drifted")
+    require(built_person.count(builder.MANAGED_START) == 1, "person pilot must contain exactly one managed wiring block")
+
+    for module in builder.MODULE_PILOT_PATHS:
+        require((site_root / module).is_file(), f"deployed module missing: {module}")
+        require(
+            (site_root / module).read_bytes() == (source_root / module).read_bytes(),
+            f"module must deploy byte-for-byte: {module}",
+        )
 
 
 def main() -> int:
