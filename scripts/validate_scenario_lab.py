@@ -7,6 +7,7 @@ BASE = Path('data/evals/scenario_lab_v01.json')
 EXTENSIONS = [
     Path('data/evals/scenario_lab_websignals_v01.json'),
     Path('data/evals/scenario_lab_websignals_continuous.json'),
+    Path('data/evals/scenario_lab_websignals_v05.json'),
 ]
 
 for path in [BASE, *EXTENSIONS]:
@@ -30,8 +31,8 @@ required_fields = {
     'expected_questions','expected_next_actions','source_requirements'
 }
 
-if len(cases) < 38:
-    print(f'expected at least 38 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
+if len(cases) < 42:
+    print(f'expected at least 42 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
     raise SystemExit(1)
 
 for case in cases:
@@ -172,6 +173,50 @@ if (
     or 'verify_trip_purpose_and_other_payer_before_recommending_application' not in riksfardtjanst['expected_next_actions']
 ):
     print('riksfardtjanst purpose/function/payer regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Caregiver-support regression: municipal support and near-relative allowance are distinct paths.
+caregiver = by_id.get('lab-relative-v05-01')
+if (
+    not caregiver
+    or 'ordinary_long_term_care_automatically_qualifies_for_narstaendepenning' not in caregiver['must_not_claim']
+    or 'municipal_caregiver_support' not in caregiver['expected_support_areas']
+    or 'separate_municipal_caregiver_support_from_narstaendepenning' not in caregiver['expected_next_actions']
+):
+    print('caregiver support vs narstaendepenning regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Pension housing-support regression: owning the primary home must not screen out a pensioner.
+pension_home = by_id.get('lab-older-v05-01')
+if (
+    not pension_home
+    or 'homeowners_are_excluded_from_bostadstillagg' not in pension_home['must_not_claim']
+    or 'pension_housing_supplement' not in pension_home['expected_support_areas']
+    or 'Pensionsmyndigheten' not in pension_home['source_requirements']
+):
+    print('pension housing supplement owner-home regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Disability/dental regression: F-dental care needs functional assessment and a regional decision.
+f_dental = by_id.get('lab-disability-v05-01')
+if (
+    not f_dental
+    or 'diagnosis_alone_guarantees_f_dental_care' not in f_dental['must_not_claim']
+    or 'regional_f_dental_care' not in f_dental['expected_support_areas']
+    or 'contact_region_dental_unit_for_f_dental_care_assessment' not in f_dental['expected_next_actions']
+):
+    print('F-dental functional/regional-decision regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Temporal housing-benefit regression: future 2027 monthly-income rules must not be backported to 2026.
+housing_2027 = by_id.get('lab-individual-v05-01')
+if (
+    not housing_2027
+    or '2027_monthly_income_rules_already_apply_in_2026' not in housing_2027['must_not_claim']
+    or 'housing_benefit_2027_transition' not in housing_2027['expected_support_areas']
+    or 'do_not_backport_future_rule_to_current_decision' not in housing_2027['expected_next_actions']
+):
+    print('housing benefit 2026-to-2027 transition regression missing', file=sys.stderr)
     raise SystemExit(1)
 
 print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types, {len(packs)} packs)')
