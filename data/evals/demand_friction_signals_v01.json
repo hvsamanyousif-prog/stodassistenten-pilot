@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Qualitative demand/friction intelligence for prioritizing the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. Community/Q&A sources may support recurrence discovery only; truth-bearing facts require the listed primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. These scores guide eval/retrieval work only and never promote a support claim to VERIFIED."
+  },
+  "signals": [
+    {
+      "signal_id": "df-child-maintenance-terms-v01",
+      "actor_types": ["child_via_guardian", "individual"],
+      "natural_language_queries": [
+        "den andra föräldern betalar inte vad kan jag få",
+        "vad är skillnaden på underhåll och underhållsstöd",
+        "förälder betalar bara ibland vem ska jag ringa"
+      ],
+      "demand_signal": {"score": 4, "basis": "Recurring public questions and a dedicated Försäkringskassan information path indicate repeated need."},
+      "friction_signal": {"score": 5, "basis": "Everyday language collapses underhållsbidrag and underhållsstöd into one word although routes and conditions differ."},
+      "miss_consequence": {"score": 5, "basis": "Wrong routing can delay a child-related payment/application and create incorrect amount expectations."},
+      "source_fragmentation": {"score": 3, "basis": "Core truth is concentrated at Försäkringskassan, but users encounter agreements, direct parent payments and agency support as separate concepts."},
+      "language_accessibility_friction": {"score": 3, "basis": "Legal/administrative terms are harder than the natural-language problem statement; multilingual explanation can reduce ambiguity."},
+      "steps_to_action": {"score": 3, "basis": "The correct path depends on residence/registration, payment status and whether an agreement or decision already exists."},
+      "recurrence_signal": {"score": 4, "basis": "Public Q&A contains repeated variations of who pays, what happens after separation and what underhåll means."},
+      "current_product_coverage_gap": {"score": 5, "basis": "No permanent canonical scenario previously forced the product to distinguish these two maintenance routes."},
+      "priority_band": "HIGH",
+      "discovery_sources": ["https://soctanter.malmo.se/fraga/11713"],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala"
+      ],
+      "recommended_learning_action": "Add fail-closed synthetic regression distinguishing direct underhållsbidrag from Försäkringskassan underhållsstöd and ask only facts that can change the route.",
+      "truth_rule": "Discovery signal is not truth; verify current conditions, amounts and application route against Försäkringskassan."
+    },
+    {
+      "signal_id": "df-partial-sick-leave-scheduling-v01",
+      "actor_types": ["employee"],
+      "natural_language_queries": [
+        "jag är sjukskriven 50 procent kan jag jobba hela dagar",
+        "kan jag jobba mer en vecka när jag har sjukpenning",
+        "räcker det att chefen godkänner arbetstiden när jag är deltidssjukskriven"
+      ],
+      "demand_signal": {"score": 4, "basis": "Part-time sickness benefit is a common transition where practical scheduling questions arise after the benefit decision."},
+      "friction_signal": {"score": 5, "basis": "Users can confuse an employer scheduling agreement with the separate requirement to coordinate benefit-relevant work distribution."},
+      "miss_consequence": {"score": 5, "basis": "Incorrect advice can affect sickness-benefit administration and create payment or reporting problems."},
+      "source_fragmentation": {"score": 3, "basis": "The user must coordinate employer realities with Försäkringskassan benefit rules."},
+      "language_accessibility_friction": {"score": 3, "basis": "Terms such as degree of sickness benefit and distribution of working time are less intuitive than the user's scheduling question."},
+      "steps_to_action": {"score": 3, "basis": "A safe next step requires current degree, proposed distribution and whether work extent is changing."},
+      "recurrence_signal": {"score": 4, "basis": "Försäkringskassan maintains a dedicated FAQ answer for this exact practical issue."},
+      "current_product_coverage_gap": {"score": 4, "basis": "Employee support existed, but no permanent scenario forced both-employer-and-Försäkringskassan coordination for part-time scheduling."},
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld"
+      ],
+      "recommended_learning_action": "Add employee regression that blocks employer-only approval claims and prioritizes the minimum facts needed to determine whether schedule or work extent changes must be coordinated.",
+      "truth_rule": "Verify current sickness-benefit guidance and the person's current decision before making benefit or schedule claims."
+    },
+    {
+      "signal_id": "df-personal-assistance-authority-split-v01",
+      "actor_types": ["person_with_disability", "child_via_guardian", "relative"],
+      "natural_language_queries": [
+        "vem söker jag personlig assistans hos kommunen eller försäkringskassan",
+        "jag behöver mycket hjälp hemma vem ska jag ringa",
+        "kan mitt barn få assistansersättning"
+      ],
+      "demand_signal": {"score": 4, "basis": "Personal assistance has dedicated national and municipal application routes and affects both adults and children."},
+      "friction_signal": {"score": 5, "basis": "The same everyday need can route to municipality or Försäkringskassan depending on assessed fundamental-needs hours and other conditions."},
+      "miss_consequence": {"score": 5, "basis": "Wrong authority routing can delay access to a high-impact disability support process."},
+      "source_fragmentation": {"score": 5, "basis": "National Försäkringskassan rules and municipal application responsibilities coexist."},
+      "language_accessibility_friction": {"score": 4, "basis": "LSS person-group and fundamental-needs concepts are difficult to infer from a natural description of daily assistance needs."},
+      "steps_to_action": {"score": 4, "basis": "A safe route requires functional-need facts and authority boundary verification rather than diagnosis-only routing."},
+      "recurrence_signal": {"score": 4, "basis": "Both national and municipal guidance repeatedly explain the authority split."},
+      "current_product_coverage_gap": {"score": 4, "basis": "Disability scenarios exist, but the authority split remains a high-consequence retrieval/routing area for continued testing."},
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna"
+      ],
+      "recommended_learning_action": "Queue a future synthetic authority-routing scenario that asks about functional assistance needs and verifies municipality versus Försäkringskassan without diagnosis-based entitlement inference.",
+      "truth_rule": "Do not convert diagnosis, estimated hours or user wording into entitlement; verify current official criteria and responsible authority."
+    },
+    {
+      "signal_id": "df-company-procurement-too-many-steps-v01",
+      "actor_types": ["company"],
+      "natural_language_queries": [
+        "företag vill lämna anbud var hittar jag upphandlingar",
+        "hur börjar mitt företag sälja till kommunen",
+        "vilka steg behöver jag innan jag lämnar anbud"
+      ],
+      "demand_signal": {"score": 4, "basis": "The company pilot and official procurement guidance both center on finding real opportunities and understanding requirements."},
+      "friction_signal": {"score": 4, "basis": "Users can be forced through generic readiness questions before reaching the actual official search/action path."},
+      "miss_consequence": {"score": 3, "basis": "Excess steps mainly cause abandonment or wasted effort rather than direct legal/benefit harm."},
+      "source_fragmentation": {"score": 4, "basis": "Announcements are spread across registered databases and specific procurement documents control the actual requirements."},
+      "language_accessibility_friction": {"score": 2, "basis": "Terminology is specialized but the current pilot already explains several procurement concepts in plain Swedish."},
+      "steps_to_action": {"score": 5, "basis": "The current company UI can ask up to seven questions before showing next actions, including a free-text description that does not affect routing."},
+      "recurrence_signal": {"score": 4, "basis": "Finding the right procurement and understanding what is mandatory are recurring official guidance topics."},
+      "current_product_coverage_gap": {"score": 3, "basis": "Truth/source coverage is relatively strong, but the interactive information-gain path remains inefficient."},
+      "priority_band": "MEDIUM_HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/hitta-affaren-i-offentlig-sektor",
+        "https://www.konkurrensverket.se/upphandling/registrerade-annonsdatabaser/annonsdatabasregistret/"
+      ],
+      "recommended_learning_action": "Self-revise the company interaction so questions are asked only when they change the route or readiness advice; keep procurement-specific source verification intact.",
+      "truth_rule": "UX prioritization is not procurement truth; specific procurement documents and official sources remain controlling."
+    }
+  ]
+}
