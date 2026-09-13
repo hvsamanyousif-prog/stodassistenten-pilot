@@ -17,7 +17,7 @@ def require(condition: bool, message: str) -> None:
 
 def make_fixture(root: Path) -> None:
     (root / "index.html").write_text(
-        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar</main></body></html>',
+        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar quickEntry(\'dental\' quickEntry(\'vision\'</main></body></html>',
         encoding="utf-8",
     )
     (root / builder.PERSON_PILOT_PATH).write_text(
@@ -99,8 +99,8 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "person-pilot.html",
         "company-pilot.html",
         "quick-help.html",
-        "mode=dental",
-        "mode=vision",
+        "quickEntry('dental'",
+        "quickEntry('vision'",
         "actor_type=",
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
@@ -138,8 +138,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     for token in (
         'id="main" tabindex="-1" aria-live="polite"',
         'class="skip"',
-        "mode==='dental'",
-        "mode==='vision'",
+        "['dental','vision']",
         "forsakringskassan.se/privatperson/tandvard/tandvardsstod",
         "boverket.se/sv/babhandboken/for-dig-som-soker/vad-ar-bostadsanpassningsbidrag",
         "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel",
