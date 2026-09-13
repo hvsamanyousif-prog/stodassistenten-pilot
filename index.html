@@ -58,7 +58,23 @@ function hrefWithLang(base){const u=new URL(base,location.href);u.searchParams.s
 function setLang(next){if(!I18N[next])return;lang=next;const u=new URL(location.href);u.searchParams.set('lang',lang);history.replaceState(null,'',u);render();}
 function score(text,key){const hay=text.toLowerCase();return KEYWORDS[key].reduce((n,w)=>n+(hay.includes(w.toLowerCase())?1:0),0)}
 function classify(text){const ranked=Object.keys(KEYWORDS).map(k=>[k,score(text,k)]).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);if(!ranked.length)return ['general','economy','work'];if(ranked[0]==='vision'&&!ranked.includes('economy'))ranked.push('economy');if(ranked[0]==='dental'&&!ranked.includes('economy'))ranked.push('economy');return [...new Set(ranked.concat('general'))].slice(0,3)}
-function routeHtml(key,text){const r=t().routes[key]||t().routes.general;let href=hrefWithLang(r[2]);if((key==='dental'||key==='vision')&&text){const u=new URL(href,location.href);u.searchParams.set('q',text.slice(0,500));href=u.pathname.split('/').pop()+u.search;}return `<a class="route" href="${href}"><span><strong>${r[0]}</strong><small>${r[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`}
+function coarseNeed(mode,text){
+  const x=String(text||'').toLowerCase();
+  if(mode==='dental'){
+    if(/kost|råd|peng|dyr|ekonomi|stöd|bidrag|högkost|اقتص|مال|هزینه|پول/.test(x))return 'cost';
+    if(/ont|värk|smärt|akut|svull|besvär|درد|وجع/.test(x))return 'care';
+    if(/stöd|bidrag|högkost|حمایت|دعم/.test(x))return 'support';
+    return 'unsure';
+  }
+  if(mode==='vision'){
+    if(/hem|bostad|lägen|trösk|kök|belys|خانه|منزل/.test(x))return 'home';
+    if(/mobil|dator|läsa|skärm|voiceover|hjälpmedel|تلفن|رایانه|خواندن/.test(x))return 'tech';
+    if(/jobb|arbete|skola|stud|کار|تحصیل|عمل|دراسة/.test(x))return 'work';
+    return 'unsure';
+  }
+  return 'unsure';
+}
+function routeHtml(key,text){const r=t().routes[key]||t().routes.general;let href=hrefWithLang(r[2]);if((key==='dental'||key==='vision')&&text){const u=new URL(href,location.href);u.searchParams.set('need',coarseNeed(key,text));href=u.pathname.split('/').pop()+u.search;}return `<a class="route" href="${href}"><span><strong>${r[0]}</strong><small>${r[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`}
 function analyze(){const text=document.getElementById('situation').value.trim();const keys=classify(text);const box=document.getElementById('engineResults');box.innerHTML=`<div class="interpret">${text?t().interp:t().fallback}</div>${keys.map(k=>routeHtml(k,text)).join('')}`;box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function renderPaths(){const keys=['dental','vision','work','economy','study','company','association','general'];const icons={dental:'◉',vision:'◐',work:'↗',economy:'¤',study:'◇',company:'▣',association:'◎',general:'+'};return keys.map(k=>{const r=t().routes[k];return `<a class="path" href="${hrefWithLang(r[2])}"><span class="icon" aria-hidden="true">${icons[k]}</span><b>${r[0]}</b><small>${r[1]}</small></a>`}).join('')}
 function renderActors(){return `<div><h2>${t().actors}</h2><p>${t().actorSub}</p></div>${t().actorsData.map(a=>`<a class="actorlink" href="${hrefWithLang(a[2])}"><span>${a[0]}<small>${a[1]}</small></span><span aria-hidden="true">→</span></a>`).join('')}`}
