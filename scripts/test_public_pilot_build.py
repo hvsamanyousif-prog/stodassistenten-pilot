@@ -17,7 +17,7 @@ def require(condition: bool, message: str) -> None:
 
 def make_fixture(root: Path) -> None:
     (root / "index.html").write_text(
-        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar quickEntry(\'dental\' quickEntry(\'vision\'</main></body></html>',
+        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar id="situation" function classify(text)</main></body></html>',
         encoding="utf-8",
     )
     (root / builder.PERSON_PILOT_PATH).write_text(
@@ -27,7 +27,10 @@ def make_fixture(root: Path) -> None:
     for relative in builder.MODULE_PILOT_PATHS:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text('<!doctype html><html><body>module</body></html>', encoding="utf-8")
+        if relative == "quick-help.html":
+            path.write_text('<!doctype html><html><body><main id="main" tabindex="-1" aria-live="polite"></main><a class="skip"></a><script>let mode; if(![\'dental\',\'vision\'].includes(mode)){}; const x="forsakringskassan.se/privatperson/tandvard/tandvardsstod boverket.se/sv/babhandboken/bostadsanpassningsbidrag/ 1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel/";</script></body></html>', encoding="utf-8")
+        else:
+            path.write_text('<!doctype html><html><body>module</body></html>', encoding="utf-8")
     for relative in builder.SCRIPT_PATHS:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -98,9 +101,10 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "En Stödassistenten – flera ingångar",
         "person-pilot.html",
         "company-pilot.html",
-        "quick-help.html",
-        "quickEntry('dental'",
-        "quickEntry('vision'",
+        "quick-help.html?mode=dental",
+        "quick-help.html?mode=vision",
+        'id="situation"',
+        "function classify(text)",
         "actor_type=",
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
@@ -140,8 +144,8 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         'class="skip"',
         "['dental','vision']",
         "forsakringskassan.se/privatperson/tandvard/tandvardsstod",
-        "boverket.se/sv/babhandboken/for-dig-som-soker/vad-ar-bostadsanpassningsbidrag",
-        "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel",
+        "boverket.se/sv/babhandboken/bostadsanpassningsbidrag/",
+        "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel/",
     ):
         require(token in quick, f"quick-help accessibility/content invariant missing: {token}")
 
