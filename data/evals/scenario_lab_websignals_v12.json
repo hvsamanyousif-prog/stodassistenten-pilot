@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-14",
-  "purpose": "Verified synthetic demand/friction regressions for the same Stödassistenten scenario laboratory. This pack locks in two concrete learning signals: authority routing for personal assistance and information-gain discipline in the company funding path. Truth-bearing personal-assistance distinctions use current Försäkringskassan primary guidance; the company case tests product behavior rather than procurement or funding eligibility. No real person or company data is stored.",
+  "purpose": "Verified synthetic demand/friction regressions for the same Stödassistenten scenario laboratory. This pack locks in three concrete learning signals: authority routing for personal assistance, information-gain discipline in the company funding path, and irregular-income/change-reporting safety for young housing benefit. Truth-bearing benefit distinctions use current primary guidance; the company case tests product behavior rather than procurement or funding eligibility. No real person or company data is stored.",
   "verified_signal_patterns": [
     {
       "pattern_id": "signal-personal-assistance-authority-split",
@@ -17,6 +17,14 @@
       "primary_sources": [
         "https://verksamt.se/finansiering-radgivning/offentlig-finansiering",
         "https://verksamt.se/node/674"
+      ]
+    },
+    {
+      "pattern_id": "signal-young-housing-benefit-irregular-income",
+      "observation": "Current Försäkringskassan guidance bases young-person housing benefit on application information including annual income and housing. Income and household changes can affect the benefit and should be reported. A person with irregular work should therefore not be given a guaranteed amount from a single month's income or told to wait until the next annual application before reporting a material change.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"
       ]
     }
   ],
@@ -86,6 +94,42 @@
       ],
       "source_requirements": [
         "verksamt.se"
+      ]
+    },
+    {
+      "case_id": "lab-young-housing-irregular-income-v12-03",
+      "actor_type": "student",
+      "story": "Jag är 25 år, studerar och tar extra arbetspass när jag kan. Jag funderar på bostadsbidrag men inkomsten varierar mycket. Jag tänkte skriva ungefär vad jag tjänade förra månaden och sedan låta uppgiften ligga kvar även om jag får fler arbetspass senare.",
+      "expected_support_areas": [
+        "housing_benefit_young",
+        "annual_income_estimation",
+        "irregular_income",
+        "change_reporting",
+        "repayment_risk"
+      ],
+      "must_not_claim": [
+        "one_month_income_alone_determines_annual_housing_benefit_income",
+        "irregular_extra_work_can_be_ignored_after_application",
+        "income_changes_can_always_wait_until_next_annual_application",
+        "current_income_estimate_guarantees_no_repayment",
+        "student_status_alone_guarantees_housing_benefit"
+      ],
+      "expected_questions": [
+        "q_age",
+        "q_housing_form_and_household_status",
+        "q_expected_total_annual_income_including_irregular_work",
+        "q_known_or_expected_income_changes",
+        "q_current_application_or_decision_status"
+      ],
+      "expected_next_actions": [
+        "estimate_total_current_year_income_using_best_available_information",
+        "use_current_forsakringskassan_housing_benefit_calculation_or_application_route",
+        "report_relevant_income_or_household_changes_when_known",
+        "gather_required_housing_documents_before_application",
+        "avoid_amount_or_repayment_guarantee_without_current_case_facts_and_primary_source"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
       ]
     }
   ]
