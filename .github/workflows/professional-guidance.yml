@@ -1,0 +1,39 @@
+name: Validate professional guidance
+
+on:
+  pull_request:
+    paths:
+      - 'client/professional-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_professional_guidance.py'
+      - '.github/workflows/professional-guidance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/professional-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_professional_guidance.py'
+      - '.github/workflows/professional-guidance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check runtime JavaScript syntax
+        run: node --check client/professional-guidance.js
+      - name: Validate product and privacy invariants
+        run: python scripts/validate_professional_guidance.py
+      - name: Build exact public artifact
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify guidance is shipped
+        run: grep -q 'client/professional-guidance.js' _site/index.html
