@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Canonical extension of the same qualitative demand/friction intelligence system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. This pack adds a high-friction young-housing-benefit problem pattern discovered from current Försäkringskassan guidance and 2026 analysis; truth-bearing facts remain primary-source controlled.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. A lower coverage-gap score can also mean a prior learning cycle has already added a regression, not that the user problem is unimportant."
+  },
+  "signals": [
+    {
+      "signal_id": "df-young-housing-benefit-income-change-v01",
+      "actor_types": ["student", "young_adult", "individual"],
+      "natural_language_queries": [
+        "jag är student kan jag få bostadsbidrag",
+        "jag jobbar extra ibland hur vet jag vilken årsinkomst jag ska skriva",
+        "kan jag bli återbetalningsskyldig om inkomsten ändras",
+        "jag hyr ett rum räknas det som bostad för bostadsbidrag"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan has a dedicated young-person housing-benefit route and its 2026 analysis reports a substantial youth-household population while also describing falling uptake."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The user must combine age, housing form, household status, annual income estimation and change reporting; irregular work makes the annual-income estimate especially difficult."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "Wrong assumptions can lead to missed support, delayed application or repayment when actual income differs from the estimate and changes are not reported."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "Core rules and application are concentrated at Försäkringskassan, but users must connect housing documents, household changes and annual income in one decision path."
+      },
+      "language_accessibility_friction": {
+        "score": 3,
+        "basis": "Terms such as annual income, household status, second-hand tenancy and lodger status are more complex than the natural-language question 'can I get help with rent?'."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe next action can require classifying housing form, estimating income, gathering housing documents, applying and then reporting relevant changes."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan's current page includes dedicated guidance and FAQs about irregular income, housing form, change reporting and repayment risk, and its 2026 analysis explicitly discusses income-estimation difficulty and repayment."
+      },
+      "current_product_coverage_gap": {
+        "score": 2,
+        "basis": "The product already locked housing-form and change-reporting misses into v07 regressions, so the remaining gap is primarily to preserve and connect that learning to demand prioritization rather than invent a new truth path."
+      },
+      "priority_band": "MEDIUM_HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"
+      ],
+      "recommended_learning_action": "Keep the v07 housing-form and change-reporting regressions in the canonical gate, preserve fail-closed handling of irregular income and housing form, and ask only the facts that can change route, application readiness or repayment-risk guidance.",
+      "truth_rule": "Verify current age, income, housing, household, document, application and change-reporting rules against Försäkringskassan before any eligibility, amount or deadline claim."
+    }
+  ]
+}
