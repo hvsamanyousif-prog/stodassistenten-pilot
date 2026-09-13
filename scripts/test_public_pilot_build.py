@@ -127,9 +127,10 @@ def test_minimal_artifact() -> None:
 
 def verify_repository_build(source_root: Path, site_root: Path) -> None:
     source_shell = (source_root / "index.html").read_text(encoding="utf-8")
+    expected_shell_source = builder.repair_known_inline_syntax(source_shell, "index.html")
     built_shell = (site_root / "index.html").read_text(encoding="utf-8")
     shell_block = builder.shell_learning_block() + "\n"
-    require(built_shell.replace(shell_block, "", 1) == source_shell, "shared shell build changed HTML outside governed runtime wiring")
+    require(built_shell.replace(shell_block, "", 1) == expected_shell_source, "shared shell build changed HTML outside governed runtime wiring/hotfix")
     require(built_shell.count(builder.SHELL_LEARNING_START) == 1, 'shared shell must contain exactly one learning block')
     for token in (
         "En Stödassistenten – flera ingångar",
@@ -167,9 +168,10 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     require((site_root / "company-pilot.html").read_bytes() == (source_root / "company-pilot.html").read_bytes(), "company module must deploy byte-for-byte")
 
     source_quick = (source_root / "quick-help.html").read_text(encoding="utf-8")
+    expected_quick_source = builder.repair_known_inline_syntax(source_quick, "quick-help.html")
     quick = (site_root / "quick-help.html").read_text(encoding="utf-8")
     quick_block = builder.quick_learning_block() + "\n"
-    require(quick.replace(quick_block, "", 1) == source_quick, "quick-help build changed HTML outside governed feedback wiring")
+    require(quick.replace(quick_block, "", 1) == expected_quick_source, "quick-help build changed HTML outside governed feedback wiring/hotfix")
     require(quick.count(builder.QUICK_LEARNING_START) == 1, "quick-help must contain exactly one learning block")
 
     for path in (*builder.SHELL_RUNTIME_PATHS, builder.QUICK_LEARNING_PATH):
