@@ -8,6 +8,8 @@ quick = (root / 'quick-help.html').read_text(encoding='utf-8')
 checks = [
     ('situation composer', 'id="situation"' in index and 'function classify(text)' in index),
     ('local privacy promise', 'analyseras lokalt' in index and 'skickas inte' in index),
+    ('safe-by-construction handoff', "searchParams.set('q'" not in index and 'function coarseNeed(mode,text)' in index and "searchParams.set('need'" in index),
+    ('guided handoff consumes coarse need', "const need=P.get('need')" in quick),
     ('engine offers routes', "dental:['Tandvård'" in index and "vision:['Synnedsättning'" in index),
     ('same platform deep links', 'person-pilot.html?actor_type=' in index and 'company-pilot.html?actor_type=company' in index),
     ('language direction', "document.documentElement.dir=rtl?'rtl':'ltr'" in index),

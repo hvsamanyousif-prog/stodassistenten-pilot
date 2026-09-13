@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified synthetic web-signal extensions for the same Stödassistenten scenario laboratory. These cases test the boundary between sjukresor/reseersättning and färdtjänst, plus the effect of region and out-of-region care route. Truth-bearing distinctions use current 1177/region guidance; no raw community story or identifying detail is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-sickness-travel-is-not-the-same-as-paratransit",
+      "observation": "A person can have a disability or a färdtjänst permit without every healthcare journey being free or governed by färdtjänst rules. Sjukresor and travel reimbursement are healthcare-trip routes with regional rules, possible own fees, and requirements tied to the care journey. The product must distinguish the trip purpose and regional sickness-travel rules instead of routing from diagnosis or a färdtjänst permit alone.",
+      "primary_sources": [
+        "https://www.1177.se/Uppsala-lan/sa-fungerar-varden/sjukresor-och-fardtjanst/sjukresor-i-uppsala-lan/",
+        "https://www.1177.se/Ostergotland/sa-fungerar-varden/sjukresor-och-fardtjanst/sjukresor-i-ostergotland/"
+      ]
+    },
+    {
+      "pattern_id": "signal-out-of-region-sickness-travel-depends-on-referral-route",
+      "observation": "Current regional 1177 guidance distinguishes care outside the home region initiated through specialist/vårdgaranti referral from care the patient independently chooses in another region. The product must ask how the out-of-region care was arranged before claiming travel reimbursement, and it must verify the person's home-region rules rather than treating one region's amounts or procedure as national.",
+      "primary_sources": [
+        "https://www.1177.se/Ostergotland/sa-fungerar-varden/sjukresor-och-fardtjanst/sjukresor-i-ostergotland/fragor-och-svar-om-ersattning-for-sjukresor-till-annan-region/",
+        "https://www.1177.se/Halland/sa-fungerar-varden/sjukresor-och-fardtjanst/sjukresor-i-halland/",
+        "https://www.1177.se/Kronoberg/sa-fungerar-varden/att-valja-vardmottagning/vard-utanfor-region-kronoberg/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-disability-sicktravel-v10-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag har färdtjänst och ska till ett planerat vårdbesök. Jag tror därför att resan automatiskt är gratis och att jag bara ska boka färdtjänst som vanligt, men jag vet inte vilka sjukreseregler som gäller där jag bor.",
+      "expected_support_areas": [
+        "sickness_travel",
+        "paratransit_boundary",
+        "regional_rules",
+        "healthcare_trip_transport_need"
+      ],
+      "must_not_claim": [
+        "fardtjanst_permit_guarantees_free_sickness_travel",
+        "sickness_travel_and_fardtjanst_are_the_same_support",
+        "diagnosis_alone_determines_sickness_travel_transport",
+        "sickness_travel_rules_are_identical_in_all_regions",
+        "a_specific_fee_or_high_cost_limit_is_national_without_verification"
+      ],
+      "expected_questions": [
+        "q_home_region",
+        "q_trip_is_for_healthcare_or_dentistry",
+        "q_transport_barrier_or_medical_need",
+        "q_care_provider_and_location",
+        "q_existing_fardtjanst_permit_without_assuming_sicktravel_eligibility"
+      ],
+      "expected_next_actions": [
+        "separate_sickness_travel_from_fardtjanst_before_recommending_booking_route",
+        "verify_home_region_sickness_travel_rules_on_1177_or_region_source",
+        "verify_transport_need_and_booking_or_reimbursement_route_before_travel_where_required",
+        "avoid_nationalizing_local_fees_or_limits"
+      ],
+      "source_requirements": [
+        "1177",
+        "home_region_primary_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-rural-outofregion-sicktravel-v10-02",
+      "actor_type": "private_person",
+      "story": "Jag bor långt från större sjukhus och har fått tid hos en specialist i en annan region. Jag vet inte om vården skickade mig dit genom remiss eller om jag själv valde mottagningen, och jag räknar med att resa och eventuell ledsagare ersätts automatiskt.",
+      "expected_support_areas": [
+        "sickness_travel",
+        "out_of_region_care",
+        "referral_route",
+        "regional_reimbursement_rules",
+        "escort_need_if_relevant"
+      ],
+      "must_not_claim": [
+        "all_out_of_region_healthcare_travel_is_reimbursed",
+        "self_chosen_out_of_region_care_always_gets_travel_reimbursement",
+        "escort_reimbursement_is_automatic",
+        "one_regions_amounts_or_deadlines_apply_nationally",
+        "travel_reimbursement_is_guaranteed_before_referral_route_is_known"
+      ],
+      "expected_questions": [
+        "q_home_region",
+        "q_specialist_or_vardgaranti_referral_vs_self_choice",
+        "q_destination_and_care_type",
+        "q_transport_mode_and_medical_need",
+        "q_escort_medical_need_if_relevant"
+      ],
+      "expected_next_actions": [
+        "verify_how_the_out_of_region_care_was_arranged",
+        "check_home_region_1177_sickness_travel_rules_before_promising_reimbursement",
+        "verify_any_required_certificate_or_booking_process_before_travel",
+        "treat_escort_support_as_separate_need_to_verify"
+      ],
+      "source_requirements": [
+        "1177",
+        "home_region_primary_guidance"
+      ]
+    }
+  ]
+}

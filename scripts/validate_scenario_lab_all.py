@@ -34,8 +34,8 @@ for path in paths:
             assert isinstance(case[key], list) and case[key], f'{cid}: {key} must be non-empty list'
         cases.append(case)
 
-# 42 cases were already in the legacy canonical gate. v06-v08 add 5 and v09 adds 2.
-assert len(cases) >= 49, f'expected at least 49 cases across the single scenario system, got {len(cases)}'
+# 42 cases were already in the legacy canonical gate. v06-v08 add 5, v09 adds 2, v10 adds 2.
+assert len(cases) >= 51, f'expected at least 51 cases across the single scenario system, got {len(cases)}'
 
 required_recent = {
     'lab-individual-v06-01',
@@ -45,6 +45,8 @@ required_recent = {
     'lab-disability-study-v08-01',
     'lab-employee-workaid-v09-01',
     'lab-employee-workaid-v09-02',
+    'lab-disability-sicktravel-v10-01',
+    'lab-rural-outofregion-sicktravel-v10-02',
 }
 missing_recent = sorted(required_recent - ids)
 assert not missing_recent, f'newer web-signal regressions outside canonical lab: {missing_recent}'
@@ -61,5 +63,17 @@ assert 'preapproval_before_purchase' in second['expected_support_areas']
 assert 'buy_first_apply_later_is_safe' in second['must_not_claim']
 assert 'retroactive_reimbursement_is_guaranteed' in second['must_not_claim']
 assert 'apply_or_obtain_required_decision_before_purchase_or_order' in second['expected_next_actions']
+
+sicktravel = by_id['lab-disability-sicktravel-v10-01']
+assert 'paratransit_boundary' in sicktravel['expected_support_areas']
+assert 'fardtjanst_permit_guarantees_free_sickness_travel' in sicktravel['must_not_claim']
+assert 'sickness_travel_rules_are_identical_in_all_regions' in sicktravel['must_not_claim']
+assert 'verify_home_region_sickness_travel_rules_on_1177_or_region_source' in sicktravel['expected_next_actions']
+
+out_of_region = by_id['lab-rural-outofregion-sicktravel-v10-02']
+assert 'referral_route' in out_of_region['expected_support_areas']
+assert 'all_out_of_region_healthcare_travel_is_reimbursed' in out_of_region['must_not_claim']
+assert 'travel_reimbursement_is_guaranteed_before_referral_route_is_known' in out_of_region['must_not_claim']
+assert 'verify_how_the_out_of_region_care_was_arranged' in out_of_region['expected_next_actions']
 
 print(f'canonical scenario lab: OK ({len(cases)} cases across {len(paths)} packs)')
