@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic demand/friction regressions for the same Stödassistenten scenario laboratory. This pack locks in three concrete learning signals: authority routing for personal assistance, information-gain discipline in the company funding path, and irregular-income/change-reporting safety for young housing benefit. Truth-bearing benefit distinctions use current primary guidance; the company case tests product behavior rather than procurement or funding eligibility. No real person or company data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-personal-assistance-authority-split",
+      "observation": "Current Försäkringskassan guidance states that state assistansersättning is assessed when help with grundläggande behov averages more than 20 hours per week, while a person with less than 20 hours should instead turn to the municipality. A diagnosis or the user's own rough hour estimate must not be treated as an entitlement decision; the product must first understand functional assistance needs and route the person to the responsible assessment path.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "https://www.forsakringskassan.se/press/vart-uppdrag-inom-assistansersattning"
+      ]
+    },
+    {
+      "pattern_id": "signal-company-funding-information-gain",
+      "observation": "For a funding-only company journey, procurement-readiness questions about capacity, references and procurement documents do not change the funding route. The product should therefore ask only the minimum facts that can change the next action and must not turn a shorter UX path into a funding or eligibility claim.",
+      "primary_sources": [
+        "https://verksamt.se/finansiering-radgivning/offentlig-finansiering",
+        "https://verksamt.se/node/674"
+      ]
+    },
+    {
+      "pattern_id": "signal-young-housing-benefit-irregular-income",
+      "observation": "Current Försäkringskassan guidance bases young-person housing benefit on application information including annual income and housing. Income and household changes can affect the benefit and should be reported. A person with irregular work should therefore not be given a guaranteed amount from a single month's income or told to wait until the next annual application before reporting a material change.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-personal-assistance-authority-v12-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag behöver mycket hjälp hemma med hygien, påklädning och andra saker varje dag. Jag har hört både kommunen och Försäkringskassan nämnas och vet inte vem jag ska kontakta. Jag kan själv bara uppskatta ungefär hur många timmar hjälpen tar.",
+      "expected_support_areas": [
+        "personal_assistance",
+        "municipality_vs_forsakringskassan_authority",
+        "basic_needs_assessment",
+        "functional_need_evidence",
+        "application_route_verification"
+      ],
+      "must_not_claim": [
+        "diagnosis_alone_guarantees_personal_assistance",
+        "user_estimated_hours_equal_assessed_basic_need_hours",
+        "under_20_hours_means_no_support_is_possible",
+        "municipality_and_forsakringskassan_are_interchangeable_application_routes",
+        "assistansersattning_is_guaranteed_before_formal_assessment"
+      ],
+      "expected_questions": [
+        "q_which_daily_activities_require_personal_help",
+        "q_help_with_basic_needs_and_how_often",
+        "q_rough_weekly_help_extent_without_treating_estimate_as_decision",
+        "q_age_and_residence_in_sweden",
+        "q_existing_municipal_or_forsakringskassan_contact_or_decision"
+      ],
+      "expected_next_actions": [
+        "separate_municipal_personal_assistance_from_state_assistansersattning_route",
+        "document_functional_help_needs_before_application_or_contact",
+        "if_basic_need_help_may_exceed_20_hours_verify_current_forsakringskassan_route",
+        "if_basic_need_help_is_below_or_unclear_20_hours_contact_municipality_for_assessment",
+        "avoid_entitlement_or_hour_claim_until_responsible_authority_has_assessed_the_need"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-company-information-gain-v12-02",
+      "actor_type": "company",
+      "story": "Jag driver ett litet konsultbolag och vill bara hitta möjlig offentlig finansiering. Jag vill komma till relevanta officiella vägar snabbt och inte svara på frågor om anbudsreferenser, upphandlingskapacitet eller upphandlingsdokument om de inte påverkar finansieringsspåret.",
+      "expected_support_areas": [
+        "company_funding",
+        "information_gain",
+        "official_funding_discovery",
+        "minimum_necessary_follow_up",
+        "primary_source_verification"
+      ],
+      "must_not_claim": [
+        "procurement_readiness_questions_are_required_for_funding_only_route",
+        "free_text_company_description_is_required_when_it_does_not_change_route",
+        "a_generic_public_funding_route_guarantees_eligibility",
+        "company_sector_alone_proves_fit_for_a_specific_funding_call"
+      ],
+      "expected_questions": [
+        "q_company_goal",
+        "q_company_sector_only_if_it_changes_discovery_or_next_action"
+      ],
+      "expected_next_actions": [
+        "skip_procurement_readiness_questions_for_funding_only_route",
+        "open_official_funding_discovery_source",
+        "verify_target_group_purpose_period_and_application_route_in_primary_call",
+        "ask_additional_company_facts_only_when_they_can_change_candidate_or_next_action"
+      ],
+      "source_requirements": [
+        "verksamt.se"
+      ]
+    },
+    {
+      "case_id": "lab-young-housing-irregular-income-v12-03",
+      "actor_type": "student",
+      "story": "Jag är 25 år, studerar och tar extra arbetspass när jag kan. Jag funderar på bostadsbidrag men inkomsten varierar mycket. Jag tänkte skriva ungefär vad jag tjänade förra månaden och sedan låta uppgiften ligga kvar även om jag får fler arbetspass senare.",
+      "expected_support_areas": [
+        "housing_benefit_young",
+        "annual_income_estimation",
+        "irregular_income",
+        "change_reporting",
+        "repayment_risk"
+      ],
+      "must_not_claim": [
+        "one_month_income_alone_determines_annual_housing_benefit_income",
+        "irregular_extra_work_can_be_ignored_after_application",
+        "income_changes_can_always_wait_until_next_annual_application",
+        "current_income_estimate_guarantees_no_repayment",
+        "student_status_alone_guarantees_housing_benefit"
+      ],
+      "expected_questions": [
+        "q_age",
+        "q_housing_form_and_household_status",
+        "q_expected_total_annual_income_including_irregular_work",
+        "q_known_or_expected_income_changes",
+        "q_current_application_or_decision_status"
+      ],
+      "expected_next_actions": [
+        "estimate_total_current_year_income_using_best_available_information",
+        "use_current_forsakringskassan_housing_benefit_calculation_or_application_route",
+        "report_relevant_income_or_household_changes_when_known",
+        "gather_required_housing_documents_before_application",
+        "avoid_amount_or_repayment_guarantee_without_current_case_facts_and_primary_source"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    }
+  ]
+}
