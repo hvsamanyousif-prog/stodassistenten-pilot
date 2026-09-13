@@ -35,9 +35,10 @@ def make_fixture(root: Path) -> None:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"// {relative}\n", encoding="utf-8")
-    shell_learning = root / builder.SHELL_LEARNING_PATH
-    shell_learning.parent.mkdir(parents=True, exist_ok=True)
-    shell_learning.write_text('// shared experience learning\n', encoding='utf-8')
+    for relative in (*builder.SHELL_RUNTIME_PATHS, builder.QUICK_LEARNING_PATH):
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(f"// {relative}\n", encoding='utf-8')
     profile = root / builder.PROFILE_PATH
     profile.parent.mkdir(parents=True, exist_ok=True)
     profile.write_text('{"schema_version":"1.0.0","capabilities":[]}', encoding="utf-8")
@@ -57,10 +58,19 @@ def test_injection_is_exact() -> None:
     require(shell.count(builder.SHELL_LEARNING_START) == 1, "shell learning start marker must occur once")
     require(shell.count(builder.SHELL_LEARNING_END) == 1, "shell learning end marker must occur once")
 
+    quick = builder.inject_quick_learning(source)
+    quick_block = builder.quick_learning_block() + "\n"
+    require(quick.replace(quick_block, "", 1) == source, "quick learning block must be the only quick-help HTML mutation")
+    require(quick.count(builder.QUICK_LEARNING_START) == 1, "quick learning start marker must occur once")
+    require(quick.count(builder.QUICK_LEARNING_END) == 1, "quick learning end marker must occur once")
+
     positions = [built.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
     require(positions == sorted(positions), "capability scripts must remain in dependency order")
+    shell_positions = [shell.index(f'<script src="{path}"></script>') for path in builder.SHELL_RUNTIME_PATHS]
+    require(shell_positions == sorted(shell_positions), "shell privacy/learning scripts must remain in dependency order")
     require(positions[-1] < built.index("</body>"), "capability scripts must load before </body>")
-    require(shell.index(builder.SHELL_LEARNING_PATH) < shell.index('</body>'), 'shell learning script must load before </body>')
+    require(shell_positions[-1] < shell.index('</body>'), 'shell runtime must load before </body>')
+    require(quick.index(builder.QUICK_LEARNING_PATH) < quick.index('</body>'), 'quick learning script must load before </body>')
 
 
 def test_fail_closed_source_validation() -> None:
@@ -75,12 +85,16 @@ def test_fail_closed_source_validation() -> None:
             pass
         else:
             raise AssertionError("invalid person source HTML must fail closed")
-    try:
-        builder.inject_shell_learning(f'<html><body>{builder.SHELL_LEARNING_START}</body></html>')
-    except ValueError:
-        pass
-    else:
-        raise AssertionError('pre-wired shell must fail closed')
+    for fn,source in (
+        (builder.inject_shell_learning,f'<html><body>{builder.SHELL_LEARNING_START}</body></html>'),
+        (builder.inject_quick_learning,f'<html><body>{builder.QUICK_LEARNING_START}</body></html>'),
+    ):
+        try:
+            fn(source)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('pre-wired public surface must fail closed')
 
 
 def test_minimal_artifact() -> None:
@@ -94,7 +108,8 @@ def test_minimal_artifact() -> None:
             Path("index.html"),
             Path(builder.PERSON_PILOT_PATH),
             Path(builder.PROFILE_PATH),
-            Path(builder.SHELL_LEARNING_PATH),
+            Path(builder.QUICK_LEARNING_PATH),
+            *(Path(path) for path in builder.SHELL_RUNTIME_PATHS),
             *(Path(path) for path in builder.MODULE_PILOT_PATHS),
             *(Path(path) for path in builder.SCRIPT_PATHS),
         }
@@ -114,7 +129,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     source_shell = (source_root / "index.html").read_text(encoding="utf-8")
     built_shell = (site_root / "index.html").read_text(encoding="utf-8")
     shell_block = builder.shell_learning_block() + "\n"
-    require(built_shell.replace(shell_block, "", 1) == source_shell, "shared shell build changed HTML outside experience-learning wiring")
+    require(built_shell.replace(shell_block, "", 1) == source_shell, "shared shell build changed HTML outside governed runtime wiring")
     require(built_shell.count(builder.SHELL_LEARNING_START) == 1, 'shared shell must contain exactly one learning block')
     for token in (
         "En Stödassistenten – flera ingångar",
@@ -125,6 +140,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         'id="situation"',
         "function classify(text)",
         "actor_type=",
+        builder.SHELL_ROUTING_PATH,
         builder.SHELL_LEARNING_PATH,
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
@@ -132,10 +148,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     source_person = (source_root / builder.PERSON_PILOT_PATH).read_text(encoding="utf-8")
     built_person = (site_root / builder.PERSON_PILOT_PATH).read_text(encoding="utf-8")
     block = builder.wiring_block() + "\n"
-    require(
-        built_person.replace(block, "", 1) == source_person,
-        "person pilot build changed HTML outside wiring block",
-    )
+    require(built_person.replace(block, "", 1) == source_person, "person pilot build changed HTML outside wiring block")
 
     for token in (
         "sv:{",
@@ -151,16 +164,17 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     require(positions == sorted(positions), "person pilot script order drifted")
     require(built_person.count(builder.MANAGED_START) == 1, "person pilot must contain exactly one managed wiring block")
 
-    for module in builder.MODULE_PILOT_PATHS:
-        require((site_root / module).is_file(), f"deployed module missing: {module}")
-        require(
-            (site_root / module).read_bytes() == (source_root / module).read_bytes(),
-            f"module must deploy byte-for-byte: {module}",
-        )
+    require((site_root / "company-pilot.html").read_bytes() == (source_root / "company-pilot.html").read_bytes(), "company module must deploy byte-for-byte")
 
-    require((site_root / builder.SHELL_LEARNING_PATH).read_bytes() == (source_root / builder.SHELL_LEARNING_PATH).read_bytes(), 'experience-learning script must deploy byte-for-byte')
-
+    source_quick = (source_root / "quick-help.html").read_text(encoding="utf-8")
     quick = (site_root / "quick-help.html").read_text(encoding="utf-8")
+    quick_block = builder.quick_learning_block() + "\n"
+    require(quick.replace(quick_block, "", 1) == source_quick, "quick-help build changed HTML outside governed feedback wiring")
+    require(quick.count(builder.QUICK_LEARNING_START) == 1, "quick-help must contain exactly one learning block")
+
+    for path in (*builder.SHELL_RUNTIME_PATHS, builder.QUICK_LEARNING_PATH):
+        require((site_root / path).read_bytes() == (source_root / path).read_bytes(), f'runtime must deploy byte-for-byte: {path}')
+
     for token in (
         'id="main" tabindex="-1" aria-live="polite"',
         'class="skip"',
@@ -168,6 +182,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "forsakringskassan.se/privatperson/tandvard/tandvardsstod",
         "boverket.se/sv/babhandboken/bostadsanpassningsbidrag/",
         "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel/",
+        builder.QUICK_LEARNING_PATH,
     ):
         require(token in quick, f"quick-help accessibility/content invariant missing: {token}")
 
