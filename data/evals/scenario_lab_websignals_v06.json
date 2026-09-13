@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified long-tail web signal for the same Stödassistenten scenario laboratory. The case separates early municipal budget/debt counselling from formal debt restructuring and does not create an entitlement claim.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-budget-debt-counselling-before-formal-debt-restructuring",
+      "observation": "Municipal budget and debt counselling is a free local support route that can help residents create a budget and debt overview, prioritise debts, negotiate voluntary arrangements and get support with a debt-restructuring application. Debt restructuring itself is a separate Kronofogden process for people whose debts cannot be repaid within the foreseeable future and is not guaranteed by contacting the municipal counsellor.",
+      "discovery_note": "People with escalating debts can incorrectly assume that help starts only after a Kronofogden case exists, or that municipal counselling itself grants debt restructuring. The scenario generalises the friction and contains no real identity or copied personal story.",
+      "primary_sources": [
+        "https://www.konsumentverket.se/kommunal-verksamhet/bus/",
+        "https://kronofogden.se/om-kronofogden/nyheter-och-press/pressmeddelande/2026-02-10-manga-ansoker-om-skuldsanering",
+        "https://kronofogden.se/om-kronofogden/nyheter-och-press/nyheter/2025-01-20-gor-vart-skuldsaneringstest"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-individual-v06-01",
+      "actor_type": "individual",
+      "story": "Jag har flera lån och obetalda räkningar och ekonomin blir sämre varje månad. Jag har inget pågående ärende hos Kronofogden och trodde därför att kommunen inte kan hjälpa mig ännu. Jag undrar också om kontakt med kommunens skuldrådgivare betyder att jag får skuldsanering.",
+      "expected_support_areas": [
+        "municipal_budget_debt_counselling",
+        "debt_overview_and_prioritisation",
+        "debt_restructuring_screening"
+      ],
+      "must_not_claim": [
+        "existing_kronofogden_case_is_required_for_municipal_counselling",
+        "municipal_counsellor_grants_debt_restructuring",
+        "contacting_counselling_guarantees_debt_restructuring",
+        "temporary_payment_difficulty_automatically_qualifies_for_debt_restructuring"
+      ],
+      "expected_questions": [
+        "q_home_municipality",
+        "q_income_expenses_and_debt_overview",
+        "q_arrears_and_urgent_essential_costs",
+        "q_ability_to_repay_over_time",
+        "q_new_borrowing_or_growing_debt",
+        "q_existing_creditor_or_kronofogden_decisions"
+      ],
+      "expected_next_actions": [
+        "contact_municipal_budget_and_debt_counselling_early",
+        "prepare_income_expense_and_debt_overview",
+        "prioritise_essential_current_costs_and_verify_creditor_options",
+        "use_kronofogden_debt_restructuring_test_before_assuming_eligibility"
+      ],
+      "source_requirements": [
+        "Konsumentverket",
+        "relevant_municipality",
+        "Kronofogden"
+      ]
+    }
+  ]
+}
