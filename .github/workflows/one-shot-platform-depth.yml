@@ -1,0 +1,156 @@
+name: One-shot platform depth and company feedback
+
+on:
+  push:
+    branches: ["build/platform-depth-feedback-v01"]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: build/platform-depth-feedback-v01
+      - name: Enrich shared shell, person results and company feedback
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def read(path):
+              return Path(path).read_text(encoding='utf-8')
+
+          def write(path, text):
+              Path(path).write_text(text, encoding='utf-8')
+
+          def require(condition, message):
+              if not condition:
+                  raise SystemExit(message)
+
+          # --- Shared shell: explain the product journey so the platform feels less thin. ---
+          path = 'index.html'
+          text = read(path)
+          require('const HOW_COPY=' not in text, 'index already patched')
+          text = text.replace('</style>', '.how{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.how div{background:#f4f6f0;border-radius:16px;padding:13px}.how b{display:block;margin-bottom:5px}.how small{color:var(--muted);line-height:1.4}@media(max-width:560px){.how{grid-template-columns:1fr}}\n</style>', 1)
+          marker = "const tr=k=>COPY[lang][k]||k;"
+          require(marker in text, 'index translation marker missing')
+          how = """const HOW_COPY={
+sv:{title:'Så hjälper Stödassistenten dig',a:'1. Berätta situationen',ad:'Börja med vem du är och vad som faktiskt händer – inte namnet på ett stöd.',b:'2. Få relevanta vägar',bd:'Vi visar möjliga stöd, rättigheter, tjänster eller möjligheter som är värda att kontrollera.',c:'3. Gå till nästa handling',cd:'Öppna originalkällan, kontrollera villkor och se vad du behöver göra eller ha redo.'},
+ar:{title:'كيف يساعدك مساعد الدعم',a:'1. اشرح الوضع',ad:'ابدأ بمن أنت وما الذي يحدث فعلاً، وليس باسم دعم معين.',b:'2. احصل على مسارات مناسبة',bd:'نعرض دعماً أو حقوقاً أو خدمات أو فرصاً تستحق التحقق.',c:'3. انتقل إلى الخطوة التالية',cd:'افتح المصدر الأصلي وتحقق من الشروط وما الذي تحتاج إلى فعله أو تجهيزه.'},
+fa:{title:'دستیار حمایت چگونه کمک می‌کند',a:'1. شرایط را بگو',ad:'با این شروع کن که چه کسی هستی و واقعاً چه اتفاقی افتاده، نه نام یک حمایت.',b:'2. مسیرهای مرتبط را ببین',bd:'حمایت‌ها، حقوق، خدمات یا فرصت‌هایی را که ارزش بررسی دارند نشان می‌دهیم.',c:'3. قدم بعدی را بردار',cd:'منبع اصلی را باز کن، شرایط را بررسی کن و ببین چه کاری یا چه مدارکی لازم است.'}
+};
+function howSection(){const h=HOW_COPY[lang]||HOW_COPY.sv;return `<section class=\"card\"><h2>${h.title}</h2><div class=\"how\"><div><b>${h.a}</b><small>${h.ad}</small></div><div><b>${h.b}</b><small>${h.bd}</small></div><div><b>${h.c}</b><small>${h.cd}</small></div></div></section>`}
+"""
+          text = text.replace(marker, marker+'\n'+how, 1)
+          needle = "<div class=\"principle\">${tr('principle')}</div></section>`}"
+          require(needle in text, 'index render marker missing')
+          text = text.replace(needle, "<div class=\"principle\">${tr('principle')}</div></section>${howSection()}`}" ,1)
+          write(path, text)
+
+          # --- Person module: preserve actor context and add a concrete next-step plan. ---
+          path = 'person-pilot.html'
+          text = read(path)
+          require('const ACTION_COPY=' not in text, 'person pilot already patched')
+          state_marker = "let lang='sv',screen='home',scenario=null,answers={},matchRatings={},finalFeedback={},submitState='idle';"
+          require(state_marker in text, 'person state marker missing')
+          extra = """
+const queryParams=new URLSearchParams(window.location.search);
+const requestedLang=queryParams.get('lang');
+if(requestedLang&&T[requestedLang])lang=requestedLang;
+const actorType=queryParams.get('actor_type')||'private_person';
+const ACTOR_COPY={
+sv:{relative:'Du hjälper någon annan. Svara utifrån den personens situation och dela inte känsliga uppgifter i onödan.',student:'Du kom in som student/ung vuxen. Välj den situation som ligger närmast studier, arbete, ekonomi eller boende.',employee:'Du kom in som anställd. Välj det som bäst beskriver arbete, sjukskrivning, ekonomi eller annan situation.',association:'Du kom in som förening. Ingången ”Förening eller litet företag” leder vidare till projekt, lokal och offentliga möjligheter.',other:'Börja brett. Det gör inget om inget exempel passar exakt.'},
+ar:{relative:'أنت تساعد شخصاً آخر. أجب بحسب وضع ذلك الشخص وتجنب مشاركة معلومات حساسة دون حاجة.',student:'دخلت كطالب أو شاب بالغ. اختر ما يشبه وضع الدراسة أو العمل أو الاقتصاد أو السكن.',employee:'دخلت كموظف. اختر ما يصف العمل أو الإجازة المرضية أو الاقتصاد أو وضعاً آخر بشكل أفضل.',association:'دخلت كجمعية. مسار الجمعية أو الشركة الصغيرة يقود إلى المشاريع والمقر والفرص العامة.',other:'ابدأ بشكل واسع. لا بأس إن لم يطابق أي مثال وضعك تماماً.'},
+fa:{relative:'تو به شخص دیگری کمک می‌کنی. بر اساس شرایط او پاسخ بده و اطلاعات حساس را بی‌دلیل وارد نکن.',student:'به عنوان دانشجو یا جوان وارد شدی. گزینه‌ای را انتخاب کن که به تحصیل، کار، اقتصاد یا مسکن نزدیک‌تر است.',employee:'به عنوان کارمند وارد شدی. گزینه‌ای را انتخاب کن که کار، مرخصی بیماری، اقتصاد یا وضعیت دیگر را بهتر توضیح می‌دهد.',association:'به عنوان انجمن وارد شدی. مسیر انجمن یا شرکت کوچک به پروژه، محل و فرصت‌های عمومی می‌رسد.',other:'گسترده شروع کن. لازم نیست هیچ مثال دقیقاً با شرایط تو یکی باشد.'}
+};
+const ACTION_COPY={
+sv:{title:'Din handlingsplan',one:'1. Börja med den högst prioriterade träffen och öppna originalkällan.',two:'2. Kontrollera villkor, aktuella uppgifter och vilka underlag som behövs innan du antar att stödet gäller dig.',three:'3. Om något avgörande saknas: skriv ned frågan och kontrollera den med ansvarig myndighet, kommun eller organisation.'},
+ar:{title:'خطة العمل التالية',one:'1. ابدأ بأعلى نتيجة أولوية وافتح المصدر الأصلي.',two:'2. تحقق من الشروط والمعلومات الحالية والمستندات المطلوبة قبل افتراض أن الدعم ينطبق عليك.',three:'3. إذا كانت معلومة حاسمة ناقصة، دوّن السؤال وتحقق منه مع الجهة المسؤولة.'},
+fa:{title:'برنامه اقدام بعدی',one:'1. از نتیجه با بالاترین اولویت شروع کن و منبع اصلی را باز کن.',two:'2. پیش از فرض واجد شرایط بودن، شرایط، اطلاعات به‌روز و مدارک لازم را بررسی کن.',three:'3. اگر اطلاعات مهمی کم است، سؤال را یادداشت کن و از نهاد مسئول بررسی کن.'}
+};
+function actorHint(){const copy=ACTOR_COPY[lang]||ACTOR_COPY.sv;const msg=copy[actorType];return msg?`<section class=\"card\"><div class=\"eyebrow\">Din ingång</div><p>${msg}</p></section>`:''}
+function actionPlan(){const a=ACTION_COPY[lang]||ACTION_COPY.sv;return `<section class=\"card\"><h2>${a.title}</h2><div class=\"info\">${a.one}</div><div class=\"info\">${a.two}</div><div class=\"info\">${a.three}</div></section>`}
+"""
+          text = text.replace(state_marker, state_marker+extra, 1)
+          home_needle = "<div class=\"privacy\">🔒 ${tr('privacy')}</div></section><section class=\"card\"><h2>${tr('choose')}</h2>"
+          require(home_needle in text, 'person home marker missing')
+          text = text.replace(home_needle, "<div class=\"privacy\">🔒 ${tr('privacy')}</div></section>${actorHint()}<section class=\"card\"><h2>${tr('choose')}</h2>", 1)
+          result_needle = "${rows.map(resultCard).join('')}<section class=\"card\"><h2>${tr('finish')}</h2>"
+          require(result_needle in text, 'person results marker missing')
+          text = text.replace(result_needle, "${rows.map(resultCard).join('')}${actionPlan()}<section class=\"card\"><h2>${tr('finish')}</h2>", 1)
+          write(path, text)
+
+          # --- Company module: richer readiness + the same structured anonymous feedback channel. ---
+          path = 'company-pilot.html'
+          text = read(path)
+          require('const FEEDBACK_ENDPOINT=' not in text, 'company pilot already patched')
+          text = text.replace('</style>', '.platform-home{display:inline-block;color:var(--sage);font-weight:800;text-decoration:none;margin:2px 0 8px}.score{background:var(--soft);border-radius:15px;padding:12px;margin:10px 0}.actionbox{background:#f4f6f0;border-radius:15px;padding:12px;margin:10px 0}.feedback-panel{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.fbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.fb{font:inherit;border:1px solid var(--line);background:white;border-radius:14px;padding:9px 11px;cursor:pointer;font-weight:750;font-size:13px}.fb.selected{background:var(--soft);border-color:#8fb5a8}.finalq{margin:12px 0;padding:12px;background:#f8f5ef;border-radius:15px}.status{margin-top:10px;padding:11px;border-radius:14px;font-size:13px;font-weight:700}.status.ok{background:var(--soft)}.status.err{background:var(--rose);color:var(--danger)}\n</style>',1)
+          text = text.replace('<div class="app">\n  <div class="top">','<div class="app">\n  <a class="platform-home" href="index.html">← Alla ingångar i Stödassistenten</a>\n  <div class="top">',1)
+          state_marker = "const state={step:0,goal:null,sector:null,geography:null,capacity:null,references:null,docs:null,description:''};"
+          require(state_marker in text, 'company state marker missing')
+          pre = """const APP_VERSION='0.6.0';
+const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
+const feedback={new:null,useful:null,clear:null,status:'idle',ratings:{}};
+function resetFeedback(){Object.assign(feedback,{new:null,useful:null,clear:null,status:'idle',ratings:{}})}
+"""
+          text = text.replace(state_marker, pre+state_marker,1)
+          reset_old = "function reset(){Object.assign(state,{step:0,goal:null,sector:null,geography:null,capacity:null,references:null,docs:null,description:''});render()}"
+          require(reset_old in text, 'company reset marker missing')
+          text = text.replace(reset_old, "function reset(){Object.assign(state,{step:0,goal:null,sector:null,geography:null,capacity:null,references:null,docs:null,description:''});resetFeedback();render()}",1)
+
+          start = text.index('function result(){')
+          end = text.index('function escapeHtml', start)
+          replacement = r'''function readinessScore(){return [state.capacity,state.references,state.docs].filter(v=>v==='yes').length}
+function companyActionPlan(){const items=[];if(state.goal==='procurement'||state.goal==='both')items.push('Välj en verklig annonserad affär som matchar sektor och geografi och läs underlaget innan ni bedömer om den passar.');if(state.goal==='funding'||state.goal==='both')items.push('Sök i officiella finansieringskällor, öppna den primära utlysningen och kontrollera målgrupp, syfte, period och ansökningsväg.');for(const gap of readiness())items.push('Beredskap: '+gap+'.');return `<section class="card"><h2>Gör så här nu</h2>${items.map(x=>`<div class="actionbox">${x}</div>`).join('')}<div class="notice">Stödassistenten ska hjälpa till att minska sökandet och strukturera nästa handling, men ett specifikt upphandlingsunderlag eller en primär stödutlysning är alltid styrande.</div></section>`}
+function rate(key,val){feedback.ratings[key]=val;feedback.status='idle';render()}
+function ratingRow(key,label){return `<div class="feedback-panel"><b>${label}</b><div class="fbs"><button class="fb ${feedback.ratings[key]===5?'selected':''}" onclick="rate('${key}',5)">Relevant</button><button class="fb ${feedback.ratings[key]===3?'selected':''}" onclick="rate('${key}',3)">Kände redan till</button><button class="fb ${feedback.ratings[key]===1?'selected':''}" onclick="rate('${key}',1)">Inte relevant</button></div></div>`}
+function finalQuestion(key,label){return `<div class="finalq"><b>${label}</b><div class="fbs"><button class="fb ${feedback[key]===true?'selected':''}" onclick="feedback.${key}=true;feedback.status='idle';render()">Ja</button><button class="fb ${feedback[key]===false?'selected':''}" onclick="feedback.${key}=false;feedback.status='idle';render()">Nej</button></div></div>`}
+function feedbackStatus(){if(feedback.status==='sending')return '<div class="status">Skickar feedback…</div>';if(feedback.status==='sent')return '<div class="status ok">✓ Tack! Din anonyma produktfeedback är sparad.</div>';if(feedback.status==='error')return '<div class="status err">Feedbacken kunde inte skickas just nu.</div>';if(feedback.status==='missing')return '<div class="status err">Svara på de tre frågorna innan du skickar.</div>';return ''}
+function companyFeedback(){let ratings='';let n=1;if(state.goal==='procurement'||state.goal==='both')ratings+=ratingRow('m'+(n++),'Hur relevant var upphandlingsdelen?');if(state.goal==='funding'||state.goal==='both')ratings+=ratingRow('m'+(n++),'Hur relevant var finansieringsdelen?');return `<section class="card"><h2>Hjälp oss förbättra företagsspåret</h2><p class="muted">Företag ska kunna ge samma typ av produktfeedback som andra användare.</p>${ratings}${finalQuestion('new','Fick du reda på något nytt?')}${finalQuestion('useful','Var planen användbar för företaget?')}${finalQuestion('clear','Var nästa steg tydligt?')}<div class="privacy">🔒 Vi skickar inte företagsbeskrivningen, sektor, geografi, kapacitet, referenser eller dokumentstatus. Bara produktversion, flöde och dina bedömningar skickas.</div><button class="btn primary" ${feedback.status==='sending'||feedback.status==='sent'?'disabled':''} onclick="submitCompanyFeedback()">Skicka anonym feedback</button>${feedbackStatus()}</section>`}
+async function submitCompanyFeedback(){if(typeof feedback.new!=='boolean'||typeof feedback.useful!=='boolean'||typeof feedback.clear!=='boolean'){feedback.status='missing';render();return}feedback.status='sending';render();const payload={app_version:APP_VERSION,language:'sv',flow:'company',learned_new:feedback.new,useful:feedback.useful,next_step_clear:feedback.clear,ratings:feedback.ratings};try{const res=await fetch(FEEDBACK_ENDPOINT,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('HTTP '+res.status);feedback.status='sent'}catch(e){feedback.status='error'}render()}
+function result(){const procurement=state.goal==='procurement'||state.goal==='both';const funding=state.goal==='funding'||state.goal==='both';return `${back()}<section class="card"><div class="eyebrow">Din första testplan</div><h1>${state.sector==='cleaning'?'Städbolag':state.sector==='construction'?'Bygg / entreprenad':state.sector==='consulting'?'Tjänsteföretag':'Företag'}</h1><p class="muted">Det här är ett pilotunderlag, inte ett beslut om stöd, kvalificering eller kontrakt.</p><div class="score"><b>Beredskap ${readinessScore()} av 3</b><br><span class="muted">Kapacitet, referenser och vanliga företagsunderlag används här som enkel readiness-signal – inte som kvalificeringsbeslut.</span></div>${state.description?`<div class="privacy"><b>Din beskrivning:</b><br>${escapeHtml(state.description)}</div>`:''}</section>${procurement?procurementBlock():''}${funding?fundingBlock():''}${companyActionPlan()}${companyFeedback()}<section class="card"><h3>Vad vi vill lära oss av testet</h3><div class="warn">När du testar: notera vad som var oklart, vilken verklig möjlighet du försökte hitta, vilket krav du fastnade på och vad du hade velat att Stödassistenten gjorde automatiskt. Dela inte personnummer, lösenord, konkurrerande anbud eller konfidentiell upphandlingsinformation.</div><button class="btn primary" onclick="reset()">Testa en ny företagssituation</button></section>`}
+'''
+          text = text[:start] + replacement + text[end:]
+          write(path, text)
+
+          # --- Permanent regression/quality guard for platform depth + privacy. ---
+          Path('scripts/test_platform_depth.py').write_text(r'''#!/usr/bin/env python3
+from pathlib import Path
+
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
+
+index = Path('index.html').read_text(encoding='utf-8')
+person = Path('person-pilot.html').read_text(encoding='utf-8')
+company = Path('company-pilot.html').read_text(encoding='utf-8')
+
+require('function howSection()' in index, 'shared shell must explain the product journey')
+require('const actorType=queryParams.get(\'actor_type\')' in person, 'person module must preserve actor context')
+require("const requestedLang=queryParams.get('lang')" in person, 'person module must preserve shell language')
+require('function actionPlan()' in person, 'person results must include a concrete next-step plan')
+require('const FEEDBACK_ENDPOINT=' in company, 'company module must expose structured feedback')
+require("flow:'company'" in company, 'company feedback must be distinguishable from person flows')
+require('function companyFeedback()' in company, 'company feedback UI missing')
+require('function readinessScore()' in company, 'company result depth/readiness missing')
+
+payload_start = company.index('const payload={app_version:APP_VERSION', company.index('submitCompanyFeedback'))
+payload_end = company.index('};try', payload_start)
+payload = company[payload_start:payload_end]
+for forbidden in ('description','sector','geography','capacity','references','docs'):
+    require(forbidden not in payload, f'company feedback must not send {forbidden}')
+
+print('platform depth + company feedback tests: OK')
+''', encoding='utf-8')
+          Path('.github/workflows/platform-depth.yml').write_text('''name: Validate platform depth and feedback\n\non:\n  push:\n  pull_request:\n\npermissions:\n  contents: read\n\njobs:\n  validate:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: "3.12"\n      - run: python scripts/test_platform_depth.py\n''', encoding='utf-8')
+          PY
+      - name: Commit enriched platform
+        run: |
+          rm .github/workflows/one-shot-platform-depth.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html person-pilot.html company-pilot.html scripts/test_platform_depth.py .github/workflows/platform-depth.yml .github/workflows/one-shot-platform-depth.yml
+          git commit -m "Build: deepen platform UX and company feedback"
+          git push origin HEAD:build/platform-depth-feedback-v01
