@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Machine-readable lock between qualitative demand/friction signals and permanent synthetic regressions in the single Stödassistenten learning system. A mapping proves that a product miss has an eval memory; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-child-maintenance-terms-v01",
+      "product_miss": "Everyday 'underhåll' language can collapse direct parent-paid underhållsbidrag and Försäkringskassan underhållsstöd into the same route.",
+      "fix_or_guardrail": "Require residence/payment facts, keep the two routes distinct and block automatic/amount claims without current primary-source verification.",
+      "regression_case_ids": ["lab-child-maintenance-v11-01"]
+    },
+    {
+      "signal_id": "df-partial-sick-leave-scheduling-v01",
+      "product_miss": "A user can assume employer approval alone makes a changed part-time sickness-benefit schedule safe.",
+      "fix_or_guardrail": "Require the proposed work distribution/extent and preserve coordination with both employer and Försäkringskassan before benefit-related schedule claims.",
+      "regression_case_ids": ["lab-employee-partialsick-v11-01"]
+    },
+    {
+      "signal_id": "df-personal-assistance-authority-split-v01",
+      "product_miss": "A person describing extensive help at home can be sent to the wrong authority or treated as eligible from diagnosis/rough hours alone.",
+      "fix_or_guardrail": "Separate municipal personal-assistance assessment from state assistansersättning, ask about functional basic-needs help and fail closed on entitlement/hour estimates.",
+      "regression_case_ids": ["lab-personal-assistance-authority-v12-01"]
+    },
+    {
+      "signal_id": "df-company-procurement-too-many-steps-v01",
+      "product_miss": "Funding-only companies were asked procurement-readiness and free-text questions that did not change the funding route.",
+      "fix_or_guardrail": "Keep the shorter information-gain path and prevent procurement readiness from leaking into funding-only advice.",
+      "regression_case_ids": ["lab-company-information-gain-v12-02"]
+    },
+    {
+      "signal_id": "df-young-housing-benefit-income-change-v01",
+      "product_miss": "Young users can treat all paid housing as equivalent or delay reporting income/household changes, increasing missed-support or repayment risk.",
+      "fix_or_guardrail": "Preserve housing-form classification, current-income/change reporting and primary-source verification in the existing young-housing regressions.",
+      "regression_case_ids": ["lab-student-housing-v07-01", "lab-student-housing-v07-02"]
+    }
+  ]
+}
