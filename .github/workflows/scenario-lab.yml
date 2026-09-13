@@ -5,9 +5,9 @@ on:
     branches: [main]
     paths:
       - 'data/evals/scenario_lab_v01.json'
-      - 'data/evals/scenario_lab_websignals_v01.json'
-      - 'data/evals/scenario_lab_websignals_continuous.json'
+      - 'data/evals/scenario_lab_websignals*.json'
       - 'scripts/validate_scenario_lab.py'
+      - 'scripts/validate_scenario_lab_all.py'
       - '.github/workflows/scenario-lab.yml'
 jobs:
   validate:
@@ -17,4 +17,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python scripts/validate_scenario_lab.py
+      - run: python scripts/validate_scenario_lab_all.py

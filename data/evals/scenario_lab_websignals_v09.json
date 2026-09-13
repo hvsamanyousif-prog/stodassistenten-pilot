@@ -1,0 +1,97 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified synthetic web-signal extensions for the same Stödassistenten scenario laboratory. The cases test authority routing and pre-approval for workplace assistive-device support. Truth-bearing distinctions use current Arbetsförmedlingen and Försäkringskassan guidance; no raw community story or identifying detail is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-work-aid-authority-depends-on-employment-duration-and-route",
+      "observation": "For workplace assistive-device support, employment duration and employment route can change which authority is relevant. Arbetsförmedlingen describes support during the first 12 months of employment or self-employment, with exceptions for some supported-employment routes; after more than 12 months, Försäkringskassan is normally the relevant route. A worker may need to be registered with Arbetsförmedlingen even when already employed. The product must not route from diagnosis alone.",
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/stod-a-o/bidrag-till-hjalpmedel-pa-arbetsplatsen",
+        "https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/bidrag-till-hjalpmedel-pa-arbetsplatsen",
+        "https://www.forsakringskassan.se/arbetsgivare/ersattningar-och-bidrag/bidrag-till-arbetshjalpmedel"
+      ]
+    },
+    {
+      "pattern_id": "signal-work-aid-preapproval-before-purchase",
+      "observation": "Current official guidance requires application or approval before purchasing, ordering or adapting the workplace for these aid routes. The product must not encourage buy-first/apply-later behavior or imply retroactive reimbursement is guaranteed.",
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetsgivare/kom-igang-med-din-rekrytering/fa-stod-i-rekryteringen/bidrag-till-hjalpmedel-pa-arbetsplatsen",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/arbetshjalpmedel",
+        "https://www.forsakringskassan.se/arbetsgivare/ersattningar-och-bidrag/bidrag-till-arbetshjalpmedel"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-workaid-v09-01",
+      "actor_type": "employee",
+      "story": "Jag har varit anställd i sex månader och behöver ett individuellt hjälpmedel för att klara en konkret arbetsuppgift. Jag vet inte om jag ska vända mig till Arbetsförmedlingen eller Försäkringskassan och tror att min diagnos automatiskt avgör saken.",
+      "expected_support_areas": [
+        "work_assistive_device",
+        "authority_routing_by_employment_duration",
+        "workplace_need_assessment",
+        "employment_route_exception_check"
+      ],
+      "must_not_claim": [
+        "diagnosis_alone_guarantees_work_aid",
+        "forsakringskassan_handles_first_12_months_by_default",
+        "arbetsformedlingen_is_only_for_unemployed_people",
+        "all_workplace_equipment_is_grant_eligible",
+        "employer_work_environment_duty_is_identical_to_individual_work_aid_support"
+      ],
+      "expected_questions": [
+        "q_employment_duration",
+        "q_specific_work_task_barrier",
+        "q_supported_employment_or_program_route",
+        "q_arbetsformedlingen_registration_if_relevant",
+        "q_standard_work_environment_or_individual_aid"
+      ],
+      "expected_next_actions": [
+        "route_first_12_month_need_to_arbetsformedlingen_unless_verified_exception_changes_route",
+        "verify_supported_employment_exception_before_authority_recommendation",
+        "verify_individual_work_barrier_before_recommending_aid_support",
+        "do_not_route_from_diagnosis_alone"
+      ],
+      "source_requirements": [
+        "Arbetsförmedlingen",
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-employee-workaid-v09-02",
+      "actor_type": "employee",
+      "story": "Jag har arbetat hos samma arbetsgivare i flera år och funderar på att köpa ett dyrt specialhjälpmedel själv först och söka ersättning i efterhand. Jag är osäker på vilken myndighet som gäller och om ett vanligt arbetsredskap kan räknas som arbetshjälpmedel.",
+      "expected_support_areas": [
+        "work_assistive_device",
+        "preapproval_before_purchase",
+        "authority_routing_by_employment_duration",
+        "ordinary_equipment_boundary"
+      ],
+      "must_not_claim": [
+        "retroactive_reimbursement_is_guaranteed",
+        "buy_first_apply_later_is_safe",
+        "all_standard_work_equipment_is_grant_eligible",
+        "arbetsformedlingen_is_always_correct_after_more_than_12_months",
+        "approval_is_automatic_when_a_device_is_expensive"
+      ],
+      "expected_questions": [
+        "q_employment_duration",
+        "q_purchase_or_order_already_made",
+        "q_specific_work_task_barrier",
+        "q_device_is_individual_or_standard_equipment",
+        "q_supported_employment_exception_if_relevant"
+      ],
+      "expected_next_actions": [
+        "verify_correct_authority_before_application",
+        "apply_or_obtain_required_decision_before_purchase_or_order",
+        "separate_standard_employer_equipment_from_individual_work_aid",
+        "do_not_promise_retroactive_reimbursement"
+      ],
+      "source_requirements": [
+        "Försäkringskassan",
+        "Arbetsförmedlingen"
+      ]
+    }
+  ]
+}
