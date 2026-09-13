@@ -5,8 +5,7 @@ The root ``index.html`` is the shared platform shell. The preserved person pilot
 lives at ``person-pilot.html`` and receives the public capability runtime at build
 time. Company and focused quick-help pages remain modules inside the same deployed
 site. Small governed runtime blocks add feedback coverage, privacy-preserving
-route handoff and professional situation guidance without duplicating product
-engines.
+route handoff and professional guidance without duplicating product engines.
 """
 
 from __future__ import annotations
@@ -28,8 +27,10 @@ SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
+QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
 SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
+QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
@@ -57,7 +58,10 @@ def shell_learning_block() -> str:
 
 
 def quick_learning_block() -> str:
-    return "\n".join((QUICK_LEARNING_START, f'<script src="{QUICK_LEARNING_PATH}"></script>', QUICK_LEARNING_END))
+    lines = [QUICK_LEARNING_START]
+    lines.extend(f'<script src="{path}"></script>' for path in QUICK_RUNTIME_PATHS)
+    lines.append(QUICK_LEARNING_END)
+    return "\n".join(lines)
 
 
 def inject_before_body(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
@@ -167,7 +171,8 @@ def build(source_root: Path, output_root: Path) -> Path:
         copy_required_asset(source_root, output_root, path)
     for path in SHELL_RUNTIME_PATHS:
         copy_required_asset(source_root, output_root, path)
-    copy_required_asset(source_root, output_root, QUICK_LEARNING_PATH)
+    for path in QUICK_RUNTIME_PATHS:
+        copy_required_asset(source_root, output_root, path)
     copy_required_asset(source_root, output_root, PROFILE_PATH)
     return output_root / "index.html"
 
