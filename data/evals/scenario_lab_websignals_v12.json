@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic demand/friction regressions for the same Stödassistenten scenario laboratory. This pack locks in two concrete learning signals: authority routing for personal assistance and information-gain discipline in the company funding path. Truth-bearing personal-assistance distinctions use current Försäkringskassan primary guidance; the company case tests product behavior rather than procurement or funding eligibility. No real person or company data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-personal-assistance-authority-split",
+      "observation": "Current Försäkringskassan guidance states that state assistansersättning is assessed when help with grundläggande behov averages more than 20 hours per week, while a person with less than 20 hours should instead turn to the municipality. A diagnosis or the user's own rough hour estimate must not be treated as an entitlement decision; the product must first understand functional assistance needs and route the person to the responsible assessment path.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "https://www.forsakringskassan.se/press/vart-uppdrag-inom-assistansersattning"
+      ]
+    },
+    {
+      "pattern_id": "signal-company-funding-information-gain",
+      "observation": "For a funding-only company journey, procurement-readiness questions about capacity, references and procurement documents do not change the funding route. The product should therefore ask only the minimum facts that can change the next action and must not turn a shorter UX path into a funding or eligibility claim.",
+      "primary_sources": [
+        "https://verksamt.se/finansiering-radgivning/offentlig-finansiering",
+        "https://verksamt.se/node/674"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-personal-assistance-authority-v12-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag behöver mycket hjälp hemma med hygien, påklädning och andra saker varje dag. Jag har hört både kommunen och Försäkringskassan nämnas och vet inte vem jag ska kontakta. Jag kan själv bara uppskatta ungefär hur många timmar hjälpen tar.",
+      "expected_support_areas": [
+        "personal_assistance",
+        "municipality_vs_forsakringskassan_authority",
+        "basic_needs_assessment",
+        "functional_need_evidence",
+        "application_route_verification"
+      ],
+      "must_not_claim": [
+        "diagnosis_alone_guarantees_personal_assistance",
+        "user_estimated_hours_equal_assessed_basic_need_hours",
+        "under_20_hours_means_no_support_is_possible",
+        "municipality_and_forsakringskassan_are_interchangeable_application_routes",
+        "assistansersattning_is_guaranteed_before_formal_assessment"
+      ],
+      "expected_questions": [
+        "q_which_daily_activities_require_personal_help",
+        "q_help_with_basic_needs_and_how_often",
+        "q_rough_weekly_help_extent_without_treating_estimate_as_decision",
+        "q_age_and_residence_in_sweden",
+        "q_existing_municipal_or_forsakringskassan_contact_or_decision"
+      ],
+      "expected_next_actions": [
+        "separate_municipal_personal_assistance_from_state_assistansersattning_route",
+        "document_functional_help_needs_before_application_or_contact",
+        "if_basic_need_help_may_exceed_20_hours_verify_current_forsakringskassan_route",
+        "if_basic_need_help_is_below_or_unclear_20_hours_contact_municipality_for_assessment",
+        "avoid_entitlement_or_hour_claim_until_responsible_authority_has_assessed_the_need"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-company-information-gain-v12-02",
+      "actor_type": "company",
+      "story": "Jag driver ett litet konsultbolag och vill bara hitta möjlig offentlig finansiering. Jag vill komma till relevanta officiella vägar snabbt och inte svara på frågor om anbudsreferenser, upphandlingskapacitet eller upphandlingsdokument om de inte påverkar finansieringsspåret.",
+      "expected_support_areas": [
+        "company_funding",
+        "information_gain",
+        "official_funding_discovery",
+        "minimum_necessary_follow_up",
+        "primary_source_verification"
+      ],
+      "must_not_claim": [
+        "procurement_readiness_questions_are_required_for_funding_only_route",
+        "free_text_company_description_is_required_when_it_does_not_change_route",
+        "a_generic_public_funding_route_guarantees_eligibility",
+        "company_sector_alone_proves_fit_for_a_specific_funding_call"
+      ],
+      "expected_questions": [
+        "q_company_goal",
+        "q_company_sector_only_if_it_changes_discovery_or_next_action"
+      ],
+      "expected_next_actions": [
+        "skip_procurement_readiness_questions_for_funding_only_route",
+        "open_official_funding_discovery_source",
+        "verify_target_group_purpose_period_and_application_route_in_primary_call",
+        "ask_additional_company_facts_only_when_they_can_change_candidate_or_next_action"
+      ],
+      "source_requirements": [
+        "verksamt.se"
+      ]
+    }
+  ]
+}
