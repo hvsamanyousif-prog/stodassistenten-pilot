@@ -35,7 +35,7 @@ def make_fixture(root: Path) -> None:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"// {relative}\n", encoding="utf-8")
-    for relative in (*builder.SHELL_RUNTIME_PATHS, builder.QUICK_LEARNING_PATH):
+    for relative in (*builder.SHELL_RUNTIME_PATHS, *builder.QUICK_RUNTIME_PATHS):
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"// {relative}\n", encoding='utf-8')
@@ -68,9 +68,11 @@ def test_injection_is_exact() -> None:
     require(positions == sorted(positions), "capability scripts must remain in dependency order")
     shell_positions = [shell.index(f'<script src="{path}"></script>') for path in builder.SHELL_RUNTIME_PATHS]
     require(shell_positions == sorted(shell_positions), "shell privacy/learning scripts must remain in dependency order")
+    quick_positions = [quick.index(f'<script src="{path}"></script>') for path in builder.QUICK_RUNTIME_PATHS]
+    require(quick_positions == sorted(quick_positions), "quick-help runtime scripts must remain in dependency order")
     require(positions[-1] < built.index("</body>"), "capability scripts must load before </body>")
     require(shell_positions[-1] < shell.index('</body>'), 'shell runtime must load before </body>')
-    require(quick.index(builder.QUICK_LEARNING_PATH) < quick.index('</body>'), 'quick learning script must load before </body>')
+    require(quick_positions[-1] < quick.index('</body>'), 'quick-help runtimes must load before </body>')
 
 
 def test_fail_closed_source_validation() -> None:
@@ -108,7 +110,7 @@ def test_minimal_artifact() -> None:
             Path("index.html"),
             Path(builder.PERSON_PILOT_PATH),
             Path(builder.PROFILE_PATH),
-            Path(builder.QUICK_LEARNING_PATH),
+            *(Path(path) for path in builder.QUICK_RUNTIME_PATHS),
             *(Path(path) for path in builder.SHELL_RUNTIME_PATHS),
             *(Path(path) for path in builder.MODULE_PILOT_PATHS),
             *(Path(path) for path in builder.SCRIPT_PATHS),
@@ -143,6 +145,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "actor_type=",
         builder.SHELL_ROUTING_PATH,
         builder.SHELL_LEARNING_PATH,
+        builder.SHELL_GUIDANCE_PATH,
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
 
@@ -171,10 +174,10 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     expected_quick_source = builder.repair_known_inline_syntax(source_quick, "quick-help.html")
     quick = (site_root / "quick-help.html").read_text(encoding="utf-8")
     quick_block = builder.quick_learning_block() + "\n"
-    require(quick.replace(quick_block, "", 1) == expected_quick_source, "quick-help build changed HTML outside governed feedback wiring/hotfix")
+    require(quick.replace(quick_block, "", 1) == expected_quick_source, "quick-help build changed HTML outside governed feedback/guidance wiring/hotfix")
     require(quick.count(builder.QUICK_LEARNING_START) == 1, "quick-help must contain exactly one learning block")
 
-    for path in (*builder.SHELL_RUNTIME_PATHS, builder.QUICK_LEARNING_PATH):
+    for path in (*builder.SHELL_RUNTIME_PATHS, *builder.QUICK_RUNTIME_PATHS):
         require((site_root / path).read_bytes() == (source_root / path).read_bytes(), f'runtime must deploy byte-for-byte: {path}')
 
     for token in (
@@ -185,6 +188,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         "boverket.se/sv/babhandboken/bostadsanpassningsbidrag/",
         "1177.se/undersokning-behandling/hjalpmedel/syn/synhjalpmedel/",
         builder.QUICK_LEARNING_PATH,
+        builder.QUICK_GUIDANCE_PATH,
     ):
         require(token in quick, f"quick-help accessibility/content invariant missing: {token}")
 
