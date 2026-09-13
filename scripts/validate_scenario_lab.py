@@ -27,8 +27,8 @@ required_fields = {
     'expected_questions','expected_next_actions','source_requirements'
 }
 
-if len(cases) < 30:
-    print(f'expected at least 30 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
+if len(cases) < 32:
+    print(f'expected at least 32 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
     raise SystemExit(1)
 
 for case in cases:
@@ -81,6 +81,27 @@ if not brf or 'indexed_official_page_means_open_support' not in brf['must_not_cl
 work_aid = by_id.get('lab-employee-web-02')
 if not work_aid or 'all_aids_use_same_scheme' not in work_aid['must_not_claim'] or 'work_assistive_device' not in work_aid['expected_support_areas']:
     print('work injury special-aid vs work-aid regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# New web-signal regressions: advertised procurement search is incomplete for direct procurement,
+# and a foundation registry listing is discovery metadata rather than an open grant decision.
+direct_procurement = by_id.get('lab-company-web-02')
+if (
+    not direct_procurement
+    or 'all_public_procurements_are_advertised' not in direct_procurement['must_not_claim']
+    or 'direct_procurement_discovery' not in direct_procurement['expected_support_areas']
+    or 'do_not_invent_unadvertised_opportunity' not in direct_procurement['expected_next_actions']
+):
+    print('direct procurement advertisement-coverage regression missing', file=sys.stderr)
+    raise SystemExit(1)
+foundation = by_id.get('lab-private-web-05')
+if (
+    not foundation
+    or 'registry_listing_means_open_grant' not in foundation['must_not_claim']
+    or 'application_route_verification' not in foundation['expected_support_areas']
+    or 'relevant_foundation' not in foundation['source_requirements']
+):
+    print('foundation registry vs open-grant regression missing', file=sys.stderr)
     raise SystemExit(1)
 
 print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types, {len(packs)} packs)')
