@@ -4,7 +4,10 @@ from pathlib import Path
 import sys
 
 BASE = Path('data/evals/scenario_lab_v01.json')
-EXTENSIONS = [Path('data/evals/scenario_lab_websignals_v01.json')]
+EXTENSIONS = [
+    Path('data/evals/scenario_lab_websignals_v01.json'),
+    Path('data/evals/scenario_lab_websignals_continuous.json'),
+]
 
 for path in [BASE, *EXTENSIONS]:
     if not path.exists():
@@ -27,8 +30,8 @@ required_fields = {
     'expected_questions','expected_next_actions','source_requirements'
 }
 
-if len(cases) < 34:
-    print(f'expected at least 34 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
+if len(cases) < 38:
+    print(f'expected at least 38 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
     raise SystemExit(1)
 
 for case in cases:
@@ -83,7 +86,7 @@ if not work_aid or 'all_aids_use_same_scheme' not in work_aid['must_not_claim'] 
     print('work injury special-aid vs work-aid regression missing', file=sys.stderr)
     raise SystemExit(1)
 
-# New web-signal regressions: advertised procurement search is incomplete for direct procurement,
+# Advertised procurement search is incomplete for direct procurement,
 # and a foundation registry listing is discovery metadata rather than an open grant decision.
 direct_procurement = by_id.get('lab-company-web-02')
 if (
@@ -125,6 +128,50 @@ if (
     or 'apply_month_by_month_to_forsakringskassan_within_deadline' not in jobbpremie['expected_next_actions']
 ):
     print('jobbpremie month/household/deadline regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Continuous web-signal regressions: student sickness protection is conditional,
+# student VAB has its own study-support path, post-study SGI protection is time-sensitive,
+# and riksfärdtjänst must be routed by function/purpose/payer rather than diagnosis alone.
+student_sick = by_id.get('lab-student-cont-01')
+if (
+    not student_sick
+    or 'approved_sickness_always_protects_weeks_even_if_studying' not in student_sick['must_not_claim']
+    or 'student_finance_repayment_risk' not in student_sick['expected_support_areas']
+    or 'check_whether_study_activity_affects_protection' not in student_sick['expected_next_actions']
+):
+    print('student sickness / continued-study protection regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+student_vab = by_id.get('lab-student-cont-02')
+if (
+    not student_vab
+    or 'student_vab_requires_employment' not in student_vab['must_not_claim']
+    or 'ordinary_studiemedel_and_omstallningsstudiestod_have_same_week_rules' not in student_vab['must_not_claim']
+    or 'student_vab_absence_protection' not in student_vab['expected_support_areas']
+):
+    print('student VAB / study-support protection regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+post_study_sgi = by_id.get('lab-student-cont-03')
+if (
+    not post_study_sgi
+    or 'sgi_is_automatically_protected_after_studies_without_action' not in post_study_sgi['must_not_claim']
+    or 'sgi_protection_after_studies' not in post_study_sgi['expected_support_areas']
+    or 'register_with_arbetsformedlingen_from_first_day_after_studies_if_not_working' not in post_study_sgi['expected_next_actions']
+):
+    print('post-study SGI first-day protection regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+riksfardtjanst = by_id.get('lab-disability-cont-01')
+if (
+    not riksfardtjanst
+    or 'visual_impairment_diagnosis_alone_guarantees_riksfardtjanst' not in riksfardtjanst['must_not_claim']
+    or 'another_public_payer_is_irrelevant' not in riksfardtjanst['must_not_claim']
+    or 'riksfardtjanst' not in riksfardtjanst['expected_support_areas']
+    or 'verify_trip_purpose_and_other_payer_before_recommending_application' not in riksfardtjanst['expected_next_actions']
+):
+    print('riksfardtjanst purpose/function/payer regression missing', file=sys.stderr)
     raise SystemExit(1)
 
 print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types, {len(packs)} packs)')
