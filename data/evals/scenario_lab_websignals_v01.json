@@ -48,6 +48,21 @@
       "primary_sources": [
         "https://www.boverket.se/sv/energiguiden/nyheter-i-energiguiden/sok-bidrag-for-energieffektivisering-i-smahus/"
       ]
+    },
+    {
+      "pattern_id": "signal-direct-procurement-not-necessarily-advertised",
+      "observation": "Direct procurements generally do not have to be advertised in TED or a registered national advertisement database, although buyers can choose to advertise them. A supplier that only searches advertisement databases can therefore miss legitimate direct-procurement routes. The product must separate advertised-opportunity search from verified buyer-specific direct-procurement discovery and must never invent an unadvertised opportunity.",
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/statistik/upphandlingsstatistik/statistik-om-annonserade-upphandlingar-2024/17-575-upphandlingar-annonserades-2024/"
+      ]
+    },
+    {
+      "pattern_id": "signal-foundation-directory-not-open-grant",
+      "observation": "Länsstyrelsernas foundation search is a discovery registry, not a guarantee that a listed foundation currently accepts applications or that a person qualifies. Official guidance says applicants send an application directly to the relevant foundation, so the product must verify purpose, target group and current application route before presenting a foundation as actionable.",
+      "primary_sources": [
+        "https://www.lansstyrelsen.se/vasternorrland/samhalle/betalning-ekonomi-och-pengar/stipendier.html",
+        "https://www.lansstyrelsen.se/dalarna/samhalle/stiftelser.html"
+      ]
     }
   ],
   "cases": [
@@ -110,6 +125,26 @@
       "expected_questions": ["q_ownership", "q_building_type", "q_measure", "q_measure_start_date", "q_material_cost", "q_application_status"],
       "expected_next_actions": ["check_current_boverket_conditions", "verify_measure_and_timing", "prepare_required_documents", "apply_through_official_channel_if_eligible"],
       "source_requirements": ["Boverket", "current_regulation_or_official_guidance"]
+    },
+    {
+      "case_id": "lab-company-web-02",
+      "actor_type": "company",
+      "story": "Jag driver ett litet tjänsteföretag och söker kommunala uppdrag. Jag har letat i flera annonsdatabaser men hittar nästan inga mindre affärer och undrar om jag söker på fel ställe eller om allt måste annonseras.",
+      "expected_support_areas": ["advertised_procurement_search", "direct_procurement_discovery", "supplier_market_visibility"],
+      "must_not_claim": ["all_public_procurements_are_advertised", "database_search_is_complete_for_direct_procurement", "active_direct_procurement_without_verification", "guaranteed_contract"],
+      "expected_questions": ["q_service_scope", "q_target_buyers", "q_geography", "q_capacity", "q_supplier_contact_channels"],
+      "expected_next_actions": ["search_registered_ad_databases_for_advertised_opportunities", "check_relevant_buyers_direct_procurement_guidance", "identify_legitimate_supplier_contact_paths", "do_not_invent_unadvertised_opportunity"],
+      "source_requirements": ["Upphandlingsmyndigheten", "relevant_buying_organisation"]
+    },
+    {
+      "case_id": "lab-private-web-05",
+      "actor_type": "individual",
+      "story": "Jag har låg inkomst och har hört att det kan finnas stiftelser eller fonder. I stiftelsesöket hittar jag många namn men jag förstår inte vilka som faktiskt tar emot ansökningar eller om jag passar in i deras ändamål.",
+      "expected_support_areas": ["foundation_discovery", "foundation_purpose_matching", "application_route_verification"],
+      "must_not_claim": ["registry_listing_means_open_grant", "guaranteed_foundation_eligibility", "guaranteed_amount", "all_foundations_accept_direct_applications_now"],
+      "expected_questions": ["q_need_or_purpose", "q_municipality_or_region", "q_age_or_target_group", "q_household_context", "q_application_deadline_or_route"],
+      "expected_next_actions": ["search_lansstyrelsen_foundation_registry", "open_relevant_foundation_record", "verify_purpose_and_current_application_route", "contact_foundation_directly_when_required"],
+      "source_requirements": ["Länsstyrelsen", "relevant_foundation"]
     }
   ]
 }
