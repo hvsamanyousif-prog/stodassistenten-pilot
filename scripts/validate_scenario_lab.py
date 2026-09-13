@@ -3,16 +3,22 @@ import json
 from pathlib import Path
 import sys
 
-P = Path('data/evals/scenario_lab_v01.json')
-if not P.exists():
-    print('scenario lab missing', file=sys.stderr)
-    raise SystemExit(1)
+BASE = Path('data/evals/scenario_lab_v01.json')
+EXTENSIONS = [Path('data/evals/scenario_lab_websignals_v01.json')]
 
-data = json.loads(P.read_text(encoding='utf-8'))
-cases = data.get('cases', [])
+for path in [BASE, *EXTENSIONS]:
+    if not path.exists():
+        print(f'scenario lab file missing: {path}', file=sys.stderr)
+        raise SystemExit(1)
+
+packs = [json.loads(BASE.read_text(encoding='utf-8'))]
+packs.extend(json.loads(path.read_text(encoding='utf-8')) for path in EXTENSIONS)
+cases = [case for pack in packs for case in pack.get('cases', [])]
+
 required_actor_types = {
     'individual','student','older_person','person_with_disability',
-    'child_via_guardian','relative','company','association'
+    'child_via_guardian','relative','company','association',
+    'employee','brf_property_actor'
 }
 seen = set()
 ids = set()
@@ -21,8 +27,8 @@ required_fields = {
     'expected_questions','expected_next_actions','source_requirements'
 }
 
-if len(cases) < 24:
-    print(f'expected at least 24 synthetic cases, got {len(cases)}', file=sys.stderr)
+if len(cases) < 30:
+    print(f'expected at least 30 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
     raise SystemExit(1)
 
 for case in cases:
@@ -32,7 +38,7 @@ for case in cases:
         raise SystemExit(1)
     cid = case['case_id']
     if cid in ids:
-        print(f'duplicate case_id: {cid}', file=sys.stderr)
+        print(f'duplicate case_id across scenario packs: {cid}', file=sys.stderr)
         raise SystemExit(1)
     ids.add(cid)
     seen.add(case['actor_type'])
@@ -66,4 +72,15 @@ if not adhd or 'school_support' not in adhd['expected_support_areas'] or 'diagno
     print('ADHD / school support seed regression missing', file=sys.stderr)
     raise SystemExit(1)
 
-print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types)')
+# Permanent web-signal regressions: stale official pages must not imply an open support,
+# and employment-related assistance must distinguish everyday special aids from work aids.
+brf = by_id.get('lab-brf-web-01')
+if not brf or 'indexed_official_page_means_open_support' not in brf['must_not_claim'] or 'support_lifecycle_verification' not in brf['expected_support_areas']:
+    print('stale/closed official support page regression missing', file=sys.stderr)
+    raise SystemExit(1)
+work_aid = by_id.get('lab-employee-web-02')
+if not work_aid or 'all_aids_use_same_scheme' not in work_aid['must_not_claim'] or 'work_assistive_device' not in work_aid['expected_support_areas']:
+    print('work injury special-aid vs work-aid regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types, {len(packs)} packs)')
