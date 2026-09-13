@@ -16,7 +16,7 @@ const context = {
 context.globalThis = context;
 vm.createContext(context);
 vm.runInContext(
-  `${scriptMatch[1]}\nglobalThis.__pilot={state,readiness,procurementBlock,fundingBlock,result,escapeHtml,render};`,
+  `${scriptMatch[1]}\nglobalThis.__pilot={state,steps,STEP,readiness,procurementBlock,fundingBlock,companyActionPlan,result,nextStepAfter,backTarget,progressText,render};`,
   context,
   { filename: 'company-pilot.html' },
 );
@@ -25,14 +25,13 @@ const pilot = context.__pilot;
 if (!pilot) throw new Error('Could not expose company pilot runtime');
 
 const defaults = {
-  step: 8,
+  step: pilot.STEP.RESULT,
   goal: null,
   sector: null,
   geography: null,
   capacity: null,
   references: null,
   docs: null,
-  description: '',
 };
 
 function sameArray(a, b) {
@@ -41,7 +40,7 @@ function sameArray(a, b) {
 
 let failed = 0;
 for (const testCase of suite.cases) {
-  Object.assign(pilot.state, defaults, testCase.input, { step: 8 });
+  Object.assign(pilot.state, defaults, testCase.input, { step: pilot.STEP.RESULT });
   const gaps = Array.from(pilot.readiness());
   const output = String(pilot.result());
   const errors = [];
@@ -65,9 +64,40 @@ for (const testCase of suite.cases) {
   }
 }
 
+const ui = suite.ui_contract || {};
+const uiErrors = [];
+if (pilot.steps.includes('description')) uiErrors.push('free-text description step still exists in interactive company flow');
+if (ui.free_text_description_required === false && html.includes('Beskriv företaget med egna ord')) uiErrors.push('free-text description prompt still shipped');
+
+Object.assign(pilot.state, defaults, { goal: 'funding', step: pilot.STEP.SECTOR });
+if (pilot.nextStepAfter('sector') !== pilot.STEP.RESULT) uiErrors.push('funding flow does not go directly from sector to result');
+if (pilot.backTarget() !== pilot.STEP.GOAL) uiErrors.push('sector back target should return to goal');
+pilot.state.step = pilot.STEP.RESULT;
+if (pilot.backTarget() !== pilot.STEP.SECTOR) uiErrors.push('funding result back target should return to sector');
+const fundingOutput = String(pilot.result());
+for (const marker of ui.funding_must_exclude || []) {
+  if (fundingOutput.includes(marker)) uiErrors.push(`funding flow leaks procurement-readiness marker: ${marker}`);
+}
+
+Object.assign(pilot.state, defaults, { goal: 'procurement', step: pilot.STEP.DOCS });
+if (pilot.nextStepAfter('docs') !== pilot.STEP.RESULT) uiErrors.push('procurement flow does not go directly from docs to result');
+pilot.state.step = pilot.STEP.RESULT;
+if (pilot.backTarget() !== pilot.STEP.DOCS) uiErrors.push('procurement result back target should return to docs');
+
+if (ui.funding_question_steps !== 2) uiErrors.push('eval contract must pin funding path to two high-value questions');
+if (ui.procurement_question_steps !== 6) uiErrors.push('eval contract must pin procurement path to six questions');
+
+if (uiErrors.length) {
+  failed += 1;
+  console.error('FAIL company-information-gain-ui');
+  for (const error of uiErrors) console.error(`  - ${error}`);
+} else {
+  console.log('PASS company-information-gain-ui');
+}
+
 if (failed) {
-  console.error(`\n${failed}/${suite.cases.length} company pilot scenarios failed`);
+  console.error(`\n${failed} company pilot regression group(s) failed`);
   process.exit(1);
 }
 
-console.log(`\ncompany pilot scenario suite: ${suite.cases.length}/${suite.cases.length} PASS`);
+console.log(`\ncompany pilot scenario suite: ${suite.cases.length}/${suite.cases.length} cases PASS + information-gain UI PASS`);
