@@ -1,0 +1,115 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified web-signal extensions for the same Stödassistenten cross-actor scenario laboratory. These cases are synthetic evaluation contracts, not entitlement claims and not a separate target-group engine.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-housing-benefit-income-estimation",
+      "observation": "Housing benefit depends on estimated annual income, several income types can count, and changed income can create repayment risk. The product must ask about income composition and uncertainty rather than assume student finance is irrelevant.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/privatperson/betala-tillbaka-bostadsbidrag"
+      ]
+    },
+    {
+      "pattern_id": "signal-employment-insurance-hidden-layer",
+      "observation": "Employees with collective agreements can have complementary insurance through work. The product must not stop at public social insurance and must verify employer/sector/collective-agreement coverage before recommending a specific scheme.",
+      "primary_sources": [
+        "https://www.afaforsakring.se/",
+        "https://www.afaforsakring.se/om-oss/aktuellt/nyheter/hojd-aldersgrans-for-sjuk-och-arbetsskadeforsakring-i-kr-sektorn"
+      ]
+    },
+    {
+      "pattern_id": "signal-work-injury-aid-distinction",
+      "observation": "A person with a work injury can face two different aid paths: special aids that compensate effects of the injury in everyday life and work aids needed to perform job tasks. The product must distinguish them before giving a next step.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/arbetshjalpmedel"
+      ]
+    },
+    {
+      "pattern_id": "signal-representation-fullmakt",
+      "observation": "Acting for another adult can require explicit authority or a fullmakt. The product must never infer authority from family relationship or encourage credential sharing.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/myndigheter-och-samarbetspartner/forsakringsbolag/ombud-for-att-ansoka-om-nodvandig-vard-utomlands"
+      ]
+    },
+    {
+      "pattern_id": "signal-support-page-can-be-closed",
+      "observation": "An official support page can remain indexed after an application window has closed. Source existence alone is not enough: current application status must be checked before presenting a support as open.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/om-boverket/tjanster/",
+        "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/"
+      ]
+    },
+    {
+      "pattern_id": "signal-new-energy-support-current-status",
+      "observation": "The broadened small-house energy-efficiency support opened for applications on 1 September 2026. The product must verify owner/building type, measure timing and current rules rather than generalize from older energy-support pages.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/energiguiden/nyheter-i-energiguiden/sok-bidrag-for-energieffektivisering-i-smahus/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-student-web-01",
+      "actor_type": "student",
+      "story": "Jag är 24 år, studerar, hyr i andra hand och funderar på bostadsbidrag. Min inkomst varierar under året och jag vet inte om CSN, extrajobb och andra inkomster räknas eller om jag riskerar återkrav.",
+      "expected_support_areas": ["housing_benefit", "income_reporting", "repayment_risk"],
+      "must_not_claim": ["csn_never_counts_as_income", "guaranteed_housing_benefit", "guaranteed_amount", "no_repayment_risk"],
+      "expected_questions": ["q_age", "q_household", "q_housing_form", "q_annual_income_estimate", "q_income_types", "q_income_uncertainty"],
+      "expected_next_actions": ["check_current_housing_benefit_conditions", "estimate_countable_annual_income", "use_official_calculator", "update_income_if_circumstances_change"],
+      "source_requirements": ["Försäkringskassan"]
+    },
+    {
+      "case_id": "lab-employee-web-01",
+      "actor_type": "employee",
+      "story": "Jag jobbar i kommunal verksamhet och har varit sjukskriven i flera veckor. Jag får ersättning från Försäkringskassan men vet inte om jag också kan ha försäkring eller ersättning via jobbet eller kollektivavtalet.",
+      "expected_support_areas": ["social_insurance_sickness", "collective_agreement_sickness_insurance", "employer_sick_pay"],
+      "must_not_claim": ["all_employees_have_afa", "guaranteed_collective_agreement_payment", "guaranteed_amount", "union_membership_required"],
+      "expected_questions": ["q_employer_sector", "q_collective_agreement", "q_employment_start", "q_sick_period", "q_forsakringskassan_decision"],
+      "expected_next_actions": ["check_employer_collective_agreement", "check_relevant_afa_insurance", "check_employer_sick_pay_and_public_insurance"],
+      "source_requirements": ["Afa Försäkring", "Försäkringskassan", "employer_or_collective_agreement"]
+    },
+    {
+      "case_id": "lab-employee-web-02",
+      "actor_type": "employee",
+      "story": "Jag har en arbetsskada och behöver ett hjälpmedel både för vardagen och för att kunna göra mitt jobb. Jag vet inte om det är samma ersättning eller två olika vägar.",
+      "expected_support_areas": ["work_injury_special_aid", "work_assistive_device", "work_injury_compensation"],
+      "must_not_claim": ["all_aids_use_same_scheme", "guaranteed_reimbursement", "buy_before_application_is_always_ok", "work_injury_automatically_proven"],
+      "expected_questions": ["q_work_injury_context", "q_aid_use_context", "q_medical_need", "q_cost_or_quote", "q_existing_region_or_employer_support"],
+      "expected_next_actions": ["distinguish_everyday_special_aid_from_work_aid", "check_work_injury_cost_compensation", "check_work_aid_application_before_purchase"],
+      "source_requirements": ["Försäkringskassan"]
+    },
+    {
+      "case_id": "lab-relative-web-01",
+      "actor_type": "relative",
+      "story": "Min vuxna förälder vill att jag hjälper till med ett myndighetsärende. Jag har inget formellt uppdrag ännu och undrar om jag bara kan logga in eller kontakta myndigheten åt hen.",
+      "expected_support_areas": ["representation_guidance", "fullmakt", "assisted_service"],
+      "must_not_claim": ["family_relationship_grants_authority", "credential_sharing_is_ok", "authority_to_act_without_consent_or_fullmakt"],
+      "expected_questions": ["q_person_can_consent", "q_existing_fullmakt", "q_authority", "q_task_to_be_performed", "q_assisted_service_preference"],
+      "expected_next_actions": ["clarify_required_authority", "use_official_fullmakt_or_ombud_path_when_applicable", "avoid_sharing_e_identification_credentials"],
+      "source_requirements": ["relevant_authority", "Försäkringskassan"]
+    },
+    {
+      "case_id": "lab-brf-web-01",
+      "actor_type": "brf_property_actor",
+      "story": "Vi sitter i styrelsen för en bostadsrättsförening och vill både energieffektivisera huset och installera laddplatser. Vi hittar en gammal Boverket-sida om energistöd och ny information om Ladda bilen. Vad är faktiskt sökbart nu?",
+      "expected_support_areas": ["energy_efficiency_support_status", "ev_charging_support", "support_lifecycle_verification"],
+      "must_not_claim": ["indexed_official_page_means_open_support", "old_boverket_multifamily_support_is_open", "guaranteed_ladda_bilen_grant", "guaranteed_amount"],
+      "expected_questions": ["q_organisation_type", "q_building_type", "q_measure", "q_project_started", "q_current_application_status", "q_charging_ownership_and_users"],
+      "expected_next_actions": ["verify_each_support_current_status", "mark_closed_or_expired_support_as_not_open", "check_current_ladda_bilen_conditions", "separate_energy_renovation_from_charging_support"],
+      "source_requirements": ["Boverket", "Naturvårdsverket"]
+    },
+    {
+      "case_id": "lab-private-web-04",
+      "actor_type": "individual",
+      "story": "Jag äger ett småhus och hörde att det går att söka ett nytt bidrag för energieffektivisering från september 2026. Jag har redan börjat planera och kanske beställt material. Hjälp mig kontrollera vad som gäller utan att anta att jag får stödet.",
+      "expected_support_areas": ["small_house_energy_efficiency_support", "application_timing", "eligible_measure_verification"],
+      "must_not_claim": ["guaranteed_energy_grant", "guaranteed_amount", "all_started_measures_are_eligible", "brf_rules_apply_to_small_house"],
+      "expected_questions": ["q_ownership", "q_building_type", "q_measure", "q_measure_start_date", "q_material_cost", "q_application_status"],
+      "expected_next_actions": ["check_current_boverket_conditions", "verify_measure_and_timing", "prepare_required_documents", "apply_through_official_channel_if_eligible"],
+      "source_requirements": ["Boverket", "current_regulation_or_official_guidance"]
+    }
+  ]
+}
