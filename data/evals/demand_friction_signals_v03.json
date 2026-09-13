@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. Community material is discovery-only; truth-bearing employment, benefit and representation claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. These scores guide eval, retrieval and question-order work only."
+  },
+  "signals": [
+    {
+      "signal_id": "df-varsel-unemployment-transition-v01",
+      "actor_types": ["employee", "young_adult"],
+      "natural_language_queries": [
+        "jag har blivit varslad ska jag skriva in mig på arbetsförmedlingen nu",
+        "jag blir arbetslös om några veckor vem ska jag ringa",
+        "jag är med i facket men inte a-kassan vad gör jag",
+        "finns omställningsstöd innan sista arbetsdagen"
+      ],
+      "demand_signal": {"score": 4, "basis": "Recent public discussion shows repeated uncertainty immediately after a layoff warning, and Arbetsförmedlingen maintains dedicated guidance for varsel, unemployment registration and transition support."},
+      "friction_signal": {"score": 5, "basis": "Natural language often collapses varsel, uppsägning and actual unemployment, while Arbetsförmedlingen registration, a-kassa and transition-organization support have different trigger points."},
+      "miss_consequence": {"score": 5, "basis": "Premature or delayed routing can waste critical time; missing first-day registration once actually unemployed can affect a-kassa assessment timing and SGI protection."},
+      "source_fragmentation": {"score": 4, "basis": "The user may need to connect employer status, Arbetsförmedlingen, a-kassa and an applicable transition organization without treating them as one system."},
+      "language_accessibility_friction": {"score": 4, "basis": "Terms such as varsel, uppsägning, permittering, a-kassa and omställningsorganisation are easy to conflate when the user's real question is simply what to do next."},
+      "steps_to_action": {"score": 4, "basis": "The correct next action changes materially depending on whether employment still continues, the actual last day, a-kassa status and whether transition support is available."},
+      "recurrence_signal": {"score": 4, "basis": "A recent community thread contains multiple conflicting suggestions about immediate registration, a-kassa and union membership, while official guidance explicitly separates the stages."},
+      "current_product_coverage_gap": {"score": 5, "basis": "Employee scenarios cover sickness and work aids, but no canonical regression currently forces the product to distinguish varsel from actual unemployment and sequence first-day registration correctly."},
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/sweden/comments/1tp6oxy/fick_nyss_information_om_att_jag_blir_varslad/"
+      ],
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/arbeta-i-sverige/varsel",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu"
+      ],
+      "recommended_learning_action": "Add a fail-closed transition regression that first establishes whether the person is still employed, then sequences preparation/transition support versus first-unemployed-day registration and a-kassa without turning union or warning status into benefit eligibility.",
+      "truth_rule": "Do not treat community advice, varsel, union membership or an expected end date as benefit truth; verify current registration, a-kassa and transition guidance against the responsible primary sources."
+    },
+    {
+      "signal_id": "df-relative-representation-housing-supplement-v01",
+      "actor_types": ["relative", "older_person"],
+      "natural_language_queries": [
+        "jag hjälper min mamma med bostadstillägg får jag logga in åt henne",
+        "behöver jag fullmakt för att söka bostadstillägg åt min pappa",
+        "min förälder klarar inte ekonomin själv hur gör jag ansökan",
+        "kan jag använda min anhörigs bankid när jag hjälper till"
+      ],
+      "demand_signal": {"score": 3, "basis": "Pensionsmyndigheten maintains a dedicated route for applying or reporting changes for another person, indicating a recurring representation need even though no measured search-volume claim is made."},
+      "friction_signal": {"score": 5, "basis": "Being an adult child, acting as a supportive relative, being a legally authorized relative, holding a future power of attorney and being a guardian or administrator are not interchangeable representation states."},
+      "miss_consequence": {"score": 5, "basis": "Wrong representation advice can cause an application to use the wrong channel, expose another person's credentials or delay a high-impact pension-related support process."},
+      "source_fragmentation": {"score": 4, "basis": "The next action depends on both the support route and representation status; the same person may need web service or paper form depending on role."},
+      "language_accessibility_friction": {"score": 4, "basis": "Terms such as behörig anhörig, god man, förvaltare and framtidsfullmakt are legal-administrative concepts far removed from the user's natural statement 'I help my parent'."},
+      "steps_to_action": {"score": 4, "basis": "The product must establish relationship, the person's ability to manage finances and any existing representative/fullmakt before selecting the safe application channel."},
+      "recurrence_signal": {"score": 3, "basis": "The dedicated official page and multiple representation variants show stable friction, but this pack does not claim measured frequency."},
+      "current_product_coverage_gap": {"score": 5, "basis": "Relative feedback is segmented, but no canonical scenario currently protects representation authority, own-login use and the web-service versus form distinction for this support journey."},
+      "priority_band": "MEDIUM_HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-bostadstillagg-at-nagon-annan-som-behorig-anhorig"
+      ],
+      "recommended_learning_action": "Add a representation regression that asks only the relationship/capacity/existing-representative facts that can change the route, requires the helper to use their own login when the official web route applies, and fails closed rather than assuming authority from family relationship alone.",
+      "truth_rule": "Verify current representation status and application channel against Pensionsmyndigheten; do not infer authority from kinship alone and never recommend using another person's e-identification credentials."
+    }
+  ]
+}
