@@ -1,0 +1,28 @@
+name: Validate demand and friction intelligence
+
+on:
+  pull_request:
+    paths:
+      - 'data/evals/demand_friction_signals_v01.json'
+      - 'scripts/validate_demand_friction_signals.py'
+      - '.github/workflows/demand-friction.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/evals/demand_friction_signals_v01.json'
+      - 'scripts/validate_demand_friction_signals.py'
+      - '.github/workflows/demand-friction.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate qualitative demand/friction signal matrix
+        run: python scripts/validate_demand_friction_signals.py

@@ -34,8 +34,8 @@ for path in paths:
             assert isinstance(case[key], list) and case[key], f'{cid}: {key} must be non-empty list'
         cases.append(case)
 
-# 42 cases were already in the legacy canonical gate. v06-v08 add 5, v09 adds 2, v10 adds 2.
-assert len(cases) >= 51, f'expected at least 51 cases across the single scenario system, got {len(cases)}'
+# 42 cases were already in the legacy canonical gate. v06-v08 add 5, v09 adds 2, v10 adds 2, v11 adds 2.
+assert len(cases) >= 53, f'expected at least 53 cases across the single scenario system, got {len(cases)}'
 
 required_recent = {
     'lab-individual-v06-01',
@@ -47,6 +47,8 @@ required_recent = {
     'lab-employee-workaid-v09-02',
     'lab-disability-sicktravel-v10-01',
     'lab-rural-outofregion-sicktravel-v10-02',
+    'lab-child-maintenance-v11-01',
+    'lab-employee-partialsick-v11-01',
 }
 missing_recent = sorted(required_recent - ids)
 assert not missing_recent, f'newer web-signal regressions outside canonical lab: {missing_recent}'
@@ -75,5 +77,17 @@ assert 'referral_route' in out_of_region['expected_support_areas']
 assert 'all_out_of_region_healthcare_travel_is_reimbursed' in out_of_region['must_not_claim']
 assert 'travel_reimbursement_is_guaranteed_before_referral_route_is_known' in out_of_region['must_not_claim']
 assert 'verify_how_the_out_of_region_care_was_arranged' in out_of_region['expected_next_actions']
+
+maintenance = by_id['lab-child-maintenance-v11-01']
+assert 'underhallsbidrag_vs_underhallsstod' in maintenance['expected_support_areas']
+assert 'underhallsbidrag_and_underhallsstod_are_the_same_route' in maintenance['must_not_claim']
+assert 'underhallsstod_is_automatic_without_application_or_assessment' in maintenance['must_not_claim']
+assert 'distinguish_parent_paid_underhallsbidrag_from_fk_underhallsstod' in maintenance['expected_next_actions']
+
+partial_sick = by_id['lab-employee-partialsick-v11-01']
+assert 'work_schedule_distribution' in partial_sick['expected_support_areas']
+assert 'employer_approval_alone_is_enough_for_partial_sick_leave_schedule' in partial_sick['must_not_claim']
+assert 'working_more_never_requires_informing_forsakringskassan' in partial_sick['must_not_claim']
+assert 'check_work_schedule_distribution_with_both_employer_and_forsakringskassan' in partial_sick['expected_next_actions']
 
 print(f'canonical scenario lab: OK ({len(cases)} cases across {len(paths)} packs)')
