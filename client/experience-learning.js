@@ -1,6 +1,6 @@
 (() => {
   const ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
-  const APP_VERSION='0.8.0';
+  const APP_VERSION='0.8.1';
   const box=document.getElementById('engineResults');
   if(!box) return;
 
@@ -12,6 +12,7 @@
 
   function lang(){const l=document.documentElement.lang||'sv';return copy[l]?l:'sv'}
   function c(k){return copy[lang()][k]}
+  function route(){return String(box.dataset.primaryRoute||'general').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,32)||'general'}
   function panel(){
     if(box.querySelector('[data-experience-feedback]')) return;
     const wrap=document.createElement('section');
@@ -27,7 +28,7 @@
     wrap.querySelector('[data-send]').addEventListener('click',async()=>{
       const status=wrap.querySelector('[data-status]');
       if(typeof state.useful!=='boolean'||typeof state.clear!=='boolean'||typeof state.learned_new!=='boolean') return;
-      const payload={app_version:APP_VERSION,language:lang(),flow:'situation_engine',learned_new:state.learned_new,useful:state.useful,next_step_clear:state.clear,ratings:{}};
+      const payload={app_version:APP_VERSION,language:lang(),flow:`situation_engine_${route()}`.slice(0,64),learned_new:state.learned_new,useful:state.useful,next_step_clear:state.clear,ratings:{}};
       try{
         const res=await fetch(ENDPOINT,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         if(!res.ok) throw new Error('HTTP '+res.status);
