@@ -1,0 +1,30 @@
+name: Validate company pilot scenarios
+
+on:
+  pull_request:
+    paths:
+      - 'company-pilot.html'
+      - 'data/evals/company_pilot_scenarios.json'
+      - 'scripts/run_company_pilot_scenarios.mjs'
+      - '.github/workflows/company-pilot-scenarios.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'company-pilot.html'
+      - 'data/evals/company_pilot_scenarios.json'
+      - 'scripts/run_company_pilot_scenarios.mjs'
+      - '.github/workflows/company-pilot-scenarios.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  scenarios:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run company pilot synthetic scenarios against platform runtime
+        run: node scripts/run_company_pilot_scenarios.mjs
