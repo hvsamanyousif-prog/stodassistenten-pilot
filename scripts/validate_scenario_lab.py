@@ -27,8 +27,8 @@ required_fields = {
     'expected_questions','expected_next_actions','source_requirements'
 }
 
-if len(cases) < 32:
-    print(f'expected at least 32 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
+if len(cases) < 34:
+    print(f'expected at least 34 synthetic cases across scenario packs, got {len(cases)}', file=sys.stderr)
     raise SystemExit(1)
 
 for case in cases:
@@ -102,6 +102,29 @@ if (
     or 'relevant_foundation' not in foundation['source_requirements']
 ):
     print('foundation registry vs open-grant regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Student-finance regression: taking only the grant does not by itself preserve CSN weeks.
+csn_weeks = by_id.get('lab-student-web-02')
+if (
+    not csn_weeks
+    or 'grant_only_saves_csn_weeks' not in csn_weeks['must_not_claim']
+    or 'student_finance_week_budgeting' not in csn_weeks['expected_support_areas']
+    or 'check_used_and_remaining_weeks_in_csn' not in csn_weeks['expected_next_actions']
+):
+    print('CSN grant-only vs used-weeks regression missing', file=sys.stderr)
+    raise SystemExit(1)
+
+# Jobbpremie regression: eligibility and deadline are month-specific and household-sensitive.
+jobbpremie = by_id.get('lab-private-web-06')
+if (
+    not jobbpremie
+    or 'one_application_covers_all_jobbpremie_months' not in jobbpremie['must_not_claim']
+    or 'current_household_social_assistance_is_irrelevant' not in jobbpremie['must_not_claim']
+    or 'monthly_application_deadline' not in jobbpremie['expected_support_areas']
+    or 'apply_month_by_month_to_forsakringskassan_within_deadline' not in jobbpremie['expected_next_actions']
+):
+    print('jobbpremie month/household/deadline regression missing', file=sys.stderr)
     raise SystemExit(1)
 
 print(f'scenario lab validation: OK ({len(cases)} cases, {len(seen)} actor types, {len(packs)} packs)')
