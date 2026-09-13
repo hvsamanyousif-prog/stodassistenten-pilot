@@ -14,7 +14,7 @@
     "free_text": null
   },
   "audience": {
-    "segments": ["employee", "sickness", "income_loss"],
+    "segments": ["employee", "sickness", "income_loss", "part_time_sick_leave"],
     "age_min": null,
     "age_max": null
   },
@@ -27,6 +27,14 @@
         "value": 0.25,
         "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
         "notes": "Försäkringskassan anger att arbetsförmågan ska vara nedsatt med minst en fjärdedel på grund av sjukdom eller skada."
+      },
+      {
+        "rule_id": "sp.extent_levels",
+        "field": "sickness_benefit_fraction",
+        "operator": "in",
+        "value": [0.25, 0.5, 0.75, 1.0],
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "notes": "Försäkringskassan anger nivåerna 25, 50, 75 eller 100 procent beroende på hur mycket arbetsförmågan är nedsatt."
       },
       {
         "rule_id": "sp.income_loss",
@@ -61,13 +69,18 @@
         "question_id": "sp.income_loss",
         "prompt": "Förlorar du arbetsinkomst när du inte kan arbeta?",
         "reason": "Inkomstförlust är ett centralt villkor."
+      },
+      {
+        "question_id": "sp.part_time_arrangement",
+        "prompt": "Om du ska arbeta deltid under sjukskrivningen: har du stämt av hur arbetstiden ska förläggas med både arbetsgivaren och Försäkringskassan?",
+        "reason": "Försäkringskassan anger att den som arbetar deltid med sjukpenning behöver stämma av arbetstidens förläggning med båda parter."
       }
     ]
   },
   "benefit": {
     "kind": "cash",
     "amount_text": null,
-    "calculation_text": "Ersättningen beror bland annat på SGI och sjukskrivningsgrad. Exakta belopp och tak ska hämtas från aktuell Försäkringskassekälla vid användning.",
+    "calculation_text": "Ersättningen beror bland annat på SGI och sjukskrivningsgrad. Försäkringskassan anger sjukpenning på 25, 50, 75 eller 100 procent beroende på hur mycket arbetsförmågan är nedsatt. Exakta belopp och tak ska hämtas från aktuell primärkälla vid användning.",
     "recurrence": "daily"
   },
   "documents": [
@@ -77,30 +90,30 @@
     "method": "online",
     "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
     "deadline_text": null,
-    "next_step": "Följ Försäkringskassans aktuella steg för anställda: meddela arbetsgivaren, säkerställ nödvändigt läkarintyg och ansök om sjukpenning när Försäkringskassans del av sjukperioden blir aktuell."
+    "next_step": "Meddela arbetsgivaren, säkerställ nödvändigt läkarintyg och ansök om sjukpenning när Försäkringskassans del av sjukperioden blir aktuell. Om du arbetar deltid med sjukpenning ska arbetstidens förläggning stämmas av med både arbetsgivaren och Försäkringskassan; om du redan har sjukpenning och vill börja arbeta mer ska ändrad omfattning meddelas Försäkringskassan."
   },
   "source": {
     "source_id": "se-forsakringskassan-benefits-a-z",
     "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
     "source_type": "official_web",
     "published_at": null,
-    "updated_at": null,
-    "retrieved_at": "2026-09-10T13:05:00Z",
+    "updated_at": "2026-06-09T00:00:00Z",
+    "retrieved_at": "2026-09-13T06:45:00Z",
     "content_hash": null
   },
   "verification": {
     "status": "NEEDS_REVIEW",
     "last_verified_at": null,
     "human_review_required": true,
-    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-10. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning.",
+    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-13 och utökad med källförankrade regler för deltidssjukskrivning. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning.",
     "material_fields_verified": []
   },
   "lifecycle": {
     "first_seen_at": "2026-09-10T13:05:00Z",
-    "last_seen_at": "2026-09-10T13:05:00Z",
+    "last_seen_at": "2026-09-13T06:45:00Z",
     "valid_from": null,
     "valid_to": null,
-    "version": 1,
+    "version": 2,
     "change_hash": null
   }
 }

@@ -1,0 +1,106 @@
+{
+  "support_id": "se-forsakringskassan-allvarlig-sjukdom-normalniva",
+  "name": "Sjukpenning på normalnivå efter 364 dagar vid allvarlig sjukdom",
+  "category": "sickness_rehabilitation",
+  "subtype": "serious_illness_normal_level_exception",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["long_term_sickness", "serious_illness", "income_loss"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "asi.long_sickness_period",
+        "field": "sickness_benefit_days",
+        "operator": "gte",
+        "value": 364,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/sjuk-en-langre-tid-sa-funkar-det",
+        "notes": "Efter 364 dagar sänks sjukpenningen normalt till fortsättningsnivå, men det finns ett undantag vid allvarlig sjukdom."
+      },
+      {
+        "rule_id": "asi.serious_illness_assessment",
+        "field": "serious_illness_under_social_insurance_rules",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/sjuk-en-langre-tid-sa-funkar-det",
+        "notes": "Begreppet allvarlig sjukdom är ett särskilt socialförsäkringsrättsligt begrepp och kräver individuell bedömning; en diagnos i sig innebär inte automatiskt rätt."
+      },
+      {
+        "rule_id": "asi.work_capacity_reduction",
+        "field": "work_capacity_reduction_fraction_due_to_serious_illness",
+        "operator": "gte",
+        "value": 0.25,
+        "source_url": "https://www.forsakringskassan.se/download/18.5f20d93c19705cd0bd55d8/1750056079638/begreppet-allvarlig-sjukdom-rattsligt-stallningstagande-2025-03.pdf",
+        "notes": "Försäkringskassans rättsliga ställningstagande anger att den allvarliga sjukdomen måste sätta ned arbetsförmågan med minst en fjärdedel för att undantaget ska kunna tillämpas."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "asi.days",
+        "prompt": "Har du haft sjukpenning i ungefär ett år eller 364 dagar?",
+        "reason": "Den särskilda frågan om fortsatt normalnivå blir relevant efter den vanliga gränsen för sjukpenning på normalnivå."
+      },
+      {
+        "question_id": "asi.serious_illness",
+        "prompt": "Har Försäkringskassan eller din behandlande läkare tagit upp att din sjukdom kan omfattas av reglerna om allvarlig sjukdom?",
+        "reason": "Begreppet är juridiskt avgränsat och ska inte antas enbart utifrån diagnosnamnet."
+      },
+      {
+        "question_id": "asi.work_capacity",
+        "prompt": "Hur mycket är din arbetsförmåga nedsatt på grund av den sjukdom som kan vara allvarlig enligt reglerna?",
+        "reason": "Undantaget kräver att just den allvarliga sjukdomen sätter ned arbetsförmågan med minst en fjärdedel."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": "Den som uppfyller reglerna om allvarlig sjukdom kan ha rätt att behålla sjukpenning på normalnivå efter 364 dagar i stället för att gå ned till fortsättningsnivå.",
+    "calculation_text": "Försäkringskassan beskriver normalnivån som cirka 80 procent av SGI och fortsättningsnivån som cirka 75 procent. Exakt ersättning och rätt prövas individuellt.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Aktuellt läkarintyg eller medicinskt underlag som beskriver sjukdomen och hur arbetsförmågan påverkas"
+  ],
+  "application": {
+    "method": "provider_contact",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/sjuk-en-langre-tid-sa-funkar-det",
+    "deadline_text": null,
+    "next_step": "Om du närmar dig eller har passerat 364 dagar med sjukpenning och har en sjukdom som kan omfattas av reglerna om allvarlig sjukdom, kontakta Försäkringskassan och fråga hur undantaget bedöms i ditt ärende samt vilket medicinskt underlag som behövs."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/sjuk-en-langre-tid-sa-funkar-det",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-08-12T00:00:00Z",
+    "retrieved_at": "2026-09-13T06:45:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella vägledning och rättsliga ställningstagande 2026-09-13. Allvarlig sjukdom får inte infereras automatiskt från diagnos. Mänsklig sakgranskning krävs innan status kan höjas till VERIFIED eller användas som produktionssanning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-13T06:45:00Z",
+    "last_seen_at": "2026-09-13T06:45:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}

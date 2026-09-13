@@ -1,0 +1,135 @@
+{
+  "support_id": "se-forsakringskassan-forebyggande-sjukpenning",
+  "name": "Förebyggande sjukpenning vid behandling eller rehabilitering",
+  "category": "sickness_rehabilitation",
+  "subtype": "preventive_sickness_benefit",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["employee", "jobseeker", "self_employed", "planned_treatment", "rehabilitation", "serious_illness"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "fsp.disease_risk",
+        "field": "disease_or_increased_disease_risk_affecting_work_capacity",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Försäkringskassan anger att personen ska ha en ökad sjukdomsrisk eller en sjukdom som riskerar att påverka arbetsförmågan."
+      },
+      {
+        "rule_id": "fsp.cannot_work_during_treatment",
+        "field": "cannot_work_or_seek_work_due_to_treatment",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Behandlingen eller rehabiliteringen ska medföra att personen behöver avstå från arbete eller arbetssökande."
+      },
+      {
+        "rule_id": "fsp.minimum_time_fraction",
+        "field": "treatment_time_fraction_of_daily_work",
+        "operator": "gte",
+        "value": 0.25,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Försäkringskassan anger minst en fjärdedel av den dagliga arbetstiden per behandlingstillfälle."
+      },
+      {
+        "rule_id": "fsp.doctor_ordered",
+        "field": "treatment_ordered_by_doctor",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Behandlingen eller rehabiliteringen ska vara ordinerad av läkare och syfta till att förebygga eller förkorta sjukdom."
+      },
+      {
+        "rule_id": "fsp.plan_approved",
+        "field": "treatment_plan_approved_by_forsakringskassan",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Behandlingsplanen ska vara godkänd av Försäkringskassan innan ersättningen söks."
+      },
+      {
+        "rule_id": "fsp.insured_in_sweden",
+        "field": "insured_in_sweden",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "notes": "Den sökande behöver vara försäkrad i Sverige."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "fsp.role",
+        "prompt": "Är du anställd, arbetssökande eller egen företagare?",
+        "reason": "Flödet och eventuell karens kan skilja sig beroende på arbetssituation."
+      },
+      {
+        "question_id": "fsp.prescription",
+        "prompt": "Har en läkare ordinerat behandlingen eller rehabiliteringen och finns en behandlingsplan?",
+        "reason": "Läkarordination och behandlingsplan är centrala villkor."
+      },
+      {
+        "question_id": "fsp.time_fraction",
+        "prompt": "Tar behandlingen, inklusive den tid som är relevant enligt Försäkringskassans regler, minst en fjärdedel av din dagliga arbetstid per tillfälle?",
+        "reason": "Minsta tidsomfattning per tillfälle är ett uttryckligt villkor."
+      },
+      {
+        "question_id": "fsp.plan_approved",
+        "prompt": "Har Försäkringskassan redan godkänt behandlingsplanen?",
+        "reason": "Ersättningen söks efter att behandlingsplanen har godkänts."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": "Försäkringskassan anger att ersättningen är knappt 80 procent av inkomsten upp till ett inkomsttak.",
+    "calculation_text": "Exakt ersättning beror på inkomsten och ska kontrolleras mot aktuell Försäkringskassekälla i det enskilda ärendet.",
+    "recurrence": "variable"
+  },
+  "documents": [
+    "Läkarutlåtande med behandlingsplan"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+    "deadline_text": null,
+    "next_step": "Be läkaren om ett läkarutlåtande med behandlingsplan, ansök först om att få planen godkänd av Försäkringskassan och ansök därefter om förebyggande sjukpenning för behandlingstillfällena."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-07-20T00:00:00Z",
+    "retrieved_at": "2026-09-13T06:45:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell primärkälla 2026-09-13. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-13T06:45:00Z",
+    "last_seen_at": "2026-09-13T06:45:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
