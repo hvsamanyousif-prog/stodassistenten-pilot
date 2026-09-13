@@ -14,7 +14,7 @@ EVAL = ROOT / 'data' / 'evals'
 SIGNAL_PATHS = sorted(EVAL.glob('demand_friction_signals_v*.json'))
 MAP_PATH = EVAL / 'demand_friction_regression_map_v01.json'
 
-assert len(SIGNAL_PATHS) >= 2, 'expected versioned demand/friction signal packs'
+assert len(SIGNAL_PATHS) >= 3, 'expected versioned demand/friction signal packs'
 assert MAP_PATH.exists(), 'demand/friction regression map missing'
 
 required_signal = {
@@ -60,8 +60,8 @@ for path in SIGNAL_PATHS:
         assert str(signal['recommended_learning_action']).strip(), f'{sid}: learning action empty'
     serialized_packs.append(json.dumps(pack, ensure_ascii=False).lower())
 
-assert len(signals) >= 5, f'first demand/friction version requires at least 5 prioritized needs, got {len(signals)}'
-assert sum(s['priority_band'] == 'HIGH' for s in signals.values()) >= 3, 'expected multiple high-priority weak-link signals'
+assert len(signals) >= 7, f'demand/friction system requires at least 7 prioritized needs, got {len(signals)}'
+assert sum(s['priority_band'] == 'HIGH' for s in signals.values()) >= 4, 'expected multiple high-priority weak-link signals'
 
 for text in serialized_packs:
     for forbidden_key in ['"username"', '"user_name"', '"person_name"', '"raw_story"', '"raw_post"', '"email"', '"phone"']:
@@ -111,6 +111,8 @@ required_links = {
     'df-personal-assistance-authority-split-v01': 'lab-personal-assistance-authority-v12-01',
     'df-company-procurement-too-many-steps-v01': 'lab-company-information-gain-v12-02',
     'df-young-housing-benefit-income-change-v01': 'lab-young-housing-irregular-income-v12-03',
+    'df-varsel-unemployment-transition-v01': 'lab-employee-varsel-transition-v13-01',
+    'df-relative-representation-housing-supplement-v01': 'lab-relative-housing-representation-v13-02',
 }
 for sid, cid in required_links.items():
     assert sid in mappings, f'critical signal mapping missing: {sid}'
