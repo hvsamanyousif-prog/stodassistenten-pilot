@@ -11,7 +11,10 @@ route handoff without duplicating product engines.
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 
 MANAGED_START = "<!-- STOD_CAPABILITY_WIRING_START -->"
@@ -75,6 +78,45 @@ def inject_quick_learning(html: str) -> str:
     return inject_before_body(html, quick_learning_block(), (QUICK_LEARNING_START, QUICK_LEARNING_END))
 
 
+def repair_known_inline_syntax(html: str, page: str) -> str:
+    """Hotfix the two locale-object brace regressions that reached main.
+
+    This is intentionally narrow and fail-closed: the build only repairs the
+    exact structural signature we observed. Source files should be corrected
+    separately; this protects the live Pages artifact immediately.
+    """
+    if page == "index.html":
+        marker = "company-pilot.html?actor_type=company']]}}\n};\nconst KEYWORDS="
+        fixed = "company-pilot.html?actor_type=company']]}\n};\nconst KEYWORDS="
+    elif page == "quick-help.html":
+        marker = "unsure:['می‌خواهم بدانم چه کمک‌هایی وجود دارد','گسترده شروع کن.']}}}}\n};\nconst SV_RESULTS="
+        fixed = "unsure:['می‌خواهم بدانم چه کمک‌هایی وجود دارد','گسترده شروع کن.']}}}\n};\nconst SV_RESULTS="
+    else:
+        return html
+    if marker in html:
+        return html.replace(marker, fixed, 1)
+    return html
+
+
+def validate_inline_javascript(html: str, label: str) -> None:
+    scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, flags=re.S)
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, script in enumerate(scripts):
+            if not script.strip():
+                continue
+            path = Path(tmp) / f"{label.replace('/', '_')}-{i}.js"
+            path.write_text(script, encoding="utf-8")
+            proc = subprocess.run(
+                ["node", "--check", str(path)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if proc.returncode:
+                detail = (proc.stderr or proc.stdout).strip()
+                raise ValueError(f"inline JavaScript syntax invalid in {label} script {i}: {detail}")
+
+
 def copy_required_asset(source_root: Path, output_root: Path, relative_path: str) -> None:
     source = source_root / relative_path
     if not source.is_file():
@@ -103,15 +145,21 @@ def build(source_root: Path, output_root: Path) -> Path:
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
 
-    shell_html = source_index.read_text(encoding="utf-8")
-    (output_root / "index.html").write_text(inject_shell_learning(shell_html), encoding="utf-8")
+    shell_html = repair_known_inline_syntax(source_index.read_text(encoding="utf-8"), "index.html")
+    built_shell = inject_shell_learning(shell_html)
+    validate_inline_javascript(built_shell, "index.html")
+    (output_root / "index.html").write_text(built_shell, encoding="utf-8")
 
     person_html = source_person.read_text(encoding="utf-8")
-    (output_root / PERSON_PILOT_PATH).write_text(inject_wiring(person_html), encoding="utf-8")
+    built_person = inject_wiring(person_html)
+    validate_inline_javascript(built_person, PERSON_PILOT_PATH)
+    (output_root / PERSON_PILOT_PATH).write_text(built_person, encoding="utf-8")
 
     copy_required_asset(source_root, output_root, "company-pilot.html")
-    quick_html = source_quick.read_text(encoding="utf-8")
-    (output_root / "quick-help.html").write_text(inject_quick_learning(quick_html), encoding="utf-8")
+    quick_html = repair_known_inline_syntax(source_quick.read_text(encoding="utf-8"), "quick-help.html")
+    built_quick = inject_quick_learning(quick_html)
+    validate_inline_javascript(built_quick, "quick-help.html")
+    (output_root / "quick-help.html").write_text(built_quick, encoding="utf-8")
 
     for path in SCRIPT_PATHS:
         copy_required_asset(source_root, output_root, path)
