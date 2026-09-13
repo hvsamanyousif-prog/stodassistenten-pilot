@@ -63,6 +63,22 @@
         "https://www.lansstyrelsen.se/vasternorrland/samhalle/betalning-ekonomi-och-pengar/stipendier.html",
         "https://www.lansstyrelsen.se/dalarna/samhalle/stiftelser.html"
       ]
+    },
+    {
+      "pattern_id": "signal-csn-grant-only-still-uses-weeks",
+      "observation": "A recurring student misconception is that declining the loan part automatically preserves CSN weeks. CSN states that weeks count as used even when a student takes only the grant; applying for fewer weeks or a lower study rate can instead preserve weeks and also changes the income threshold. The product must separate loan amount from week consumption and verify the student's actual decision and used weeks.",
+      "primary_sources": [
+        "https://www.csn.se/bidrag-och-lan/studiemedel/langsta-tid-med-studiemedel.html",
+        "https://www.csn.se/inkomst-fribelopp"
+      ]
+    },
+    {
+      "pattern_id": "signal-jobbpremie-is-month-specific-transition-support",
+      "observation": "Jobbpremie is a narrow transition support rather than a generic reward for anyone leaving social assistance. Current primary sources require social assistance for every month July-December 2025, employment salary for the claimed month, no social assistance in the household for that month, and a separate monthly application within three calendar months. The product must not collapse jobbpremie into jobbstimulans or assume one application covers all months.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/jobbpremien/"
+      ]
     }
   ],
   "cases": [
@@ -145,6 +161,26 @@
       "expected_questions": ["q_need_or_purpose", "q_municipality_or_region", "q_age_or_target_group", "q_household_context", "q_application_deadline_or_route"],
       "expected_next_actions": ["search_lansstyrelsen_foundation_registry", "open_relevant_foundation_record", "verify_purpose_and_current_application_route", "contact_foundation_directly_when_required"],
       "source_requirements": ["Länsstyrelsen", "relevant_foundation"]
+    },
+    {
+      "case_id": "lab-student-web-02",
+      "actor_type": "student",
+      "story": "Jag har fått beslut om studiemedel men jobbar mer än jag först trodde. Jag funderar på att bara ta bidraget och hoppa över lånet för att spara CSN-veckor, men jag är osäker på om veckorna ändå räknas och hur inkomsten påverkar fribeloppet.",
+      "expected_support_areas": ["student_finance_week_budgeting", "income_threshold", "student_finance_application_adjustment"],
+      "must_not_claim": ["loan_only_consumes_csn_weeks", "grant_only_saves_csn_weeks", "guaranteed_no_repayment", "income_change_is_irrelevant"],
+      "expected_questions": ["q_current_csn_decision", "q_study_rate", "q_weeks_with_grant", "q_weeks_with_loan", "q_expected_half_year_income", "q_disbursement_started"],
+      "expected_next_actions": ["check_used_and_remaining_weeks_in_csn", "compare_fewer_weeks_or_lower_support_rate", "check_current_fribelopp", "update_income_or_application_if_needed"],
+      "source_requirements": ["CSN"]
+    },
+    {
+      "case_id": "lab-private-web-06",
+      "actor_type": "individual",
+      "story": "Jag hade försörjningsstöd förra året och har nu börjat jobba. Jag har hört om jobbpremie men vet inte om den gäller automatiskt, om min partners försörjningsstöd påverkar eller om en ansökan räcker för flera månader.",
+      "expected_support_areas": ["jobbpremie", "employment_transition", "monthly_application_deadline"],
+      "must_not_claim": ["any_former_social_assistance_recipient_qualifies", "current_household_social_assistance_is_irrelevant", "one_application_covers_all_jobbpremie_months", "jobbstimulans_and_jobbpremie_are_same", "guaranteed_jobbpremie"],
+      "expected_questions": ["q_social_assistance_each_month_jul_dec_2025", "q_salary_for_claim_month", "q_own_social_assistance_claim_month", "q_household_social_assistance_claim_month", "q_claim_month_and_deadline"],
+      "expected_next_actions": ["verify_jul_dec_2025_assistance_history", "verify_current_household_assistance_status", "distinguish_jobbpremie_from_jobbstimulans", "apply_month_by_month_to_forsakringskassan_within_deadline"],
+      "source_requirements": ["Försäkringskassan", "Socialstyrelsen"]
     }
   ]
 }
