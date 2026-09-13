@@ -6,6 +6,7 @@ on:
     paths:
       - 'data/evals/scenario_lab_v01.json'
       - 'data/evals/scenario_lab_websignals_v01.json'
+      - 'data/evals/scenario_lab_websignals_continuous.json'
       - 'scripts/validate_scenario_lab.py'
       - '.github/workflows/scenario-lab.yml'
 jobs:
