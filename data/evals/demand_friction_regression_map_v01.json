@@ -30,8 +30,8 @@
     {
       "signal_id": "df-young-housing-benefit-income-change-v01",
       "product_miss": "Young users can treat all paid housing as equivalent or delay reporting income/household changes, increasing missed-support or repayment risk.",
-      "fix_or_guardrail": "Preserve housing-form classification, current-income/change reporting and primary-source verification in the existing young-housing regressions.",
-      "regression_case_ids": ["lab-student-housing-v07-01", "lab-student-housing-v07-02"]
+      "fix_or_guardrail": "Preserve housing-form classification, current-income/change reporting and primary-source verification, including irregular-income handling that must not promise an amount or no repayment.",
+      "regression_case_ids": ["lab-student-housing-v07-01", "lab-student-housing-v07-02", "lab-young-housing-irregular-income-v12-03"]
     }
   ]
 }
