@@ -35,6 +35,9 @@ def make_fixture(root: Path) -> None:
         path = root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(f"// {relative}\n", encoding="utf-8")
+    shell_learning = root / builder.SHELL_LEARNING_PATH
+    shell_learning.parent.mkdir(parents=True, exist_ok=True)
+    shell_learning.write_text('// shared experience learning\n', encoding='utf-8')
     profile = root / builder.PROFILE_PATH
     profile.parent.mkdir(parents=True, exist_ok=True)
     profile.write_text('{"schema_version":"1.0.0","capabilities":[]}', encoding="utf-8")
@@ -44,13 +47,20 @@ def test_injection_is_exact() -> None:
     source = '<html><body><script>window.keep="exact";</script></body></html>'
     built = builder.inject_wiring(source)
     block = builder.wiring_block() + "\n"
-    require(built.replace(block, "", 1) == source, "managed block must be the only pilot HTML mutation")
+    require(built.replace(block, "", 1) == source, "managed block must be the only person-pilot HTML mutation")
     require(built.count(builder.MANAGED_START) == 1, "managed start marker must occur once")
     require(built.count(builder.MANAGED_END) == 1, "managed end marker must occur once")
+
+    shell = builder.inject_shell_learning(source)
+    shell_block = builder.shell_learning_block() + "\n"
+    require(shell.replace(shell_block, "", 1) == source, "shell learning block must be the only shell HTML mutation")
+    require(shell.count(builder.SHELL_LEARNING_START) == 1, "shell learning start marker must occur once")
+    require(shell.count(builder.SHELL_LEARNING_END) == 1, "shell learning end marker must occur once")
 
     positions = [built.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
     require(positions == sorted(positions), "capability scripts must remain in dependency order")
     require(positions[-1] < built.index("</body>"), "capability scripts must load before </body>")
+    require(shell.index(builder.SHELL_LEARNING_PATH) < shell.index('</body>'), 'shell learning script must load before </body>')
 
 
 def test_fail_closed_source_validation() -> None:
@@ -64,7 +74,13 @@ def test_fail_closed_source_validation() -> None:
         except ValueError:
             pass
         else:
-            raise AssertionError("invalid source HTML must fail closed")
+            raise AssertionError("invalid person source HTML must fail closed")
+    try:
+        builder.inject_shell_learning(f'<html><body>{builder.SHELL_LEARNING_START}</body></html>')
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('pre-wired shell must fail closed')
 
 
 def test_minimal_artifact() -> None:
@@ -78,6 +94,7 @@ def test_minimal_artifact() -> None:
             Path("index.html"),
             Path(builder.PERSON_PILOT_PATH),
             Path(builder.PROFILE_PATH),
+            Path(builder.SHELL_LEARNING_PATH),
             *(Path(path) for path in builder.MODULE_PILOT_PATHS),
             *(Path(path) for path in builder.SCRIPT_PATHS),
         }
@@ -96,7 +113,9 @@ def test_minimal_artifact() -> None:
 def verify_repository_build(source_root: Path, site_root: Path) -> None:
     source_shell = (source_root / "index.html").read_text(encoding="utf-8")
     built_shell = (site_root / "index.html").read_text(encoding="utf-8")
-    require(built_shell == source_shell, "shared shell must deploy byte-for-byte")
+    shell_block = builder.shell_learning_block() + "\n"
+    require(built_shell.replace(shell_block, "", 1) == source_shell, "shared shell build changed HTML outside experience-learning wiring")
+    require(built_shell.count(builder.SHELL_LEARNING_START) == 1, 'shared shell must contain exactly one learning block')
     for token in (
         "En Stödassistenten – flera ingångar",
         "person-pilot.html",
@@ -106,6 +125,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
         'id="situation"',
         "function classify(text)",
         "actor_type=",
+        builder.SHELL_LEARNING_PATH,
     ):
         require(token in built_shell, f"shared shell invariant missing: {token}")
 
@@ -137,6 +157,8 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
             (site_root / module).read_bytes() == (source_root / module).read_bytes(),
             f"module must deploy byte-for-byte: {module}",
         )
+
+    require((site_root / builder.SHELL_LEARNING_PATH).read_bytes() == (source_root / builder.SHELL_LEARNING_PATH).read_bytes(), 'experience-learning script must deploy byte-for-byte')
 
     quick = (site_root / "quick-help.html").read_text(encoding="utf-8")
     for token in (
