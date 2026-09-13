@@ -34,8 +34,8 @@ for path in paths:
             assert isinstance(case[key], list) and case[key], f'{cid}: {key} must be non-empty list'
         cases.append(case)
 
-# 53 cases were present after v12. v13 adds two new permanent transition/representation regressions.
-assert len(cases) >= 55, f'expected at least 55 cases across the single scenario system, got {len(cases)}'
+# 55 cases were present after v13. v14 adds one tenure/consent regression.
+assert len(cases) >= 56, f'expected at least 56 cases across the single scenario system, got {len(cases)}'
 
 required_recent = {
     'lab-individual-v06-01',
@@ -54,6 +54,7 @@ required_recent = {
     'lab-young-housing-irregular-income-v12-03',
     'lab-employee-varsel-transition-v13-01',
     'lab-relative-housing-representation-v13-02',
+    'lab-disability-housing-tenure-v14-01',
 }
 missing_recent = sorted(required_recent - ids)
 assert not missing_recent, f'newer web-signal regressions outside canonical lab: {missing_recent}'
@@ -95,6 +96,25 @@ assert 'employer_approval_alone_is_enough_for_partial_sick_leave_schedule' in pa
 assert 'working_more_never_requires_informing_forsakringskassan' in partial_sick['must_not_claim']
 assert 'check_work_schedule_distribution_with_both_employer_and_forsakringskassan' in partial_sick['expected_next_actions']
 
+# v12 introduced three high-impact learning signals. Lock their safety content, not just their IDs.
+personal_assistance = by_id['lab-personal-assistance-authority-v12-01']
+assert 'municipality_vs_forsakringskassan_authority' in personal_assistance['expected_support_areas']
+assert 'diagnosis_alone_guarantees_personal_assistance' in personal_assistance['must_not_claim']
+assert 'user_estimated_hours_equal_assessed_basic_need_hours' in personal_assistance['must_not_claim']
+assert 'under_20_hours_means_no_support_is_possible' in personal_assistance['must_not_claim']
+assert 'if_basic_need_help_is_below_or_unclear_20_hours_contact_municipality_for_assessment' in personal_assistance['expected_next_actions']
+
+company_information_gain = by_id['lab-company-information-gain-v12-02']
+assert 'information_gain' in company_information_gain['expected_support_areas']
+assert 'procurement_readiness_questions_are_required_for_funding_only_route' in company_information_gain['must_not_claim']
+assert 'skip_procurement_readiness_questions_for_funding_only_route' in company_information_gain['expected_next_actions']
+
+young_housing = by_id['lab-young-housing-irregular-income-v12-03']
+assert 'irregular_income' in young_housing['expected_support_areas']
+assert 'one_month_income_alone_determines_annual_housing_benefit_income' in young_housing['must_not_claim']
+assert 'income_changes_can_always_wait_until_next_annual_application' in young_housing['must_not_claim']
+assert 'report_relevant_income_or_household_changes_when_known' in young_housing['expected_next_actions']
+
 varsel = by_id['lab-employee-varsel-transition-v13-01']
 assert 'varsel_vs_actual_unemployment' in varsel['expected_support_areas']
 assert 'varsel_means_already_unemployed' in varsel['must_not_claim']
@@ -106,5 +126,13 @@ assert 'authorized_relative_boundary' in representation['expected_support_areas'
 assert 'helper_should_use_the_other_persons_bankid_or_credentials' in representation['must_not_claim']
 assert 'adult_child_relationship_alone_always_grants_representation_authority' in representation['must_not_claim']
 assert 'use_helpers_own_e_identification_only_when_current_official_authorized_relative_web_route_applies' in representation['expected_next_actions']
+
+housing_tenure = by_id['lab-disability-housing-tenure-v14-01']
+assert 'tenure_and_owner_consent' in housing_tenure['expected_support_areas']
+assert 'tenant_cannot_apply_for_housing_adaptation' in housing_tenure['must_not_claim']
+assert 'landlord_or_brf_is_the_applicant_by_default' in housing_tenure['must_not_claim']
+assert 'municipality_can_issue_positive_decision_without_required_written_owner_or_right_holder_consent' in housing_tenure['must_not_claim']
+assert 'obtain_required_written_consent_and_owner_non_restoration_compensation_undertaking_before_positive_decision' in housing_tenure['expected_next_actions']
+assert 'Boverket' in housing_tenure['source_requirements']
 
 print(f'canonical scenario lab: OK ({len(cases)} cases across {len(paths)} packs)')

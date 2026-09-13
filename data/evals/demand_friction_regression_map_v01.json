@@ -44,6 +44,12 @@
       "product_miss": "A helper can assume family relationship alone authorizes representation or can be told to use the supported person's credentials instead of the correct representative route.",
       "fix_or_guardrail": "Check relationship, capacity and existing representative arrangements; require own e-identification where the official authorized-relative web route applies and fail closed on representation authority.",
       "regression_case_ids": ["lab-relative-housing-representation-v13-02"]
+    },
+    {
+      "signal_id": "df-housing-adaptation-tenure-consent-v01",
+      "product_miss": "A person with a functional housing barrier can wrongly be screened out because the home is rented, or receive an unusable next step that ignores the owner and other right-holders whose written consent can be required before a positive municipal decision.",
+      "fix_or_guardrail": "Keep the person with the functional need as the applicant path, ask tenure/ownership/right-holder facts only when they change the process, and require current Boverket plus municipal verification of written consent without turning consent into entitlement.",
+      "regression_case_ids": ["lab-disability-housing-tenure-v14-01"]
     }
   ]
 }

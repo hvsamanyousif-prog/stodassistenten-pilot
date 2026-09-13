@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic housing-adaptation regression for the same Stödassistenten scenario laboratory. This pack turns a high-friction tenure/consent problem into a permanent fail-closed test. It uses current Boverket primary guidance and stores no real person, username or community story.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-housing-adaptation-tenure-consent",
+      "observation": "A person with a disability can be the applicant for housing adaptation even when the home is rented, but a positive municipal decision can require written consent from the owner and, where applicable, other right-holders. The owner must also undertake not to demand compensation for restoring the adaptation. The product must therefore distinguish the applicant's functional need from tenure, ownership and consent facts instead of screening out tenants or treating the landlord as the applicant by default.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/handlaggning/guide-for-handlaggning/Fastighetsagarens-medgivande/",
+        "https://www.boverket.se/sv/om-boverket/lattlast-pa-boverket/bidrag-och-stod/bostadsanpassningsbidrag/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-disability-housing-tenure-v14-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag ser dåligt och behöver anpassa min permanenta hyresbostad så att den fungerar säkrare hemma. Jag står på kontraktet tillsammans med min partner och tror att jag inte kan söka bostadsanpassningsbidrag eftersom jag inte äger lägenheten. Jag vet inte heller om hyresvärden måste söka åt mig.",
+      "expected_support_areas": [
+        "housing_adaptation",
+        "functional_housing_barrier",
+        "tenure_and_owner_consent",
+        "co_right_holder_consent",
+        "written_consent_before_positive_decision",
+        "municipal_application_route"
+      ],
+      "must_not_claim": [
+        "tenant_cannot_apply_for_housing_adaptation",
+        "landlord_or_brf_is_the_applicant_by_default",
+        "visual_impairment_diagnosis_alone_guarantees_housing_adaptation",
+        "housing_tenure_is_irrelevant_to_required_consent",
+        "municipality_can_issue_positive_decision_without_required_written_owner_or_right_holder_consent",
+        "co_tenant_or_other_right_holder_status_is_always_irrelevant",
+        "owner_can_automatically_require_the_applicant_to_pay_restoration_compensation_after_consent"
+      ],
+      "expected_questions": [
+        "q_which_concrete_home_barrier_the_functional_impairment_creates",
+        "q_is_this_the_permanent_home",
+        "q_housing_tenure_and_who_owns_the_home",
+        "q_are_there_other_contract_or_right_holders",
+        "q_has_required_written_owner_and_right_holder_consent_been_obtained",
+        "q_existing_municipal_application_or_contact"
+      ],
+      "expected_next_actions": [
+        "document_the_concrete_housing_barrier_and_requested_fixed_adaptation",
+        "identify_owner_and_any_other_relevant_right_holders",
+        "obtain_required_written_consent_and_owner_non_restoration_compensation_undertaking_before_positive_decision",
+        "apply_or_complete_application_with_responsible_municipality",
+        "ask_municipality_for_help_with_the_process_if_the_applicant_cannot_manage_it_alone",
+        "do_not_infer_entitlement_from_diagnosis_or_tenure_alone"
+      ],
+      "source_requirements": [
+        "Boverket",
+        "responsible_municipality"
+      ]
+    }
+  ]
+}
