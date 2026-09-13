@@ -44,11 +44,15 @@ assert 'fetch(' not in routing, 'privacy router must not transmit situation data
 
 person_context=Path('client/person-context-learning.js').read_text(encoding='utf-8')
 assert "get('actor_type')" in person_context, 'person runtime must preserve actor entry context'
-assert "data.flow=`${actor}_${flow}`" in person_context, 'person feedback must segment by actor without sensitive answers'
+assert "ALLOWED_PERSON_ACTORS" in person_context, 'person actor context must use a bounded canonical allow-list'
+for actor in ['private_person','relative','student','employee','association','other']:
+    assert f"'{actor}'" in person_context, f'person actor allow-list missing: {actor}'
+assert "ALLOWED_PERSON_ACTORS.has(sanitizedActor)?sanitizedActor:'other'" in person_context, 'unknown person actor values must collapse to other'
+assert "data.flow=`${actor}_${flow}`" in person_context, 'person feedback must segment by canonical actor without sensitive answers'
 for marker in ["heading:'Din ingång'","heading:'مدخلك'","heading:'ورودی شما'"]:
     assert marker in person_context, f'localized actor heading missing: {marker}'
 assert 'answers' not in person_context and 'situationText' not in person_context and 'situation_text' not in person_context
 assert "pilot.textContent!==actorLabel" in person_context, 'actor label patch must not self-trigger endlessly'
 assert "actorEyebrow.textContent!==heading" in person_context, 'localized eyebrow patch must be idempotent'
 
-print('feedback coverage + privacy routing + actor context: OK')
+print('feedback coverage + privacy routing + canonical actor context: OK')
