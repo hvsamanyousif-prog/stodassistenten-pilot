@@ -1,0 +1,176 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Appendable verified web-signal extensions for the same Stödassistenten scenario laboratory. Community material is discovery-only; every truth-bearing condition in this pack is grounded in primary or issuing-authority sources. These synthetic cases are not entitlement claims and do not create a separate target-group engine.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-student-sickness-protection-can-be-lost-by-studying",
+      "observation": "Students with ordinary studiemedel can protect result requirements and used weeks during an approved sickness period, but the protection depends on proper sickness reporting/approval and on not continuing to study during the approved period. The product must not present sickness protection as automatic or unconditional.",
+      "discovery_note": "Open community discussion showed conflicting advice about sickness, studies and social insurance. No community story or identity is copied into eval data.",
+      "primary_sources": [
+        "https://www.csn.se/om-nagot-hander-eller-andras/sjuk",
+        "https://www.csn.se/bidrag-och-lan/studiemedel/langsta-tid-med-studiemedel.html"
+      ]
+    },
+    {
+      "pattern_id": "signal-student-vab-is-a-studiestod-protection-path",
+      "observation": "A student who cannot study because of care of a sick child can have a separate CSN absence/protection path. For ordinary studiemedel, approved care periods can preserve support, lower result requirements and avoid consuming those weeks; omställningsstudiestöd has different week-consumption rules. The product must ask which study-support scheme applies and route the notification correctly.",
+      "discovery_note": "CSN itself reports very low use of this protection among students with children, making lack of awareness a verified hidden-need signal rather than an anecdotal assumption.",
+      "primary_sources": [
+        "https://www.csn.se/om-nagot-hander-eller-andras/vard-av-barn.html",
+        "https://www.csn.se/om-csn/press/pressmeddelanden/2025-04-29-fa-vabbar-under-studierna.html"
+      ]
+    },
+    {
+      "pattern_id": "signal-post-study-sgi-protection-starts-immediately",
+      "observation": "When studies end and a person does not start work immediately, Försäkringskassan states that protection of a previous SGI requires registration with Arbetsförmedlingen from the first day after studies. The product must treat this as a time-sensitive transition question rather than generic unemployment guidance.",
+      "discovery_note": "Community questions repeatedly mix unemployment, parental benefits and SGI after study or work transitions. The scenario below generalizes the confusion and uses only Försäkringskassan for the truth-bearing rule.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjukpenninggrundande-inkomst-sgi"
+      ]
+    },
+    {
+      "pattern_id": "signal-riksfardtjanst-is-purpose-and-cost-sensitive",
+      "observation": "Riksfärdtjänst is not a diagnosis-based general travel benefit. Current law ties it to a large and lasting disability that makes an inter-municipal journey unusually costly or requires a companion, to specified personal/recreational purposes, and to the trip not already being publicly funded for another reason. The product must ask about travel purpose, route, functional travel barrier and other payer before routing.",
+      "discovery_note": "Search results around färdtjänst/riksfärdtjänst show repeated route and purpose ambiguity. The truth-bearing contract is grounded in current law and issuing-municipality guidance.",
+      "primary_sources": [
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1997735-om-riksfardtjanst_sfs-1997-735/",
+        "https://malmo.se/Bo-och-leva/Stod-och-omsorg/Fardtjanst-och-riksfardtjanst/Riksfardtjanst.html"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-student-cont-01",
+      "actor_type": "student",
+      "story": "Jag har studiemedel och har varit sjuk i två veckor. Jag sjukanmälde mig men har ändå försökt lämna in några uppgifter när jag orkade. Jag vill veta om veckorna fortfarande kan räknas bort och om jag riskerar återkrav.",
+      "expected_support_areas": [
+        "student_sickness_protection",
+        "student_finance_week_protection",
+        "student_finance_repayment_risk"
+      ],
+      "must_not_claim": [
+        "sickness_report_alone_guarantees_protection",
+        "approved_sickness_always_protects_weeks_even_if_studying",
+        "continued_study_during_sick_period_is_irrelevant",
+        "guaranteed_no_repayment"
+      ],
+      "expected_questions": [
+        "q_study_support_type",
+        "q_sickness_reported_and_approved",
+        "q_sickness_degree",
+        "q_studied_or_received_results_during_period",
+        "q_return_to_study_date"
+      ],
+      "expected_next_actions": [
+        "verify_sickness_period_with_forsakringskassan_and_csn",
+        "check_whether_study_activity_affects_protection",
+        "notify_return_to_studies_if_earlier_than_approved_period",
+        "check_csn_decision_before_assuming_weeks_or_repayment_outcome"
+      ],
+      "source_requirements": [
+        "CSN",
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-student-cont-02",
+      "actor_type": "student",
+      "story": "Jag studerar med studiestöd och mitt barn har blivit sjukt. Jag trodde vab bara gällde den som jobbar och har därför försökt lösa studierna ändå. Vad behöver jag göra för att inte förlora studiestöd eller använda veckor i onödan?",
+      "expected_support_areas": [
+        "student_vab_absence_protection",
+        "student_finance_week_protection",
+        "student_result_requirement_protection"
+      ],
+      "must_not_claim": [
+        "student_vab_requires_employment",
+        "late_notification_is_always_accepted",
+        "ordinary_studiemedel_and_omstallningsstudiestod_have_same_week_rules",
+        "all_child_care_absence_is_automatically_approved"
+      ],
+      "expected_questions": [
+        "q_study_support_type",
+        "q_first_day_unable_to_study",
+        "q_child_age",
+        "q_reason_for_child_care",
+        "q_duration_and_documentation"
+      ],
+      "expected_next_actions": [
+        "notify_csn_of_child_care_as_soon_as_possible",
+        "check_documentation_requirements_for_duration_and_child_age",
+        "distinguish_studiemedel_from_omstallningsstudiestod_week_rules",
+        "verify_approved_absence_before_assuming_week_or_result_protection"
+      ],
+      "source_requirements": [
+        "CSN"
+      ]
+    },
+    {
+      "case_id": "lab-student-cont-03",
+      "actor_type": "student",
+      "story": "Jag hade en SGI från arbete före studierna. Nu är utbildningen slut men mitt nya jobb börjar först om några veckor. Jag vill inte råka förlora skyddet eftersom jag kan behöva föräldrapenning eller sjukpenning senare.",
+      "expected_support_areas": [
+        "sgi_protection_after_studies",
+        "employment_transition",
+        "family_and_sickness_benefit_basis"
+      ],
+      "must_not_claim": [
+        "sgi_is_automatically_protected_after_studies_without_action",
+        "arbetsformedlingen_registration_can_wait_until_later_without_effect",
+        "previous_sgi_is_guaranteed_to_exist",
+        "guaranteed_parental_or_sickness_benefit_amount"
+      ],
+      "expected_questions": [
+        "q_previous_sgi_or_work",
+        "q_study_end_date",
+        "q_next_job_start_date",
+        "q_registered_with_arbetsformedlingen_first_day_after_studies",
+        "q_current_work_or_other_sgi_protection"
+      ],
+      "expected_next_actions": [
+        "verify_previous_sgi_with_forsakringskassan",
+        "register_with_arbetsformedlingen_from_first_day_after_studies_if_not_working",
+        "verify_sgi_protection_before_estimating_future_benefits"
+      ],
+      "source_requirements": [
+        "Försäkringskassan",
+        "Arbetsförmedlingen"
+      ]
+    },
+    {
+      "case_id": "lab-disability-cont-01",
+      "actor_type": "person_with_disability",
+      "story": "Jag har en långvarig synnedsättning och bor på landsbygden. Jag vill resa till en anhörig i en annan kommun och behöver hjälp under resan. Jag vet inte om vanlig färdtjänst, riksfärdtjänst eller något annat gäller.",
+      "expected_support_areas": [
+        "riksfardtjanst",
+        "fardtjanst_boundary",
+        "accessible_intermunicipal_travel"
+      ],
+      "must_not_claim": [
+        "visual_impairment_diagnosis_alone_guarantees_riksfardtjanst",
+        "all_intermunicipal_trips_qualify",
+        "work_study_or_healthcare_trips_are_automatically_riksfardtjanst",
+        "another_public_payer_is_irrelevant",
+        "guaranteed_vehicle_type"
+      ],
+      "expected_questions": [
+        "q_home_municipality",
+        "q_trip_origin_and_destination_municipalities",
+        "q_trip_purpose",
+        "q_functional_barrier_to_normal_public_transport",
+        "q_need_for_companion",
+        "q_other_public_payer"
+      ],
+      "expected_next_actions": [
+        "distinguish_fardtjanst_from_riksfardtjanst",
+        "check_riksfardtjanst_statutory_conditions",
+        "contact_home_municipality_or_delegated_transport_authority",
+        "verify_trip_purpose_and_other_payer_before_recommending_application"
+      ],
+      "source_requirements": [
+        "Riksdagen",
+        "relevant_municipality_or_transport_authority"
+      ]
+    }
+  ]
+}
