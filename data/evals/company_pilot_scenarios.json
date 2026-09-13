@@ -1,59 +1,65 @@
 {
-  "schema_version": "1.0",
-  "description": "Synthetic regression cases that execute the actual company-pilot.html JavaScript in CI. No real company or person data.",
+  "schema_version": "1.1",
+  "description": "Synthetic regression cases that execute the actual company-pilot.html JavaScript in CI. No real company or person data. The UI contract also guards the information-gain principle: do not ask questions that cannot change the current route or advice.",
+  "ui_contract": {
+    "funding_question_steps": 2,
+    "procurement_question_steps": 6,
+    "free_text_description_required": false,
+    "funding_must_exclude": ["Beredskap:", "Beredskap 0 av 3"]
+  },
   "cases": [
     {
       "id": "cleaning-local-ready",
-      "input": {"goal":"procurement","sector":"cleaning","geography":"local","capacity":"yes","references":"yes","docs":"yes","description":"Vi är ett syntetiskt städbolag i Stockholmsområdet."},
+      "input": {"goal":"procurement","sector":"cleaning","geography":"local","capacity":"yes","references":"yes","docs":"yes"},
       "expected_gaps": [],
       "must_include": ["Städbolag","Ni verkar ha en grund att utgå från","Upphandlingsmyndigheten"],
       "must_exclude": ["verksamt.se – Hitta rådgivning och finansiering"]
     },
     {
       "id": "cleaning-local-not-ready",
-      "input": {"goal":"procurement","sector":"cleaning","geography":"local","capacity":"partial","references":"no","docs":"partial","description":"Syntetiskt städbolag som vill börja lämna anbud."},
+      "input": {"goal":"procurement","sector":"cleaning","geography":"local","capacity":"partial","references":"no","docs":"partial"},
       "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["Städbolag","Innan ni lägger mycket tid på anbud"],
       "must_exclude": ["garanterat kontrakt"]
     },
     {
       "id": "construction-missing-references",
-      "input": {"goal":"procurement","sector":"construction","geography":"multi","capacity":"yes","references":"partial","docs":"yes","description":"Syntetiskt byggföretag."},
+      "input": {"goal":"procurement","sector":"construction","geography":"multi","capacity":"yes","references":"partial","docs":"yes"},
       "expected_gaps": ["strukturera relevanta referenser och tidigare leveranser"],
       "must_include": ["Bygg / entreprenad","obligatoriska krav"],
       "must_exclude": ["garanterad finansiering"]
     },
     {
       "id": "consulting-funding",
-      "input": {"goal":"funding","sector":"consulting","geography":"national","capacity":"yes","references":"yes","docs":"yes","description":"Syntetiskt tjänsteföretag som söker finansieringsmöjligheter."},
-      "expected_gaps": [],
+      "input": {"goal":"funding","sector":"consulting","geography":"national","capacity":null,"references":null,"docs":null},
+      "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["Tjänsteföretag","Finansiering / företagsstöd","verksamt.se"],
-      "must_exclude": ["Upphandlingsmyndigheten – Hitta affären"]
+      "must_exclude": ["Upphandlingsmyndigheten – Hitta affären","Beredskap:","Beredskap 0 av 3"]
     },
     {
       "id": "cleaning-both-doc-gap",
-      "input": {"goal":"both","sector":"cleaning","geography":"local","capacity":"yes","references":"yes","docs":"no","description":"Syntetiskt städbolag som vill kontrollera både upphandling och finansiering."},
+      "input": {"goal":"both","sector":"cleaning","geography":"local","capacity":"yes","references":"yes","docs":"no"},
       "expected_gaps": ["samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["Offentlig upphandling","Finansiering / företagsstöd","Upphandlingsmyndigheten","verksamt.se"],
       "must_exclude": ["ni kommer vinna"]
     },
     {
       "id": "unknown-readiness-fails-closed",
-      "input": {"goal":"procurement","sector":"other","geography":"unknown","capacity":null,"references":null,"docs":null,"description":"Syntetiskt företag med okänd beredskap."},
+      "input": {"goal":"procurement","sector":"other","geography":"unknown","capacity":null,"references":null,"docs":null},
       "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["Företag","Innan ni lägger mycket tid på anbud"],
       "must_exclude": ["Ni verkar ha en grund att utgå från"]
     },
     {
-      "id": "description-html-escaped",
-      "input": {"goal":"procurement","sector":"cleaning","geography":"local","capacity":"yes","references":"yes","docs":"yes","description":"<script>alert('x')</script> syntetiskt städbolag"},
-      "expected_gaps": [],
-      "must_include": ["&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;"],
-      "must_exclude": ["<script>alert('x')</script>"]
+      "id": "funding-does-not-inherit-procurement-readiness",
+      "input": {"goal":"funding","sector":"other","geography":null,"capacity":"no","references":"no","docs":"no"},
+      "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
+      "must_include": ["Finansiering / företagsstöd","Sök i officiella finansieringskällor"],
+      "must_exclude": ["Beredskap:","Beredskap 0 av 3","Innan ni lägger mycket tid på anbud"]
     },
     {
       "id": "no-fabricated-entitlement-language",
-      "input": {"goal":"both","sector":"other","geography":"national","capacity":"partial","references":"partial","docs":"partial","description":"Syntetiskt företag."},
+      "input": {"goal":"both","sector":"other","geography":"national","capacity":"partial","references":"partial","docs":"partial"},
       "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["inte ett beslut om stöd, kvalificering eller kontrakt"],
       "must_exclude": ["du har rätt till bidrag","garanterad finansiering","garanterat kontrakt","ni kommer vinna"]
