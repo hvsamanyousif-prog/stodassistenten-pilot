@@ -4,8 +4,9 @@
 The root ``index.html`` is the shared platform shell. The preserved person pilot
 lives at ``person-pilot.html`` and receives the public capability runtime at build
 time. Company and focused quick-help pages remain modules inside the same deployed
-site. Small governed runtime blocks add feedback coverage and privacy-preserving
-route handoff without duplicating product engines.
+site. Small governed runtime blocks add feedback coverage, privacy-preserving
+route handoff and professional situation guidance without duplicating product
+engines.
 """
 
 from __future__ import annotations
@@ -25,9 +26,10 @@ QUICK_LEARNING_START = "<!-- STOD_QUICK_HELP_LEARNING_START -->"
 QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
+SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
-SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH)
+SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
