@@ -23,12 +23,14 @@ QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
+PERSON_CONTEXT_PATH = "client/person-context-learning.js"
 SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
     "client/public-pilot-ui-gate.js",
     "client/public-pilot-wiring.js",
+    PERSON_CONTEXT_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"

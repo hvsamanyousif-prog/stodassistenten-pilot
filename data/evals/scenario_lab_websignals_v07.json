@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified synthetic web-signal extensions for the same Stödassistenten scenario laboratory. Community material was used only to discover recurring confusion; all truth-bearing rules below are grounded in the current Försäkringskassan source. No raw community story or identifying detail is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-young-housing-benefit-depends-on-tenancy-form",
+      "observation": "For housing benefit to young people under 29, renting in first or second hand can be relevant, while being a lodger is not an eligible housing form for that youth benefit. The product must distinguish first-hand tenancy, approved second-hand tenancy, lodger/room rental and cohabitation instead of treating all paid housing as equivalent.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar"
+      ]
+    },
+    {
+      "pattern_id": "signal-housing-benefit-change-reporting-is-time-sensitive",
+      "observation": "Current housing benefit is based on application information about income and housing. Changes such as income, housing cost, moving, or someone moving in or out should be reported directly. A young applicant cannot receive housing benefit retroactively for months before the application month. The product must therefore surface change-reporting and application timing rather than only a generic eligibility result.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-student-housing-v07-01",
+      "actor_type": "student",
+      "story": "Jag är 24 år och studerar. Jag betalar varje månad för ett rum i någon annans lägenhet och har hört att studenter kan få bostadsbidrag. Jag vet inte om mitt boende räknas som andrahandsboende eller inneboende.",
+      "expected_support_areas": [
+        "housing_benefit_young",
+        "housing_form_classification",
+        "application_documents"
+      ],
+      "must_not_claim": [
+        "all_paid_room_rent_qualifies_for_youth_housing_benefit",
+        "lodger_status_equals_second_hand_tenancy",
+        "student_status_alone_creates_entitlement",
+        "guaranteed_housing_benefit"
+      ],
+      "expected_questions": [
+        "q_age",
+        "q_housing_form",
+        "q_contract_party",
+        "q_second_hand_approval_if_relevant",
+        "q_household_or_partner_status",
+        "q_annual_income",
+        "q_housing_cost"
+      ],
+      "expected_next_actions": [
+        "classify_housing_form_before_eligibility_guidance",
+        "check_required_housing_documents",
+        "use_current_forsakringskassan_housing_benefit_calculation",
+        "avoid_application_advice_until_lodger_vs_second_hand_is_clear"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-student-housing-v07-02",
+      "actor_type": "student",
+      "story": "Jag får bostadsbidrag som ensamstående student men ska flytta ihop med min partner och kanske jobba mer under hösten. Jag vill veta om jag kan vänta till nästa ansökan med att ändra uppgifterna och om bidrag kan sökas i efterhand om det blir fel.",
+      "expected_support_areas": [
+        "housing_benefit_change_reporting",
+        "household_income_change",
+        "housing_benefit_application_timing"
+      ],
+      "must_not_claim": [
+        "household_changes_can_wait_until_next_application",
+        "partner_income_is_irrelevant",
+        "income_changes_are_irrelevant_until_year_end",
+        "youth_housing_benefit_is_retroactive_before_application_month",
+        "guaranteed_no_repayment"
+      ],
+      "expected_questions": [
+        "q_current_housing_benefit_decision",
+        "q_move_in_or_cohabitation_date",
+        "q_partner_status",
+        "q_expected_annual_income_change",
+        "q_housing_cost_change"
+      ],
+      "expected_next_actions": [
+        "report_household_and_income_changes_directly",
+        "recalculate_current_housing_benefit_with_updated_information",
+        "do_not_assume_retroactive_payment_before_application_month",
+        "verify_current_decision_and_reporting_channel"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    }
+  ]
+}

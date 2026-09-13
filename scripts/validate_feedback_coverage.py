@@ -12,7 +12,10 @@ rules=matrix['feedback_rules']
 assert rules['never_send_raw_situation_text'] is True
 assert rules['raw_situation_text_must_not_appear_in_navigation_url'] is True
 assert rules['coarse_flow_segmentation_required'] is True
+assert rules['actor_context_segmentation_required_for_shared_person_module'] is True
 assert rules['feedback_is_learning_signal_not_truth'] is True
+person_surface=next(s for s in matrix['surfaces'] if s['surface']=='person_module')
+assert person_surface['status']=='present_actor_segmented', 'person feedback must preserve coarse actor context'
 
 person=Path('person-pilot.html').read_text(encoding='utf-8')
 company=Path('company-pilot.html').read_text(encoding='utf-8')
@@ -20,7 +23,7 @@ for name,text in [('person',person),('company',company)]:
     assert 'FEEDBACK_ENDPOINT' in text, f'{name} missing feedback endpoint'
 
 builder=Path('scripts/build_public_pilot.py').read_text(encoding='utf-8')
-for path in ['client/privacy-routing.js','client/experience-learning.js','client/quick-help-feedback.js']:
+for path in ['client/privacy-routing.js','client/experience-learning.js','client/quick-help-feedback.js','client/person-context-learning.js']:
     assert path in builder, f'public build is missing governed runtime: {path}'
 
 shell_feedback=Path('client/experience-learning.js').read_text(encoding='utf-8')
@@ -39,4 +42,13 @@ assert "searchParams.delete('q')" in routing, 'raw situation query must be remov
 assert "searchParams.set('need'" in routing, 'quick-help handoff must retain only a coarse need token'
 assert 'fetch(' not in routing, 'privacy router must not transmit situation data'
 
-print('feedback coverage + privacy routing: OK')
+person_context=Path('client/person-context-learning.js').read_text(encoding='utf-8')
+assert "get('actor_type')" in person_context, 'person runtime must preserve actor entry context'
+assert "data.flow=`${actor}_${flow}`" in person_context, 'person feedback must segment by actor without sensitive answers'
+for marker in ["heading:'Din ingång'","heading:'مدخلك'","heading:'ورودی شما'"]:
+    assert marker in person_context, f'localized actor heading missing: {marker}'
+assert 'answers' not in person_context and 'situationText' not in person_context and 'situation_text' not in person_context
+assert "pilot.textContent!==actorLabel" in person_context, 'actor label patch must not self-trigger endlessly'
+assert "actorEyebrow.textContent!==heading" in person_context, 'localized eyebrow patch must be idempotent'
+
+print('feedback coverage + privacy routing + actor context: OK')
