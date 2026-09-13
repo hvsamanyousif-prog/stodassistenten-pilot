@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Build the minimal GitHub Pages artifact for the public Stödassistenten pilot.
 
-The source ``index.html`` intentionally stays easy to inspect. The deployed artifact
-gets the public capability runtime injected at build time, after the legacy inline
-pilot script has declared its browser globals. This keeps the change reversible and
-lets CI prove that the only HTML change is the managed script block.
+The root ``index.html`` is the shared platform shell. The preserved person pilot
+lives at ``person-pilot.html`` and receives the public capability runtime at build
+time. Company and future module pilot pages remain explicit deep-link harnesses
+inside the same deployed site.
 """
 
 from __future__ import annotations
@@ -22,6 +22,8 @@ SCRIPT_PATHS = (
     "client/public-pilot-wiring.js",
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
+PERSON_PILOT_PATH = "person-pilot.html"
+MODULE_PILOT_PATHS = ("company-pilot.html",)
 
 
 def wiring_block() -> str:
@@ -33,11 +35,11 @@ def wiring_block() -> str:
 
 def inject_wiring(html: str) -> str:
     if MANAGED_START in html or MANAGED_END in html:
-        raise ValueError("source index already contains managed capability wiring")
+        raise ValueError("source pilot already contains managed capability wiring")
     if "</body>" not in html:
-        raise ValueError("source index is missing </body>")
+        raise ValueError("source pilot is missing </body>")
     if html.count("</body>") != 1:
-        raise ValueError("source index must contain exactly one </body>")
+        raise ValueError("source pilot must contain exactly one </body>")
     return html.replace("</body>", f"{wiring_block()}\n</body>", 1)
 
 
@@ -54,8 +56,11 @@ def build(source_root: Path, output_root: Path) -> Path:
     source_root = source_root.resolve()
     output_root = output_root.resolve()
     source_index = source_root / "index.html"
+    source_person = source_root / PERSON_PILOT_PATH
     if not source_index.is_file():
         raise FileNotFoundError("index.html is missing")
+    if not source_person.is_file():
+        raise FileNotFoundError(f"{PERSON_PILOT_PATH} is missing")
     if source_root == output_root:
         raise ValueError("output directory must differ from source root")
 
@@ -63,10 +68,14 @@ def build(source_root: Path, output_root: Path) -> Path:
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
 
-    source_html = source_index.read_text(encoding="utf-8")
-    built_html = inject_wiring(source_html)
-    (output_root / "index.html").write_text(built_html, encoding="utf-8")
+    # Shared shell is deployed unchanged. Capability wiring belongs to the
+    # preserved person pilot until the shared matcher/session runtime is unified.
+    shutil.copy2(source_index, output_root / "index.html")
+    person_html = source_person.read_text(encoding="utf-8")
+    (output_root / PERSON_PILOT_PATH).write_text(inject_wiring(person_html), encoding="utf-8")
 
+    for path in MODULE_PILOT_PATHS:
+        copy_required_asset(source_root, output_root, path)
     for path in SCRIPT_PATHS:
         copy_required_asset(source_root, output_root, path)
     copy_required_asset(source_root, output_root, PROFILE_PATH)
