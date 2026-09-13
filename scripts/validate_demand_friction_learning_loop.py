@@ -110,7 +110,7 @@ required_links = {
     'df-partial-sick-leave-scheduling-v01': 'lab-employee-partialsick-v11-01',
     'df-personal-assistance-authority-split-v01': 'lab-personal-assistance-authority-v12-01',
     'df-company-procurement-too-many-steps-v01': 'lab-company-information-gain-v12-02',
-    'df-young-housing-benefit-income-change-v01': 'lab-student-housing-v07-02',
+    'df-young-housing-benefit-income-change-v01': 'lab-young-housing-irregular-income-v12-03',
 }
 for sid, cid in required_links.items():
     assert sid in mappings, f'critical signal mapping missing: {sid}'
