@@ -12,9 +12,11 @@
   function label(){const c=copy[lang()];return c[actor]||c.other}
   function patchContext(){
     const pilot=document.getElementById('pilot');
-    if(pilot) pilot.textContent=label();
+    const actorLabel=label();
+    if(pilot&&pilot.textContent!==actorLabel) pilot.textContent=actorLabel;
     const actorEyebrow=document.querySelector('#main > section.card:not(.hero) > .eyebrow');
-    if(actorEyebrow) actorEyebrow.textContent=copy[lang()].heading;
+    const heading=copy[lang()].heading;
+    if(actorEyebrow&&actorEyebrow.textContent!==heading) actorEyebrow.textContent=heading;
   }
 
   const nativeFetch=window.fetch.bind(window);
