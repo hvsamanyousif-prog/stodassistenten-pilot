@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-13",
+  "purpose": "Verified synthetic web-signal extensions for the same Stödassistenten scenario laboratory. These cases cover confusion between underhållsbidrag and underhållsstöd, plus part-time sickness-benefit work-schedule coordination. Truth-bearing distinctions use current Försäkringskassan primary guidance; public Q&A is discovery only and no identifying community detail is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-child-maintenance-support-vs-contribution",
+      "observation": "People use the broad word underhåll for two different routes. Underhållsbidrag is arranged or paid between parents, while underhållsstöd can be applied for from Försäkringskassan when the other parent does not pay or pays only part. The product must establish the child's living/registration situation and current payment arrangement before routing or making any amount claim.",
+      "discovery_sources": [
+        "https://soctanter.malmo.se/fraga/11713"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala"
+      ]
+    },
+    {
+      "pattern_id": "signal-partial-sick-leave-schedule-needs-fk-coordination",
+      "observation": "A person on part-time sickness benefit can assume employer approval is enough to redistribute hours or work more. Current Försäkringskassan guidance says the distribution of working time during part-time sickness benefit must be checked with both Försäkringskassan and the employer, and a person who already has sickness benefit and wants to work more needs to inform Försäkringskassan.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-child-maintenance-v11-01",
+      "actor_type": "child_via_guardian",
+      "story": "Jag och den andra föräldern bor inte ihop. Barnet bor mest hos mig och den andra föräldern betalar ibland, men inte alltid hela beloppet. Jag säger bara 'underhåll' och tror att underhållsbidrag och underhållsstöd är samma sak som Försäkringskassan automatiskt fyller på.",
+      "expected_support_areas": [
+        "child_maintenance",
+        "underhallsbidrag_vs_underhallsstod",
+        "child_residence_and_registration",
+        "payment_gap",
+        "application_route_verification"
+      ],
+      "must_not_claim": [
+        "underhallsbidrag_and_underhallsstod_are_the_same_route",
+        "underhallsstod_is_automatic_without_application_or_assessment",
+        "partial_payment_from_other_parent_is_irrelevant",
+        "child_residence_and_registration_are_irrelevant",
+        "a_specific_underhall_amount_applies_without_current_primary_source_and_case_facts"
+      ],
+      "expected_questions": [
+        "q_child_lives_with_whom_and_how_much",
+        "q_child_registration_address",
+        "q_guardianship_and_parent_relationship_status",
+        "q_what_other_parent_currently_pays_and_how_regularly",
+        "q_existing_agreement_judgment_or_fk_decision"
+      ],
+      "expected_next_actions": [
+        "distinguish_parent_paid_underhallsbidrag_from_fk_underhallsstod",
+        "verify_current_underhallsstod_conditions_with_forsakringskassan",
+        "check_current_payment_gap_before_recommending_route",
+        "use_primary_source_or_official_calculation_route_before_amount_claim"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    },
+    {
+      "case_id": "lab-employee-partialsick-v11-01",
+      "actor_type": "employee",
+      "story": "Jag har sjukpenning och är sjukskriven på 50 procent. Jag vill lägga arbetstiden som hela dagar eller jobba mer en vecka och tänker att det räcker att chefen säger ja.",
+      "expected_support_areas": [
+        "partial_sick_leave",
+        "work_schedule_distribution",
+        "sickness_benefit_scope_change",
+        "employer_and_forsakringskassan_coordination"
+      ],
+      "must_not_claim": [
+        "employer_approval_alone_is_enough_for_partial_sick_leave_schedule",
+        "part_time_sick_leave_hours_can_always_be_rearranged_freely",
+        "working_more_never_requires_informing_forsakringskassan",
+        "diagnosis_alone_determines_sickness_benefit_degree"
+      ],
+      "expected_questions": [
+        "q_current_approved_sickness_percentage",
+        "q_current_sickness_benefit_stage_or_decision",
+        "q_proposed_work_schedule_distribution",
+        "q_temporary_or_sustained_increase_in_work",
+        "q_employer_coordination_status"
+      ],
+      "expected_next_actions": [
+        "check_work_schedule_distribution_with_both_employer_and_forsakringskassan",
+        "inform_forsakringskassan_before_or_when_work_extent_increases_as_current_guidance_requires",
+        "verify_current_decision_and_primary_guidance_before_financial_claim",
+        "avoid_promising_that_a_specific_schedule_preserves_benefit_without_assessment"
+      ],
+      "source_requirements": [
+        "Försäkringskassan"
+      ]
+    }
+  ]
+}
