@@ -1,0 +1,100 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic regressions for the same Stödassistenten scenario laboratory. This pack locks two high-friction transitions: varsel versus actual unemployment and relative representation for pension housing supplement. Community material is discovery-only and no real person, username or exact community story is copied. Truth-bearing routes remain controlled by current primary sources.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-varsel-versus-unemployment-transition",
+      "observation": "Current Arbetsförmedlingen guidance distinguishes a warning of possible redundancy from actual unemployment. A person who has only been warned does not need to register merely because of the warning; if employment actually ends without a new job, registration should occur on the first unemployed day. Transition-organization support can be a separate path and may be available before employment ends.",
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/arbeta-i-sverige/varsel",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu"
+      ]
+    },
+    {
+      "pattern_id": "signal-relative-representation-housing-supplement",
+      "observation": "Current Pensionsmyndigheten guidance provides a specific representation route for housing supplement and elderly income support. A spouse, cohabitant or child who qualifies as an authorized relative can use their own e-identification in the web service, while other representatives may need a form. Existing guardian, administrator or future power of attorney can change whether relative authority applies.",
+      "primary_sources": [
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/ansok-om-bostadstillagg-at-nagon-annan-som-behorig-anhorig"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-varsel-transition-v13-01",
+      "actor_type": "employee",
+      "story": "Jag har fått veta att min arbetsplats varslar och att min anställning kan ta slut om några veckor. Jag är fortfarande anställd och får lön men tror att jag måste skriva in mig som arbetslös redan nu. Jag är också osäker på om facket, a-kassan och omställningsstödet är samma sak.",
+      "expected_support_areas": [
+        "varsel_vs_actual_unemployment",
+        "first_unemployed_day_registration",
+        "a_kassa_route",
+        "sgi_protection_transition",
+        "transition_organization_support",
+        "minimum_information_gain"
+      ],
+      "must_not_claim": [
+        "varsel_means_already_unemployed",
+        "arbetsformedlingen_registration_is_required_immediately_for_every_varsel",
+        "union_membership_equals_a_kassa_membership",
+        "transition_support_and_a_kassa_are_the_same_route",
+        "a_kassa_payment_or_eligibility_is_guaranteed",
+        "expected_last_workday_can_be_treated_as_confirmed_without_current_employment_status"
+      ],
+      "expected_questions": [
+        "q_are_you_still_employed_and_receiving_pay",
+        "q_is_there_a_confirmed_end_date_or_only_a_warning",
+        "q_do_you_already_have_a_new_job_starting_immediately_after",
+        "q_a_kassa_membership_or_current_application_status",
+        "q_collective_agreement_or_known_transition_organization_only_if_it_changes_next_action"
+      ],
+      "expected_next_actions": [
+        "if_only_warned_and_still_employed_prepare_without_misclassifying_as_unemployed",
+        "check_applicable_transition_organization_or_employer_information_before_employment_ends_when_relevant",
+        "if_employment_ends_without_new_job_register_with_arbetsformedlingen_on_first_unemployed_day",
+        "after_registration_follow_current_a_kassa_application_route_and_verify_conditions",
+        "preserve_first_day_registration_guidance_for_sgi_without_promising_benefit_entitlement"
+      ],
+      "source_requirements": [
+        "Arbetsförmedlingen"
+      ]
+    },
+    {
+      "case_id": "lab-relative-housing-representation-v13-02",
+      "actor_type": "relative",
+      "story": "Jag hjälper en äldre förälder som inte längre klarar sin ekonomi själv och vill söka bostadstillägg åt personen. Jag tänkte logga in med förälderns BankID eftersom jag är barn och hjälper till, men jag vet inte om det finns god man, förvaltare eller framtidsfullmakt sedan tidigare.",
+      "expected_support_areas": [
+        "relative_representation",
+        "housing_supplement_for_older_person",
+        "authorized_relative_boundary",
+        "own_e_identification",
+        "web_service_vs_form_route",
+        "existing_representative_check"
+      ],
+      "must_not_claim": [
+        "adult_child_relationship_alone_always_grants_representation_authority",
+        "helper_should_use_the_other_persons_bankid_or_credentials",
+        "authorized_relative_route_applies_even_if_existing_guardian_administrator_or_future_power_of_attorney_changes_it",
+        "all_representatives_can_use_the_same_web_service",
+        "housing_supplement_is_guaranteed_because_a_relative_can_apply",
+        "representation_status_can_be_inferred_without_checking_existing_arrangements"
+      ],
+      "expected_questions": [
+        "q_relationship_to_person_needing_help",
+        "q_is_it_clear_the_person_cannot_manage_their_finances",
+        "q_existing_guardian_administrator_or_future_power_of_attorney",
+        "q_which_support_or_change_needs_to_be_submitted",
+        "q_digital_access_only_after_representation_route_is_clear"
+      ],
+      "expected_next_actions": [
+        "determine_current_representation_route_before_starting_application",
+        "use_helpers_own_e_identification_only_when_current_official_authorized_relative_web_route_applies",
+        "use_current_pensionsmyndigheten_form_or_other_official_route_when_web_service_is_not_available_for_the_representative_type",
+        "do_not_request_or_reuse_the_supported_persons_bankid_credentials",
+        "separate_representation_authority_from_housing_supplement_eligibility_and_verify_both_against_current_primary_source"
+      ],
+      "source_requirements": [
+        "Pensionsmyndigheten"
+      ]
+    }
+  ]
+}
