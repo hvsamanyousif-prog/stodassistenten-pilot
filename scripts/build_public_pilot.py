@@ -4,7 +4,8 @@
 The root ``index.html`` is the shared platform shell. The preserved person pilot
 lives at ``person-pilot.html`` and receives the public capability runtime at build
 time. Company and focused quick-help pages remain explicit deep-link modules
-inside the same deployed site.
+inside the same deployed site. The shared shell receives a small governed
+experience-learning script so feedback coverage is not limited to module pages.
 """
 
 from __future__ import annotations
@@ -15,6 +16,9 @@ from pathlib import Path
 
 MANAGED_START = "<!-- STOD_CAPABILITY_WIRING_START -->"
 MANAGED_END = "<!-- STOD_CAPABILITY_WIRING_END -->"
+SHELL_LEARNING_START = "<!-- STOD_EXPERIENCE_LEARNING_START -->"
+SHELL_LEARNING_END = "<!-- STOD_EXPERIENCE_LEARNING_END -->"
+SHELL_LEARNING_PATH = "client/experience-learning.js"
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
@@ -33,14 +37,24 @@ def wiring_block() -> str:
     return "\n".join(lines)
 
 
-def inject_wiring(html: str) -> str:
-    if MANAGED_START in html or MANAGED_END in html:
-        raise ValueError("source pilot already contains managed capability wiring")
-    if "</body>" not in html:
-        raise ValueError("source pilot is missing </body>")
+def shell_learning_block() -> str:
+    return "\n".join((SHELL_LEARNING_START, f'<script src="{SHELL_LEARNING_PATH}"></script>', SHELL_LEARNING_END))
+
+
+def inject_before_body(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
+    if any(marker in html for marker in forbidden_markers):
+        raise ValueError("source HTML already contains managed wiring")
     if html.count("</body>") != 1:
-        raise ValueError("source pilot must contain exactly one </body>")
-    return html.replace("</body>", f"{wiring_block()}\n</body>", 1)
+        raise ValueError("source HTML must contain exactly one </body>")
+    return html.replace("</body>", f"{block}\n</body>", 1)
+
+
+def inject_wiring(html: str) -> str:
+    return inject_before_body(html, wiring_block(), (MANAGED_START, MANAGED_END))
+
+
+def inject_shell_learning(html: str) -> str:
+    return inject_before_body(html, shell_learning_block(), (SHELL_LEARNING_START, SHELL_LEARNING_END))
 
 
 def copy_required_asset(source_root: Path, output_root: Path, relative_path: str) -> None:
@@ -68,9 +82,9 @@ def build(source_root: Path, output_root: Path) -> Path:
         shutil.rmtree(output_root)
     output_root.mkdir(parents=True)
 
-    # Shared shell is deployed unchanged. Capability wiring belongs to the
-    # preserved person pilot until the shared matcher/session runtime is unified.
-    shutil.copy2(source_index, output_root / "index.html")
+    shell_html = source_index.read_text(encoding="utf-8")
+    (output_root / "index.html").write_text(inject_shell_learning(shell_html), encoding="utf-8")
+
     person_html = source_person.read_text(encoding="utf-8")
     (output_root / PERSON_PILOT_PATH).write_text(inject_wiring(person_html), encoding="utf-8")
 
@@ -78,6 +92,7 @@ def build(source_root: Path, output_root: Path) -> Path:
         copy_required_asset(source_root, output_root, path)
     for path in SCRIPT_PATHS:
         copy_required_asset(source_root, output_root, path)
+    copy_required_asset(source_root, output_root, SHELL_LEARNING_PATH)
     copy_required_asset(source_root, output_root, PROFILE_PATH)
     return output_root / "index.html"
 
