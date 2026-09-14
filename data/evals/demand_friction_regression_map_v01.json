@@ -56,6 +56,12 @@
       "product_miss": "A guardian can follow the old 90-day VAB habit or assume that ordinary VAB conditions remain unchanged after the child turns 12, causing a late application or missing medical documentation.",
       "fix_or_guardrail": "Surface the post-1-April-2026 30-day window, distinguish age 12-15 conditions, ask whether a prior decision exists, and preserve current medical-statement rules without promising entitlement or payment.",
       "regression_case_ids": ["lab-guardian-vab-12plus-v15-02"]
+    },
+    {
+      "signal_id": "df-partialsick-vab-hours-overlap-v01",
+      "product_miss": "A part-time sick-listed parent can treat the sickness percentage as if it automatically defines the VAB percentage, ignoring exact hour placement, the parent's own sick-reported time and other same-day benefits.",
+      "fix_or_guardrail": "Ask only the hour-level facts that can change the route, block same-hour double-benefit assumptions, and preserve coordination of part-time sickness-benefit work-time placement with Försäkringskassan and the employer.",
+      "regression_case_ids": ["lab-employee-partialsick-vab-v16-01"]
     }
   ]
 }
