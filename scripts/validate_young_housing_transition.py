@@ -32,12 +32,20 @@ assert "en enskild månads inkomst" in annual["notes"].lower()
 assert "1 januari 2027" in transition["value"]
 assert "endast beslut" in transition["value"].lower()
 assert "pågående beslutet löper ut" in transition["value"].lower()
+assert "egenföretagare" in transition["notes"].lower()
+assert "inkomst från utlandet" in transition["notes"].lower()
 assert "bostadsbidrag-nya-regler-fran-1-januari-2027" in transition["source_url"]
 assert lodger["value"] == "lodger"
 
+questions = {q["question_id"]: q for q in support["eligibility"]["missing_information_questions"]}
+assert "bhyoung.decision_period" in questions
+assert "bhyoung.2027_exception" in questions
+assert "egenföretagare" in questions["bhyoung.2027_exception"]["prompt"].lower()
+
 application = support["application"]
 assert "2026-beslut" in application["next_step"]
-assert "2027-reglerna separat" in application["next_step"]
+assert "nytt beslut 2027" in application["next_step"]
+assert "undantag" in application["next_step"].lower()
 assert "bara lämnas från och med den månad ansökan görs" in application["deadline_text"]
 
 cases = {case["case_id"]: case for case in scenario["cases"]}
@@ -47,6 +55,7 @@ required_forbidden = {
     "one_autumn_month_income_is_sufficient_for_the_2026_annual_income_estimate",
     "all_existing_housing_benefit_decisions_switch_automatically_on_2027_01_01",
     "known_2026_income_changes_do_not_need_to_be_reported_because_rules_change_in_2027",
+    "monthly_income_reform_applies_to_self_employed_or_foreign_income_cases_without_current_source_check",
     "the_2027_reform_guarantees_no_repayment_or_a_specific_benefit_amount",
 }
 assert required_forbidden <= set(case["must_not_claim"])
@@ -55,8 +64,10 @@ required_actions = {
     "report_known_income_housing_or_household_changes_under_current_rules",
     "if_a_new_decision_will_start_from_2027_01_01_verify_the_monthly_income_rules_and_current_exceptions_then",
     "do_not_treat_2027_01_01_as_an_automatic_mid_decision_switch_for_existing_housing_benefit",
+    "do_not_apply_the_monthly_income_reform_to_an_excluded_group_without_current_primary_source_support",
 }
 assert required_actions <= set(case["expected_next_actions"])
+assert "q_if_2027_check_self_employment_or_foreign_income_exception" in case["expected_questions"]
 assert len(case["source_requirements"]) >= 2
 
 older_cases = {case["case_id"]: case for case in older["cases"]}
