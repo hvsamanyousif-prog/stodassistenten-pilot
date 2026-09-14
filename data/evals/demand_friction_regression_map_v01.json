@@ -1,13 +1,13 @@
 {
   "schema_version": "0.1.0",
-  "generated_at": "2026-09-14",
+  "generated_at": "2026-09-15",
   "purpose": "Machine-readable lock between qualitative demand/friction signals and permanent synthetic regressions in the single Stödassistenten learning system. A mapping proves that a product miss has an eval memory; it does not prove eligibility or factual truth.",
   "mappings": [
     {
       "signal_id": "df-child-maintenance-terms-v01",
-      "product_miss": "Everyday 'underhåll' language can collapse direct parent-paid underhållsbidrag and Försäkringskassan underhållsstöd into the same route.",
-      "fix_or_guardrail": "Require residence/payment facts, keep the two routes distinct and block automatic/amount claims without current primary-source verification.",
-      "regression_case_ids": ["lab-child-maintenance-v11-01"]
+      "product_miss": "The v11 regression already knew that everyday 'underhåll' language can collapse direct parent-paid underhållsbidrag and Försäkringskassan underhållsstöd, but that learning had not been converted into a focused public natural-language route and did not permanently cover equal-residence or cross-border cases.",
+      "fix_or_guardrail": "Use focus=child_maintenance in the same root/person product, ask only residence pattern and payment status when they change the route, preserve a coarse cross-border context without sending country or raw story, and keep underhållsbidrag/underhållsstöd distinct. Material eligibility and amount facts remain primary-source/review gated.",
+      "regression_case_ids": ["lab-child-maintenance-v11-01", "lab-family-maintenance-public-route-v51-01", "lab-family-maintenance-equal-residence-v51-02", "lab-family-maintenance-cross-border-v51-03"]
     },
     {
       "signal_id": "df-partial-sick-leave-scheduling-v01",
