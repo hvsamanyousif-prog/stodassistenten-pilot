@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility or factual truth. Community discussion is discovery-only. Commute/work-injury dental facts must be verified against current Försäkringskassan primary sources, while the Afa commute-traffic boundary must be verified separately against Afa's current primary source.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-commute-traffic-work-injury-dental-split-v01",
+      "actor_types": [
+        "employee"
+      ],
+      "natural_language_queries": [
+        "jag skadade tanden i bilolycka på väg till jobbet vilken försäkring gäller",
+        "på väg hem från jobbet påkörd tand skadad afa eller trafikförsäkring",
+        "arbetsresa trafikolycka tandläkare försäkringskassan arbetsskada",
+        "räknas bilolycka till jobbet som arbetsskada och vem betalar tandvården"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Public community questions show recurring uncertainty about injuries on the way to or from work and which insurance route applies. This is qualitative discovery only, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A single commute accident can touch employer incident reporting, Försäkringskassan work-injury dental-cost reimbursement, Afa collective-agreement insurance and traffic insurance. The route boundary differs by system and is easy to collapse incorrectly."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Wrong routing can delay a dental-cost application, send the user to an inapplicable collective-agreement route, or create a false belief that one insurer's decision settles another system's assessment."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Försäkringskassan includes work/commute causation in its dental-cost conditions, while Afa separately excludes commute traffic accidents from its work-injury insurance and points to traffic insurance."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "People naturally say 'påkörd på väg hem', 'bilolycka till jobbet' or 'vem betalar tanden' rather than naming the formal reimbursement and insurance products."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "The person may need to separate where the injury occurred, whether it was a traffic accident, whether dental treatment is necessary because of the injury, cost evidence and dentist connection, then verify separate public, collective-agreement and traffic-insurance routes."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Community discussions repeatedly contain conflicting advice about commute injuries, employer/Afa coverage and traffic insurance, which makes this a durable misunderstanding rather than a one-off wording issue."
+      },
+      "current_product_coverage_gap": {
+        "score": 4,
+        "basis": "v26 added structured work-injury dental truth and regression, but main still lacked a bounded public natural-language route and a permanent guard for Afa's commute-traffic exception before this v27 change."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/stockholm/comments/17k3jck/skada_p%C3%A5_v%C3%A4g_fr%C3%A5n_arbetet/",
+        "https://www.reddit.com/r/sweden/comments/yjehpg/p%C3%A5k%C3%B6rd_p%C3%A5_v%C3%A4g_hem_fr%C3%A5n_jobbet/"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/arbetsskadeforsakring"
+      ],
+      "recommended_learning_action": "Convert the existing v26 truth/regression into one privacy-safe same-shell natural-language focus, then add a route-changing commute-traffic question so the product preserves Försäkringskassan's commute dental-cost path while not presenting Afa work-injury insurance as unchanged for a commute traffic accident.",
+      "truth_rule": "Community and search-like wording are discovery signals only and are not evidence of factual truth or eligibility. Verify current work/commute dental-cost conditions, documents, dentist connection, reference-price and application facts against Försäkringskassan's primary source. Verify the collective-agreement commute-traffic boundary against Afa's primary source. Do not infer a responsible traffic insurer, eligibility, amount or payment date from discovery content or prior AI output."
+    }
+  ]
+}
