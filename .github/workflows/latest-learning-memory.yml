@@ -19,5 +19,6 @@ jobs:
       - name: Lock newest Stodassistenten learning semantics
         run: |
           python scripts/validate_latest_learning_memory.py
+          python scripts/validate_v31_age30_transition.py
           python scripts/validate_scenario_lab_all.py
           python scripts/validate_data.py
