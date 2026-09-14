@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Community discussion is discovery-only; current housing-benefit facts must come from Försäkringskassan primary sources and remain review-gated in the truth layer.",
+  "scoring": {"scale": "1-5", "meaning": "1=low, 5=very high", "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."},
+  "signals": [{
+    "signal_id": "df-young-post-study-housing-change-v01",
+    "actor_types": ["student", "young_adult", "new_graduate"],
+    "natural_language_queries": ["jag är 24 och hyr lägenhet men börjar jobba efter examen hur ska jag tänka om bostadsbidrag", "student med extrajobb olika mycket varje månad bostadsbidrag vad ska jag ange för inkomst", "nyexaminerad får första lönen senare i år måste jag ändra bostadsbidraget", "jag har CSN nu och börjar jobba efter sommaren påverkar bostadsbidraget"],
+    "demand_signal": {"score": 4, "basis": "Recent Swedish community discussions repeatedly ask how student finance, summer work, graduation and changing earnings interact with housing benefit. This is a qualitative discovery signal only."},
+    "friction_signal": {"score": 5, "basis": "The user experiences one transition—studies, housing and income changing together—while the current housing-benefit process requires a calendar-year income estimate and later change reporting. A catalog route can miss that combination."},
+    "miss_consequence": {"score": 5, "basis": "Försäkringskassan states that actual income is reconciled later and that higher income than reported can lead to repayment. It also instructs recipients to report known changes directly."},
+    "source_fragmentation": {"score": 2, "basis": "The core 2026 user journey can be grounded in one current Försäkringskassan page, while separate change-intelligence material covers the 2027 reform."},
+    "language_accessibility_friction": {"score": 4, "basis": "People describe the problem as extrajobb, first salary, varying monthly income or starting work after graduation rather than as an annual-income-estimation rule. The same coarse route should work in Swedish, Arabic and Persian."},
+    "steps_to_action": {"score": 3, "basis": "A safe first action is concise once age, housing form and income-change context are known: use the current calendar-year estimate for a 2026 decision, report known changes, and use the official calculation/application route before assuming fit or amount."},
+    "recurrence_signal": {"score": 4, "basis": "The study-to-work transition recurs every graduation cycle and irregular student work makes the same income-estimation problem recur throughout the year."},
+    "current_product_coverage_gap": {"score": 5, "basis": "The coverage matrix explicitly says longer combinations involving studies, housing and first employment remain weak. A review-ready young-housing truth record and temporal regression already exist, but the visible product did not connect natural transition language to that route."},
+    "priority_band": "HIGH",
+    "discovery_sources": ["https://www.reddit.com/r/sweden/comments/12j0zyj", "https://www.reddit.com/r/Sverige/comments/183070n"],
+    "primary_sources": ["https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar", "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"],
+    "recommended_learning_action": "Add a bounded young_housing handoff inside the existing shared shell/person module. Pass only a coarse income-change context, ask only age and housing facts that can change the route, skip repeated income-change questions when the shell already knows that coarse fact, and give source-grounded 2026 annual-estimate/change-reporting guidance without promising eligibility or amount.",
+    "truth_rule": "Community discussion may reveal wording and friction only. Current income-period, change-reporting, housing-form and application facts must come from Försäkringskassan. The existing support record stays NEEDS_REVIEW and no model output may promote material fields to VERIFIED."
+  }]
+}
