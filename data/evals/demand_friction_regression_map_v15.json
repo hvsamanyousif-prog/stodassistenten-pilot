@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove Villaeffekten eligibility, amount, deadline safety, budget availability or payment.",
+  "mappings": [
+    {
+      "signal_id": "df-villaeffekten-discovery-to-action-v02",
+      "product_miss": "v34 made Villaeffekten current and review-gated in the common truth layer, but the public situation shell still could not turn ordinary homeowner language into that verified-source path. A user could therefore encounter generic economy/housing routes even though the product already knew the critical owner/residence, value-year, district-heating, measure, timing, document and material-cost boundaries.",
+      "fix_or_guardrail": "Keep one product and one truth layer. Add a bounded home-energy discovery handoff inside the existing shared shell, pass only actor/focus/language rather than raw story, ask owner/residence before deeper grant questions, distinguish value year from build year and existing district heating from a planned measure, stop safely when the route no longer fits, and end with current Boverket verification plus independent municipal energy advice rather than an eligibility or amount promise.",
+      "regression_case_ids": [
+        "lab-homeowner-villaeffekten-public-route-v35-01",
+        "lab-nonowner-villaeffekten-failclosed-v35-02",
+        "lab-homeowner-villaeffekten-timing-docs-budget-v35-03"
+      ]
+    }
+  ]
+}
