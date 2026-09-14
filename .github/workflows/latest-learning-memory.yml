@@ -1,0 +1,23 @@
+name: Latest learning memory
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  latest-learning-memory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Lock newest Stodassistenten learning semantics
+        run: |
+          python scripts/validate_latest_learning_memory.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
