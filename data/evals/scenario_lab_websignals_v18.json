@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic change-intelligence regression for the single Stödassistenten scenario laboratory. It prevents the confirmed 2027 monthly-income reform from leaking backward into a 2026 young-person housing-benefit decision, while preserving current change-reporting duties. No real person or community story is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-young-housing-benefit-2027-income-transition",
+      "observation": "Försäkringskassan's current young-person housing-benefit guidance uses an estimated annual income for current rules. A separate current primary-source page states that monthly-income rules apply only to decisions from 1 January 2027; a person already receiving housing benefit moves to the new model only after the current decision expires during 2027 and a new application is made. The product must therefore version the calculation regime by decision period rather than treating the reform date as an automatic switch for every case.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-young-housing-2027-transition-v18-01",
+      "actor_type": "student",
+      "story": "Jag är 24 år, hyr min bostad och jobbar extra med olika många timmar varje månad. Jag ska söka bostadsbidrag hösten 2026 och har läst att inkomsten snart ska räknas månadsvis. Kan jag bara ange höstens månadslön nu och räkna med att allt byter modell automatiskt den 1 januari 2027?",
+      "expected_support_areas": [
+        "housing_benefit_young",
+        "annual_income_estimation_2026",
+        "income_change_reporting",
+        "decision_period_versioning",
+        "monthly_income_reform_2027",
+        "repayment_risk"
+      ],
+      "must_not_claim": [
+        "monthly_income_rules_apply_to_a_2026_housing_benefit_decision",
+        "one_autumn_month_income_is_sufficient_for_the_2026_annual_income_estimate",
+        "all_existing_housing_benefit_decisions_switch_automatically_on_2027_01_01",
+        "known_2026_income_changes_do_not_need_to_be_reported_because_rules_change_in_2027",
+        "the_2027_reform_guarantees_no_repayment_or_a_specific_benefit_amount"
+      ],
+      "expected_questions": [
+        "q_age",
+        "q_application_or_decision_start_period",
+        "q_current_decision_status_or_expiry_if_already_receiving_support",
+        "q_housing_form_and_household_status",
+        "q_expected_total_2026_annual_income_and_known_changes"
+      ],
+      "expected_next_actions": [
+        "for_a_2026_decision_use_the_current_annual_income_estimation_route",
+        "report_known_income_housing_or_household_changes_under_current_rules",
+        "use_current_forsakringskassan_calculation_and_application_sources_before_claiming_fit_or_amount",
+        "if_a_new_decision_will_start_from_2027_01_01_verify_the_monthly_income_rules_and_current_exceptions_then",
+        "do_not_treat_2027_01_01_as_an_automatic_mid_decision_switch_for_existing_housing_benefit"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_young_housing_benefit_guidance",
+        "Forsakringskassan_current_2027_housing_benefit_transition_guidance"
+      ]
+    }
+  ]
+}
