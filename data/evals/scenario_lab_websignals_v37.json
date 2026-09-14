@@ -57,7 +57,7 @@
     {
       "case_id": "lab-invoiced-worker-work-injury-dental-public-handoff-v37-02",
       "actor_type": "employee",
-      "story": "Jag fakturerar uppdrag via ett faktureringsföretag och skadade tanden under uppdraget. Vem räknas som arbetsgivare och vilken väg ska jag kontrollera?",
+      "story": "Jag fakturerar uppdrag via ett faktureringsföretag och skadade tanden på jobbet under uppdraget. Vem räknas som arbetsgivare och vilken väg ska jag kontrollera?",
       "expected_support_areas": [
         "same_public_work_injury_dental_route",
         "bounded_invoiced_worker_handoff_context",
