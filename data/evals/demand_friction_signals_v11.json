@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-14",
-  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Community discussion is discovery-only; current housing-benefit facts must come from Försäkringskassan primary sources and remain review-gated in the truth layer.",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility or factual truth. Community discussion is discovery-only; current housing-benefit facts must come from Försäkringskassan primary sources and remain review-gated in the truth layer.",
   "scoring": {"scale": "1-5", "meaning": "1=low, 5=very high", "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."},
   "signals": [{
     "signal_id": "df-young-post-study-housing-change-v01",
