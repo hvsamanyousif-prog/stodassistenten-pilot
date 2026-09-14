@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-employee-collective-sickness-compensation-v01",
+      "product_miss": "The shared employee_sick route handled first sickness reporting and partial sickness absence but had no information-gain step for the agreement area that determines where an employee should verify supplementary compensation during longer sickness.",
+      "regression_case_ids": [
+        "lab-employee-collective-private-worker-v52-01",
+        "lab-employee-collective-itp-v52-02",
+        "lab-employee-collective-municipal-v52-03",
+        "lab-employee-collective-state-sickpay-boundary-v52-04",
+        "lab-employee-collective-unknown-agreement-v52-05"
+      ],
+      "fix_or_guardrail": "Keep the capability inside the existing employee_sick module. For explicit longer-sickness compensation questions, skip unrelated sick-pay/part-time questions and ask only the coarse agreement area. Route private workers to the AGS verification path, ITP-covered private salaried employees to Collectum, municipal/region/church cases to Afa AGS-KL, state cases to the SPV boundary, and unknown cases to agreement identification before any insurer is selected.",
+      "truth_guardrail": "Försäkringskassan's uptake analysis is a demand/friction signal, not individual eligibility proof. Avtalat/Afa, Collectum and SPV carry agreement-specific current rules. Do not infer agreement coverage, entitlement, amount or a reporting deadline from employment sector alone. Preserve the state boundary that SPV sickness pension is not payable while the person only has ordinary sickness benefit.",
+      "privacy_guardrail": "Do not put raw situation text, diagnosis, medical certificate, exact sickness dates, salary, SGI, employer identity, workplace, union membership or person identity in URL or structured feedback. The public handoff carries only actor_type, focus, language and the coarse collective-compensation context; feedback may contain only the coarse route choice and product ratings.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
