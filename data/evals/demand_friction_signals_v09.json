@@ -59,7 +59,7 @@
         "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa"
       ],
       "recommended_learning_action": "Recognize completed-study transition phrases in the existing shared shell, hand off only a coarse study_to_work focus without raw situation text, ask only whether a job starts immediately and when unemployment begins, then give source-grounded first-day registration guidance without promising a-kassa eligibility.",
-      "truth_rule": "Do not treat community discussion, registration or a previous AI answer as proof of unemployment-insurance eligibility. Verify registration timing against current Arbetsförmedlingen guidance, and keep the a-kassa as the separate decision-maker for entitlement."
+      "truth_rule": "Community discussions may reveal wording and friction only. Do not treat community discussion, registration or a previous AI answer as proof of unemployment-insurance eligibility. Verify registration timing against current Arbetsförmedlingen guidance, and keep the a-kassa as the separate decision-maker for entitlement."
     }
   ]
 }
