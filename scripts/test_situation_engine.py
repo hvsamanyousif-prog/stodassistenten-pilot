@@ -5,7 +5,8 @@ root = Path(__file__).resolve().parents[1]
 index = (root / 'index.html').read_text(encoding='utf-8')
 quick = (root / 'quick-help.html').read_text(encoding='utf-8')
 routing = (root / 'client' / 'privacy-routing.js').read_text(encoding='utf-8')
-person_context = (root / 'client' / 'person-context-learning.js').read_text(encoding='utf-8')
+assistance = (root / 'client' / 'assistance-focus.js').read_text(encoding='utf-8')
+builder = (root / 'scripts' / 'build_public_pilot.py').read_text(encoding='utf-8')
 
 checks = [
     ('situation composer', 'id="situation"' in index and 'function classify(text)' in index),
@@ -23,11 +24,12 @@ checks = [
     ('accessibility baseline', 'class="skip"' in index and 'aria-live="polite"' in quick and ':focus-visible' in index and ':focus-visible' in quick),
     ('natural assistance route', 'KEYWORDS.assistance' in routing and 'hjälp med hygien' in routing and 'hjälp med påklädning' in routing and 'focus=assistance' in routing),
     ('assistance is need-led not diagnosis-led', 'adhd' not in routing.lower() and 'autism' not in routing.lower() and 'diagnos' not in routing.lower()),
-    ('assistance focus is allow-listed', "ALLOWED_PERSON_FOCUS=new Set(['assistance'])" in person_context and "focus==='assistance'" in person_context),
-    ('assistance asks high-value facts', "assistWho:'Vem gäller hjälpbehovet?'" in person_context and "assistNeed:'Gäller hjälpen grundläggande vardagsbehov?'" in person_context and 'Din uppskattning är bara en vägvisare' in person_context),
-    ('assistance authority split is fail-closed', '20 timmar eller mindre' in person_context and 'mer än 20 timmar' in person_context and 'En egen timuppskattning är inte samma sak som myndighetens bedömning.' in person_context),
-    ('assistance uses primary authority sources', 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna' in person_context and 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn' in person_context),
-    ('assistance results stay uncertain', "resultCard(r,i+2)" in person_context and 'Produkten avgör inte rätt till stöd.' in person_context),
+    ('assistance focus is bounded', "focus!=='assistance'" in assistance and "params.get('focus')" in assistance),
+    ('assistance asks high-value facts', "assistWho:'Vem gäller hjälpbehovet?'" in assistance and "assistNeed:'Gäller hjälpen grundläggande vardagsbehov?'" in assistance and 'Din uppskattning är bara en vägvisare' in assistance),
+    ('assistance authority split is fail-closed', '20 timmar eller mindre' in assistance and 'mer än 20 timmar' in assistance and 'En egen timuppskattning är inte samma sak som myndighetens bedömning.' in assistance),
+    ('assistance uses primary authority sources', 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna' in assistance and 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn' in assistance),
+    ('assistance results stay uncertain', "resultCard(r,i+2)" in assistance and 'Produkten avgör inte rätt till stöd.' in assistance),
+    ('assistance stays in same person module', 'ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"' in builder and 'ASSISTANCE_FOCUS_PATH,' in builder),
 ]
 
 failed = [name for name, ok in checks if not ok]
