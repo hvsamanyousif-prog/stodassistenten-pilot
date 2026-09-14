@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Semantic memory extension for Stodassistenten v28-v29.
+"""Semantic memory extension for Stodassistenten v28-v30.
 
 The common scenario lab dynamically loads all packs, while the older recent-memory
 validator currently stops at v27. This guard closes that drift without creating a
-new matcher or truth layer: v28 foundation discovery and v29 worker-context
-boundaries remain part of the same canonical learning system.
+new matcher or truth layer: v28 foundation discovery, v29 worker-context boundaries
+and v30 self-employed TFA contract semantics remain part of the same canonical
+learning system.
 """
 import json
 from pathlib import Path
@@ -22,7 +23,7 @@ for path in paths:
         assert cid not in cases, f"duplicate scenario id: {cid}"
         cases[cid] = case
 
-assert len(cases) >= 75, f"expected at least 75 canonical scenarios after v29, got {len(cases)}"
+assert len(cases) >= 77, f"expected at least 77 canonical scenarios after v30, got {len(cases)}"
 
 locks = {
     "lab-private-foundation-discovery-boundary-v28-01": {
@@ -91,6 +92,46 @@ locks = {
             "verify_actual_collective_agreement_or_insurance_coverage_instead_of_inferring_it_from_egenanstallning",
         ],
     },
+    "lab-self-employed-tfa-fora-agreement-v30-01": {
+        "expected_support_areas": [
+            "self_employed_tfa_via_fora_agreement_candidate",
+            "forsakringskassan_and_tfa_kept_separate",
+            "actual_contract_status_controls_tfa_route",
+        ],
+        "must_not_claim": [
+            "self_employed_people_are_always_excluded_from_tfa",
+            "every_self_employed_person_is_automatically_covered_by_tfa",
+            "a_company_registration_f_tax_or_company_form_alone_proves_a_fora_insurance_agreement",
+            "tfa_coverage_proves_forsakringskassan_work_injury_dental_eligibility_or_full_reimbursement",
+        ],
+        "expected_questions": [
+            "q_does_the_business_have_a_current_fora_insurance_or_ground_agreement",
+        ],
+        "expected_next_actions": [
+            "verify_the_current_fora_insurance_or_ground_agreement_and_tfa_scope_before_presenting_tfa_as_actionable",
+            "if_tfa_is_confirmed_route_to_current_afa_or_fora_primary_guidance_without_merging_the_decisions",
+        ],
+    },
+    "lab-self-employed-tfa-unknown-contract-v30-02": {
+        "expected_support_areas": [
+            "tfa_contract_status_missing_fact",
+            "information_gain_before_tfa_route",
+            "private_or_other_business_insurance_kept_separate",
+        ],
+        "must_not_claim": [
+            "afa_tfa_applies_because_the_person_has_a_business",
+            "afa_tfa_is_unavailable_because_the_person_is_self_employed",
+            "lack_of_known_fora_agreement_excludes_the_statutory_forsakringskassan_route",
+            "private_business_insurance_and_tfa_are_the_same_contract_or_decision",
+        ],
+        "expected_questions": [
+            "q_does_the_business_have_a_current_fora_insurance_or_ground_agreement",
+        ],
+        "expected_next_actions": [
+            "verify_fora_agreement_status_before_claiming_or_excluding_tfa",
+            "ask_no_more_than_the_minimum_contract_context_needed_to_change_the_route",
+        ],
+    },
 }
 
 for cid, fields in locks.items():
@@ -100,34 +141,59 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in case[field], f"{cid}: missing locked {field} token {token}"
 
-signal_pack = json.loads((EVAL / "demand_friction_signals_v16.json").read_text(encoding="utf-8"))
-assert len(signal_pack["signals"]) == 1
-signal = signal_pack["signals"][0]
-assert signal["signal_id"] == "df-self-employed-work-injury-insurance-context-v01"
-assert signal["priority_band"] == "HIGH"
-assert "not measured search volume" in signal_pack["scoring"]["priority_rule"]
-assert all("reddit.com" in url for url in signal["discovery_sources"])
-assert all("reddit.com" not in url for url in signal["primary_sources"])
-assert "discovery" in signal["truth_rule"].lower()
-assert "verify" in signal["truth_rule"].lower()
-assert any("forsakringskassan.se" in url for url in signal["primary_sources"])
-assert any("verksamt.se" in url for url in signal["primary_sources"])
-assert any("afaforsakring.se" in url for url in signal["primary_sources"])
+signal_pack_v16 = json.loads((EVAL / "demand_friction_signals_v16.json").read_text(encoding="utf-8"))
+assert len(signal_pack_v16["signals"]) == 1
+signal_v16 = signal_pack_v16["signals"][0]
+assert signal_v16["signal_id"] == "df-self-employed-work-injury-insurance-context-v01"
+assert signal_v16["priority_band"] == "HIGH"
+assert "not measured search volume" in signal_pack_v16["scoring"]["priority_rule"]
+assert all("reddit.com" in url for url in signal_v16["discovery_sources"])
+assert all("reddit.com" not in url for url in signal_v16["primary_sources"])
+assert "discovery" in signal_v16["truth_rule"].lower()
+assert "verify" in signal_v16["truth_rule"].lower()
+assert any("forsakringskassan.se" in url for url in signal_v16["primary_sources"])
+assert any("verksamt.se" in url for url in signal_v16["primary_sources"])
+assert any("afaforsakring.se" in url for url in signal_v16["primary_sources"])
 
-mapping_pack = json.loads((EVAL / "demand_friction_regression_map_v10.json").read_text(encoding="utf-8"))
-assert len(mapping_pack["mappings"]) == 1
-mapping = mapping_pack["mappings"][0]
-assert mapping["signal_id"] == signal["signal_id"]
-assert mapping["regression_case_ids"] == [
+mapping_pack_v10 = json.loads((EVAL / "demand_friction_regression_map_v10.json").read_text(encoding="utf-8"))
+assert len(mapping_pack_v10["mappings"]) == 1
+mapping_v10 = mapping_pack_v10["mappings"][0]
+assert mapping_v10["signal_id"] == signal_v16["signal_id"]
+assert mapping_v10["regression_case_ids"] == [
     "lab-self-employed-work-injury-dental-v29-01",
     "lab-invoiced-worker-work-injury-dental-v29-02",
 ]
-assert "automatic afa" in mapping["fix_or_guardrail"].lower()
-assert "employer context" in mapping["fix_or_guardrail"].lower()
+assert "automatic afa" in mapping_v10["fix_or_guardrail"].lower()
+assert "employer context" in mapping_v10["fix_or_guardrail"].lower()
+
+signal_pack_v17 = json.loads((EVAL / "demand_friction_signals_v17.json").read_text(encoding="utf-8"))
+assert len(signal_pack_v17["signals"]) == 1
+signal_v17 = signal_pack_v17["signals"][0]
+assert signal_v17["signal_id"] == "df-self-employed-tfa-contract-boundary-v01"
+assert signal_v17["priority_band"] == "HIGH"
+assert "not measured search volume" in signal_pack_v17["scoring"]["priority_rule"]
+assert all("reddit.com" in url for url in signal_v17["discovery_sources"])
+assert all("reddit.com" not in url for url in signal_v17["primary_sources"])
+assert "discovery" in signal_v17["truth_rule"].lower()
+assert "verify" in signal_v17["truth_rule"].lower()
+assert any("forsakringskassan.se" in url for url in signal_v17["primary_sources"])
+assert any("afaforsakring.se" in url for url in signal_v17["primary_sources"])
+assert any("fora.se" in url for url in signal_v17["primary_sources"])
+
+mapping_pack_v11 = json.loads((EVAL / "demand_friction_regression_map_v11.json").read_text(encoding="utf-8"))
+assert len(mapping_pack_v11["mappings"]) == 1
+mapping_v11 = mapping_pack_v11["mappings"][0]
+assert mapping_v11["signal_id"] == signal_v17["signal_id"]
+assert mapping_v11["regression_case_ids"] == [
+    "lab-self-employed-tfa-fora-agreement-v30-01",
+    "lab-self-employed-tfa-unknown-contract-v30-02",
+]
+assert "never exclude tfa" in mapping_v11["fix_or_guardrail"].lower()
+assert "fora insurance/ground agreement" in mapping_v11["fix_or_guardrail"].lower()
 
 support = json.loads(SUPPORT.read_text(encoding="utf-8"))
 assert support["verification"]["status"] == "NEEDS_REVIEW"
 assert support["verification"]["human_review_required"] is True
 assert support["verification"]["material_fields_verified"] == []
 
-print(f"latest learning memory: OK ({len(cases)} canonical scenarios; v28-v29 semantics locked; truth stays review-gated)")
+print(f"latest learning memory: OK ({len(cases)} canonical scenarios; v28-v30 semantics locked; truth stays review-gated)")
