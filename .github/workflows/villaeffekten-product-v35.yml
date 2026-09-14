@@ -1,0 +1,37 @@
+name: Villaeffekten product v35
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  villaeffekten-product-v35:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check shared runtimes
+        run: |
+          node --check client/experience-learning.js
+          node --check client/person-context-learning.js
+      - name: Validate v35 public product route
+        run: python scripts/validate_v35_villaeffekten_product.py
+      - name: Preserve v34 truth boundary
+        run: python scripts/validate_villaeffekten_v34.py
+      - name: Validate canonical scenario lab
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand and friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Validate public pilot build
+        run: |
+          python scripts/build_public_pilot.py --source . --output _site
+          python scripts/test_public_pilot_build.py --source . --site _site
