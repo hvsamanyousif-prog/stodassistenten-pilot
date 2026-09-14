@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, amount, deadline safety, decision or payment. Commercial pages and news language are discovery-only; material Villaeffekten claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-villaeffekten-discovery-to-action-v02",
+      "actor_types": ["individual", "homeowner"],
+      "natural_language_queries": [
+        "jag vill sänka elkostnaden i villan finns det bidrag",
+        "kan jag få Villaeffekten för värmepump",
+        "jag hyr huset kan jag söka Villaeffekten",
+        "vi har redan börjat renovera är det för sent att söka",
+        "får man 30 procent av hela fakturan",
+        "vilka papper behöver jag för Villaeffekten",
+        "är pengarna säkrade när ansökan är inskickad",
+        "var får jag oberoende hjälp att välja energiåtgärd"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "The scheme is live from September 2026 and both Boverket and current market-facing pages prominently connect it to ordinary homeowner intents such as heat pumps and lower energy cost. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Natural language collapses materially different facts: ownership/permanent residence, tax value year versus build year, existing district-heating connection, exact measure/product, start timing, documents, material versus labour and decision/budget uncertainty."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A user can buy material, miss a time-sensitive application route, budget around the wrong cost base, assume submission equals approval or abandon a potentially relevant measure."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Boverket provides the operational grant guidance, county boards decide applications, and Energimyndigheten/municipal advisers provide independent measure guidance. Commercial installer pages are useful for discovery language but cannot carry the truth boundary."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as Villaeffekten, energibidrag, värmepump, värdeår, fjärrvärme, materialkostnad and start date are easy to collapse into a misleading yes/no answer, with additional risk for users reading through translated or simplified language."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "The safe path should be short but ordered: natural situation -> owner/residence -> value year -> existing district heating -> concrete measure -> timing -> current primary-source check -> documents and county-board application, with an independent energy-advice fallback when the measure is unclear."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The same misunderstandings recur across heat-pump, insulation, window and renovation contexts, while commercial pages repeatedly lead with simplified amounts and measure examples."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "After v34 the product had a normalized review-gated truth record and regressions but the common public situation shell still had no focused natural-language handoff that consumed this knowledge."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.boverket.se/sv/om-boverket/nyheter-aktuellt/nyheter/sok-bidrag/",
+        "https://mitsubishielectric.se/blogg/fa-bidrag-nar-du-installerar-varmepump",
+        "https://www.xn--vrmepumpsexperterna-gwb.se/guider/villaeffekten-varmepump-bidrag-2026"
+      ],
+      "primary_sources": [
+        "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+        "https://www.energimyndigheten.se/effektiv-energianvandning/effektiv-energianvandning/program-och-uppdrag/kommunal-energi-och-klimatradgivning/"
+      ],
+      "recommended_learning_action": "Use the existing shared situation shell and person module to expose a bounded home-energy handoff. Ask only facts that change the Villaeffekten path, keep the normalized support record review-gated, provide current Boverket verification and independent municipal energy advice, and turn every discovered product miss into regression memory. Do not build a separate energy app or matcher.",
+      "truth_rule": "Discovery pages and market language are signals, not truth. Verify material grant facts against current Boverket primary guidance before they affect user-facing behavior. Energimyndigheten may support the independent-advice fallback. Do not infer eligibility, amount, deadline safety, county-board decision or budget reservation from commercial claims, a generic renovation story or prior AI output."
+    }
+  ]
+}
