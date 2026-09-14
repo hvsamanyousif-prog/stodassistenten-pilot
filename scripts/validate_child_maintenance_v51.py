@@ -83,7 +83,9 @@ assert support['application']['deadline_text'] is None
 client = CLIENT.read_text(encoding='utf-8')
 assert 'focus=child_maintenance' in client
 assert "flow:'child_maintenance'" in client
-assert 'maintenance_context=cross_border' in client
+# The JS unit test verifies the exact generated query string. Here, guard the
+# semantic cross-border contract without depending on literal string assembly.
+assert 'maintenance_context' in client and 'cross_border' in client
 assert 'child_name=' not in client and 'other_parent=' not in client and 'amount=' not in client
 assert 'FK_OVERVIEW_URL' in client and 'FK_SUPPORT_URL' in client and 'FK_ABROAD_URL' in client
 
