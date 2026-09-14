@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Community discussions are discovery signals only; timing, registration and unemployment-insurance facts must come from current primary sources before they affect product guidance.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-young-post-study-no-job-v01",
+      "actor_types": ["student", "young_adult", "new_graduate"],
+      "natural_language_queries": [
+        "jag har precis tagit examen och hittar inget jobb vad ska jag göra nu",
+        "utbildningen är klar men jag har ingen anställning och sparpengarna minskar",
+        "nyexaminerad arbetslös ska jag skriva in mig på arbetsförmedlingen direkt",
+        "jag tog examen förra veckan men vet inte om jag kan få a-kassa"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Recent Swedish community discussions repeatedly describe difficulty getting a first job after graduation and uncertainty about what to do during the gap. This is a qualitative discovery signal, not population prevalence."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The user often expresses one combined problem—studies finished, no job, money pressure—while official next steps are split between jobseeker registration and a separate unemployment-insurance assessment. A catalog-like route can therefore miss the transition moment."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Arbetsförmedlingen states that registration should be submitted on the first unemployed day and notes consequences for when an a-kassa can assess compensation and for protecting SGI. A missed or vague next step can therefore have material consequences."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "Arbetsförmedlingen provides the registration sequence and points onward to the relevant a-kassa, which separately decides entitlement and payment. The product must not collapse those roles into one decision."
+      },
+      "language_accessibility_friction": {
+        "score": 3,
+        "basis": "People describe the event as 'tagit examen', 'klar med utbildningen' or simply 'inget jobb', not necessarily with the administrative term 'arbetslös'. The same transition must be detectable in supported Arabic and Persian without changing the underlying route."
+      },
+      "steps_to_action": {
+        "score": 2,
+        "basis": "A safe first action can be concise once timing is known: if the person is unemployed, submit registration on the first unemployed day; if compensation is sought, apply separately to the a-kassa after registration."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The transition recurs each graduation cycle and across education types. The wording varies substantially, so it is a useful permanent natural-language regression rather than a one-off FAQ."
+      },
+      "current_product_coverage_gap": {
+        "score": 4,
+        "basis": "The coverage matrix already identifies weak natural-language transition detection between studies and first job. The root router recognizes 'nyexaminerad' but misses common completed-study phrases such as 'tagit examen' unless another keyword happens to route the user correctly."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/sweden/comments/1jb2k5n/att_vara_nyexaminerad_idag_k%C3%A4nns_mer_som_en/",
+        "https://www.reddit.com/r/Asksweddit/comments/1l5anji/"
+      ],
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa"
+      ],
+      "recommended_learning_action": "Recognize completed-study transition phrases in the existing shared shell, hand off only a coarse study_to_work focus without raw situation text, ask only whether a job starts immediately and when unemployment begins, then give source-grounded first-day registration guidance without promising a-kassa eligibility.",
+      "truth_rule": "Community discussions may reveal wording and friction only. Registration timing and downstream a-kassa guidance must be grounded in current Arbetsförmedlingen information, and the product must state that the a-kassa separately decides entitlement."
+    }
+  ]
+}
