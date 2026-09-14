@@ -113,6 +113,7 @@ required_links = {
     'df-young-housing-benefit-income-change-v01': 'lab-young-housing-irregular-income-v12-03',
     'df-varsel-unemployment-transition-v01': 'lab-employee-varsel-transition-v13-01',
     'df-relative-representation-housing-supplement-v01': 'lab-relative-housing-representation-v13-02',
+    'df-vab-12plus-deadline-documentation-v01': 'lab-guardian-vab-12plus-v15-02',
 }
 for sid, cid in required_links.items():
     assert sid in mappings, f'critical signal mapping missing: {sid}'
