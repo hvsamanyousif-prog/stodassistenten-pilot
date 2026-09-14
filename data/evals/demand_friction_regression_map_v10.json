@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility, insurance coverage, employer identity or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-self-employed-work-injury-insurance-context-v01",
+      "product_miss": "The current public work-injury dental route is actor-labeled as employee even though the statutory truth conditions are not an employee-only gate, while the product lacked a permanent distinction between own-business status and egenanstallning through an invoicing company.",
+      "fix_or_guardrail": "Keep the existing Forsakringskassan work-injury dental truth conditions intact, add permanent self-employed and egenanstalld synthetic regressions, forbid automatic Afa coverage or automatic exclusion from the statutory route, and require actual insurance/employer context to be verified before any future public handoff is generalized.",
+      "regression_case_ids": [
+        "lab-self-employed-work-injury-dental-v29-01",
+        "lab-invoiced-worker-work-injury-dental-v29-02"
+      ]
+    }
+  ]
+}
