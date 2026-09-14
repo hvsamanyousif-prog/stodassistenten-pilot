@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-adult-disability-extra-costs-v01",
+      "product_miss": "The canonical base scenario already knew that recurring disability-related extra costs should lead to adult additional-cost support, but the public product had no focused natural-language path, no payer/double-compensation boundary and no normalized adult support record.",
+      "regression_case_ids": [
+        "lab-disability-adult-extra-costs-v50-01",
+        "lab-disability-extra-costs-other-payer-v50-02",
+        "lab-disability-extra-costs-applicant-age-study-v50-03"
+      ],
+      "fix_or_guardrail": "Extend the same root/person product with focus=adult_extra_costs. Ask only whether the cost is genuinely extra because of disability, who pays it and the age/study applicant boundary. Keep ordinary spending, other-public-payer overlap and 18–20 study status explicit, and send the user to the current Försäkringskassan source without calculating entitlement or amount.",
+      "truth_guardrail": "Försäkringskassan is the truth-bearing primary source. Diagnosis alone is not entitlement, total spending is not the same as assessed additional costs, a cost already paid by municipality/region/assistansersättning cannot be counted again unchanged, and the normalized support record remains NEEDS_REVIEW with no material fields verified.",
+      "privacy_guardrail": "Do not put diagnosis, exact costs, receipts, municipality/region, identity, school name or raw situation text in URL or structured feedback. Feedback carries only language, route and product ratings.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
