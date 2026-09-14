@@ -1,0 +1,133 @@
+{
+  "support_id": "se-forsakringskassan-arbetsskada-tandvard",
+  "name": "Ersättning för tandvårdskostnader vid arbetsskada",
+  "category": "health_dental",
+  "subtype": "work_injury_dental_reimbursement",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "employee",
+      "self_employed",
+      "work_injury",
+      "commuting_injury",
+      "dental_cost"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "wid.work_causation",
+        "field": "injury_or_disease_due_to_work_or_commute",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "notes": "Försäkringskassan anger att skadan eller sjukdomen ska ha uppstått på grund av arbetet eller på väg till eller från arbetet."
+      },
+      {
+        "rule_id": "wid.treatment_necessary",
+        "field": "dental_treatment_necessary_due_to_work_injury",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "notes": "Tandbehandlingen ska vara nödvändig på grund av arbetsskadan."
+      },
+      {
+        "rule_id": "wid.cost_evidence",
+        "field": "dental_cost_evidence_available",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "notes": "Det behövs underlag som visar kostnaden, exempelvis kostnadsförslag, kvitto eller faktura."
+      },
+      {
+        "rule_id": "wid.dentist_connected",
+        "field": "dentist_connected_to_forsakringskassan",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "notes": "Tandläkaren ska vara ansluten till Försäkringskassan."
+      },
+      {
+        "rule_id": "wid.insured_sweden",
+        "field": "insured_in_sweden",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "notes": "Den sökande ska vara försäkrad i Sverige."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "wid.causation",
+        "prompt": "Uppstod skadan eller sjukdomen på grund av arbetet eller på väg till eller från arbetet?",
+        "reason": "Det avgör om just arbetsskadespåret är relevant att utreda."
+      },
+      {
+        "question_id": "wid.treatment_link",
+        "prompt": "Är tandbehandlingen nödvändig på grund av den skadan eller sjukdomen?",
+        "reason": "Kostnaden behöver ha samband med arbetsskadan; en vanlig tandvårdskostnad är inte samma väg."
+      },
+      {
+        "question_id": "wid.documents",
+        "prompt": "Har du kostnadsförslag, kvitto eller faktura från tandläkaren?",
+        "reason": "Försäkringskassan anger att kostnadsunderlag behövs i handläggningen."
+      },
+      {
+        "question_id": "wid.dentist",
+        "prompt": "Är tandläkaren ansluten till Försäkringskassan?",
+        "reason": "Det är ett uttryckligt villkor för tandvårdsersättningen."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "reimbursement",
+    "amount_text": "Ersättningen motsvarar inte alltid hela tandläkarens pris; Försäkringskassan utgår från tandvårdens referenspriser och kan även ersätta resor med billigaste färdsätt.",
+    "calculation_text": "Exakt ersättning beror på aktuell åtgärd, referenspris och Försäkringskassans bedömning. Ett högre klinikpris än referenspriset ersätts ofta inte fullt ut.",
+    "recurrence": "variable"
+  },
+  "documents": [
+    "Kostnadsförslag, kvitto eller faktura från tandläkaren"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+    "deadline_text": null,
+    "next_step": "Samla kostnadsunderlaget och använd Försäkringskassans aktuella e-tjänst eller blankett 5002 för att ansöka om kostnadsersättning vid arbetsskada. Kontrollera separat med arbetsgivare eller fack om kollektivavtalad arbetsskadeförsäkring kan ge annan kompletterande ersättning; det är inte samma prövning som Försäkringskassans tandvårdskostnad."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T09:25:47Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell Försäkringskassekälla 2026-09-14. Måste granskas av människa innan status kan höjas till VERIFIED eller användas som produktionssanning. Afa/kollektivavtalad ersättning hålls uttryckligen som separat möjlig väg och är inte inbakad i denna stödpost.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T09:25:47Z",
+    "last_seen_at": "2026-09-14T09:25:47Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
