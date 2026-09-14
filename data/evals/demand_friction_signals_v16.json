@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-14",
-  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volume and not proof of eligibility, insurance coverage or factual truth. Community discussion is discovery-only; material claims require current primary-source verification.",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, insurance coverage or factual truth. Community discussion is discovery-only; material claims require current primary-source verification.",
   "scoring": {
     "scale": "1-5",
     "meaning": "1=low, 5=very high",
