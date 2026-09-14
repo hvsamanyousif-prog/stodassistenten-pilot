@@ -1,0 +1,47 @@
+name: Validate pension housing v38
+
+on:
+  pull_request:
+    paths:
+      - 'client/pension-housing.js'
+      - 'client/pension-housing.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_pension_housing_v38.py'
+      - 'data/evals/scenario_lab_websignals_v38.json'
+      - 'data/evals/demand_friction_signals_v24.json'
+      - 'data/evals/demand_friction_regression_map_v18.json'
+      - 'data/supports/se-pensionsmyndigheten-bostadstillagg.json'
+      - '.github/workflows/pension-housing-v38.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/pension-housing.js'
+      - 'client/pension-housing.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_pension_housing_v38.py'
+      - 'data/evals/scenario_lab_websignals_v38.json'
+      - 'data/evals/demand_friction_signals_v24.json'
+      - 'data/evals/demand_friction_regression_map_v18.json'
+      - 'data/supports/se-pensionsmyndigheten-bostadstillagg.json'
+      - '.github/workflows/pension-housing-v38.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate v38 product, regression and truth boundaries
+        run: |
+          python scripts/validate_pension_housing_v38.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
+          python scripts/build_public_pilot.py --source . --output /tmp/stod-v38-site
