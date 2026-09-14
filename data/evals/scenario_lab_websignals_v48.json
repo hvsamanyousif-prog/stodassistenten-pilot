@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Permanent synthetic regressions for the high-friction boundary between ordinary employee sickness with employer sick pay, employment without sick pay, ordinary part-time employment and partial sickness absence. Stories are synthetic and contain no reused community text or personal data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "employee-sick-pay-and-part-time-boundary",
+      "observation": "Natural problem statements such as 'I work part-time and I am sick' often omit two route-changing facts: whether the employer pays sick pay at the beginning of the sickness period and whether part-time describes the normal employment extent or partial sickness absence. Current Försäkringskassan primary pages keep these routes separate.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld-utan-sjuklon"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-sick-pay-first-route-v48-01",
+      "actor_type": "employee",
+      "story": "Jag är anställd och blev sjuk. Jag tror att arbetsgivaren betalar sjuklön men vet inte vad nästa steg är.",
+      "expected_support_areas": ["employee_sickness_reporting", "employer_sick_pay_route", "later_forsakringskassan_route_if_sickness_continues"],
+      "must_not_claim": ["every_employee_should_report_first_sick_day_to_forsakringskassan", "sick_pay_guarantees_later_sickness_benefit", "employment_alone_proves_sgi_or_eligibility"],
+      "expected_questions": ["ask_if_employer_normally_pays_sick_pay_before_selecting_first_reporting_route", "ask_partial_sickness_only_if_it_changes_worktime_guidance"],
+      "expected_next_actions": ["use_current_forsakringskassan_employee_sickness_source_and_keep_later_benefit_assessment_separate"],
+      "source_requirements": ["Forsakringskassan_current_employee_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-employee-without-sick-pay-first-day-v48-02",
+      "actor_type": "employee",
+      "story": "Jag är timanställd och får ingen sjuklön från arbetsgivaren. Jag blev sjuk idag.",
+      "expected_support_areas": ["employment_without_sick_pay", "first_day_forsakringskassan_reporting_candidate"],
+      "must_not_claim": ["all_employees_have_employer_sick_pay_first", "hourly_employment_automatically_means_no_sick_pay", "reporting_to_forsakringskassan_guarantees_sickness_benefit"],
+      "expected_questions": ["do_not_repeat_sick_pay_question_when_the_story_already_states_no_sick_pay", "do_not_request_diagnosis_sgi_salary_or_identity_to_choose_reporting_source"],
+      "expected_next_actions": ["show_current_forsakringskassan_without_sick_pay_route_and_leave_eligibility_to_authority_assessment"],
+      "source_requirements": ["Forsakringskassan_current_employee_without_sick_pay_guidance"]
+    },
+    {
+      "case_id": "lab-employee-parttime-vs-partial-sick-leave-v48-03",
+      "actor_type": "employee",
+      "story": "Jag jobbar deltid och är sjuk. Betyder det att jag är deltidssjukskriven och ska ha 50 procent sjukpenning?",
+      "expected_support_areas": ["ordinary_part_time_vs_partial_sickness_absence", "worktime_coordination_if_partial_sickness_benefit"],
+      "must_not_claim": ["ordinary_part_time_employment_equals_partial_sickness_absence", "part_time_work_automatically_means_50_percent_sickness_benefit", "the_model_can_infer_medical_work_capacity_percentage_from_hours_or_free_text"],
+      "expected_questions": ["ask_whether_part_time_is_the_normal_employment_extent_or_reduced_work_due_to_partial_sickness_absence"],
+      "expected_next_actions": ["if_partial_sickness_benefit_is_current_verify_worktime_placement_with_employer_and_forsakringskassan_without_predicting_entitlement_or_percentage"],
+      "source_requirements": ["Forsakringskassan_current_employee_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-mixed-jobseeker-employee-sickness-route-conflict-v48-04",
+      "actor_type": "private_person",
+      "story": "Jag söker jobb på deltid, har också en anställning och är sjuk.",
+      "expected_support_areas": ["mixed_jobseeker_employment_context", "route_conflict_prevention"],
+      "must_not_claim": ["employee_route_should_override_jobseeker_programme_disambiguation", "one_reporting_recipient_always_covers_mixed_context", "benefit_coordination_can_be_inferred_without_primary_source_assessment"],
+      "expected_questions": ["preserve_existing_v47_programme_status_disambiguation_before_employee_only_route"],
+      "expected_next_actions": ["keep_mixed_context_in_existing_unemployed_sick_route_and_preserve_employer_reporting_when_relevant"],
+      "source_requirements": ["Forsakringskassan_current_jobseeker_sickness_guidance", "Forsakringskassan_current_employee_sickness_guidance"]
+    }
+  ]
+}
