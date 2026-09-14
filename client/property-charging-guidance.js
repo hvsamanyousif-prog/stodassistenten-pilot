@@ -8,7 +8,7 @@
   const FOCUS = 'property_charging';
   const NV_ASSOC = 'https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/';
   const NV_COMPANY = 'https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-fastighetsbolag-och-foretag/';
-  const RIKSDAGEN = 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/okade-mojligheter-till-hemmaladdning-av-elfordon_hd03148/';
+  const RIKSDAGEN = 'https://data.riksdagen.se/dokument/sfs-1991-614.html';
 
   const CONTEXTS = new Set(['association_project', 'company_project', 'resident_request']);
   const USES = new Set(['members', 'guests', 'external', 'company_internal', 'company_guests', 'mixed']);
