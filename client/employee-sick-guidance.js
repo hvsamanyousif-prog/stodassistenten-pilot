@@ -18,8 +18,9 @@
 
   const EXCLUSION_PATTERNS = [
     /arbetslös|arbetssökande|arbetsförmedlingen|aktivitetsstöd|utvecklingsersättning|etableringsersättning/i,
-    /عاطل\s+عن\s+العمل|باحث\s+عن\s+عمل|مكتب\s+العمل/i,
-    /بیکار|جویای\s+کار|اداره\s+کار/i,
+    /ingen\s+anställning|utan\s+anställning|saknar\s+anställning/i,
+    /عاطل\s+عن\s+العمل|باحث\s+عن\s+عمل|مكتب\s+العمل|بدون\s+عمل|ليس\s+لدي\s+عمل|لا\s+أعمل/i,
+    /بیکار|جویای\s+کار|اداره\s+کار|بدون\s+کار|کار\s+ندارم|شاغل\s+نیستم/i,
   ];
   const DIRECT_PATTERNS = [
     /(?:jobbar|arbetar|anställd|anställning|timanställd|behovsanställd|deltid).*(?:sjuk|sjukskriv|sjukanmäl|sjuklön)/i,
