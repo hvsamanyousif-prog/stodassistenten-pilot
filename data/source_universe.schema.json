@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/source-universe-0.1.0.json",
+  "title": "Stödassistenten Source Universe Overlay",
+  "description": "A non-truth overlay that classifies discovery source families by product role and safety boundary while referencing the canonical source registry. It must not duplicate source metadata, user case data, or verified support facts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at",
+    "purpose",
+    "invariants",
+    "families"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1400
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "references_canonical_source_registry",
+        "no_duplicate_source_metadata",
+        "discovery_never_implies_open_application",
+        "primary_source_required_for_opportunity_state",
+        "no_raw_person_data",
+        "no_user_case_data",
+        "no_ai_promotion_to_verified"
+      ],
+      "properties": {
+        "references_canonical_source_registry": {"const": true},
+        "no_duplicate_source_metadata": {"const": true},
+        "discovery_never_implies_open_application": {"const": true},
+        "primary_source_required_for_opportunity_state": {"const": true},
+        "no_raw_person_data": {"const": true},
+        "no_user_case_data": {"const": true},
+        "no_ai_promotion_to_verified": {"const": true}
+      }
+    },
+    "families": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/family"}
+    }
+  },
+  "$defs": {
+    "family": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "family_id",
+        "source_registry_refs",
+        "domain",
+        "discovery_role",
+        "opportunity_state_authority",
+        "private_adapter_required",
+        "review_required",
+        "public_safe_fields",
+        "blocked_fields",
+        "required_verification_before_action",
+        "prohibited_promotions"
+      ],
+      "properties": {
+        "family_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+        },
+        "source_registry_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+          }
+        },
+        "domain": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{1,79}$"
+        },
+        "discovery_role": {
+          "type": "string",
+          "enum": [
+            "registry_discovery",
+            "catalog_discovery",
+            "aggregator_discovery",
+            "primary_opportunity"
+          ]
+        },
+        "opportunity_state_authority": {
+          "type": "string",
+          "enum": ["not_authoritative", "source_specific"]
+        },
+        "private_adapter_required": {"type": "boolean"},
+        "review_required": {"type": "boolean"},
+        "public_safe_fields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,79}$"
+          }
+        },
+        "blocked_fields": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,79}$"
+          }
+        },
+        "required_verification_before_action": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 400
+          }
+        },
+        "prohibited_promotions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{2,119}$"
+          }
+        }
+      }
+    }
+  }
+}

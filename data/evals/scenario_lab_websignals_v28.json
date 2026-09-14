@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v28 rotates demand/friction discovery to foundations and locks a source-universe boundary: registry discovery may create candidates, but it must never become open-application or eligibility truth without current primary-source verification. No real user story, registry person data or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-foundation-registry-discovery-not-open-opportunity-2026",
+      "observation": "Länsstyrelsernas Stiftelsesök is an official registry for finding active registered foundations and their purposes, but Länsstyrelserna states that it does not handle grant applications and that a person seeking money must contact the foundation about application documents, application times and where to apply.",
+      "primary_sources": [
+        "https://stiftelser.lansstyrelsen.se/",
+        "https://www.lansstyrelsen.se/stockholm/samhalle/betalning-ekonomi-och-pengar/stipendier.html"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-private-foundation-discovery-boundary-v28-01",
+      "actor_type": "private_person",
+      "story": "Jag har det ekonomiskt svårt och har hört att det finns fonder eller stiftelser för olika behov. Hur hittar jag sådant som faktiskt går att söka nu?",
+      "expected_support_areas": [
+        "foundation_registry_candidate_discovery",
+        "purpose_and_geography_narrowing",
+        "organization_level_privacy_filter",
+        "current_application_state_verification",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "registered_active_foundation_means_an_application_is_open_now",
+        "foundation_purpose_text_alone_proves_user_eligibility",
+        "lansstyrelsen_accepts_the_grant_application",
+        "board_member_auditor_or_signatory_details_should_be_republished_as_product_contact_data",
+        "a_deadline_amount_or_payment_can_be_inferred_from_registry_discovery_or_community_advice"
+      ],
+      "expected_questions": [
+        "q_what_need_or_purpose_should_the_foundation_support",
+        "q_which_geography_or_connection_may_limit_candidates",
+        "q_is_the_user_looking_for_currently_open_application_or_general_candidate_discovery"
+      ],
+      "expected_next_actions": [
+        "search_candidate_foundations_by_purpose_and_relevant_geography_without_calling_them_verified_opportunities",
+        "for_each_candidate_verify_current_application_documents_period_target_group_and_submission_route_with_the_foundation_primary_source",
+        "show_only_organization_level_contact_or_application_routes_that_have_been_verified_for_product_use"
+      ],
+      "source_requirements": [
+        "Lansstyrelserna_current_foundation_registry_primary_source",
+        "responsible_foundation_or_provider_primary_source_for_current_application_state"
+      ]
+    },
+    {
+      "case_id": "lab-association-foundation-open-window-v28-02",
+      "actor_type": "association",
+      "story": "Vår förening behöver finansiering till ett projekt. Vi hittar många stiftelser i sökningar men vet inte vilka som tar emot ansökningar eller om ändamålet räcker för att vi ska få söka.",
+      "expected_support_areas": [
+        "foundation_registry_candidate_discovery",
+        "association_project_purpose_narrowing",
+        "open_planned_expired_state_requires_primary_source",
+        "evidence_and_application_gap_detection",
+        "privacy_safe_source_handling"
+      ],
+      "must_not_claim": [
+        "registry_presence_equals_active_funding_call",
+        "purpose_similarity_equals_fit_or_eligibility",
+        "an_old_application_page_proves_a_current_deadline",
+        "a_search_engine_or_forum_post_is_a_truth_source",
+        "personal_registry_details_are_needed_for_candidate_matching"
+      ],
+      "expected_questions": [
+        "q_what_project_purpose_and_target_group_need_financing",
+        "q_what_geography_or_organizational_connection_applies",
+        "q_what_current_primary_application_page_or_contact_confirms_open_planned_or_closed_state"
+      ],
+      "expected_next_actions": [
+        "use_registry_or_authoritative_catalogs_to_discover_candidates_not_to_decide_fit",
+        "verify_each_candidate_application_state_and_mandatory_requirements_at_the_named_primary_provider",
+        "mark_unknown_or_stale_application_state_for_review_instead_of_guessing_open"
+      ],
+      "source_requirements": [
+        "Lansstyrelserna_current_foundation_registry_primary_source",
+        "named_foundation_current_application_primary_source"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility, open application windows or factual truth. Community discussion is discovery-only; foundation facts and application state must be verified against primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-foundation-find-open-application-v01",
+      "actor_types": [
+        "private_person",
+        "student",
+        "association"
+      ],
+      "natural_language_queries": [
+        "finns det någon fond eller stiftelse jag kan söka pengar från",
+        "hur hittar jag stipendier som faktiskt går att söka nu",
+        "jag behöver ekonomisk hjälp men vet inte vilka stiftelser som passar",
+        "vi är en förening och behöver hitta fonder med öppen ansökan"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Public community questions show recurring attempts to find funds, foundations or scholarships without knowing the formal source or which opportunities are actually open. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The official registry can help find registered foundations by purpose, but the registry does not handle grant applications and does not itself provide a reliable open/closed application state. Users must verify application documents, periods and destination with each foundation."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "Treating a registry listing as an open opportunity can waste time, expose people to stale contact routes, or cause a missed real deadline while a purpose match is mistaken for current eligibility."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Discovery sits in a national foundation registry while current application rules, documents and deadlines may live with individual foundations, municipalities, parishes or other primary providers."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "People ask for 'fond', 'stipendium', 'pengar till mitt behov' or 'öppen ansökan' rather than knowing a foundation name or registry term."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "A useful path must narrow purpose and geography, discover candidate foundations, filter organization-level data, then verify current application route and timing directly with each foundation before showing an actionable opportunity."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The same confusion recurs across personal, student and association contexts: finding a foundation is easier than proving that it currently accepts applications for the user's purpose."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The canonical source registry already knows Länsstyrelsernas Stiftelsesök requires special handling, but main lacked a machine-readable source-universe boundary and a permanent regression preventing registry discovery from being promoted into an open verified opportunity."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Sverige/comments/mcitr1/s%C3%B6ka_stipendiebidrag/"
+      ],
+      "primary_sources": [
+        "https://stiftelser.lansstyrelsen.se/",
+        "https://www.lansstyrelsen.se/stockholm/samhalle/betalning-ekonomi-och-pengar/stipendier.html"
+      ],
+      "recommended_learning_action": "Add one source-universe overlay referencing the existing canonical source registry, explicitly separate foundation registry discovery from opportunity-state verification, block personal registry fields from public reuse, and lock the distinction with synthetic regressions before building any private adapter.",
+      "truth_rule": "Community wording is discovery only. Verify that a foundation is registered through Länsstyrelsernas primary registry, but do not infer open application, eligibility, deadline or payment from registration or purpose text. Verify application documents, current period, target group and submission route with the foundation or other responsible primary provider before any opportunity is promoted."
+    }
+  ]
+}
