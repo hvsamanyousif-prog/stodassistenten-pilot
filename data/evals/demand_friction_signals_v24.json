@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, amount, deadlines or agency responsibility. Community and Q&A phrasing is discovery-only; pension housing facts require current Pensionsmyndigheten primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-pension-housing-low-income-source-recency-v01",
+      "actor_types": ["older_person", "relative"],
+      "natural_language_queries": [
+        "min pension räcker inte till hyran vad kan jag få",
+        "jag är pensionär och har dyr hyra vem ska jag ringa",
+        "kan jag få bostadstillägg om jag äger min bostad",
+        "påverkar sparpengar bostadstillägget",
+        "måste jag ta ut hela pensionen för bostadstillägg",
+        "jag bor med sambo påverkar det bostadstillägget",
+        "en gammal broschyr säger 66 men pensionsmyndigheten säger 67 vad gäller",
+        "أنا متقاعد والمعاش لا يكفي للإيجار ما الذي يمكنني التحقق منه",
+        "من بازنشسته‌ام و مستمری برای اجاره کافی نیست چه کمکی هست"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Low pension plus housing-cost pressure is a broad high-frequency situation family in the product, and public Q&A repeatedly starts from rent, partner status, ownership or savings rather than the benefit name. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users must distinguish bostadstillägg from other housing benefits, understand which agency applies, find the current age and pension-withdrawal boundary, then move into a four-part official calculation covering basic, housing, income and capital information."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A wrong age boundary, wrong agency or false automatic exclusion based on home ownership/assets can prevent or delay a person with weak finances from reaching the official calculation or correct support path."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Current facts, application instructions, the preliminary calculator, change-reporting guidance and older official PDFs can all appear in search. Older official material can contain superseded age information, so source recency matters even within the same authority."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as bostadstillägg, bostadsbidrag, äldreförsörjningsstöd, premiepension, tillgångar and joint household assessment are easy to conflate, especially for people with lower digital confidence or when using another language."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A useful product path should ask only age, full public-pension withdrawal and residence before handing detailed housing, household, income and asset data to the official calculator, rather than collecting those sensitive details in the public pilot."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The same misunderstandings recur around low pension, expensive rent, ownership, savings, cohabitation and whether a current or older age threshold applies."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The product already listed pension support and had a Pensionsmyndigheten support record, but the public pension scenario asked municipality size, living alone and dental need before the route-changing current age, full-pension and residence facts. Natural-language low-pension/high-rent descriptions also lacked a focused handoff."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://lawline.se/answers/bostadstillagg-for-pensionarer",
+        "https://lawline.se/answers/hur-paverkas-sjukersattning-och-bostadstillagg-av-att-jag-gifter-mig",
+        "https://www.reddit.com/r/Sverige/comments/1vdltho/hyrorna_har_%C3%B6kat_med_17_procent_bostadstill%C3%A4gget/"
+      ],
+      "primary_sources": [
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/fakta-om-bostadstillagg",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+        "https://www.pensionsmyndigheten.se/service/beraknabt/prelbostadstillagg/uppgifter",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/anmal-andringar-bostadstillagg-aldreforsorjningsstod"
+      ],
+      "recommended_learning_action": "Keep one person product. Detect pension plus housing/economy language, hand off only actor/focus/language, replace the old municipality-alone-dental pension sequence with a high-information split, ask age/full public pension/residence only for the housing route, and use the current official calculator for detailed housing/income/assets/household facts. Prefer the current authority page over stale official PDFs and never infer eligibility or amount from a short story.",
+      "truth_rule": "Community/Q&A language and qualitative scores are discovery signals, never truth. Verify pensioner housing-support conditions and the current age boundary against current Pensionsmyndigheten primary pages before truth-bearing behavior. A stale official PDF, search-result ranking, prior AI answer, ownership label, savings label or partner label must not become an eligibility decision."
+    }
+  ]
+}

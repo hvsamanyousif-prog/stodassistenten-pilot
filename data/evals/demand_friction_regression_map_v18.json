@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Maps the v38 pension-housing demand/friction signal into the same canonical Stödassistenten regression system.",
+  "mappings": [
+    {
+      "signal_id": "df-pension-housing-low-income-source-recency-v01",
+      "product_miss": "The existing pension journey asked municipality size, living-alone status and dental need before the current route-changing pension-housing facts, while natural-language low-pension/high-housing-cost descriptions had no focused same-product handoff. The product also lacked a permanent guard against using stale official age information or routing sickness/activity-compensation bostadstillägg questions into the pensioner authority path.",
+      "regression_case_ids": [
+        "lab-pension-low-income-high-housing-cost-v38-01",
+        "lab-pension-housing-stale-age-source-v38-02",
+        "lab-nonpension-bostadstillagg-authority-boundary-v38-03"
+      ],
+      "product_surfaces": [
+        "index.html natural-language situation entry",
+        "person-pilot.html existing pension entry",
+        "client/pension-housing.js same-product focused route"
+      ],
+      "fix_or_guardrail": "Route pension-plus-housing/economy language into the existing person product with only actor/focus/language state. Ask the current route-changing age/full-public-pension/residence facts before detailed financial information, use Pensionsmyndigheten's current preliminary calculator for housing/income/assets/household details, prefer current authority pages over stale official PDFs, and do not route sickness/activity-compensation housing-support questions into the pensioner authority path merely because the benefit name is similar.",
+      "privacy_guardrail": "Do not put raw stories, pension values, rent, assets, household finances, partner identity or other financial details in URLs, feedback or public regression data. Feedback may contain only the existing structured anonymous product fields.",
+      "truth_guardrail": "Do not promote the existing Pensionsmyndigheten support record to VERIFIED. Eligibility, amount, current age boundary, agency responsibility and application behavior remain primary-source governed and must fail closed when context is missing or conflicting."
+    }
+  ]
+}

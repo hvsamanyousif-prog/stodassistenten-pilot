@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic public-product regressions for the single Stödassistenten learning system. v38 turns pension/low-economy truth already present in the shared support layer into a guarded public housing-cost route, removes low-information pension questions, and locks a source-recency boundary so stale official PDFs cannot override the current 2026 Pensionsmyndigheten page. No real pension, rent, asset, household or identity data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-pension-housing-current-source-2026",
+      "observation": "Pensionsmyndigheten's current web pages say the pensioner main route is for a person living in Sweden, age 67 or older, taking the full public pension including premium pension. The current preliminary calculator then collects housing, income, capital/assets and household information. Older official material indexed in search can still show the earlier age 66 boundary, so current-page recency is a route-changing source-quality fact.",
+      "primary_sources": [
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/fakta-om-bostadstillagg",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/ekonomiskt-stod/sa-fungerar-bostadstillagg/ansok-om-bostadstillagg",
+        "https://www.pensionsmyndigheten.se/service/beraknabt/prelbostadstillagg/uppgifter"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-pension-low-income-high-housing-cost-v38-01",
+      "actor_type": "older_person",
+      "story": "Jag är pensionär och efter hyran räcker pengarna knappt. Vad kan jag kontrollera utan att behöva veta vilket stöd det heter?",
+      "expected_support_areas": [
+        "same_person_product_pension_housing_route",
+        "pensionsmyndigheten_bostadstillagg_candidate",
+        "current_age_full_pension_and_residence_information_gain",
+        "official_preliminary_calculator_as_next_action",
+        "structured_anonymous_feedback"
+      ],
+      "must_not_claim": [
+        "pensioner_status_alone_proves_bostadstillagg_eligibility",
+        "a_specific_amount_can_be_promised_from_a_short_story",
+        "housing_cost_income_assets_or_household_details_should_be_collected_in_the_public_handoff_url_or_feedback",
+        "owning_a_home_or_having_assets_automatically_excludes_bostadstillagg",
+        "the_product_should_ask_municipality_size_living_alone_and_dental_need_before_the_route_changing_age_full_pension_and_residence_facts",
+        "the_existing_pensionsmyndigheten_support_record_can_be_promoted_from_needs_review_to_verified_by_this_product_change"
+      ],
+      "expected_questions": [
+        "q_is_person_67_or_older",
+        "q_is_full_public_pension_including_premium_pension_withdrawn",
+        "q_does_person_live_in_sweden"
+      ],
+      "expected_next_actions": [
+        "if_the_three_main_route_facts_align_open_the_current_pensionsmyndigheten_preliminary_calculator_without_promising_eligibility_or_amount",
+        "let_the_official_calculator_collect_housing_household_income_and_asset_details_instead_of_requesting_them_in_the_public_pilot",
+        "keep_feedback_structured_and_free_of_pension_rent_asset_or_household_values",
+        "do_not_promote_the_review_gated_support_record_to_verified"
+      ],
+      "source_requirements": [
+        "Pensionsmyndigheten_current_facts_page",
+        "Pensionsmyndigheten_current_application_page",
+        "Pensionsmyndigheten_current_preliminary_calculator"
+      ]
+    },
+    {
+      "case_id": "lab-pension-housing-stale-age-source-v38-02",
+      "actor_type": "older_person",
+      "story": "Jag hittar en äldre broschyr som säger 66 år men en ny sida som säger 67 år. Vilken ålder ska Stödassistenten använda?",
+      "expected_support_areas": [
+        "source_recency_conflict_detection",
+        "current_primary_web_page_priority",
+        "fail_closed_age_gate",
+        "stale_official_material_not_treated_as_current_truth"
+      ],
+      "must_not_claim": [
+        "an_older_official_pdf_is_equally_current_when_the_agency_current_page_has_changed_the_age_boundary",
+        "the_2025_age_66_rule_should_be_backported_into_the_2026_product_route",
+        "search_result_rank_or_prior_ai_output_proves_which_age_rule_is_current",
+        "age_alone_proves_eligibility"
+      ],
+      "expected_questions": [
+        "q_is_person_67_or_older"
+      ],
+      "expected_next_actions": [
+        "prefer_the_current_pensionsmyndigheten_web_page_for_the_2026_main_route",
+        "treat_conflicting_older_official_material_as_stale_context_not_current_truth",
+        "keep_special_cases_separate_and_verify_them_on_current_primary_sources"
+      ],
+      "source_requirements": [
+        "Pensionsmyndigheten_current_facts_page_with_67_year_main_rule",
+        "Pensionsmyndigheten_current_application_page_with_67_year_main_rule"
+      ]
+    },
+    {
+      "case_id": "lab-nonpension-bostadstillagg-authority-boundary-v38-03",
+      "actor_type": "person_with_disability",
+      "story": "Jag har sjukersättning och undrar om bostadstillägg. Jag är inte pensionär.",
+      "expected_support_areas": [
+        "bostadstillagg_authority_disambiguation",
+        "non_pension_false_positive_prevention",
+        "forsakringskassan_route_kept_separate_from_pensionsmyndigheten_pension_route"
+      ],
+      "must_not_claim": [
+        "every_bostadstillagg_question_should_route_to_pensionsmyndigheten_pensioner_flow",
+        "sjukersattning_is_the_same_as_old_age_pension",
+        "the_pensioner_age_and_full_pension_questions_are_required_before_the_correct_non_pension_authority_is_identified",
+        "a_shared_benefit_name_means_the_responsible_agency_and_rules_are_the_same"
+      ],
+      "expected_questions": [
+        "q_which_primary_benefit_context_applies_pension_or_sickness_activity_compensation"
+      ],
+      "expected_next_actions": [
+        "do_not_trigger_the_pension_housing_route_without_pension_context",
+        "route_sickness_or_activity_compensation_housing_supplement_questions_to_the_current_forsakringskassan_path",
+        "keep_the_two_authority_routes_in_the_same_product_but_separate_in_truth_and_next_action"
+      ],
+      "source_requirements": [
+        "Pensionsmyndigheten_current_preliminary_calculator_authority_note",
+        "Forsakringskassan_current_bostadstillagg_source_for_sickness_or_activity_compensation_when_displayed"
+      ]
+    }
+  ]
+}
