@@ -1,0 +1,51 @@
+name: Validate student CSN v40
+
+on:
+  pull_request:
+    paths:
+      - 'client/student-finance-guidance.js'
+      - 'client/student-finance-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_student_csn_product_v40.py'
+      - 'data/evals/scenario_lab_websignals_v39.json'
+      - 'data/supports/se-csn-studiemedel-veckor-sommar.json'
+      - '.github/workflows/student-csn-v40.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/student-finance-guidance.js'
+      - 'client/student-finance-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_student_csn_product_v40.py'
+      - 'data/evals/scenario_lab_websignals_v39.json'
+      - 'data/supports/se-csn-studiemedel-veckor-sommar.json'
+      - '.github/workflows/student-csn-v40.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate shared student CSN route
+        run: |
+          node --check client/student-finance-guidance.js
+          node client/student-finance-guidance.test.cjs
+          node client/study-transition.test.cjs
+          python scripts/validate_student_csn_product_v40.py
+          python scripts/validate_student_csn_weeks_v39.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
+          python scripts/build_public_pilot.py --source . --output /tmp/stod-v40-site
+          test -f /tmp/stod-v40-site/client/student-finance-guidance.js
+          grep -q 'client/student-finance-guidance.js' /tmp/stod-v40-site/index.html
+          grep -q 'client/student-finance-guidance.js' /tmp/stod-v40-site/person-pilot.html

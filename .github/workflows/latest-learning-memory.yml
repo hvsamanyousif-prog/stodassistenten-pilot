@@ -4,27 +4,35 @@ on:
   push:
     branches: [main]
     paths:
+      - 'client/student-finance-guidance.js'
+      - 'client/student-finance-guidance.test.cjs'
       - 'data/evals/**'
       - 'data/supports/**'
+      - 'scripts/build_public_pilot.py'
       - 'scripts/validate_latest_learning_memory.py'
       - 'scripts/validate_v31_age30_transition.py'
       - 'scripts/validate_age30_product.py'
       - 'scripts/validate_v33_procurement_discovery.py'
       - 'scripts/validate_pension_housing_v38.py'
       - 'scripts/validate_student_csn_weeks_v39.py'
+      - 'scripts/validate_student_csn_product_v40.py'
       - 'scripts/validate_scenario_lab_all.py'
       - 'scripts/validate_data.py'
       - '.github/workflows/latest-learning-memory.yml'
   pull_request:
     paths:
+      - 'client/student-finance-guidance.js'
+      - 'client/student-finance-guidance.test.cjs'
       - 'data/evals/**'
       - 'data/supports/**'
+      - 'scripts/build_public_pilot.py'
       - 'scripts/validate_latest_learning_memory.py'
       - 'scripts/validate_v31_age30_transition.py'
       - 'scripts/validate_age30_product.py'
       - 'scripts/validate_v33_procurement_discovery.py'
       - 'scripts/validate_pension_housing_v38.py'
       - 'scripts/validate_student_csn_weeks_v39.py'
+      - 'scripts/validate_student_csn_product_v40.py'
       - 'scripts/validate_scenario_lab_all.py'
       - 'scripts/validate_data.py'
       - '.github/workflows/latest-learning-memory.yml'
@@ -49,5 +57,6 @@ jobs:
           python scripts/validate_v33_procurement_discovery.py
           python scripts/validate_pension_housing_v38.py
           python scripts/validate_student_csn_weeks_v39.py
+          python scripts/validate_student_csn_product_v40.py
           python scripts/validate_scenario_lab_all.py
           python scripts/validate_data.py
