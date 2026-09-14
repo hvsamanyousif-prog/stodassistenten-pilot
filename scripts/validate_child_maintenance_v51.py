@@ -17,13 +17,16 @@ for path in paths:
         assert cid not in cases, f'duplicate scenario id: {cid}'
         cases[cid] = case
 
+# v11 already owns the core terminology/payment-gap regression. v51 must extend,
+# not clone, that memory with public handoff + long-tail boundaries.
+assert 'lab-child-maintenance-v11-01' in cases
 locks = {
-    'lab-family-maintenance-unpaid-mostly-resident-v51-01': {
+    'lab-family-maintenance-public-route-v51-01': {
         'must_not_claim': [
+            'the_product_must_collect_all_material_eligibility_facts_before_showing_the_primary_source',
             'separation_plus_nonpayment_proves_maintenance_support_eligibility',
+            'underhallsbidrag_and_underhallsstod_are_the_same_route',
             'a_fixed_support_amount_is_guaranteed',
-            'the_product_can_decide_custody_registration_relationship_or_insurance_conditions',
-            'underhallsbidrag_and_underhallsstod_are_the_same_payment',
         ],
     },
     'lab-family-maintenance-equal-residence-v51-02': {
@@ -33,14 +36,7 @@ locks = {
             'income_difference_alone_proves_a_specific_payment_obligation_or_amount',
         ],
     },
-    'lab-family-maintenance-partial-payment-v51-03': {
-        'must_not_claim': [
-            'partial_payment_automatically_means_the_state_pays_the_full_difference',
-            'the_product_can_infer_the_correct_private_maintenance_amount',
-            'a_community_example_or_previous_ai_answer_can_establish_the_payment_rule',
-        ],
-    },
-    'lab-family-maintenance-cross-border-v51-04': {
+    'lab-family-maintenance-cross-border-v51-03': {
         'must_not_claim': [
             'the_domestic_administrative_path_is_identical_for_every_country',
             'living_abroad_proves_or_excludes_maintenance_support',
@@ -54,20 +50,27 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in cases[cid][field], f'{cid}: missing {field} token {token}'
 
-signal_pack = json.loads((EVAL / 'demand_friction_signals_v34.json').read_text(encoding='utf-8'))
-signal = signal_pack['signals'][0]
-assert signal['signal_id'] == 'df-child-maintenance-payment-route-v01'
+signal_pack = json.loads((EVAL / 'demand_friction_signals_v01.json').read_text(encoding='utf-8'))
+signal = next(s for s in signal_pack['signals'] if s['signal_id'] == 'df-child-maintenance-terms-v01')
 assert signal['priority_band'] == 'HIGH'
-assert 'not measured search volumes' in signal_pack['scoring']['priority_rule']
+assert 'not measured search volumes' in signal_pack['purpose']
 assert 'VERIFY' in signal['truth_rule']
+assert len(signal['primary_sources']) >= 3
 assert all('forsakringskassan.se' in url for url in signal['primary_sources'])
 assert any('reddit.com' in url for url in signal['discovery_sources'])
+assert 'v11 canonical regression already protected' in signal['current_product_coverage_gap']['basis']
 
-mapping = json.loads((EVAL / 'demand_friction_regression_map_v28.json').read_text(encoding='utf-8'))['mappings'][0]
-assert mapping['signal_id'] == signal['signal_id']
+mapping_pack = json.loads((EVAL / 'demand_friction_regression_map_v01.json').read_text(encoding='utf-8'))
+mapping = next(m for m in mapping_pack['mappings'] if m['signal_id'] == signal['signal_id'])
 assert mapping['product_miss']
-assert mapping['regression_case_ids'] == list(locks)
-assert mapping['coverage_status'] == 'GUARDED_PUBLIC_ROUTE_READY_TRUTH_REMAINS_REVIEW_GATED'
+assert mapping['regression_case_ids'] == ['lab-child-maintenance-v11-01', *list(locks)]
+
+# No second signal/mapping pack may be introduced just to rename the same need.
+for path in EVAL.glob('demand_friction_signals_v*.json'):
+    if path.name == 'demand_friction_signals_v01.json':
+        continue
+    text = path.read_text(encoding='utf-8')
+    assert 'df-child-maintenance-payment-route-v01' not in text, 'duplicate maintenance signal reintroduced'
 
 support = json.loads(SUPPORT.read_text(encoding='utf-8'))
 assert support['verification']['status'] == 'NEEDS_REVIEW'
@@ -87,4 +90,4 @@ assert 'FK_OVERVIEW_URL' in client and 'FK_SUPPORT_URL' in client and 'FK_ABROAD
 build = BUILD.read_text(encoding='utf-8')
 assert 'client/child-maintenance-guidance.js' in build, 'v51 route must be wired into the same public build'
 
-print(f'child maintenance v51: OK ({len(cases)} canonical scenarios; truth remains review-gated)')
+print(f'child maintenance v51: OK ({len(cases)} canonical scenarios; existing signal extended; truth remains review-gated)')
