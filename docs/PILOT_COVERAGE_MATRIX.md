@@ -23,7 +23,7 @@ Varje kombination av aktör × situation × geografi × stödtyp ska kunna märk
 |---|---|---|---|---|---|---|---|
 | Privatperson | root + person-pilot | bred personprofil + tand/syn/ekonomi/assistans | ja, per visad stödväg | ja | ja | ja | bred fallback ställer fortfarande fler frågor än vissa fokuserade flöden |
 | Student/nyexaminerad | root `study` → samma personmodul | student/arbete/ekonomi/boende | ja för visade kandidater | ja | ja, aktörssegmenterad | ja | naturligt språk kan fortfarande behöva bättre övergångsdetektion mellan studier och första jobb |
-| Äldre person | root + samma personmodul + befintlig dental quick-help | pension/ekonomi/boende + tandkostnad | ja för visade kandidater | ja | ja | ja, inklusive tandkostnad och 2026 års 67+-regel | tandflödet är ännu generiskt och saknar en egen publik åldersmedveten 67+-handoff |
+| Äldre person | root + samma personmodul + dental quick-help med åldersmedveten 67+-handoff | pension/ekonomi/boende + tandkostnad; kalenderårsålder används bara när den kan ändra kostnadsvägen | ja för visade kandidater, inklusive Försäkringskassan/TLV för 67+-spåret | ja | ja | ja, inklusive tandkostnad och 2026 års 67+-regel | 67+-handoffen avgör inte exakt åtgärd eller slutkostnad; klinikens åtgärds-/prisunderlag och aktuell primärkälla krävs fortsatt |
 | Person med funktionsnedsättning | root + syn/assistans/familj → samma personmodul | funktionsbehov, bostad, hjälpmedel och assistans hålls isär från diagnos | ja | ja | ja | ja | lokal/regional variation för hjälpmedel och kommunala insatser kräver fortsatt source-aware routing |
 | Anställd | root `work` + naturlig akut-VAB-route → samma personmodul | arbete/sjukskrivning/ekonomi + ålder/egen sjukfrånvaro/exakta timmar vid VAB | ja | ja | ja, aktörssegmenterad | ja, inklusive deltidssjukskrivning + VAB på timnivå | fler kombinationer mellan arbete, ersättningar och familjeansvar behöver long-tail-testas |
 | Anhörig som hjälper annan | root actor-ingång → samma personmodul | representation och den hjälptes situation hålls isär i regressioner | ja | ja | ja, aktörssegmenterad | ja | fullmakt/representation varierar mellan tjänster och ska fortsatt fail-closed |
@@ -63,7 +63,7 @@ VAB 12+ behandlas separat i Scenario Lab eftersom ålder, särskilt vård-/tills
 
 BRF/fastighetsaktör är ett permanent exempel på att täckningsmatrisen måste följa faktisk produkt. Den publika bostadsanpassningsvägen finns nu, men aktörsetiketten får inte göra BRF/hyresvärd till ursprunglig sökande eller blanda ihop medgivande med ett frivilligt övertagande efter beviljat kontantbidrag.
 
-Tandvård 67+ är ett permanent exempel på skillnaden mellan eval-täckning och färdig publik förmåga. Scenario Lab ska nu stoppa påståenden om att “tiotandvård” betyder 10 procent av hela besöket. Det publika tandflödet är fortfarande generiskt tills en källgrundad åldersmedveten handoff byggs i samma quick-help-väg.
+Tandvård 67+ är ett permanent exempel på hur eval → sanningslager → publik produkt måste hållas ihop. Scenario Lab stoppar påståenden om att “tiotandvård” betyder 10 procent av hela besöket, sanningsposten ligger kvar som `NEEDS_REVIEW`, och samma dental quick-help har nu en källgrundad åldersmedveten handoff för kostnad/stöd. Handoffen får inte avgöra exakt eligibility, åtgärdsomfattning eller slutkostnad; den ska fråga kalenderårsålder endast när svaret kan ändra vägen och sedan skicka användaren vidare till specificerat behandlings-/prisunderlag samt aktuell Försäkringskasse- och TLV-kontroll.
 
 ## Pilotprincip
 
