@@ -38,6 +38,7 @@ QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
 DENTAL_67_GUIDANCE_PATH = "client/dental-67-guidance.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
+FUNDING_DISCOVERY_PATH = "client/funding-discovery-guidance.js"
 FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 VAB_FOCUS_PATH = "client/vab-focus.js"
@@ -61,6 +62,7 @@ SCRIPT_PATHS = (
     "client/public-pilot-ui-gate.js",
     "client/public-pilot-wiring.js",
     PERSON_CONTEXT_PATH,
+    FUNDING_DISCOVERY_PATH,
     FAMILY_AGE_ROUTING_PATH,
     ASSISTANCE_FOCUS_PATH,
     VAB_FOCUS_PATH,
