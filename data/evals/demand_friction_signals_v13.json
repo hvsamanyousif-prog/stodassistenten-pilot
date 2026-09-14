@@ -1,0 +1,68 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility or factual truth. Community discussion is discovery-only; work-injury dental-cost facts must be verified against current Försäkringskassan primary sources, while possible Afa coverage must be verified separately against current Afa/collective-agreement sources.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-work-injury-dental-cost-v01",
+      "actor_types": [
+        "employee",
+        "self_employed"
+      ],
+      "natural_language_queries": [
+        "jag slog sönder en tand på jobbet vem betalar tandläkaren",
+        "skadade tanden på väg hem från jobbet försäkringskassan eller jobbets försäkring",
+        "arbetsskada tandläkare kostnadsförslag vilken ersättning ska jag söka",
+        "måste arbetsskadan vara godkänd innan jag kan söka ersättning för tanden"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Public questions repeatedly frame work injuries as 'who pays' or 'which insurance applies', including commute injuries and dental costs. This is qualitative discovery only, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The user must distinguish reporting an incident from a benefit decision, Försäkringskassan dental-cost reimbursement from ordinary dental support, and any separate Afa/collective-agreement insurance. Reference-price limits add another easy-to-miss boundary."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A missed or confused route can leave a person with substantial dental costs, missing evidence, or an incorrect assumption that an employer report or another insurer automatically settles the Försäkringskassan claim."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Försäkringskassan governs the specific dental-cost reimbursement route, while separate collective-agreement work-injury compensation may exist through Afa. The two routes must not be merged into one eligibility decision."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Natural wording is about an accident, tooth damage, commute, employer or insurance rather than the formal name of the reimbursement. Users may not know the difference between work-injury reporting and applying for a specific cost benefit."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The person needs to establish work/commute connection, treatment necessity, cost documentation and dentist connection before the safe application step, then separately check any collective-agreement insurance without assuming coverage."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The same routing confusion recurs across accidents at work, commuting injuries, dental trauma and questions about employer versus public or collective-agreement insurance."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository has broad sickness/work and dental paths but no structured work-injury dental reimbursement record or permanent scenario covering the boundary between Försäkringskassan and separate collective-agreement insurance."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/stockholm/comments/17k3jck",
+        "https://www.reddit.com/r/Asksweddit/comments/1r5k5kd"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/arbetsskadeforsakring"
+      ],
+      "recommended_learning_action": "Add a review-gated Försäkringskassan work-injury dental-cost truth record and permanent synthetic regression first. Then expose a bounded same-shell route that asks only causal/treatment/document facts that can change the path, keeps Afa/collective-agreement insurance separate, and never treats incident reporting as benefit approval.",
+      "truth_rule": "Discovery discussions reveal wording and friction only. Verify work/commute causation, treatment necessity, cost evidence, dentist connection, reference-price and application facts against the current Försäkringskassan primary source. Verify any Afa/collective-agreement route separately and never infer coverage from union membership or employment alone. Do not promote the new support record from NEEDS_REVIEW to VERIFIED without the required human review chain."
+    }
+  ]
+}
