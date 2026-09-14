@@ -57,10 +57,12 @@ assert.equal(studentFinance.nextWeeks({ level: 'higher' }), 'ask_pace');
 assert.equal(studentFinance.nextWeeks({ level: 'higher', pace: '50' }), 'show_weeks_next_action');
 
 assert.equal(studentFinance.nextSummer({}), 'ask_study_type');
+assert.equal(studentFinance.nextSummer({ studyType: 'unsure' }), 'verify_summer_setup');
 assert.equal(studentFinance.nextSummer({ studyType: 'university' }), 'ask_minimum');
 assert.equal(studentFinance.nextSummer({ studyType: 'university', minimum: 'no' }), 'verify_summer_setup');
+assert.equal(studentFinance.nextSummer({ studyType: 'university', minimum: 'unsure' }), 'verify_summer_setup');
 assert.equal(studentFinance.nextSummer({ studyType: 'university', minimum: 'yes' }), 'ask_registration');
 assert.equal(studentFinance.nextSummer({ studyType: 'university', minimum: 'yes', registration: 'unsure' }), 'verify_summer_setup');
 assert.equal(studentFinance.nextSummer({ studyType: 'university', minimum: 'yes', registration: 'yes' }), 'show_summer_next_action');
 
-console.log('student finance guidance: OK (same shell, coarse handoff, no personal CSN balance)');
+console.log('student finance guidance: OK (same shell, fail-closed summer route, no personal CSN balance)');
