@@ -1,5 +1,5 @@
 (() => {
-  function installAssistanceRoute(){
+  function installGovernedRoutes(){
     try{
       if(typeof KEYWORDS!=='undefined'){
         KEYWORDS.assistance=[
@@ -7,15 +7,31 @@
           'مساعدة شخصية','النظافة الشخصية','المساعدة في اللباس','ارتداء الملابس','المساعدة في الأكل','المساعدة في التواصل','التنفس',
           'کمک شخصی','بهداشت شخصی','کمک برای لباس پوشیدن','لباس پوشیدن','کمک برای غذا خوردن','کمک در ارتباط','تنفس'
         ];
+        // Need-led family route. Avoid bare "barn"/label-only triggers so an
+        // ordinary VAB story is not sent into the extra-support family flow.
+        KEYWORDS.family=[
+          'barn behöver extra stöd','barnet behöver extra stöd','extra tillsyn','extra omvårdnad','mycket hjälp i vardagen','stöd i skolan','hjälp i skolan','barn med stödbehov',
+          'طفلي يحتاج دعماً إضافياً','يحتاج مراقبة إضافية','رعاية إضافية','مساعدة إضافية في المدرسة',
+          'کودکم به حمایت بیشتری نیاز دارد','نظارت بیشتر','مراقبت بیشتر','کمک بیشتر در مدرسه'
+        ];
       }
       if(typeof I18N!=='undefined'){
-        if(I18N.sv&&I18N.sv.routes) I18N.sv.routes.assistance=['Personlig hjälp i vardagen','Hygien, påklädning, måltider, kommunikation eller annat omfattande hjälpbehov','person-pilot.html?actor_type=private_person&focus=assistance'];
-        if(I18N.ar&&I18N.ar.routes) I18N.ar.routes.assistance=['مساعدة شخصية في الحياة اليومية','النظافة الشخصية، اللباس، الوجبات، التواصل أو احتياجات مساعدة واسعة','person-pilot.html?actor_type=private_person&focus=assistance'];
-        if(I18N.fa&&I18N.fa.routes) I18N.fa.routes.assistance=['کمک شخصی در زندگی روزمره','بهداشت شخصی، لباس پوشیدن، غذا، ارتباط یا نیاز گسترده به کمک','person-pilot.html?actor_type=private_person&focus=assistance'];
+        if(I18N.sv&&I18N.sv.routes){
+          I18N.sv.routes.assistance=['Personlig hjälp i vardagen','Hygien, påklädning, måltider, kommunikation eller annat omfattande hjälpbehov','person-pilot.html?actor_type=private_person&focus=assistance'];
+          I18N.sv.routes.family=['Barn/familj – extra stödbehov','Extra omvårdnad, tillsyn, vardagsstöd eller stöd kring skolan','person-pilot.html?actor_type=relative&focus=family'];
+        }
+        if(I18N.ar&&I18N.ar.routes){
+          I18N.ar.routes.assistance=['مساعدة شخصية في الحياة اليومية','النظافة الشخصية، اللباس، الوجبات، التواصل أو احتياجات مساعدة واسعة','person-pilot.html?actor_type=private_person&focus=assistance'];
+          I18N.ar.routes.family=['الطفل/الأسرة – حاجة إلى دعم إضافي','رعاية أو مراقبة أو مساعدة يومية إضافية أو دعم متعلق بالمدرسة','person-pilot.html?actor_type=relative&focus=family'];
+        }
+        if(I18N.fa&&I18N.fa.routes){
+          I18N.fa.routes.assistance=['کمک شخصی در زندگی روزمره','بهداشت شخصی، لباس پوشیدن، غذا، ارتباط یا نیاز گسترده به کمک','person-pilot.html?actor_type=private_person&focus=assistance'];
+          I18N.fa.routes.family=['کودک/خانواده – نیاز به حمایت بیشتر','مراقبت، نظارت، کمک روزمره یا حمایت مرتبط با مدرسه','person-pilot.html?actor_type=relative&focus=family'];
+        }
       }
     }catch(_err){/* the source shell remains usable if governed route augmentation cannot load */}
   }
-  installAssistanceRoute();
+  installGovernedRoutes();
 
   const box=document.getElementById('engineResults');
   if(!box) return;
@@ -42,6 +58,7 @@
     if(mode==='dental'||mode==='vision') return mode;
     const focus=safeToken(url.searchParams.get('focus'));
     if(focus==='assistance') return 'assistance';
+    if(focus==='family') return 'family';
     if(url.pathname.endsWith('company-pilot.html')) return 'company';
     const actor=safeToken(url.searchParams.get('actor_type'));
     return {employee:'work',student:'study',association:'association',private_person:'economy',relative:'general',other:'general'}[actor]||'general';
