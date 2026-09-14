@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, insurance coverage or factual truth. Community discussion is discovery-only; material claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-self-employed-work-injury-insurance-context-v01",
+      "actor_types": ["self_employed", "employee"],
+      "natural_language_queries": [
+        "jag driver eget och skadade mig när jag jobbade vem ersätter tandvården",
+        "gäller arbetsskadeförsäkring om jag är egenföretagare",
+        "gäller Afa automatiskt när jag har eget företag",
+        "jag fakturerar genom faktureringsföretag vem är arbetsgivare vid arbetsskada",
+        "jag är både anställd och driver eget vilken försäkring gäller när jag skadar mig"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Public questions repeatedly mix employment, own business and insurance routes when a person is injured while working. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The user must distinguish statutory social insurance conditions from collective-agreement insurance and private/business insurance, and must also distinguish sole-trader/own-company status from egenanstallning through an invoicing company."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "An employee-only assumption can hide a potentially relevant statutory route, while an automatic-Afa assumption can send a business owner to an insurance route that may not cover them. Misclassifying an invoiced worker can also produce the wrong employer context."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Work-injury dental cost criteria are described by Forsakringskassan, business-owner insurance context by Verksamt, invoiced-worker employer responsibility by Forsakringskassan, and collective-agreement coverage by Afa."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Natural wording such as 'driver eget', 'egenforetagare', 'egenanstalld' and 'faktureringsforetag' can sound interchangeable even though the relevant insurance/employer context is different."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe route must first identify the work/injury connection, preserve the statutory work-injury conditions, then verify actual social-insurance and separate business/private/collective coverage rather than guessing from actor label."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The same misunderstanding appears in business-owner and mixed employee/business questions: users ask which insurance applies before they know which layer of insurance they are asking about."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The public work-injury dental route is currently actor-labeled as employee, while the truth conditions themselves are not expressed as an employee-only gate. The product also has no permanent regression separating an own-business user from an egenanstalld user whose invoicing company has employer responsibility."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/PrivatEkonomi/comments/1jyzjah"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld",
+        "https://verksamt.se/ekonomisk-trygghet/forsakringar-for-ditt-foretag",
+        "https://www.afaforsakring.se/"
+      ],
+      "recommended_learning_action": "Lock self-employed and egenanstalld worker contexts as separate synthetic regressions in the existing work-injury learning loop. Keep Forsakringskassan's statutory cost route separate from Afa and private/business insurance, and do not ship a public self-employed handoff until the existing same-shell runtime can preserve that distinction without weakening truth or privacy guards.",
+      "truth_rule": "Community wording is discovery only. Verify work-injury dental criteria with current Forsakringskassan primary guidance, egenanstalld employer responsibility with current Forsakringskassan guidance, business-owner insurance context with current Verksamt guidance, and any collective-agreement coverage with Afa or the responsible primary provider. Do not infer coverage, eligibility, amount or employer identity from actor labels alone."
+    }
+  ]
+}

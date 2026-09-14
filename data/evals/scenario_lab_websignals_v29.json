@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v29 extends the existing work-injury dental truth boundary to self-employed and invoiced-worker contexts without creating a separate target-group engine. The scenarios are synthetic and store no real user, employer, company or health data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-self-employed-work-injury-dental-insurance-boundary-2026",
+      "observation": "Försäkringskassan's current work-injury dental-cost route is expressed through work causation, treatment necessity, cost evidence, connected dentist and Swedish-insurance conditions rather than an employee-only gate. Verksamt states that business owners participate in the social insurance system but may need separate private/business insurance, while Afa describes its collective-agreement insurance as automatic for employees whose employer has a collective agreement. These layers must not be collapsed into one coverage claim.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://verksamt.se/ekonomisk-trygghet/forsakringar-for-ditt-foretag",
+        "https://www.afaforsakring.se/"
+      ]
+    },
+    {
+      "pattern_id": "signal-invoiced-worker-is-not-sole-trader-2026",
+      "observation": "Försäkringskassan states that a person who invoices assignments through an invoicing company is egenanställd and that the invoicing company has employer responsibility while it is used; this can matter for work injury. That context must not be silently treated as sole-trader/self-employed status.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-self-employed-work-injury-dental-v29-01",
+      "actor_type": "self_employed",
+      "story": "Jag driver eget och slog sönder en tand när jag jobbade i verksamheten. Kan jag använda samma arbetsskadeväg som en anställd, och gäller Afa automatiskt för mig?",
+      "expected_support_areas": [
+        "work_injury_dental_cost_reimbursement_candidate",
+        "self_employed_social_insurance_boundary",
+        "afa_not_assumed_automatic",
+        "business_or_private_insurance_kept_separate",
+        "swedish_insurance_status_when_unclear"
+      ],
+      "must_not_claim": [
+        "self_employment_automatically_excludes_the_person_from_forsakringskassan_work_injury_dental_cost_route",
+        "afa_collective_agreement_work_injury_insurance_applies_automatically_to_every_self_employed_person",
+        "business_registration_f_tax_or_company_form_alone_proves_work_injury_or_insurance_coverage",
+        "the_product_can_guarantee_full_dental_reimbursement_or_a_specific_amount",
+        "the_raw_injury_story_company_name_exact_cost_or_health_details_should_be_put_in_feedback_or_public_eval_data"
+      ],
+      "expected_questions": [
+        "q_did_injury_or_disease_arise_due_to_work_or_commute",
+        "q_is_dental_treatment_necessary_due_to_that_work_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan",
+        "q_if_cross_border_or_unclear_is_the_person_insured_in_sweden"
+      ],
+      "expected_next_actions": [
+        "check_the_current_forsakringskassan_work_injury_dental_cost_route_without_inventing_an_employee_only_gate",
+        "if_sweden_insurance_status_is_unclear_verify_it_before_promising_that_the_route_applies",
+        "check_actual_business_or_private_accident_insurance_separately_without_assuming_afa_coverage",
+        "do_not_promote_the_existing_work_injury_dental_support_record_from_needs_review_to_verified"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Verksamt_current_business_owner_insurance_primary_source",
+        "Afa_current_collective_agreement_insurance_primary_source"
+      ]
+    },
+    {
+      "case_id": "lab-invoiced-worker-work-injury-dental-v29-02",
+      "actor_type": "employee",
+      "story": "Jag tar uppdrag och fakturerar genom ett faktureringsföretag. Jag skadade en tand under ett uppdrag. Är jag egenföretagare i den här frågan eller ska faktureringsföretaget räknas som arbetsgivare?",
+      "expected_support_areas": [
+        "invoicing_company_employer_responsibility",
+        "work_injury_dental_cost_reimbursement_candidate",
+        "egenanstalld_vs_sole_trader_disambiguation",
+        "insurance_routes_kept_separate"
+      ],
+      "must_not_claim": [
+        "egenanstalld_via_an_invoicing_company_is_the_same_as_sole_trader_or_own_company",
+        "the_client_that_bought_the_assignment_is_automatically_the_employer",
+        "invoicing_company_employer_responsibility_automatically_proves_forsakringskassan_eligibility",
+        "afa_coverage_is_guaranteed_only_because_an_invoicing_company_is_the_employer",
+        "the_raw_assignment_client_company_or_health_story_should_be_copied_into_public_regression_data"
+      ],
+      "expected_questions": [
+        "q_is_the_work_invoiced_through_an_invoicing_company_that_pays_salary",
+        "q_did_the_injury_arise_during_the_work_assignment_or_commute",
+        "q_is_dental_treatment_necessary_due_to_that_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan"
+      ],
+      "expected_next_actions": [
+        "treat_the_invoicing_company_as_the_employer_context_when_current_forsakringskassan_guidance_applies",
+        "keep_the_forsakringskassan_work_injury_cost_assessment_separate_from_any_collective_agreement_or_private_insurance",
+        "verify_actual_collective_agreement_or_insurance_coverage_instead_of_inferring_it_from_egenanstallning",
+        "do_not_promote_the_existing_work_injury_dental_support_record_from_needs_review_to_verified"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_egenanstalld_primary_source",
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Afa_current_collective_agreement_insurance_primary_source_when_relevant"
+      ]
+    }
+  ]
+}
