@@ -98,7 +98,7 @@ assert "dynamic purchasing systems" in mapping["fix_or_guardrail"].lower()
 company_suite = json.loads((EVAL / "company_pilot_scenarios.json").read_text(encoding="utf-8"))
 company_cases = {c["id"]: c for c in company_suite["cases"]}
 company_case = company_cases["procurement-discovery-is-not-one-database"]
-for marker in ["en enda databas", "Direktupphandlingar behöver inte annonseras", "CPV", "registrerade annonsdatabaser"]:
+for marker in ["En enda databas", "Direktupphandlingar behöver inte annonseras", "CPV", "registrerade annonsdatabaser"]:
     assert marker in company_case["must_include"], f"company scenario missing marker: {marker}"
 assert company_suite["ui_contract"]["procurement_question_steps"] == 6
 
