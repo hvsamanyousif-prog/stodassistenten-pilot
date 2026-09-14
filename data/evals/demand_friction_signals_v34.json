@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for employees on longer sick leave who may miss supplementary compensation through collective agreements. Scores are not measured search volumes and do not prove coverage or eligibility. Current Försäkringskassan, Avtalat, Collectum, Afa Försäkring and SPV sources carry truth-bearing rules; natural problem formulations are discovery signals only.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-employee-collective-sickness-compensation-v01",
+      "actor_types": ["employee"],
+      "natural_language_queries": [
+        "jag har varit sjukskriven i flera månader finns det extra ersättning via jobbet",
+        "jag är långtidssjukskriven och har kollektivavtal missar jag någon försäkring",
+        "vem söker AGS när jag är sjuk länge",
+        "jag är tjänsteman och har varit sjuk över 90 dagar gäller ITP sjukpension",
+        "jag jobbar i kommunen och är långtidssjukskriven finns AGS-KL",
+        "jag är statligt anställd och får sjukpenning kan jag få sjukpension från SPV"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan reported on 10 February 2026 that almost nine in ten employees are covered by collective agreements, yet only about six in ten employees who had been sick for more than three months in 2023 had received the relevant supplementary agreement-based benefits in the same year. This is an official observed uptake gap, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The next action changes by agreement area: a private-sector worker can have an AGS route with self-application to Afa, an ITP-covered private salaried employee depends on employer reporting to Collectum, municipal/region/church coverage can involve AGS-KL, while SPV explicitly says state sickness pension is not payable while the person only receives ordinary sickness benefit."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A missed route can mean a person never checks supplementary compensation during a financially vulnerable long sickness period; an incorrect route can also create false expectations about payment, timing or who must report."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Truth is split across Försäkringskassan and agreement administrators/insurers including Avtalat/Afa, Collectum and SPV, with materially different reporting and eligibility boundaries."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as AGS, AGS-KL, ITP sjukpension, sjukpenning, sjukersättning and avtalsområde are difficult to distinguish, especially when the user only knows that the employment has some kind of collective agreement."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "A useful path first identifies the coarse agreement area, then sends the user to the correct current source and reporting actor without collecting diagnosis, salary, employer identity or exact sickness dates."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan's 2026 analysis describes the missing supplementary compensation as a broad recurring uptake problem among employees with longer sickness absence."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The shared employee_sick product already handled employer sick pay and partial sickness absence, but did not ask the agreement-area fact that changes the long-sickness supplementary-compensation route and had no guarded handoff to AGS, ITP, AGS-KL or the state SPV boundary."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-02-10-manga---missar--extra-ersattning-vid-langtidssjukskrivning"
+      ],
+      "primary_sources": [
+        "https://www.avtalat.se/arbetare/sjukdom/avtalsgruppsjukforsakring/",
+        "https://collectum.se/tjanstepensionen-itp/itp-itpk-och-tgl/det-har-galler-for-itp-sjukpension",
+        "https://www.afaforsakring.se/forsakring/sjukforsakring",
+        "https://www.spv.se/privatperson/statlig-tjanstepension/handelser-i-livet/sjuk/"
+      ],
+      "product_miss": "The shared employee_sick route stopped after ordinary sick-pay and partial-sickness guidance, so a natural long-sickness question about extra compensation could not select the correct agreement-specific verification path.",
+      "future_guardrail": "Keep one employee_sick route. Only enter collective-compensation mode when the natural situation contains both an employee sickness context and an explicit longer-sickness/extra-compensation signal. Ask only the coarse agreement area because it changes the official source and reporting actor. Never infer agreement coverage from job title/employer name, never calculate an amount, and fail closed when the agreement area is unknown.",
+      "regression_case": [
+        "lab-employee-collective-private-worker-v52-01",
+        "lab-employee-collective-itp-v52-02",
+        "lab-employee-collective-municipal-v52-03",
+        "lab-employee-collective-state-sickpay-boundary-v52-04",
+        "lab-employee-collective-unknown-agreement-v52-05"
+      ],
+      "evaluation_method": "Run lab-employee-collective-private-worker-v52-01, lab-employee-collective-itp-v52-02, lab-employee-collective-municipal-v52-03, lab-employee-collective-state-sickpay-boundary-v52-04 and lab-employee-collective-unknown-agreement-v52-05; require sv/ar/fa route detection, no redundant sick-pay/partial question inside collective mode, privacy-safe handoff, agreement-specific primary source and fail-closed unknown/state boundaries.",
+      "recommended_learning_action": "Extend the existing employee_sick module rather than create another matcher. Preserve ordinary v48 behavior, add a coarse collective-compensation context for explicit long-sickness compensation questions, then route by agreement area to current official sources.",
+      "truth_rule": "VERIFY current agreement-specific rules at the responsible primary/official source. Do not infer that long sickness, employment sector or the existence of a collective agreement proves entitlement; do not generalize the Försäkringskassan article's possible compensation levels to an individual."
+    }
+  ]
+}
