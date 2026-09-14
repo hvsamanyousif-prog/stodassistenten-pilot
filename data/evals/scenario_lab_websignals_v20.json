@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic study-to-work transition regression for the single Stödassistenten scenario laboratory. It protects new graduates from being routed as generic students or being promised unemployment compensation without a separate a-kassa assessment. It contains no real person or copied community story.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-post-study-first-unemployed-day",
+      "observation": "Current Arbetsförmedlingen guidance says a person who is unemployed should submit registration on the first unemployed day. The page states that an a-kassa can assess compensation from the day the person is registered and unemployed, and that first-day registration is relevant to protecting SGI. If unemployment compensation is sought, the application is then made separately to the a-kassa, which decides entitlement. The product must therefore distinguish a completed-study transition, whether a job starts immediately, and when the unemployment period starts before giving a concrete registration action.",
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-young-post-study-no-job-v20-01",
+      "actor_type": "young_adult",
+      "story": "Jag tog examen förra veckan. Jag har sökt många jobb men inget börjar nu och jag vet inte vad jag ska göra medan jag väntar. Ska jag skriva in mig någonstans och betyder det att jag automatiskt kan få a-kassa?",
+      "expected_support_areas": [
+        "study_to_work_transition",
+        "jobseeker_registration",
+        "first_unemployed_day",
+        "unemployment_insurance_separate_assessment",
+        "sgi_registration_timing_awareness"
+      ],
+      "must_not_claim": [
+        "new_graduate_status_alone_proves_unemployment_insurance_eligibility",
+        "registration_with_arbetsformedlingen_automatically_grants_a_kassa",
+        "the_person_should_submit_registration_before_the_first_unemployed_day",
+        "a_community_discussion_is_evidence_of_current_registration_or_a_kassa_rules",
+        "the_raw_situation_text_should_be_put_in_the_handoff_url_or_feedback",
+        "all_people_finishing_studies_have_the_same_income_or_household_support_route"
+      ],
+      "expected_questions": [
+        "q_does_a_job_start_immediately_after_studies",
+        "q_is_the_first_unemployed_day_today_or_later"
+      ],
+      "expected_next_actions": [
+        "if_unemployed_submit_arbetsformedlingen_registration_on_the_first_unemployed_day",
+        "if_registration_is_for_a_future_unemployed_day_prepare_information_but_wait_to_submit_until_that_day",
+        "if_seeking_unemployment_compensation_apply_separately_to_the_relevant_a_kassa_after_registration",
+        "do_not_promise_a_kassa_eligibility_or_amount",
+        "keep_the_handoff_language_neutral_and_do_not_transfer_raw_story_text"
+      ],
+      "source_requirements": [
+        "Arbetsformedlingen_current_unemployment_registration_guidance",
+        "Arbetsformedlingen_current_a_kassa_application_guidance"
+      ]
+    }
+  ]
+}
