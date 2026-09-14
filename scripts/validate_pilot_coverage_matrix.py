@@ -17,6 +17,8 @@ required_rows = [
     "| Äldre person |",
     "| Person med funktionsnedsättning |",
     "| Anställd |",
+    "| Egenföretagare |",
+    "| Egenanställd via faktureringsföretag |",
     "Anhörig/vän som hjälper annan",
     "| Barn via vårdnadshavare/familj |",
     "| Företag |",
@@ -38,7 +40,9 @@ assert "relative_care" in matrix
 assert "livshotande tillstånd och avstående från arbete" in matrix
 assert "work_injury_dental" in matrix
 assert "trafikolycka på arbetsresan" in matrix
-assert "Rå skadeberättelse, arbetsgivare, exakt kostnad och hälsodetaljer följer inte med" in matrix
+assert "work_context=self_employed" in matrix
+assert "work_context=invoiced_worker" in matrix
+assert "aldrig rå skadeberättelse" in matrix
 assert "NEEDS_REVIEW" in matrix
 
 # Runtime/artifact existence backs the updated matrix claims. These checks do not
@@ -55,6 +59,10 @@ for rel in [
     "data/evals/scenario_lab_websignals_v21.json",
     "data/evals/scenario_lab_websignals_v26.json",
     "data/evals/scenario_lab_websignals_v27.json",
+    "data/evals/scenario_lab_websignals_v29.json",
+    "data/evals/scenario_lab_websignals_v30.json",
+    "data/evals/scenario_lab_websignals_v37.json",
+    "data/evals/demand_friction_signals_v23.json",
     "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
     "data/supports/se-forsakringskassan-narstaendepenning.json",
     "data/supports/se-forsakringskassan-arbetsskada-tandvard.json",
@@ -69,11 +77,15 @@ assert "focus=relative_care" in relative_runtime
 assert "get('q')" not in relative_runtime and 'get("q")' not in relative_runtime
 assert "focus=work_injury_dental" in work_injury_dental_runtime
 assert "actor_type=employee&focus=work_injury_dental&lang=" in work_injury_dental_runtime
+assert "actor_type=self_employed&focus=work_injury_dental&work_context=self_employed" in work_injury_dental_runtime
+assert "work_context=invoiced_worker" in work_injury_dental_runtime
+assert "detectWorkContext" in work_injury_dental_runtime
 assert "data-stod-work-injury-dental" in work_injury_dental_runtime
 assert "Var händelsen på arbetsresan en trafikolycka?" in work_injury_dental_runtime
+assert "Har företaget ett aktuellt försäkringsavtal eller grundavtal hos Fora?" in work_injury_dental_runtime
 assert "get('q')" not in work_injury_dental_runtime and 'get("q")' not in work_injury_dental_runtime
 assert "fetch(" not in work_injury_dental_runtime and "XMLHttpRequest" not in work_injury_dental_runtime
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 
-print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v27)")
+print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v37 worker context)")

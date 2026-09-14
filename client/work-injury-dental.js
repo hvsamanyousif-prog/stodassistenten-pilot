@@ -9,7 +9,9 @@
   'use strict';
 
   const FK_URL = 'https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada';
+  const FK_EGEN_URL = 'https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld';
   const AFA_URL = 'https://www.afaforsakring.se/forsakring/arbetsskadeforsakring';
+  const FORA_URL = 'https://www.fora.se/ms-foretag-inlogg';
   const ORDINARY_DENTAL_URL = 'quick-help.html?mode=dental';
 
   const DENTAL = [
@@ -23,9 +25,9 @@
     /آسیب|حادثه|افتاد|تصادف|شکست/i,
   ];
   const WORK = [
-    /\b(?:på\s+jobbet|i\s+jobbet|på\s+arbetsplatsen|i\s+arbetet|under\s+arbetet|på\s+väg\s+till\s+jobbet|på\s+väg\s+från\s+jobbet|till\s+eller\s+från\s+arbetet)\b/i,
-    /في\s+العمل|أثناء\s+العمل|في\s+مكان\s+العمل|في\s+الطريق\s+إلى\s+العمل|في\s+الطريق\s+من\s+العمل/i,
-    /سر\s+کار|در\s+محل\s+کار|هنگام\s+کار|در\s+راه\s+کار|در\s+مسیر\s+کار/i,
+    /\b(?:på\s+jobbet|i\s+jobbet|på\s+arbetsplatsen|i\s+arbetet|under\s+arbetet|när\s+jag\s+jobbade|i\s+verksamheten|under\s+ett\s+uppdrag|på\s+väg\s+till\s+jobbet|på\s+väg\s+från\s+jobbet|till\s+eller\s+från\s+arbetet)\b/i,
+    /في\s+العمل|أثناء\s+العمل|في\s+مكان\s+العمل|أثناء\s+مهمة|في\s+الطريق\s+إلى\s+العمل|في\s+الطريق\s+من\s+العمل/i,
+    /سر\s+کار|در\s+محل\s+کار|هنگام\s+کار|حین\s+ماموریت|در\s+راه\s+کار|در\s+مسیر\s+کار/i,
   ];
   const DIRECT = [
     /\b(?:tandskada|tandolycka).{0,35}(?:jobb|arbete|arbetsplats)/i,
@@ -33,6 +35,21 @@
     /\b(?:slog|skadade|bröt|spräckte).{0,24}tand.{0,28}(?:jobb|arbete|arbetsplats)/i,
     /إصابة\s+أسنان.{0,30}(?:العمل|الوظيفة)|(?:العمل|الوظيفة).{0,30}إصابة\s+أسنان/i,
     /آسیب\s+دندان.{0,30}(?:کار|محل\s+کار)|(?:کار|محل\s+کار).{0,30}آسیب\s+دندان/i,
+  ];
+  const INVOICED_WORKER = [
+    /\begenanställd\b/i,
+    /\bfakturerings(?:företag|bolag)\w*\b/i,
+    /\bfakturerar\b.{0,35}\b(?:via|genom)\b.{0,35}\bfakturerings(?:företag|bolag)\w*\b/i,
+    /شركة\s+(?:فواتير|فوترة)|أعمل\s+عبر\s+شركة\s+(?:فواتير|فوترة)/i,
+    /شرکت\s+(?:صدور\s+فاکتور|فاکتورینگ)|از\s+طریق\s+شرکت.{0,20}فاکتور/i,
+  ];
+  const SELF_EMPLOYED = [
+    /\bdriver\s+eget\b/i,
+    /\b(?:mitt\s+)?eget\s+(?:företag|aktiebolag|bolag)\b/i,
+    /\begenföretag(?:are)?\b/i,
+    /\benskild\s+firma\b/i,
+    /أعمل\s+لحسابي|أدير\s+شركتي|صاحب\s+(?:شركة|عمل)/i,
+    /خوداشتغال|کسب\s*و\s*کار\s+خودم|شرکت\s+خودم|صاحب\s+کسب\s*و\s*کار/i,
   ];
 
   const COPY = {
@@ -117,14 +134,70 @@
     },
   };
 
+  const CONTEXT_COPY = {
+    sv: {
+      selfContext: 'Du beskrev dig som egenföretagare. Försäkringskassans kostnadsväg och företagets försäkringar är separata lager.',
+      invoicedContext: 'Du beskrev arbete via ett faktureringsföretag. Försäkringskassan beskriver faktureringsföretaget som arbetsgivare under tiden du använder det.',
+      qFora: 'Har företaget ett aktuellt försäkringsavtal eller grundavtal hos Fora?',
+      foraYesTitle: 'TFA kan vara en separat väg att kontrollera',
+      foraYesBody: 'Fora anger att en företagare kan omfattas av TFA genom företagets försäkringsavtal. Kontrollera att avtalet är aktuellt och vilken personkategori du tillhör. Det avgör inte Försäkringskassans separata prövning.',
+      foraNoTitle: 'Utgå inte från TFA utan avtalsgrund',
+      foraNoBody: 'Företagande i sig bevisar inte TFA. Håll Försäkringskassans arbetsskadeväg öppen för separat kontroll och se över andra företags- eller olycksfallsförsäkringar för sig.',
+      foraUnsureTitle: 'Verifiera Fora-avtalet innan du räknar med eller avfärdar TFA',
+      foraUnsureBody: 'Kontrollera om företaget har ett aktuellt försäkringsavtal eller grundavtal hos Fora. Du behöver inte lämna företagsnamn eller avtalsnummer i piloten.',
+      invoicedTitle: 'Egenanställd via faktureringsföretag är inte samma sak som egenföretagare',
+      invoicedBody: 'Försäkringskassan anger att faktureringsföretaget har arbetsgivaransvaret under tiden du använder det. Det gör inte TFA, Afa eller annan försäkring automatisk; faktisk försäkrings- eller kollektivavtalstäckning måste kontrolleras separat.',
+      fkEgenSource: 'Försäkringskassan: egenanställd och faktureringsföretag',
+      foraSource: 'Fora: företag utan anställda och TFA',
+    },
+    ar: {
+      selfContext: 'وصفت نفسك كصاحب عمل. مسار تكاليف Försäkringskassan وتأمينات الشركة طبقتان منفصلتان.',
+      invoicedContext: 'وصفت عملاً عبر شركة فوترة. توضح Försäkringskassan أن شركة الفوترة تتحمل مسؤولية صاحب العمل أثناء استخدامك لها.',
+      qFora: 'هل لدى الشركة حالياً اتفاق تأمين أو اتفاق أساسي مع Fora؟',
+      foraYesTitle: 'قد يكون TFA مساراً منفصلاً يستحق التحقق',
+      foraYesBody: 'توضح Fora أن صاحب العمل قد يشمله TFA عبر اتفاق تأمين الشركة. تحقق من أن الاتفاق ساري ومن فئتك. هذا لا يحسم تقييم Försäkringskassan المنفصل.',
+      foraNoTitle: 'لا تفترض وجود TFA من مجرد امتلاك شركة',
+      foraNoBody: 'امتلاك شركة وحده لا يثبت TFA. أبقِ مسار Försäkringskassan متاحاً للتحقق المنفصل وافحص أي تأمين شركة أو حوادث آخر بشكل مستقل.',
+      foraUnsureTitle: 'تحقق من اتفاق Fora قبل الاعتماد على TFA أو استبعاده',
+      foraUnsureBody: 'تحقق هل لدى الشركة اتفاق تأمين أو اتفاق أساسي ساري مع Fora. لا حاجة لإدخال اسم الشركة أو رقم الاتفاق في التجربة.',
+      invoicedTitle: 'العمل عبر شركة فوترة ليس هو نفسه العمل كصاحب شركة',
+      invoicedBody: 'توضح Försäkringskassan أن شركة الفوترة تتحمل مسؤولية صاحب العمل أثناء استخدامها. هذا لا يجعل TFA أو Afa أو أي تأمين آخر تلقائياً؛ يجب التحقق من التغطية الفعلية بشكل منفصل.',
+      fkEgenSource: 'Försäkringskassan: العمل عبر شركة فوترة',
+      foraSource: 'Fora: شركة بلا موظفين وTFA',
+    },
+    fa: {
+      selfContext: 'خودت را صاحب کسب‌وکار توصیف کردی. مسیر هزینه Försäkringskassan و بیمه‌های شرکت دو لایه جدا هستند.',
+      invoicedContext: 'گفتی از طریق شرکت صدور فاکتور کار می‌کنی. Försäkringskassan آن شرکت را هنگام استفاده از آن در جایگاه کارفرما توضیح می‌دهد.',
+      qFora: 'آیا شرکت اکنون قرارداد بیمه یا قرارداد پایه با Fora دارد؟',
+      foraYesTitle: 'TFA می‌تواند مسیر جداگانه‌ای برای بررسی باشد',
+      foraYesBody: 'Fora می‌گوید صاحب کسب‌وکار می‌تواند از طریق قرارداد بیمه شرکت تحت TFA باشد. جاری بودن قرارداد و دسته فرد را بررسی کن. این موضوع ارزیابی جداگانه Försäkringskassan را تعیین نمی‌کند.',
+      foraNoTitle: 'صرف صاحب کسب‌وکار بودن را دلیل TFA ندان',
+      foraNoBody: 'داشتن کسب‌وکار به‌تنهایی TFA را ثابت نمی‌کند. مسیر Försäkringskassan را برای بررسی جداگانه باز نگه دار و بیمه‌های دیگر شرکت یا حوادث را جدا بررسی کن.',
+      foraUnsureTitle: 'پیش از حساب کردن روی TFA یا رد آن، قرارداد Fora را بررسی کن',
+      foraUnsureBody: 'بررسی کن آیا شرکت قرارداد بیمه یا قرارداد پایه جاری با Fora دارد. نیازی نیست نام شرکت یا شماره قرارداد را در این پایلوت وارد کنی.',
+      invoicedTitle: 'کار از طریق شرکت صدور فاکتور همان خوداشتغالیِ صاحب کسب‌وکار نیست',
+      invoicedBody: 'Försäkringskassan می‌گوید شرکت صدور فاکتور هنگام استفاده از آن مسئولیت کارفرما را دارد. این موضوع TFA، Afa یا بیمه دیگر را خودکار نمی‌کند؛ پوشش واقعی باید جداگانه بررسی شود.',
+      fkEgenSource: 'Försäkringskassan: کار از طریق شرکت صدور فاکتور',
+      foraSource: 'Fora: شرکت بدون کارمند و TFA',
+    },
+  };
+
   function safeLang(value) { return ['sv', 'ar', 'fa'].includes(value) ? value : 'sv'; }
   function any(patterns, text) { return patterns.some((re) => re.test(text)); }
   function detect(text) {
     const value = String(text || '');
     return any(DIRECT, value) || (any(DENTAL, value) && any(INJURY, value) && any(WORK, value));
   }
-  function handoffHref(language) {
+  function detectWorkContext(text) {
+    const value = String(text || '');
+    if (any(INVOICED_WORKER, value)) return 'invoiced_worker';
+    if (any(SELF_EMPLOYED, value)) return 'self_employed';
+    return 'employee';
+  }
+  function handoffHref(language, context) {
     const lang = safeLang(language);
+    if (context === 'self_employed') return `person-pilot.html?actor_type=self_employed&focus=work_injury_dental&work_context=self_employed&lang=${encodeURIComponent(lang)}`;
+    if (context === 'invoiced_worker') return `person-pilot.html?actor_type=employee&focus=work_injury_dental&work_context=invoiced_worker&lang=${encodeURIComponent(lang)}`;
     return `person-pilot.html?actor_type=employee&focus=work_injury_dental&lang=${encodeURIComponent(lang)}`;
   }
 
@@ -141,10 +214,11 @@
       if (!detect(input.value)) return;
       const lang = safeLang(doc.documentElement.lang);
       const copy = COPY[lang];
+      const context = detectWorkContext(input.value);
       const link = doc.createElement('a');
       link.className = 'route';
       link.dataset.stodWorkInjuryDental = 'true';
-      link.href = handoffHref(lang);
+      link.href = handoffHref(lang, context);
       const text = doc.createElement('span');
       const title = doc.createElement('strong'); title.textContent = copy.shellTitle;
       const sub = doc.createElement('small'); sub.textContent = copy.shellSub;
@@ -196,6 +270,12 @@
     if (!main) return;
     const lang = safeLang(params.get('lang') || doc.documentElement.lang);
     const copy = COPY[lang];
+    const contextCopy = CONTEXT_COPY[lang];
+    const boundedContext = String(params.get('work_context') || '').toLowerCase();
+    const actorType = String(params.get('actor_type') || '').toLowerCase();
+    const workContext = boundedContext === 'self_employed' || boundedContext === 'invoiced_worker'
+      ? boundedContext
+      : (actorType === 'self_employed' ? 'self_employed' : 'employee');
     doc.documentElement.lang = lang;
     if (lang === 'ar' || lang === 'fa') {
       doc.documentElement.dir = 'rtl';
@@ -206,7 +286,8 @@
     section.id = 'workInjuryDentalGuidance';
     section.className = 'card';
     section.setAttribute('data-local-only', 'true');
-    const state = { where: null, traffic: null, treatment: null, docs: null };
+    section.dataset.workContext = workContext;
+    const state = { where: null, traffic: null, treatment: null, docs: null, foraAgreement: null };
 
     function q(title, group, options) {
       const wrap = doc.createElement('div'); wrap.className = 'finalq';
@@ -214,11 +295,13 @@
       options.forEach(([value, label]) => wrap.appendChild(button(doc, label, state[group] === value, () => {
         state[group] = value;
         if (group === 'where') {
-          state.traffic = null; state.treatment = null; state.docs = null;
+          state.traffic = null; state.treatment = null; state.docs = null; state.foraAgreement = null;
         } else if (group === 'traffic') {
-          state.treatment = null; state.docs = null;
+          state.treatment = null; state.docs = null; state.foraAgreement = null;
         } else if (group === 'treatment') {
-          state.docs = null;
+          state.docs = null; state.foraAgreement = null;
+        } else if (group === 'docs') {
+          state.foraAgreement = null;
         }
         render();
       })));
@@ -231,6 +314,8 @@
       const title = doc.createElement('h2'); title.textContent = copy.title;
       const intro = doc.createElement('p'); intro.className = 'muted'; intro.textContent = copy.intro;
       section.append(eye, title, intro);
+      if (workContext === 'self_employed') section.appendChild(result(doc, copy.eyebrow, contextCopy.selfContext));
+      if (workContext === 'invoiced_worker') section.appendChild(result(doc, copy.eyebrow, contextCopy.invoicedContext));
       section.appendChild(q(copy.qWhere, 'where', [["work", copy.atWork], ["commute", copy.commute], ["other", copy.other], ["unsure", copy.unsure]]));
 
       if (state.where === 'other') {
@@ -269,9 +354,20 @@
       if (state.docs === 'unsure') section.appendChild(result(doc, copy.docsUnsureTitle, copy.docsUnsureBody));
       if (state.docs === 'both') section.appendChild(result(doc, copy.candidateTitle, copy.candidateBody));
       if (state.docs) {
-        if (!(state.where === 'commute' && state.traffic === 'yes')) section.appendChild(result(doc, copy.afaTitle, copy.afaBody));
+        if (workContext === 'invoiced_worker') {
+          section.appendChild(result(doc, contextCopy.invoicedTitle, contextCopy.invoicedBody));
+        } else if (workContext === 'self_employed' && !(state.where === 'commute' && state.traffic === 'yes')) {
+          section.appendChild(q(contextCopy.qFora, 'foraAgreement', [["yes", copy.yes], ["no", copy.no], ["unsure", copy.unsure]]));
+          if (state.foraAgreement === 'yes') section.appendChild(result(doc, contextCopy.foraYesTitle, contextCopy.foraYesBody));
+          if (state.foraAgreement === 'no') section.appendChild(result(doc, contextCopy.foraNoTitle, contextCopy.foraNoBody));
+          if (state.foraAgreement === 'unsure') section.appendChild(result(doc, contextCopy.foraUnsureTitle, contextCopy.foraUnsureBody));
+        } else if (workContext === 'employee' && !(state.where === 'commute' && state.traffic === 'yes')) {
+          section.appendChild(result(doc, copy.afaTitle, copy.afaBody));
+        }
         source(doc, section, copy.fkSource, FK_URL);
-        source(doc, section, copy.afaSource, AFA_URL);
+        if (workContext === 'invoiced_worker') source(doc, section, contextCopy.fkEgenSource, FK_EGEN_URL);
+        if (workContext === 'self_employed' && state.foraAgreement) source(doc, section, contextCopy.foraSource, FORA_URL);
+        if (workContext === 'employee' || (state.where === 'commute' && state.traffic === 'yes')) source(doc, section, copy.afaSource, AFA_URL);
       }
     }
 
@@ -280,5 +376,5 @@
   }
 
   function init(win) { addShellHandoff(win); addPersonGuidance(win); }
-  return { detect, safeLang, handoffHref, init };
+  return { detect, detectWorkContext, safeLang, handoffHref, init };
 });

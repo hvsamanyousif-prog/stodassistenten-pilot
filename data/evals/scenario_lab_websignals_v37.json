@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic public-product regressions for the single Stödassistenten learning system. v37 turns the existing v29-v30 worker-context truth boundaries into the same public work-injury dental route without a separate self-employed or invoiced-worker engine. The scenarios are synthetic and store no real user, company, client, contract, cost or health data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-public-work-injury-worker-context-2026",
+      "observation": "Försäkringskassan's current dental-cost route at work injury is not expressed as an employee-only gate. Current Försäkringskassan guidance separately states that an invoiced worker using a faktureringsföretag has that company as employer context, while current Fora guidance states that a business owner without employees can have TFA through a Fora insurance agreement and that an invoiced worker is not treated as a business owner under that owner agreement. The public route therefore needs bounded worker context before it explains the separate insurance layer.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld",
+        "https://www.fora.se/ms-foretag-inlogg",
+        "https://www.fora.se/BL000203/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-self-employed-work-injury-dental-public-handoff-v37-01",
+      "actor_type": "self_employed",
+      "story": "Jag driver eget och slog av en tand när jag jobbade i verksamheten. Vem ska jag vända mig till?",
+      "expected_support_areas": [
+        "same_public_work_injury_dental_route",
+        "bounded_self_employed_handoff_context",
+        "forsakringskassan_work_injury_dental_cost_candidate",
+        "fora_agreement_information_gain_before_tfa_claim",
+        "statutory_and_tfa_routes_kept_separate"
+      ],
+      "must_not_claim": [
+        "self_employed_work_injury_dental_must_be_hardcoded_to_employee_context",
+        "every_self_employed_person_is_automatically_covered_by_tfa",
+        "self_employed_people_are_always_excluded_from_tfa",
+        "a_fora_agreement_or_tfa_coverage_proves_forsakringskassan_eligibility_or_full_reimbursement",
+        "the_product_should_ask_for_company_name_contract_number_exact_cost_or_raw_injury_or_health_details_to_choose_the_next_step",
+        "the_raw_story_company_identity_contract_or_health_details_should_be_put_in_the_handoff_url_feedback_or_public_eval_data",
+        "the_existing_work_injury_dental_support_record_can_be_promoted_from_needs_review_to_verified_by_this_product_change"
+      ],
+      "expected_questions": [
+        "q_where_did_injury_occur_work_commute_other_or_unsure",
+        "q_is_dental_treatment_necessary_due_to_that_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan",
+        "q_does_the_business_have_a_current_fora_insurance_or_ground_agreement"
+      ],
+      "expected_next_actions": [
+        "route_through_the_existing_work_injury_dental_module_with_only_bounded_worker_context",
+        "keep_the_current_forsakringskassan_dental_cost_assessment_available_without_inventing_an_employee_only_gate",
+        "verify_current_fora_agreement_status_before_presenting_or_excluding_tfa_for_the_business_owner",
+        "keep_private_or_other_business_insurance_as_separate_possible_routes",
+        "do_not_promote_the_review_gated_support_record_to_verified"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Fora_current_business_without_employees_primary_source",
+        "Fora_current_business_owner_insurance_primary_source"
+      ]
+    },
+    {
+      "case_id": "lab-invoiced-worker-work-injury-dental-public-handoff-v37-02",
+      "actor_type": "employee",
+      "story": "Jag fakturerar uppdrag via ett faktureringsföretag och skadade tanden på jobbet under uppdraget. Vem räknas som arbetsgivare och vilken väg ska jag kontrollera?",
+      "expected_support_areas": [
+        "same_public_work_injury_dental_route",
+        "bounded_invoiced_worker_handoff_context",
+        "invoicing_company_employer_context",
+        "forsakringskassan_work_injury_dental_cost_candidate",
+        "collective_or_private_insurance_not_inferred_from_invoicing_arrangement"
+      ],
+      "must_not_claim": [
+        "an_invoiced_worker_via_a_faktureringsforetag_is_the_same_as_a_sole_trader_or_business_owner",
+        "the_assignment_client_is_automatically_the_employer",
+        "the_invoicing_company_employer_context_automatically_proves_forsakringskassan_eligibility",
+        "the_invoicing_arrangement_itself_proves_tfa_afa_or_other_collective_insurance_coverage",
+        "the_product_should_ask_for_client_name_invoicing_company_name_exact_cost_or_raw_health_details_to_choose_the_route",
+        "raw_assignment_client_company_or_health_details_should_be_put_in_the_handoff_url_feedback_or_public_eval_data"
+      ],
+      "expected_questions": [
+        "q_is_the_work_invoiced_through_an_invoicing_company_that_pays_salary",
+        "q_where_did_injury_occur_work_commute_other_or_unsure",
+        "q_is_dental_treatment_necessary_due_to_that_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan"
+      ],
+      "expected_next_actions": [
+        "route_through_the_existing_work_injury_dental_module_with_only_bounded_invoiced_worker_context",
+        "use_the_invoicing_company_as_employer_context_when_current_forsakringskassan_guidance_applies",
+        "keep_the_forsakringskassan_dental_cost_assessment_separate_from_any_collective_or_private_insurance",
+        "verify_actual_insurance_or_collective_agreement_coverage_instead_of_inferring_it_from_egenanstallning"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_egenanstalld_primary_source",
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Fora_current_owner_agreement_boundary_primary_source_when_explaining_why_egenanstalld_is_not_the_same_as_foretagare"
+      ]
+    }
+  ]
+}

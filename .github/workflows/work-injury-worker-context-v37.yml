@@ -1,0 +1,38 @@
+name: work-injury-worker-context-v37
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'client/work-injury-dental.js'
+      - 'data/evals/scenario_lab_websignals_v37.json'
+      - 'data/evals/demand_friction_signals_v23.json'
+      - 'data/evals/demand_friction_regression_map_v17.json'
+      - 'scripts/validate_work_injury_worker_context_v37.py'
+      - '.github/workflows/work-injury-worker-context-v37.yml'
+  pull_request:
+    paths:
+      - 'client/work-injury-dental.js'
+      - 'data/evals/scenario_lab_websignals_v37.json'
+      - 'data/evals/demand_friction_signals_v23.json'
+      - 'data/evals/demand_friction_regression_map_v17.json'
+      - 'scripts/validate_work_injury_worker_context_v37.py'
+      - '.github/workflows/work-injury-worker-context-v37.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate v37 worker context
+        run: python scripts/validate_work_injury_worker_context_v37.py
+      - name: Re-run shared work-injury dental guard
+        run: python scripts/validate_work_injury_dental.py
+      - name: Validate canonical scenario lab
+        run: python scripts/validate_scenario_lab_all.py
