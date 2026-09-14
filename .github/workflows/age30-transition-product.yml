@@ -1,0 +1,45 @@
+name: Validate age-30 transition product
+
+on:
+  pull_request:
+    paths:
+      - 'client/age30-transition.js'
+      - 'client/age30-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_age30_product.py'
+      - 'scripts/validate_v31_age30_transition.py'
+      - 'data/evals/scenario_lab_websignals_v31.json'
+      - 'data/supports/se-forsakringskassan-sjukpenning-sarskilda-fall.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/age30-transition-product.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/age30-transition.js'
+      - 'client/age30-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_age30_product.py'
+      - 'scripts/validate_v31_age30_transition.py'
+      - 'data/evals/scenario_lab_websignals_v31.json'
+      - 'data/supports/se-forsakringskassan-sjukpenning-sarskilda-fall.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/age30-transition-product.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate age-30 multilingual handoff, privacy and public build
+        run: |
+          python scripts/validate_v31_age30_transition.py
+          python scripts/validate_age30_product.py
