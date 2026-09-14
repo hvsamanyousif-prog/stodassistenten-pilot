@@ -122,11 +122,13 @@ assert {
 
 coverage = COVERAGE.read_text(encoding="utf-8")
 assert "30-årsövergång" in coverage
-assert "v31" in coverage
+assert "v31/v32" in coverage
 assert "NEEDS_REVIEW" in coverage
-assert "saknar fortfarande fokuserad publik handoff" in coverage
+assert "activity_compensation_age30" in coverage
+assert "30-årsövergången har nu sannings-, regressions- och fokuserad publik handoff" in coverage
+assert "saknar fortfarande fokuserad publik handoff" not in coverage
 
 print(
     f"v31 age-30 transition: OK ({len(cases)} canonical scenarios; "
-    "route split + housing-support boundary locked; truth stays NEEDS_REVIEW)"
+    "route split + housing-support boundary locked; truth stays NEEDS_REVIEW; v32 public focus present)"
 )
