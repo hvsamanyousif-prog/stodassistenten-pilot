@@ -1,0 +1,113 @@
+{
+  "support_id": "se-naturvardsverket-ladda-bilen-forening-boende",
+  "name": "Ladda bilen för föreningar och boendeorganisationer",
+  "category": "housing_energy",
+  "subtype": "ev_charging_association_grant",
+  "provider": {
+    "name": "Naturvårdsverket",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["property_actor", "housing_association", "joint_property_association", "nonprofit_association"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "ladda_bilen.association_applicant",
+        "field": "organisation_context",
+        "operator": "text_condition",
+        "value": "Naturvårdsverkets aktuella förenings-/boendeorganisationsväg omfattar bland annat bostadsrättsföreningar, samfälligheter, ekonomiska föreningar utan affärsverksamhet och ideella föreningar för laddstationer som ägs av föreningen.",
+        "source_url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+        "notes": "Juridisk form ensam avgör inte alla statsstödsregler. Användningen av laddpunkterna och eventuell ekonomisk verksamhet måste hållas isär."
+      },
+      {
+        "rule_id": "ladda_bilen.resident_member_level",
+        "field": "resident_member_use",
+        "operator": "text_condition",
+        "value": "För laddpunkter för egna boende eller medlemmar anger Naturvårdsverket möjlighet att söka 50 procent av bidragsberättigade kostnader, högst 15 000 kronor per laddpunkt.",
+        "source_url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+        "notes": "Beloppet är en stödnivå/takregel och får inte presenteras som garanterad utbetalning eller som 50 procent av vilken projektkostnad som helst."
+      },
+      {
+        "rule_id": "ladda_bilen.external_user_pre_start",
+        "field": "external_user_and_work_start",
+        "operator": "text_condition",
+        "value": "När en förening söker för en extern användare, exempelvis en extern hyresgäst, anger Naturvårdsverket att ansökan måste vara inskickad innan installationen påbörjas eftersom föreningen behandlas som företag i det enskilda fallet.",
+        "source_url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+        "notes": "Blanda inte ihop denna pre-start-gräns med föreningens boende-/medlemsspår. Blandad användning kan behöva separeras."
+      },
+      {
+        "rule_id": "ladda_bilen.guests_de_minimis",
+        "field": "guest_visitor_use",
+        "operator": "text_condition",
+        "value": "För gäst-/besöksparkering anger Naturvårdsverket 50 procent av bidragsberättigade kostnader, högst 15 000 kronor per laddpunkt, och att stödet klassas som stöd av mindre betydelse vilket gör att andra sådana stöd kan behöva räknas in.",
+        "source_url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+        "notes": "Produkten ska inte själv beräkna de minimis-utrymme eller statsstödsstatus från fri text."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "ladda_bilen.primary_user_category",
+        "prompt": "Ska laddpunkterna främst användas av boende/medlemmar, gäster/besökare eller en extern hyresgäst/verksamhet?",
+        "reason": "Användarkategorin kan ändra statsstödsregel, beloppslogik och om ansökan måste lämnas innan installationen påbörjas."
+      },
+      {
+        "question_id": "ladda_bilen.work_started_when_prestart_matters",
+        "prompt": "Har installationsarbetet redan påbörjats?",
+        "reason": "Frågan ska bara ställas på en väg där pre-start-regeln kan ändra utfallet, exempelvis extern användning eller företags-/ekonomisk verksamhet."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "one_time",
+    "amount_text": "För egna boende eller medlemmar: 50 procent av bidragsberättigade kostnader, högst 15 000 kronor per laddpunkt enligt Naturvårdsverkets vägledning kontrollerad 2026-09-14. Gäst-/extern användning har separata statsstödsregler.",
+    "calculation_text": "Stödnivå och statsstödsregel beror på användarkategori och organisations-/verksamhetskontext. Stödassistenten ska inte ersätta Naturvårdsverkets prövning eller räkna ett garanterat belopp från en offert.",
+    "recurrence": null
+  },
+  "documents": [
+    {
+      "name": "Ekonomiskt och kostnadsunderlag enligt aktuell Naturvårdsverket-väg",
+      "required": false,
+      "notes": "Exakta bilagor och versionskrav ska kontrolleras på den aktuella ansöknings-/utbetalningssidan innan ansökan."
+    }
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+    "deadline_text": "Ingen generell perioddeadline materialiseras här. Aktuell ansökningstid och eventuell installationsrelaterad tidsgräns ska kontrolleras mot Naturvårdsverket för den faktiska användarkategorin.",
+    "next_step": "Fastställ först organisations-/projektkontext och vem som ska använda laddpunkterna. Använd därefter Naturvårdsverkets aktuella förenings-/boendeorganisationsväg. Om extern användare eller ekonomisk verksamhet är relevant, kontrollera pre-start-regeln innan installationsarbete påbörjas."
+  },
+  "source": {
+    "source_id": "se-naturvardsverket-ladda-bilen-association",
+    "url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-09-07",
+    "retrieved_at": "2026-09-14T18:25:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Naturvårdsverkets aktuella primärkälla, kontrollerad 2026-09-14. Mänsklig granskning krävs före VERIFIED. AI har inte verifierat några materialfält. Kontrollera särskilt bidragsberättigade kostnader, användarkategorier, statsstödsregler, installations-/ansökningstid och aktuella bilagekrav före framtida materialisering som VERIFIED.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T18:25:00Z",
+    "last_seen_at": "2026-09-14T18:25:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
