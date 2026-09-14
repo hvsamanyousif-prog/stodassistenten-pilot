@@ -20,7 +20,7 @@ for path in paths:
             raise AssertionError(f"duplicate scenario id: {cid}")
         cases[cid] = case
 
-assert len(cases) >= 68, f"expected at least 68 cases after v25, got {len(cases)}"
+assert len(cases) >= 71, f"expected at least 71 cases after v27, got {len(cases)}"
 
 locks = {
     "lab-young-post-study-no-job-v20-01": {
@@ -138,6 +138,73 @@ locks = {
             "if_the_route_does_not_fit_keep_ordinary_sickness_benefit_employer_rehabilitation_and_other_paths_separate",
         ],
     },
+    "lab-employee-work-injury-dental-cost-v26-01": {
+        "expected_support_areas": [
+            "work_injury_dental_cost_reimbursement_candidate",
+            "reference_price_boundary",
+            "collective_agreement_insurance_kept_separate",
+        ],
+        "must_not_claim": [
+            "a_workplace_incident_report_or_employer_report_automatically_proves_an_approved_work_injury",
+            "every_dental_bill_after_a_work_injury_is_reimbursed_in_full",
+            "afa_work_injury_insurance_applies_to_every_worker_or_requires_union_membership",
+            "forsakringskassan_dental_cost_reimbursement_and_afa_compensation_are_the_same_decision",
+            "the_raw_injury_story_employer_identity_exact_cost_or_health_details_should_be_put_in_the_handoff_url_or_feedback",
+        ],
+        "expected_questions": [
+            "q_did_injury_or_disease_arise_due_to_work_or_commute",
+            "q_is_dental_treatment_necessary_due_to_that_work_injury",
+            "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan",
+        ],
+        "expected_next_actions": [
+            "collect_cost_proposal_receipt_or_invoice_and_confirm_the_dentist_is_connected_to_forsakringskassan",
+            "use_the_current_forsakringskassan_work_injury_cost_route_or_form_5002_without_promising_approval_or_full_reimbursement",
+            "check_collective_agreement_work_injury_insurance_separately_with_employer_union_or_afa_when_relevant_without_assuming_coverage",
+        ],
+    },
+    "lab-employee-work-injury-dental-natural-route-v27-01": {
+        "expected_support_areas": [
+            "natural_language_route_to_same_person_module",
+            "privacy_safe_coarse_handoff",
+            "information_gain_question_order",
+        ],
+        "must_not_claim": [
+            "dental_words_plus_employment_without_an_injury_signal_are_enough_to_force_work_injury_routing",
+            "the_raw_injury_story_employer_identity_exact_cost_or_health_details_should_be_put_in_the_handoff_url_or_feedback",
+        ],
+        "expected_questions": [
+            "q_where_did_injury_occur_work_commute_other_or_unsure",
+            "q_is_dental_treatment_necessary_due_to_that_injury",
+            "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan",
+        ],
+        "expected_next_actions": [
+            "route_only_explicit_dental_injury_plus_work_or_commute_context_to_the_bounded_same_person_focus",
+            "use_the_current_forsakringskassan_work_injury_cost_route_without_promising_approval_or_full_reimbursement",
+        ],
+    },
+    "lab-employee-commute-traffic-dental-split-v27-02": {
+        "expected_support_areas": [
+            "commute_work_injury_boundary",
+            "forsakringskassan_dental_cost_route_kept_separate",
+            "afa_commute_traffic_exception",
+            "traffic_insurance_separate_route",
+        ],
+        "must_not_claim": [
+            "a_commute_traffic_accident_automatically_proves_eligibility_for_forsakringskassan_dental_cost_reimbursement",
+            "afa_collective_agreement_work_injury_insurance_covers_a_commute_traffic_accident_unchanged",
+            "traffic_insurance_and_forsakringskassan_work_injury_dental_reimbursement_are_the_same_decision",
+            "the_product_can_guess_which_vehicle_insurer_is_responsible_without_current_case_specific_information",
+        ],
+        "expected_questions": [
+            "q_where_did_injury_occur_work_commute_other_or_unsure",
+            "q_if_commute_was_event_a_traffic_accident",
+        ],
+        "expected_next_actions": [
+            "for_forsakringskassan_keep_the_commute_dental_cost_route_subject_to_current_conditions_and_individual_assessment",
+            "for_a_commute_traffic_accident_do_not_recommend_afa_work_injury_insurance_as_if_it_applied_unchanged",
+            "check_the_relevant_traffic_insurance_route_separately_without_guessing_responsible_insurer",
+        ],
+    },
 }
 
 for cid, fields in locks.items():
@@ -147,4 +214,4 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in case[field], f"{cid}: missing locked {field} token {token}"
 
-print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v25 semantics locked)")
+print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v27 semantics locked)")
