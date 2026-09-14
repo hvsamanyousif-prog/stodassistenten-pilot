@@ -1,7 +1,7 @@
 {
   "support_id": "se-forsakringskassan-underhallsstod",
   "name": "Underhållsstöd",
-  "category": "family",
+  "category": "family_children",
   "subtype": "child_maintenance_support",
   "provider": {
     "name": "Försäkringskassan",
@@ -79,7 +79,7 @@
     "kind": "cash",
     "amount_text": null,
     "calculation_text": "Försäkringskassan bedömer rätten och eventuell nivå enligt aktuella regler. Den publika Stödassistenten räknar inte ut underhållsstöd eller underhållsbidrag.",
-    "recurrence": "monthly_if_granted"
+    "recurrence": "monthly"
   },
   "documents": [],
   "application": {
@@ -89,7 +89,7 @@
     "next_step": "Klargör boendemönster och om underhåll betalas fullt, delvis eller inte alls. Kontrollera därefter aktuella villkor och ansökningsväg direkt hos Försäkringskassan."
   },
   "source": {
-    "source_id": "se-forsakringskassan-family-maintenance",
+    "source_id": "se-forsakringskassan-benefits-a-z",
     "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
     "source_type": "official_web",
     "published_at": null,
