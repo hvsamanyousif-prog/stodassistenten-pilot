@@ -8,6 +8,7 @@ on:
       - 'data/evals/scenario_lab_websignals*.json'
       - 'scripts/validate_scenario_lab.py'
       - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_recent_learning_memory.py'
       - '.github/workflows/scenario-lab.yml'
 jobs:
   validate:
@@ -18,3 +19,4 @@ jobs:
         with:
           python-version: '3.12'
       - run: python scripts/validate_scenario_lab_all.py
+      - run: python scripts/validate_recent_learning_memory.py
