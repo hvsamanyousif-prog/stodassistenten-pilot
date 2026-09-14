@@ -1,0 +1,46 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regression for the single Stödassistenten scenario laboratory. It captures high-consequence friction when a private person cannot cover basic needs and needs a source-grounded municipal economic-assistance path. Community material is discovery-only; truth-bearing behavior must come from Socialstyrelsen primary sources. No real user story or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-private-basic-needs-economic-assistance-2026",
+      "observation": "People commonly describe the problem as not having enough money for food, rent or other necessary household costs rather than naming economic assistance. Socialstyrelsen states that applications are made to municipal social services, that the municipality makes an individual assessment, that a simplified trial calculation is not a decision, and that a person has the right to apply and receive a decision.",
+      "primary_sources": [
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/provberakning-ekonomiskt-bistand/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-private-basic-needs-economic-assistance-v23-01",
+      "actor_type": "private_person",
+      "story": "Jag är sjukskriven och pengarna räcker inte till mat och hyran den här månaden. Jag vet inte om jag får söka hjälp från kommunen eller vilka underlag som behövs.",
+      "expected_support_areas": [
+        "municipal_economic_assistance_candidate",
+        "individual_assessment",
+        "basic_needs_or_recurring_support_type",
+        "right_to_apply_and_receive_decision",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "low_income_or_illness_alone_guarantees_economic_assistance",
+        "a_simplified_trial_calculation_is_a_municipal_decision",
+        "illness_alone_removes_all_activity_or_document_requirements",
+        "the_product_can_guarantee_amount_or_payment_date",
+        "the_raw_situation_text_exact_income_bank_data_or_health_details_should_be_put_in_the_handoff_url_or_feedback"
+      ],
+      "expected_questions": [],
+      "expected_next_actions": [
+        "contact_social_services_in_the_users_municipality_to_apply",
+        "ask_the_municipality_which_household_housing_income_asset_and_expense_documents_are_required",
+        "treat_the_socialstyrelsen_trial_calculation_as_orientation_not_a_decision",
+        "do_not_block_an_application_because_the_public_pilot_is_unsure"
+      ],
+      "source_requirements": [
+        "Socialstyrelsen_current_economic_assistance_guidance"
+      ]
+    }
+  ]
+}
