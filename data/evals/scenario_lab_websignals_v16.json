@@ -1,0 +1,55 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic regression for the same Stödassistenten scenario laboratory. This pack captures a recurring work + family-responsibility + sickness-benefit overlap where exact hours can change the VAB route. It stores no real person or community story and promotes no eligibility claim to VERIFIED.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-partial-sickleave-vab-hours",
+      "observation": "Current Försäkringskassan guidance explicitly warns that exact hours and days are especially important when a VAB applicant is partially sick-listed or receives another benefit the same day. It also states that a person who is themselves sick and has reported sick to the employer cannot receive VAB for that sick time. Current sickness-benefit guidance requires part-time work-time placement to be coordinated with Försäkringskassan and the employer.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-02-extra-kontroller-av-vab-under-varen",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-partialsick-vab-v16-01",
+      "actor_type": "employee_guardian",
+      "story": "Jag är sjukskriven 50 procent och skulle ha arbetat resten av dagen. Mitt barn blir sjukt. Kan jag bara vabba 50 procent den dagen, eller spelar det roll vilka timmar jag är sjukskriven och vilka timmar jag skulle ha jobbat?",
+      "expected_support_areas": [
+        "partial_sickness_benefit",
+        "temporary_parental_benefit_vab",
+        "exact_hour_overlap",
+        "work_schedule_distribution",
+        "same_day_benefit_coordination"
+      ],
+      "must_not_claim": [
+        "partial_sick_leave_percentage_automatically_equals_available_vab_percentage",
+        "vab_is_payable_for_hours_when_parent_is_self_sick_and_reported_sick",
+        "two_benefits_can_be_paid_for_the_same_hours_without_coordination",
+        "employer_schedule_alone_determines_forsakringskassan_entitlement",
+        "a_rough_daily_percentage_is_enough_when_exact_hours_or_other_same_day_benefits_are_unclear"
+      ],
+      "expected_questions": [
+        "q_which_exact_hours_are_covered_by_sick_leave_or_sickness_benefit",
+        "q_which_exact_hours_the_parent_would_otherwise_have_worked",
+        "q_was_the_parent_self_sick_and_reported_sick_during_the_hours_they_want_vab",
+        "q_is_any_other_benefit_claimed_or_paid_for_the_same_hours",
+        "q_child_age_or_other_vab_condition_only_if_it_changes_the_route"
+      ],
+      "expected_next_actions": [
+        "map_exact_sick_leave_work_and_requested_vab_hours_before_applying",
+        "do_not_claim_vab_for_hours_that_overlap_with_the_parents_own_reported_sickness",
+        "check_current_forsakringskassan_vab_guidance_for_same_day_overlap",
+        "keep_part_time_sickness_benefit_work_distribution_coordinated_with_both_forsakringskassan_and_employer",
+        "contact_forsakringskassan_if_the_hour_overlap_or_same_day_benefit_combination_is_unclear"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_vab_hours_and_same_day_benefit_guidance",
+        "Forsakringskassan_current_part_time_sickness_benefit_guidance"
+      ]
+    }
+  ]
+}
