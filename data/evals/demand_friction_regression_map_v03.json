@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-young-post-study-no-job-v01",
+      "product_miss": "Natural completed-study language such as 'tagit examen' can fall into a generic work/student route, leaving the user without a source-grounded first-unemployed-day action and creating risk that registration is confused with automatic a-kassa eligibility.",
+      "fix_or_guardrail": "Detect only bounded completed-study transition language, pass a coarse study_to_work focus without raw story text, ask whether a job starts immediately and then whether unemployment is today or later, and keep a-kassa entitlement as a separate decision by the a-kassa.",
+      "regression_case_ids": ["lab-young-post-study-no-job-v20-01"]
+    }
+  ]
+}
