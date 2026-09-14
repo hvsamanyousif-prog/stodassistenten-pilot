@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regression for the single Stödassistenten learning system. It protects a high-friction work-injury dental-cost path without treating a workplace incident report, community discussion or prior AI output as proof of eligibility. Current factual conditions come from Försäkringskassan; possible Afa/collective-agreement compensation is a separate route. No real user story or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-work-injury-dental-cost-2026",
+      "observation": "People can describe a damaged tooth at work or on the commute as an insurance/reporting problem and be unsure whether the employer, Försäkringskassan, Afa or ordinary dental support pays. Försäkringskassan states that dental-cost reimbursement can be relevant when the injury or disease arose due to work or the commute, the treatment is necessary because of the work injury, cost evidence exists, the dentist is connected to Försäkringskassan and the person is insured in Sweden. Reimbursement is not necessarily the full clinic price because reference prices are used. Afa states that collective-agreement work-injury insurance is a separate possible compensation path and that coverage depends on employment/collective-agreement insurance, not union membership alone.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/arbetsskadeforsakring"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-work-injury-dental-cost-v26-01",
+      "actor_type": "employee",
+      "story": "Jag slog i en tand på jobbet och tandläkaren säger att den behöver behandlas. Jag har fått ett kostnadsförslag men vet inte om jobbet, Försäkringskassan eller någon försäkring ska betala. Vad gör jag nu?",
+      "expected_support_areas": [
+        "work_injury_dental_cost_reimbursement_candidate",
+        "work_or_commute_causation_boundary",
+        "treatment_necessary_due_to_work_injury",
+        "cost_evidence_and_connected_dentist",
+        "reference_price_boundary",
+        "collective_agreement_insurance_kept_separate",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "a_workplace_incident_report_or_employer_report_automatically_proves_an_approved_work_injury",
+        "every_dental_bill_after_a_work_injury_is_reimbursed_in_full",
+        "the_clinic_price_is_always_the_reimbursable_amount_regardless_of_reference_price",
+        "afa_work_injury_insurance_applies_to_every_worker_or_requires_union_membership",
+        "forsakringskassan_dental_cost_reimbursement_and_afa_compensation_are_the_same_decision",
+        "ordinary_dental_support_and_work_injury_dental_reimbursement_are_interchangeable_without_source_check",
+        "the_product_can_guarantee_eligibility_amount_or_payment_date",
+        "the_raw_injury_story_employer_identity_exact_cost_or_health_details_should_be_put_in_the_handoff_url_or_feedback"
+      ],
+      "expected_questions": [
+        "q_did_injury_or_disease_arise_due_to_work_or_commute",
+        "q_is_dental_treatment_necessary_due_to_that_work_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan"
+      ],
+      "expected_next_actions": [
+        "collect_cost_proposal_receipt_or_invoice_and_confirm_the_dentist_is_connected_to_forsakringskassan",
+        "use_the_current_forsakringskassan_work_injury_cost_route_or_form_5002_without_promising_approval_or_full_reimbursement",
+        "check_collective_agreement_work_injury_insurance_separately_with_employer_union_or_afa_when_relevant_without_assuming_coverage",
+        "keep_livranta_work_aids_and_ordinary_dental_support_as_separate_paths_unless_current_sources_make_them_relevant"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Afa_current_collective_agreement_work_injury_primary_source_for_separate_insurance_boundary"
+      ]
+    }
+  ]
+}
