@@ -1,0 +1,42 @@
+name: Validate relative-care guidance
+on:
+  pull_request:
+    paths:
+      - 'client/relative-care.js'
+      - 'client/relative-care.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_relative_care.py'
+      - 'data/supports/se-forsakringskassan-narstaendepenning.json'
+      - 'data/evals/scenario_lab_websignals_v21.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/relative-care.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/relative-care.js'
+      - 'client/relative-care.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_relative_care.py'
+      - 'data/supports/se-forsakringskassan-narstaendepenning.json'
+      - 'data/evals/scenario_lab_websignals_v21.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/relative-care.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: node --check client/relative-care.js
+      - run: node client/relative-care.test.cjs
+      - run: python scripts/validate_relative_care.py
+      - run: python scripts/build_public_pilot.py --source . --output _site
+      - run: python scripts/test_public_pilot_build.py --source . --site _site
+        working-directory: .
