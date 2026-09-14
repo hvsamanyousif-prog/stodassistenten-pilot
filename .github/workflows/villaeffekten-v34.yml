@@ -1,0 +1,24 @@
+name: Validate Villaeffekten v34
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  villaeffekten-v34:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Villaeffekten truth and learning loop
+        run: |
+          python scripts/validate_villaeffekten_v34.py
+          python scripts/validate_support_records.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_demand_friction_learning_loop.py

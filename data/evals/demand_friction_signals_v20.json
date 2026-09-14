@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, amount or payment. Search/news language is discovery-only; material Villaeffekten claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-villaeffekten-live-rules-v01",
+      "actor_types": ["individual", "homeowner"],
+      "natural_language_queries": [
+        "jag äger villa och vill sänka elkostnaden finns det bidrag",
+        "kan jag få villaeffekten för värmepump",
+        "gäller energibidraget om huset redan har fjärrvärme",
+        "vi började renovera före september kan vi söka ändå",
+        "får man 30 procent av hela fakturan",
+        "vilka papper behövs för energieffektivisering i småhus"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "The national grant reopened on 1 September 2026 and Boverket is actively surfacing it to small-house owners as a current route for measures that can lower energy costs. This is a qualitative product-priority signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A safe answer depends on multiple facts that ordinary renovation language often omits: ownership/permanent residence, value year, existing district-heating connection, exact measure/product, material-order timing, work-start timing and the distinction between material and labour cost."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A wrong route can make a household miss a transition deadline, order ineligible material, assume labour is covered, budget around a non-guaranteed amount or incorrectly abandon a potentially relevant energy measure."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Boverket provides the operational application guidance while the current legal conditions and measure classes are controlled by SFS 2023:402 as amended through SFS 2026:1519; county boards make grant decisions."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Natural phrases such as 'energibidrag', 'villaeffekten', 'värmepump', 'isolera huset' and '30 procent av fakturan' collapse materially different eligibility, measure and calculation questions."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "The minimum safe path is situation -> check the few route-changing property/measure/timing facts -> current Boverket/SFS verification -> county-board application, rather than a generic renovation catalogue."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The same confusion recurs across many small-house renovation situations and the scheme remains planned through 2030, while exact budget, product requirements and dates can change."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The scenario library already expects an energy-efficiency-grant area, but main had no normalized Villaeffekten truth record despite an explicit open domain issue and the scheme being live since 1 September 2026."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.boverket.se/sv/om-boverket/nyheter-aktuellt/nyheter/sok-bidrag/"
+      ],
+      "primary_sources": [
+        "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/"
+      ],
+      "recommended_learning_action": "Add the live Villaeffekten candidate to the existing truth layer in NEEDS_REVIEW state, preserve the Boverket/SFS source boundary, and permanently regress the value-year, district-heating, measure, timing, material-only, county-board-decision and no-guaranteed-amount semantics. Do not build a separate energy matcher.",
+      "truth_rule": "Discovery language and Boverket news are signals, not eligibility truth. Verify current material conditions against Boverket's operational primary guidance and the current SFS before making a material claim. Do not infer eligibility, a 60,000 SEK payment, labour-cost coverage or deadline safety from generic renovation intent."
+    }
+  ]
+}

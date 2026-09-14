@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-09-05",
+  "generated_at": "2026-09-14",
   "purpose": "Candidate primary-source registry for the future private Support Ingestion Engine. This file stores source metadata only; it does not assert user eligibility or publish unverified support rules.",
   "automation_guardrails": {
     "robots_and_terms_review_required_before_crawling": true,
@@ -99,6 +99,22 @@
       "source_verification_status": "SOURCE_VERIFIED",
       "last_source_check": "2026-09-05",
       "adapter_state": "CANDIDATE"
+    },
+    {
+      "source_id": "se-boverket-small-house-energy-grant",
+      "owner": "Boverket",
+      "authority_type": "national_agency",
+      "url": "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+      "geography": "SE",
+      "coverage": ["housing", "energy", "small_house", "renovation", "grant"],
+      "source_type": "official_guidance",
+      "ingestion_method": "html_guidance",
+      "priority": "P0",
+      "suggested_review_frequency_days": 7,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-14",
+      "adapter_state": "CANDIDATE",
+      "notes": "Current primary guidance for the 2026 small-house energy-efficiency grant (Villaeffekten). Material eligibility, application timing and decision authority must stay grounded in current Boverket guidance plus the current SFS; source verification does not imply user eligibility."
     },
     {
       "source_id": "se-lansstyrelserna-foundation-search",
