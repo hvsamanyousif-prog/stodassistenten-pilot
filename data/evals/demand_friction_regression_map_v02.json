@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-dental-67-strengthened-protection-v01",
+      "product_miss": "The public dental path is generic, so a person turning 67+ in 2026 can interpret 'tiotandvård' as 10 percent of the whole clinic invoice instead of a strengthened rule tied to specific measures and reference prices.",
+      "fix_or_guardrail": "Require age/year, planned measure and reference-price disambiguation before cost claims; explicitly keep examinations, X-rays and preventive care outside the blanket 10-percent assumption and preserve the ordinary high-cost route for other measures.",
+      "regression_case_ids": ["lab-older-dental-67-v19-01"]
+    }
+  ]
+}
