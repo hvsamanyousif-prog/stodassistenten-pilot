@@ -1,16 +1,16 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-14",
-  "purpose": "Qualitative demand/friction intelligence for property charging in the single Stödassistenten learning system. Scores prioritize product work; they are not search-volume measurements, eligibility evidence or a source of legal truth.",
+  "purpose": "Qualitative demand/friction intelligence for property charging in the single Stödassistenten learning system. These are not measured search volumes; scores prioritize product work and are not eligibility evidence or a source of legal truth.",
   "scoring": {
     "scale": "1-5",
     "meaning": "1=low, 5=very high",
-    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage."
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
   },
   "signals": [
     {
       "signal_id": "df-property-charging-brf-rights-v01",
-      "actor_types": ["property_actor", "association", "private_person"],
+      "actor_types": ["property_actor", "private_person"],
       "natural_language_queries": [
         "kan brf få bidrag till laddstolpar",
         "ladda bilen brf hur mycket får man",
@@ -44,7 +44,7 @@
       },
       "steps_to_action": {
         "score": 4,
-        "basis": "The route can be shortened to project owner/context, primary user category and work-start state only where it can change the path; individual resident requests should bypass grant questions entirely."
+        "basis": "The route can be shortened to project owner/context, primary user category and work-start state only where they can change the path; an individual resident request should bypass organisation-grant questions and ask only a statutory-scope fact if it can change the route."
       },
       "recurrence_signal": {
         "score": 5,
@@ -63,7 +63,7 @@
         "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-fastighetsbolag-och-foretag/",
         "https://data.riksdagen.se/dokument/sfs-1991-614.html"
       ],
-      "recommended_learning_action": "Add one bounded property_charging route to the existing shell/person product. Preserve a coarse context in the handoff only when it is explicit, ask only route-changing usage/start facts, keep organisation grant paths separate from the resident's statutory request, and make all material support/legal claims primary-source governed and review-gated.",
+      "recommended_learning_action": "Add one bounded property_charging route to the existing shell/person product. Preserve a coarse context in the handoff only when it is explicit, ask only route-changing usage/start/statutory-scope facts, keep organisation grant paths separate from the resident's statutory request, and make all material support/legal claims primary-source governed and review-gated.",
       "truth_rule": "Demand, usage and natural-language signals are not truth. Current grant amount caps, eligible-cost rules, applicant categories, work-start rules and resident charging rights must be checked against current Naturvårdsverket/Riksdagen primary sources. Never infer grant approval, state-aid classification, a guaranteed resident installation or individual statutory eligibility from story text."
     }
   ]
