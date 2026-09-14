@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. VAB and sickness-benefit rules are truth-bearing only after current primary-source verification; discovery material is never used as fact.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. These scores guide eval, retrieval and question-order work only."
+  },
+  "signals": [
+    {
+      "signal_id": "df-partialsick-vab-hours-overlap-v01",
+      "actor_types": ["employee", "guardian", "employee_guardian"],
+      "natural_language_queries": [
+        "jag är sjukskriven 50 procent kan jag vabba resten av dagen",
+        "barnet är sjukt och jag är sjukskriven deltid vilka timmar kan jag vabba",
+        "kan jag få sjukpenning och vab samma dag",
+        "vem ska jag fråga om vab när min arbetstid är förlagd annorlunda under deltidssjukskrivning"
+      ],
+      "demand_signal": {"score": 4, "basis": "VAB and part-time sickness absence are both broad national social-insurance situations that can overlap for working parents. The score is a qualitative product-priority signal, not measured query volume."},
+      "friction_signal": {"score": 5, "basis": "A percentage such as 50 percent sounds sufficient, but current guidance makes exact hours, the parent's own sickness status and other same-day benefits material. Work-time placement can also differ from a simple half-day split."},
+      "miss_consequence": {"score": 5, "basis": "A false-positive answer can lead to a VAB claim for time when the parent was themselves sick or to overlapping benefit claims, while an overly broad rejection can make the user miss a potentially relevant non-overlapping work-time route."},
+      "source_fragmentation": {"score": 4, "basis": "The safe route spans current Försäkringskassan VAB guidance, same-day control guidance and part-time sickness-benefit work-time rules rather than one simple percentage rule."},
+      "language_accessibility_friction": {"score": 4, "basis": "Terms such as sjukskrivningsgrad, arbetstidens förläggning, samma timmar and annan ersättning samma dag are easy to flatten into a misleading daily percentage, especially under family time pressure."},
+      "steps_to_action": {"score": 3, "basis": "The route can be shortened to a few high-information facts: exact sick-leave hours, exact hours otherwise worked, whether the parent is self-sick/sick-reported for the requested time and whether another benefit covers the same hours."},
+      "recurrence_signal": {"score": 4, "basis": "The overlap is structurally recurring whenever a working parent has part-time sickness absence and a child-care interruption. This is a qualitative recurrence signal, not a measured frequency claim."},
+      "current_product_coverage_gap": {"score": 5, "basis": "The scenario system separately covered part-time sickness-benefit scheduling and VAB boundaries, but did not permanently test their same-day hour-level intersection. The employee coverage matrix also identified work + family responsibility + sickness as an area needing more combination cases."},
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-02-extra-kontroller-av-vab-under-varen",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld"
+      ],
+      "recommended_learning_action": "Add a permanent fail-closed combination regression that asks for exact hour overlap before treating a part-time sickness percentage as available VAB time, and use the finding to improve future question order for work + family + sickness cases.",
+      "truth_rule": "Verify current VAB and part-time sickness-benefit rules against Försäkringskassan; do not infer eligibility or an available VAB percentage from the sickness percentage alone, and do not claim two benefits for the same hours are valid without current authority verification."
+    }
+  ]
+}
