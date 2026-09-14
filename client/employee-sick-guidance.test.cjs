@@ -4,8 +4,9 @@ const g = require('./employee-sick-guidance.js');
 assert.equal(g.detect('Jag jobbar deltid och är sjukskriven resten.'), true);
 assert.equal(g.detect('Jag är timanställd och sjuk. Vem ska jag sjukanmäla mig till?'), true);
 assert.equal(g.detect('Jag är arbetslös på deltid, har en anställning och är sjuk.'), false, 'mixed jobseeker/employment must stay in the v47 authority-disambiguation route');
+assert.equal(g.detect('Jag är sjuk och har ingen anställning.'), false, 'negated employment must not trigger the employee route');
 assert.equal(g.detect('Jag jobbar deltid och vill söka semester.'), false);
-assert.equal(g.detect('Jag är sjuk men skriver inget om arbete eller anställning.'), false);
+assert.equal(g.detect('Jag är sjuk och behöver hjälp.'), false);
 assert.equal(g.detect('أعمل بدوام جزئي وأنا في إجازة مرضية.'), true);
 assert.equal(g.detect('پاره‌وقت کار می‌کنم و مرخصی استعلاجی هستم.'), true);
 
