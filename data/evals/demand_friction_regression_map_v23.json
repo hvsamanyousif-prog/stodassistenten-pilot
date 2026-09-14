@@ -4,6 +4,7 @@
   "mappings": [
     {
       "signal_id": "df-job-premium-assistance-to-work-transition-v01",
+      "product_miss": "The normalized Försäkringskassan job-premium record already exists, but the public situation/person intelligence has no explicit route for the reverse transition from municipal social assistance to employment salary. Without a guarded route, the product can either miss a time-limited support candidate or overgeneralize from vague facts such as 'I had social assistance last year and now work'.",
       "regression_case_ids": [
         "lab-private-social-assistance-to-work-job-premium-v45-01",
         "lab-private-job-premium-qualification-or-deadline-fail-closed-v45-02"
