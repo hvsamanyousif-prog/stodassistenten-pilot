@@ -21,14 +21,16 @@ Varje kombination av aktör × situation × geografi × stödtyp ska kunna märk
 
 | Aktör | Fungerande ingång | Situationsförståelse | Primärkällor när fakta visas | Konkret nästa handling | Anonym feedback | Regression | Aktuell lucka |
 |---|---|---|---|---|---|---|---|
-| Privatperson | root + person-pilot | bred personprofil + tand/syn/ekonomi | ja, per visad stödväg | ja | ja | ja | bred fallback ställer fortfarande fler frågor än vissa fokuserade flöden |
+| Privatperson | root + person-pilot | bred personprofil + tand/syn/ekonomi/assistans | ja, per visad stödväg | ja | ja | ja | bred fallback ställer fortfarande fler frågor än vissa fokuserade flöden |
 | Student/nyexaminerad | root `study` → samma personmodul | student/arbete/ekonomi/boende | ja för visade kandidater | ja | ja, aktörssegmenterad | ja | naturligt språk kan fortfarande behöva bättre övergångsdetektion mellan studier och första jobb |
-| Anställd | root `work` → samma personmodul | arbete/sjukskrivning/ekonomi | ja | ja | ja, aktörssegmenterad | ja, inklusive deltidssjukskrivning + VAB på timnivå | publik väg saknar ännu fokuserad handoff för kombinationen arbete + familjeansvar + sjukdom |
+| Äldre person | root + samma personmodul + befintlig dental quick-help | pension/ekonomi/boende + tandkostnad | ja för visade kandidater | ja | ja | ja, inklusive tandkostnad och 2026 års 67+-regel | tandflödet är ännu generiskt och saknar en egen publik åldersmedveten 67+-handoff |
+| Person med funktionsnedsättning | root + syn/assistans/familj → samma personmodul | funktionsbehov, bostad, hjälpmedel och assistans hålls isär från diagnos | ja | ja | ja | ja | lokal/regional variation för hjälpmedel och kommunala insatser kräver fortsatt source-aware routing |
+| Anställd | root `work` + naturlig akut-VAB-route → samma personmodul | arbete/sjukskrivning/ekonomi + ålder/egen sjukfrånvaro/exakta timmar vid VAB | ja | ja | ja, aktörssegmenterad | ja, inklusive deltidssjukskrivning + VAB på timnivå | fler kombinationer mellan arbete, ersättningar och familjeansvar behöver long-tail-testas |
 | Anhörig som hjälper annan | root actor-ingång → samma personmodul | representation och den hjälptes situation hålls isär i regressioner | ja | ja | ja, aktörssegmenterad | ja | fullmakt/representation varierar mellan tjänster och ska fortsatt fail-closed |
-| Barn via vårdnadshavare/familj | root naturligt extra-stödbehov → samma personmodul + person-pilot familjeingång | behovsledd family-handoff + åldersgrind + behov av omvårdnad/tillsyn/skola | ja för visade barnstöd | ja | ja | ja | VAB 12+ och deltidssjukskrivning + VAB finns som evals men ännu inte som egna publika fokuserade stödvägar |
+| Barn via vårdnadshavare/familj | root naturligt extra-stödbehov + separat akut-VAB-route → samma personmodul | behovsledd family-handoff + åldersgrind; VAB-flödet frågar ålder och bara route-changing frånvarofakta | ja för visade barnstöd/VAB-vägar | ja | ja | ja, inklusive VAB 12+ och deltidssjukskrivning + VAB | andra familjeersättningar och skol/kommun-kombinationer behöver fortsatt breddas utan att blanda ihop dem med akut VAB |
 | Företag | root + company-pilot | finansiering kontra upphandling med information-gain | ja | ja | ja | ja | fortsatt retrievalbredd för faktiska upphandlingar och lokala finansieringskällor |
 | Förening/ideell | root `association` → samma personmodul | finansiering/lokal/offentliga möjligheter | ja | ja | ja | ja | lokal/geografisk stödvariation är fortfarande tunn |
-| BRF/fastighetsaktör | ingen tydlig dedikerad publik ingång ännu | bostadsanpassning fångar ägare/rättighetshavare som processfakta, inte som full aktörsväg | delvis | delvis | inte egen aktörssegmentering | scenarioregression finns för bostadsanpassning | **svag täckning**: bör prioriteras först när verifierade behov visar att en egen ingång ger högre nytta utan parallell motor |
+| BRF/fastighetsaktör | root `property_actor` / `focus=property_accessibility` → samma produkt | common area kontra inne i lägenhet, beslutsläge, medgivande kontra frivilligt övertagande | ja, Boverket + ansvarig kommun när sakfakta visas | ja | ja, grov aktörssegmentering utan scenariosvar | ja, v17 bostadsanpassning/övertagande | täckningen är fortfarande smal till bostadsanpassning; den ska inte generaliseras till annan fastighetsjuridik utan nya verifierade behov |
 
 ## Högprioriterade situationsfamiljer
 
@@ -40,7 +42,7 @@ Varje kombination av aktör × situation × geografi × stödtyp ska kunna märk
 - anhörigstöd
 - barn/familj
 - boende/energi/renovering
-- tandvård
+- tandvård, inklusive 2026 års förstärkta högkostnadsskydd 67+
 - försäkrings-/ersättningsspår
 - anställningsförmåner
 - mobilitet/fordon/laddning när verifierat stöd finns
@@ -55,9 +57,13 @@ Varje kombination av aktör × situation × geografi × stödtyp ska kunna märk
 
 En fråga räknas inte som situationsförståelse om svaret inte kan ändra routing, ranking, säker nästa handling eller behovet av verifiering. När en fråga visar att ett specialiserat flöde inte längre passar ska produkten fail-closed inom samma Stödassistenten i stället för att fortsätta till fel målgruppsstöd.
 
-Familjeflödet är ett permanent exempel: root-skalet får nu lämna över ett grovt `focus=family` för tydliga, behovsledda berättelser om extra omvårdnad/tillsyn/skolstöd, men rå situationsberättelse följer inte med. Om åldersgrinden sedan inte stödjer barnspåret får produkten inte fortsätta till barnspecifika resultat. Ett vanligt VAB-ärende ska inte triggas av den familjerouten bara för att ordet barn förekommer.
+Familjeflödet och VAB-flödet är avsiktligt separata men delar samma produkt och lärsystem. Root-skalet får lämna över ett grovt `focus=family` för tydliga, behovsledda berättelser om extra omvårdnad/tillsyn/skolstöd och ett separat grovt `focus=vab` för akut sjukt-barn/VAB. Rå situationsberättelse följer inte med. Om åldersgrinden inte stödjer barnspåret får produkten inte fortsätta till barnspecifika resultat.
 
 VAB 12+ behandlas separat i Scenario Lab eftersom ålder, särskilt vård-/tillsynsbehov, medicinskt underlag/förhandsbeslut och aktuell ansökningstid kan ändra vägen. Kombinationen deltidssjukskrivning + VAB behandlas också separat eftersom exakt förläggning av sjukskrivning, arbete och begärd VAB-tid kan ändra svaret; ett dagsprocenttal är inte tillräckligt som ensam beslutsfakta.
+
+BRF/fastighetsaktör är ett permanent exempel på att täckningsmatrisen måste följa faktisk produkt. Den publika bostadsanpassningsvägen finns nu, men aktörsetiketten får inte göra BRF/hyresvärd till ursprunglig sökande eller blanda ihop medgivande med ett frivilligt övertagande efter beviljat kontantbidrag.
+
+Tandvård 67+ är ett permanent exempel på skillnaden mellan eval-täckning och färdig publik förmåga. Scenario Lab ska nu stoppa påståenden om att “tiotandvård” betyder 10 procent av hela besöket. Det publika tandflödet är fortfarande generiskt tills en källgrundad åldersmedveten handoff byggs i samma quick-help-väg.
 
 ## Pilotprincip
 

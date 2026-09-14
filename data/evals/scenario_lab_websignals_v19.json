@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic dental-cost regression for the single Stödassistenten scenario laboratory. It protects the 2026 strengthened high-cost protection for people who turn 67 or older from being overgeneralized to every dental measure or to the clinic's entire invoice. It stores no real person or community story and does not promote an eligibility claim to VERIFIED.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-dental-67-strengthened-high-cost-2026",
+      "observation": "Current Försäkringskassan guidance states that from 1 January 2026 people who turn 67 or older during 2026 pay 10 percent of the reference price for certain treatments under the strengthened high-cost protection. Examinations, preventive care and X-rays are not included in that strengthened protection, while the previous high-cost protection remains for care outside it. TLV's current 2026 regulations and reference-price framework define the covered measures and prices. The product must therefore distinguish age/year, treatment measure and reference price before describing the user's likely cost.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "https://www.tlv.se/tandvard/regelverk-om-tandvardsstodet.html"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-older-dental-67-v19-01",
+      "actor_type": "older_person",
+      "story": "Jag fyller 67 år under 2026 och behöver både undersökning, röntgen och behandling av en trasig tand. Jag har hört om tiotandvård. Betyder det att jag bara betalar 10 procent av hela tandläkarbesöket och alla åtgärder?",
+      "expected_support_areas": [
+        "state_dental_support",
+        "strengthened_high_cost_protection_67_plus_2026",
+        "reference_price",
+        "covered_vs_excluded_measures",
+        "ordinary_high_cost_protection_for_other_measures",
+        "itemized_price_estimate"
+      ],
+      "must_not_claim": [
+        "strengthened_high_cost_protection_covers_the_entire_dental_invoice",
+        "examinations_xrays_and_preventive_care_are_always_included_in_the_10_percent_rule",
+        "patient_pays_10_percent_of_any_clinic_price_regardless_of_reference_price",
+        "every_person_under_67_is_covered_by_the_2026_strengthened_rule",
+        "all_prosthetic_treatment_anywhere_in_the_mouth_is_covered_without_measure_check",
+        "the_previous_high_cost_protection_disappeared_in_2026",
+        "a_specific_final_cost_is_guaranteed_before_the_treatment_measures_and_reference_prices_are_known"
+      ],
+      "expected_questions": [
+        "q_does_person_turn_67_or_older_during_2026",
+        "q_which_examination_xray_preventive_and_treatment_measures_are_planned",
+        "q_has_clinic_provided_itemized_price_and_reference_price_information",
+        "q_is_any_prosthetic_measure_included_and_if_so_which_tooth_position_or_measure"
+      ],
+      "expected_next_actions": [
+        "ask_dental_provider_for_itemized_treatment_plan_with_clinic_price_reference_price_and_which_measures_use_strengthened_support",
+        "use_current_forsakringskassan_guidance_to_separate_strengthened_protection_from_excluded_measures",
+        "use_current_tlv_rules_or_reference_prices_before_claiming_coverage_or_cost_for_a_specific_measure",
+        "for_measures_outside_strengthened_protection_check_the_existing_state_dental_support_route_instead_of_treating_them_as_uncovered_by_all_support",
+        "do_not_promise_a_final_patient_cost_until_actual_measures_and_current_reference_prices_are_known"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_strengthened_dental_high_cost_protection_2026",
+        "TLV_current_2026_dental_support_rules_and_reference_prices"
+      ]
+    }
+  ]
+}

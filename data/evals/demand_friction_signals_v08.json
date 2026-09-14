@@ -1,0 +1,41 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. Dental 67+ rules become truth-bearing only after current primary-source verification; commercial FAQ pages are discovery signals only.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. These scores guide eval, retrieval and question-order work only."
+  },
+  "signals": [
+    {
+      "signal_id": "df-dental-67-strengthened-protection-v01",
+      "actor_types": ["older_person", "individual"],
+      "natural_language_queries": [
+        "jag fyller 67 i år betyder tiotandvård att hela tandläkarbesöket kostar tio procent",
+        "ingår undersökning och röntgen i tiotandvård",
+        "betalar jag tio procent av tandläkarens pris eller av referenspriset",
+        "gäller nya tandvårdsstödet alla tänder och alla behandlingar efter 67"
+      ],
+      "demand_signal": {"score": 4, "basis": "Dental cost worry is already a permanent older-person scenario and the 2026 reform creates a new age-specific decision point. Current public FAQ-style pages repeatedly explain the same 67+, 10-percent and included/excluded-measure questions; this is qualitative prioritization, not measured search volume."},
+      "friction_signal": {"score": 5, "basis": "The shorthand 'tiotandvård' can be misread as ten percent of the whole invoice. Safe guidance must separate reference price from clinic price, covered treatment measures from examinations/X-rays/preventive care, and the strengthened protection from the ordinary high-cost protection that remains."},
+      "miss_consequence": {"score": 4, "basis": "Overgeneralizing the rule can create a materially wrong cost expectation before treatment, while under-explaining it can make an older user delay necessary dental care or fail to request an itemized estimate."},
+      "source_fragmentation": {"score": 4, "basis": "The user-facing overview is on Försäkringskassan while detailed current measure and reference-price rules are maintained by TLV, so a specific treatment-cost answer cannot safely rely on one generic page alone."},
+      "language_accessibility_friction": {"score": 4, "basis": "Terms such as referenspris, särskild tandvårdsersättning, ersättningsberättigande åtgärd and tandposition are technical; the popular name 'tiotandvård' encourages an overly simple interpretation."},
+      "steps_to_action": {"score": 3, "basis": "A useful next step can be short: establish whether the person reaches the 67+ rule in 2026, identify the planned measures, and obtain an itemized clinic price/reference-price breakdown before estimating cost."},
+      "recurrence_signal": {"score": 4, "basis": "The same ambiguity recurs whenever a 67+ patient combines an examination or X-ray with treatment, or hears '10 percent' without knowing which measures and price base it refers to. This is a qualitative recurrence signal."},
+      "current_product_coverage_gap": {"score": 4, "basis": "The existing dental quick-help path correctly points to state dental support and price estimates, but it is generic and does not permanently guard the 2026 67+ distinction between strengthened coverage, excluded measures and reference-price semantics."},
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.tandlakare.se/fakta/tiotandvard/",
+        "https://www.aquadental.se/fakta/tiotandvard/fragor-och-svar"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "https://www.tlv.se/tandvard/regelverk-om-tandvardsstodet.html"
+      ],
+      "recommended_learning_action": "Add the 67+ strengthened dental protection as a permanent synthetic regression in the existing scenario laboratory, require age/year + planned measure + reference-price disambiguation before cost claims, and keep the public generic dental path visibly marked as a coverage gap until a source-grounded age-aware route is added.",
+      "truth_rule": "Verify current age scope, covered measures and reference prices against Försäkringskassan and TLV before stating coverage or cost; do not treat commercial FAQ wording, the label 'tiotandvård', or an age label alone as proof that every measure is covered."
+    }
+  ]
+}
