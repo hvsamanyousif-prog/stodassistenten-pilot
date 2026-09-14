@@ -62,6 +62,12 @@
       "product_miss": "A part-time sick-listed parent can treat the sickness percentage as if it automatically defines the VAB percentage, ignoring exact hour placement, the parent's own sick-reported time and other same-day benefits.",
       "fix_or_guardrail": "Ask only the hour-level facts that can change the route, block same-hour double-benefit assumptions, and preserve coordination of part-time sickness-benefit work-time placement with Försäkringskassan and the employer.",
       "regression_case_ids": ["lab-employee-partialsick-vab-v16-01"]
+    },
+    {
+      "signal_id": "df-property-housing-adaptation-owner-role-v01",
+      "product_miss": "A BRF or landlord can be routed as if it were the initial housing-adaptation applicant, or can conflate owner consent with the separate voluntary takeover route for an already granted cash grant in common areas.",
+      "fix_or_guardrail": "Keep the resident as initial applicant, distinguish inside-apartment from common-area measures and consent from takeover, require the positive cash-grant and written-agreement prerequisites before owner takeover, and keep repair/restoration consequences separate.",
+      "regression_case_ids": ["lab-property-housing-adaptation-takeover-v17-01"]
     }
   ]
 }
