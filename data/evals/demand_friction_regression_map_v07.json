@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-work-injury-dental-cost-v01",
+      "product_miss": "The product had dental and work/sickness coverage but no structured truth or regression for a user whose tooth injury arose at work or on the commute, creating a risk of conflating an incident report, Försäkringskassan cost reimbursement, ordinary dental support and possible Afa/collective-agreement compensation.",
+      "fix_or_guardrail": "Create one review-gated Försäkringskassan dental-cost support record and lock the cross-route boundaries in Scenario Lab: work/commute connection and treatment necessity matter, reference price means full clinic price is not guaranteed, incident reporting is not benefit approval, and Afa/collective-agreement coverage remains a separate assessment.",
+      "regression_case_ids": [
+        "lab-employee-work-injury-dental-cost-v26-01"
+      ]
+    }
+  ]
+}
