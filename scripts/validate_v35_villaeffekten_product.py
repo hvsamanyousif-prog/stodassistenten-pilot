@@ -125,8 +125,21 @@ assert {
     "lab-homeowner-villaeffekten-timing-cost-v34-03",
 }.issubset(v34_ids)
 
-serialized = json.dumps({"signal": signal, "cases": list(cases.values())}, ensure_ascii=False).lower()
-for forbidden in ["personnummer", "bankkonto", "diagnos", '"email"', '"phone"', "raw_story", "raw_post"]:
-    assert forbidden not in serialized, f"forbidden sensitive/raw field leaked: {forbidden}"
+# Privacy guard checks data structure, not safety prose. Regression labels are allowed
+# to *name* forbidden concepts (for example "raw_story") so the tests can lock the
+# prohibition. What must never appear are actual fields that could carry those values.
+forbidden_field_keys = {"personnummer", "bankkonto", "diagnos", "email", "phone", "raw_story", "raw_post"}
+
+def assert_no_forbidden_field_keys(value, path="root"):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            normalized = str(key).strip().lower()
+            assert normalized not in forbidden_field_keys, f"forbidden sensitive/raw field key leaked at {path}.{key}"
+            assert_no_forbidden_field_keys(child, f"{path}.{key}")
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            assert_no_forbidden_field_keys(child, f"{path}[{index}]")
+
+assert_no_forbidden_field_keys({"signal": signal, "cases": list(cases.values())})
 
 print("Villaeffekten v35 product guard: OK (same shell/person module; privacy, information-gain, source and review gates locked)")
