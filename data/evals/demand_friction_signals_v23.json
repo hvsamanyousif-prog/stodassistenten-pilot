@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, amount, deadline safety, insurance coverage or payment. Natural-language patterns are discovery-only; work-injury and insurance facts require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-work-injury-worker-context-v01",
+      "actor_types": ["employee", "self_employed", "invoiced_worker"],
+      "natural_language_queries": [
+        "jag driver eget och slog sönder en tand när jag jobbade",
+        "gäller arbetsskada om jag har enskild firma",
+        "har företagare Afa eller TFA vid arbetsskada",
+        "jag fakturerar via faktureringsföretag vem är arbetsgivare vid arbetsskada",
+        "är egenanställd samma sak som egenföretagare när jag skadar mig i jobbet",
+        "jag har eget företag och vet inte om jag har Fora avtal",
+        "أنا أعمل لحسابي وأصبت سني أثناء العمل أي تأمين أراجع",
+        "من از طریق شرکت صدور فاکتور کار می‌کنم و در کار دندانم آسیب دید کارفرما کیست"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "The same natural work-injury question can arise for employees, business owners and people invoicing through an invoicing company, while official guidance distinguishes their employment and contract context. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users can easily collapse the statutory Försäkringskassan work-injury route, invoicing-company employer responsibility, Fora business-owner agreements and TFA into one concept called arbetsskadeförsäkring. The route-changing fact is worker/contract context, not the label alone."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Wrong worker-context routing can incorrectly exclude a business owner from a statutory route, incorrectly promise or deny TFA, send an invoiced worker to sole-trader guidance, or delay collection of the correct dental and insurance evidence."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "The statutory dental-cost route is described by Försäkringskassan, the invoiced-worker employer relationship is described separately by Försäkringskassan, and business-owner TFA depends on current Fora agreement context. No one source safely resolves every layer."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as egenföretagare, egenanställd, faktureringsföretag, arbetsgivaransvar, försäkringsavtal and TFA are easy to conflate, especially when a user starts from a concrete injury rather than an insurance term."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A useful route should first preserve the injury/treatment evidence path, then carry only bounded worker context, then ask the minimum contract question that can change the TFA path instead of requesting company identities, contract numbers or raw health details."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The confusion repeats wherever a person works through a business, sole-trader structure or invoicing company and tries to map a workplace injury to public and contractual insurance layers."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The public work-injury dental module had v29-v30 synthetic knowledge about self-employed and invoiced-worker boundaries but still hardcoded every natural-language handoff to actor_type=employee and displayed generic employee/Afa wording."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld",
+        "https://www.fora.se/ms-foretag-inlogg"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld",
+        "https://www.fora.se/ms-foretag-inlogg",
+        "https://www.fora.se/BL000203/"
+      ],
+      "recommended_learning_action": "Keep one shared work-injury dental module. Detect only explicit worker-context language, preserve that context as bounded URL state, keep the statutory dental-cost path available, ask a business owner only whether a current Fora insurance/ground agreement exists when that fact can change the TFA path, and treat an invoicing company as employer context without converting the user into a sole trader. Never copy raw injury, company, client, contract or health details into the handoff or feedback.",
+      "truth_rule": "Discovery language and qualitative scores are signals, not truth. Verify current work-injury conditions with Försäkringskassan and current employer/agreement/TFA context with the responsible primary source before they affect truth-bearing behavior. Never infer eligibility, full reimbursement, TFA coverage or absence of coverage from worker labels, business registration, an invoicing arrangement or prior AI output."
+    }
+  ]
+}
