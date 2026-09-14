@@ -1,0 +1,132 @@
+{
+  "support_id": "se-boverket-bostadsanpassningsbidrag",
+  "name": "Bostadsanpassningsbidrag för nödvändiga anpassningar i bostaden",
+  "category": "housing_energy",
+  "subtype": "municipal_housing_adaptation_grant",
+  "provider": {
+    "name": "Ansvarig kommun",
+    "provider_type": "municipality",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": "Nationellt reglerat bidrag som prövas av kommunen där bostaden som ska anpassas finns."
+  },
+  "audience": {
+    "segments": [
+      "disability",
+      "housing_adaptation",
+      "tenant",
+      "home_owner",
+      "housing_cooperative"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "bab.applicant_functional_need",
+        "field": "person_with_disability_is_applicant",
+        "operator": "text_condition",
+        "value": "Det är personen med funktionsnedsättning som är sökande. Bidraget avser åtgärder som är nödvändiga med hänsyn till funktionsnedsättningen; diagnos eller funktionsnedsättning i sig är inte ett automatiskt beslut om bidrag.",
+        "source_url": "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/handlaggning/guide-for-handlaggning/ansokan/",
+        "notes": "Produkten ska fråga efter den konkreta barriären och den åtgärd som behöver prövas, inte anta rätt till bidrag utifrån diagnos."
+      },
+      {
+        "rule_id": "bab.responsible_municipality",
+        "field": "municipality_where_home_is_located",
+        "operator": "text_condition",
+        "value": "Ansökan prövas av kommunen där bostaden som ska anpassas finns.",
+        "source_url": "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/handlaggning/guide-for-handlaggning/ansokan/",
+        "notes": "Kommunal process och blankett/e-tjänst kan variera; aktuell lokal ansökningsväg måste kontrolleras hos rätt kommun."
+      },
+      {
+        "rule_id": "bab.owner_right_holder_consent",
+        "field": "owner_and_right_holder_written_consent",
+        "operator": "text_condition",
+        "value": "Om någon annan än sökanden helt eller delvis äger bostaden eller har relevant nyttjanderätt krävs medgivanden enligt den aktuella rättsliga ramen innan ett positivt beslut kan lämnas. Ägare ska också, där regeln gäller, utfästa att inte kräva ersättning för återställning av anpassningsåtgärden.",
+        "source_url": "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/handlaggning/guide-for-handlaggning/Fastighetsagarens-medgivande/",
+        "notes": "Hyresrätt eller delat kontrakt är inte i sig ett skäl att sålla bort stödvägen. Consent är ett process- och beslutsvillkor, inte bevis på entitlement."
+      },
+      {
+        "rule_id": "bab.home_context",
+        "field": "home_use_context",
+        "operator": "text_condition",
+        "value": "Bidragets bostadsvillkor måste kontrolleras mot aktuell Boverket-vägledning för den bostad som ska anpassas; permanentboende och vissa återkommande boendesituationer behandlas i regelverket.",
+        "source_url": "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/villkor-for-bostadsanpassningsbidrag/dar-sokanden-bor-permanent/",
+        "notes": "Produkten får inte förenkla bostadsvillkoret till en ensam folkbokföringsfråga."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "bab.concrete_barrier",
+        "prompt": "Vilken konkret del av bostaden fungerar inte för dig på grund av funktionsnedsättningen, och vilken fast anpassning vill du få prövad?",
+        "reason": "Nödvändigheten knyts till den konkreta barriären och åtgärden, inte enbart till diagnos."
+      },
+      {
+        "question_id": "bab.home_context",
+        "prompt": "Är det här bostaden där du bor permanent eller en annan bostad som du vistas regelbundet i?",
+        "reason": "Boendesituationen kan ändra vilka regler som måste kontrolleras innan ansökan kan bedömas."
+      },
+      {
+        "question_id": "bab.tenure",
+        "prompt": "Äger du bostaden, hyr du den eller bor du med bostadsrätt?",
+        "reason": "Upplåtelseformen kan ändra vilka ägar- och nyttjanderättshavarmedgivanden som behövs i processen, men ska inte användas som automatisk screening bort från bidraget."
+      },
+      {
+        "question_id": "bab.other_right_holders",
+        "prompt": "Finns det någon annan ägare eller person som står på hyres-/bostadsrätten tillsammans med dig?",
+        "reason": "Andra ägare eller nyttjanderättshavare kan behöva lämna skriftligt medgivande innan ett positivt beslut."
+      },
+      {
+        "question_id": "bab.consent_status",
+        "prompt": "Har fastighetsägaren och eventuella andra relevanta rättighetshavare redan lämnat skriftligt medgivande till den aktuella anpassningen?",
+        "reason": "Detta kan ändra nästa processsteg, men ett medgivande betyder inte att kommunen måste bevilja bidraget."
+      },
+      {
+        "question_id": "bab.existing_municipal_contact",
+        "prompt": "Har du redan kontakt med kommunen eller lämnat in en ansökan om bostadsanpassningsbidrag?",
+        "reason": "Befintlig handläggning avgör om nästa steg är ny ansökan, komplettering eller kontakt med handläggaren."
+      }
+    ]
+  },
+  "documents": [
+    "Ansökan som beskriver vilken anpassningsåtgärd som önskas och varför",
+    "Sakkunnigintyg, till exempel från arbetsterapeut, fysioterapeut eller läkare, när behovet inte är uppenbart",
+    "Skriftligt medgivande från berörda ägare och nyttjanderättshavare när det krävs",
+    "Ägares utfästelse att inte kräva ersättning för återställning när det krävs"
+  ],
+  "application": {
+    "method": "municipality_contact",
+    "url": "https://www.boverket.se/sv/om-boverket/lattlast-pa-boverket/bidrag-och-stod/bostadsanpassningsbidrag/",
+    "deadline_text": null,
+    "next_step": "Beskriv den konkreta barriären i bostaden och den åtgärd du vill få prövad. Ta reda på vilken kommun som ska handlägga ansökan och kontrollera dess aktuella ansökningsväg. Identifiera samtidigt ägare och andra rättighetshavare så att eventuella skriftliga medgivanden kan ordnas utan att behandla dem som bevis på att bidraget kommer beviljas."
+  },
+  "source": {
+    "source_id": "se-boverket-housing-adaptation",
+    "url": "https://www.boverket.se/sv/om-boverket/lattlast-pa-boverket/bidrag-och-stod/bostadsanpassningsbidrag/",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T00:21:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuella Boverket-primärkällor 2026-09-14. Mänsklig sakgranskning krävs före VERIFIED. Kontrollera särskilt nödvändighetskravet, bostadsvillkoret, kommunens ansvar enligt aktuell lag, vilka ägare/nyttjanderättshavare som måste lämna medgivande och när ägarens återställningsutfästelse krävs. Hyresrätt, delat kontrakt eller ägarmedgivande får inte ensamt tolkas som entitlement eller ineligibility.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T00:21:00Z",
+    "last_seen_at": "2026-09-14T00:21:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
