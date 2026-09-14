@@ -68,7 +68,7 @@
       "id": "procurement-discovery-is-not-one-database",
       "input": {"goal":"procurement","sector":"consulting","geography":"local","capacity":"yes","references":"partial","docs":"yes"},
       "expected_gaps": ["strukturera relevanta referenser och tidigare leveranser"],
-      "must_include": ["en enda databas","Direktupphandlingar behöver inte annonseras","CPV","registrerade annonsdatabaser"],
+      "must_include": ["En enda databas","Direktupphandlingar behöver inte annonseras","CPV","registrerade annonsdatabaser"],
       "must_exclude": ["alla offentliga affärer annonseras","garanterar att ni får en förfrågan"]
     }
   ]
