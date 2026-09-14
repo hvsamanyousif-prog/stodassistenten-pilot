@@ -1,0 +1,23 @@
+name: Work-injury dental cost guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  work-injury-dental:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate work-injury dental truth and learning loop
+        run: |
+          python scripts/validate_work_injury_dental.py
+          python scripts/validate_support_records.py
+          python scripts/validate_scenario_lab_all.py
