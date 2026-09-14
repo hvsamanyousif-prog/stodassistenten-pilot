@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-commute-traffic-work-injury-dental-split-v01",
+      "product_miss": "The product had v26 truth for work/commute dental costs but no bounded public route consuming it, and no permanent distinction for a traffic accident on the commute where Försäkringskassan's dental-cost path and Afa's collective-agreement work-injury boundary diverge.",
+      "fix_or_guardrail": "Add one same-shell work_injury_dental focus using only coarse actor/focus/language handoff, ask where the injury occurred and only ask the traffic-accident question for commute cases, keep ordinary dental care separate, and preserve separate assessments for Försäkringskassan, Afa and traffic insurance without guessing eligibility or responsible insurer.",
+      "regression_case_ids": [
+        "lab-employee-work-injury-dental-natural-route-v27-01",
+        "lab-employee-commute-traffic-dental-split-v27-02"
+      ]
+    }
+  ]
+}
