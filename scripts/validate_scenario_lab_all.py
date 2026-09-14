@@ -34,8 +34,8 @@ for path in paths:
             assert isinstance(case[key], list) and case[key], f'{cid}: {key} must be non-empty list'
         cases.append(case)
 
-# 55 cases were present after v13. v14 adds one tenure/consent regression.
-assert len(cases) >= 56, f'expected at least 56 cases across the single scenario system, got {len(cases)}'
+# 56 cases were present after v14. v15 adds family age-gate and VAB 12+ regressions.
+assert len(cases) >= 58, f'expected at least 58 cases across the single scenario system, got {len(cases)}'
 
 required_recent = {
     'lab-individual-v06-01',
@@ -55,6 +55,8 @@ required_recent = {
     'lab-employee-varsel-transition-v13-01',
     'lab-relative-housing-representation-v13-02',
     'lab-disability-housing-tenure-v14-01',
+    'lab-family-age-gate-v15-01',
+    'lab-guardian-vab-12plus-v15-02',
 }
 missing_recent = sorted(required_recent - ids)
 assert not missing_recent, f'newer web-signal regressions outside canonical lab: {missing_recent}'
@@ -134,5 +136,20 @@ assert 'landlord_or_brf_is_the_applicant_by_default' in housing_tenure['must_not
 assert 'municipality_can_issue_positive_decision_without_required_written_owner_or_right_holder_consent' in housing_tenure['must_not_claim']
 assert 'obtain_required_written_consent_and_owner_non_restoration_compensation_undertaking_before_positive_decision' in housing_tenure['expected_next_actions']
 assert 'Boverket' in housing_tenure['source_requirements']
+
+family_age = by_id['lab-family-age-gate-v15-01']
+assert 'age_scope_disambiguation' in family_age['expected_support_areas']
+assert 'child_specific_supports_apply_unchanged_to_adult_family_member' in family_age['must_not_claim']
+assert 'omvardnadsbidrag_for_child_is_a_valid_route_for_a_25_year_old' in family_age['must_not_claim']
+assert 'do_not_continue_into_child_specific_results_when_age_gate_is_not_met' in family_age['expected_next_actions']
+assert 'reroute_within_the_same_product_to_a_broader_adult_safe_path' in family_age['expected_next_actions']
+
+vab = by_id['lab-guardian-vab-12plus-v15-02']
+assert '30_day_application_window_from_2026_04_01' in vab['expected_support_areas']
+assert 'ninety_day_rule_still_applies_to_new_vab_days_after_2026_04_01' in vab['must_not_claim']
+assert 'ordinary_sickness_for_age_12_to_15_automatically_qualifies_for_vab' in vab['must_not_claim']
+assert 'medical_documentation_is_never_needed_for_age_12_to_15' in vab['must_not_claim']
+assert 'apply_or_check_application_status_promptly_against_the_current_30_day_rule' in vab['expected_next_actions']
+assert 'Forsakringskassan_current_application_deadline' in vab['source_requirements']
 
 print(f'canonical scenario lab: OK ({len(cases)} cases across {len(paths)} packs)')
