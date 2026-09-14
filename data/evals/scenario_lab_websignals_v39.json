@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic CSN student-finance regressions for the single Stödassistenten learning system. These cases use invented situations only, preserve the primary-source verification boundary, and do not contain real account, course, income or identity data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-csn-weeks-summer-current-2026",
+      "observation": "Current CSN guidance says the maximum number of study-finance weeks depends on education level and study pace; remaining used/available weeks are shown on Mina sidor. Summer student finance has specific course, registration and study-pace conditions and summer weeks with student finance count as used weeks.",
+      "primary_sources": [
+        "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+        "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-student-csn-remaining-weeks-v39-01",
+      "actor_type": "student",
+      "story": "Jag har läst flera år och funderar på en sommarkurs. Har jag veckor kvar, och räknas deltidsstudier som lika många heltidsveckor?",
+      "expected_support_areas": [
+        "same_person_product_student_finance_candidate",
+        "csn_remaining_weeks_by_education_level",
+        "study_pace_full_time_equivalent_conversion",
+        "official_mina_sidor_as_next_action",
+        "structured_anonymous_feedback"
+      ],
+      "must_not_claim": [
+        "all_students_have_one_shared_240_week_limit_regardless_of_education_level",
+        "part_time_calendar_weeks_always_consume_the_same_number_of_full_time_equivalent_weeks",
+        "the_product_can_know_remaining_weeks_without_current_csn_account_data",
+        "a_prior_ai_answer_or_user_memory_is_a_source_for_remaining_csn_weeks",
+        "the_new_support_record_can_be_promoted_to_verified_by_automation"
+      ],
+      "expected_questions": [
+        "q_which_education_level_applies",
+        "q_what_study_pace_and_calendar_period_is_planned"
+      ],
+      "expected_next_actions": [
+        "check_remaining_used_and_available_weeks_on_csn_mina_sidor_instead_of_inferring_from_memory",
+        "convert_part_time_calendar_period_to_the_relevant_study_finance_week_effect_using_current_csn_guidance",
+        "verify_current_course_period_and_study_pace_before_planning_summer_financing",
+        "keep_account_balance_course_income_and_identity_details_out_of_public_eval_and_feedback"
+      ],
+      "source_requirements": [
+        "CSN_current_how_many_weeks_student_finance_primary_source",
+        "CSN_current_Mina_sidor_remaining_weeks_source"
+      ]
+    },
+    {
+      "case_id": "lab-student-csn-summer-course-v39-02",
+      "actor_type": "student",
+      "story": "Jag fick inget sommarjobb. Om jag söker en sommarkurs, får jag automatiskt CSN hela sommaren?",
+      "expected_support_areas": [
+        "same_person_product_student_finance_candidate",
+        "summer_course_student_finance_conditions",
+        "registration_and_study_pace_disambiguation",
+        "remaining_weeks_and_half_year_income_context",
+        "structured_anonymous_feedback"
+      ],
+      "must_not_claim": [
+        "admission_to_any_summer_course_automatically_guarantees_student_finance_for_the_whole_summer",
+        "self_study_without_registered_eligible_summer_study_is_enough_for_student_finance",
+        "summer_studies_with_student_finance_do_not_use_available_student_finance_weeks",
+        "the_product_can_ignore_study_pace_consecutive_week_or_registration_requirements",
+        "reddit_forums_or_search_snippets_are_truth_sources"
+      ],
+      "expected_questions": [
+        "q_is_the_course_or_education_eligible_for_student_finance",
+        "q_is_planned_study_at_least_fifty_percent_for_at_least_three_consecutive_weeks",
+        "q_is_the_student_registered_and_for_higher_education_has_school_reported_it_as_a_summer_course"
+      ],
+      "expected_next_actions": [
+        "verify_the_current_summer_course_and_registration_conditions_in_csn_primary_guidance",
+        "check_remaining_weeks_on_csn_mina_sidor_before_using_summer_weeks",
+        "check_current_income_and_fribelopp_effect_for_the_calendar_half_year_if_work_income_is_relevant",
+        "do_not_promise_amount_duration_or_eligibility"
+      ],
+      "source_requirements": [
+        "CSN_current_summer_studies_with_student_finance_primary_source",
+        "CSN_current_how_many_weeks_student_finance_primary_source"
+      ]
+    }
+  ]
+}

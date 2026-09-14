@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Maps the v39 student CSN weeks/summer demand-friction signal into the same canonical Stödassistenten regression system.",
+  "mappings": [
+    {
+      "signal_id": "df-student-csn-weeks-summer-v01",
+      "product_miss": "The product already retained actor_type=student and the source registry already contained CSN, but the generic person journey had no focused student-finance path for remaining weeks or summer-study planning. A student could be asked broad work, money, children, health and housing questions before the education level and study pace that actually change this route, while no normalized review-gated CSN weeks support record or permanent regression prevented week-limit and summer-course overclaims.",
+      "regression_case_ids": [
+        "lab-student-csn-remaining-weeks-v39-01",
+        "lab-student-csn-summer-course-v39-02"
+      ],
+      "product_surfaces": [
+        "index.html natural-language study entry",
+        "person-pilot.html existing student actor context",
+        "data/source_registry.json existing CSN source contract",
+        "single canonical scenario lab"
+      ],
+      "fix_or_guardrail": "Truth and regression first: distinguish education level and planned study pace/period, use current CSN primary guidance for general week and summer-study rules, and send personal used/remaining-week checks to CSN Mina sidor. A later public improvement must use the same person shell and ask only route-changing student-finance questions; it must not create a separate student engine or infer personal week balance from a public narrative.",
+      "privacy_guardrail": "Do not put personal CSN account balance, course registrations, study results, exact income, identity, application data or raw student stories into public evals, URLs or feedback. Feedback remains the existing structured anonymous product signal only.",
+      "truth_guardrail": "Do not promote the new CSN support record to VERIFIED by automation. Week limits, study-pace effects, summer-study conditions, income/fribelopp effects, eligibility, amounts and application outcomes remain current CSN primary-source governed; personal remaining weeks require the user's current CSN account information."
+    }
+  ]
+}
