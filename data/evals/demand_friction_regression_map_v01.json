@@ -50,6 +50,12 @@
       "product_miss": "A person with a functional housing barrier can wrongly be screened out because the home is rented, or receive an unusable next step that ignores the owner and other right-holders whose written consent can be required before a positive municipal decision.",
       "fix_or_guardrail": "Keep the person with the functional need as the applicant path, ask tenure/ownership/right-holder facts only when they change the process, and require current Boverket plus municipal verification of written consent without turning consent into entitlement.",
       "regression_case_ids": ["lab-disability-housing-tenure-v14-01"]
+    },
+    {
+      "signal_id": "df-vab-12plus-deadline-documentation-v01",
+      "product_miss": "A guardian can follow the old 90-day VAB habit or assume that ordinary VAB conditions remain unchanged after the child turns 12, causing a late application or missing medical documentation.",
+      "fix_or_guardrail": "Surface the post-1-April-2026 30-day window, distinguish age 12-15 conditions, ask whether a prior decision exists, and preserve current medical-statement rules without promising entitlement or payment.",
+      "regression_case_ids": ["lab-guardian-vab-12plus-v15-02"]
     }
   ]
 }
