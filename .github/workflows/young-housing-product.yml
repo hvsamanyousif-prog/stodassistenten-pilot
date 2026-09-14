@@ -1,0 +1,47 @@
+name: Validate young housing product
+
+on:
+  pull_request:
+    paths:
+      - 'client/young-housing-transition.js'
+      - 'client/young-housing-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_young_housing_product.py'
+      - 'scripts/validate_recent_learning_memory.py'
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-unga.json'
+      - 'data/evals/demand_friction_signals_v11.json'
+      - 'data/evals/demand_friction_regression_map_v05.json'
+      - 'data/evals/scenario_lab_websignals_v22.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/young-housing-product.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/young-housing-transition.js'
+      - 'client/young-housing-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_young_housing_product.py'
+      - 'scripts/validate_recent_learning_memory.py'
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-unga.json'
+      - 'data/evals/demand_friction_signals_v11.json'
+      - 'data/evals/demand_friction_regression_map_v05.json'
+      - 'data/evals/scenario_lab_websignals_v22.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/young-housing-product.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate young housing transition and public build
+        run: python scripts/validate_young_housing_product.py
