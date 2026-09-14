@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v34 Red Teams the live 2026 Villaeffekten path after primary-source verification: value year, permanent residence, district-heating boundary, measure type, material/start timing, material-only calculation, county-board decision and budget uncertainty must stay distinct. These scenarios contain no real household or property data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-villaeffekten-live-2026",
+      "observation": "Boverket's current guidance says the small-house energy-efficiency grant opened for applications on 1 September 2026. Current SFS 2023:402 as amended through SFS 2026:1519 limits the route by ownership/residence, value year before 1990, district-heating status, eligible measures, timing and available funds. The product must therefore treat natural-language renovation intent as candidate discovery, not automatic grant eligibility.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-homeowner-villaeffekten-candidate-v34-01",
+      "actor_type": "individual",
+      "story": "Jag äger en villa från 1978 där jag bor permanent. Vi har direktverkande el och funderar på luft-vattenvärmepump för att få ner elkostnaden. Finns det något stöd?",
+      "expected_support_areas": [
+        "villaeffekten_candidate",
+        "current_measure_eligibility_check",
+        "material_cost_only_boundary",
+        "county_board_decision_boundary"
+      ],
+      "must_not_claim": [
+        "old_house_and_high_energy_cost_alone_guarantee_villaeffekten",
+        "air_water_heat_pump_is_automatically_eligible_without_current_product_and_measure_checks",
+        "the_product_can_guarantee_60000_sek",
+        "labour_cost_is_covered_by_villaeffekten",
+        "boverket_e_service_submission_is_the_same_as_an_approved_grant"
+      ],
+      "expected_questions": [
+        "q_property_value_year_if_not_already_known",
+        "q_is_house_already_connected_to_district_heating_if_not_already_known",
+        "q_which_specific_measure_and_product_is_planned",
+        "q_when_material_was_or_will_be_ordered_and_when_installation_started_or_will_start"
+      ],
+      "expected_next_actions": [
+        "check_current_boverket_measure_and_product_requirements_against_the_specific_plan",
+        "verify_material_order_and_measure_start_dates_before_applying",
+        "apply_through_current_boverket_route_to_the_county_board_without_promising_approval"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance",
+        "SFS_2023_402_current_through_2026_1519"
+      ]
+    },
+    {
+      "case_id": "lab-homeowner-villaeffekten-district-heating-v34-02",
+      "actor_type": "individual",
+      "story": "Min villa är inte ansluten till fjärrvärme idag men jag funderar på att ansluta den. Jag läste att hus med fjärrvärme inte får stöd, så är fjärrvärmeanslutning utesluten?",
+      "expected_support_areas": [
+        "district_heating_status_at_application",
+        "new_district_heating_connection_as_possible_measure",
+        "condition_and_measure_kept_distinct"
+      ],
+      "must_not_claim": [
+        "any_district_heating_related_measure_is_excluded_from_villaeffekten",
+        "an_already_district_heating_connected_house_meets_the_basic_no_connection_condition",
+        "a_planned_new_district_heating_connection_is_automatically_approved",
+        "generic_energy_advice_overrides_current_sfs_measure_rules"
+      ],
+      "expected_questions": [
+        "q_is_the_house_already_connected_to_district_heating_at_application_time",
+        "q_is_the_planned_measure_a_new_connection_and_what_material_is_included"
+      ],
+      "expected_next_actions": [
+        "keep_existing_connection_status_separate_from_a_planned_new_connection_measure",
+        "verify_the_current_measure_and_material_rules_before_recommending_application"
+      ],
+      "source_requirements": [
+        "SFS_2023_402_current_sections_3_and_7",
+        "Boverket_current_villaeffekten_primary_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-homeowner-villaeffekten-timing-cost-v34-03",
+      "actor_type": "individual",
+      "story": "Vi började isolera huset i augusti 2026 och har både material- och arbetskostnader. Kan vi få 30 procent av hela fakturan och söka när vi vill?",
+      "expected_support_areas": [
+        "transition_application_deadline",
+        "material_order_date_boundary",
+        "material_vs_labour_cost_boundary",
+        "minimum_and_maximum_grant_rules"
+      ],
+      "must_not_claim": [
+        "villaeffekten_covers_30_percent_of_the_entire_contractor_invoice",
+        "work_started_before_2026_09_01_is_automatically_ineligible",
+        "there_is_no_application_deadline_for_transition_work",
+        "a_calculated_30_percent_amount_is_guaranteed_to_be_paid",
+        "rot_and_villaeffekten_can_be_double_counted_on_the_same_cost_without_current_rule_check"
+      ],
+      "expected_questions": [
+        "q_exact_measure_start_date",
+        "q_when_eligible_material_was_ordered",
+        "q_are_material_and_labour_costs_itemized"
+      ],
+      "expected_next_actions": [
+        "for_work_started_between_2025_10_17_and_2026_08_31_check_the_2027_02_28_transition_deadline",
+        "separate_eligible_material_cost_from_labour_before_estimating_any_possible_grant",
+        "use_current_boverket_and_sfs_rules_before_combining_with_any_tax_deduction"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance",
+        "SFS_2023_402_current_sections_12_and_15"
+      ]
+    }
+  ]
+}
