@@ -86,6 +86,9 @@ const out = {
   selfCtx: m.detectWorkContext('Jag driver eget och slog av en tand när jag jobbade i verksamheten.'),
   invoiceCtx: m.detectWorkContext('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand på jobbet under uppdraget.'),
   employeeCtx: m.detectWorkContext('Jag slog av en tand på jobbet.'),
+  ownAbCtx: m.detectWorkContext('Jag fakturerar kunden genom mitt eget aktiebolag och arbetar där själv.'),
+  colloquialEmployerCtx: m.detectWorkContext('Mitt företag skickade mig till en kund och jag är anställd där.'),
+  genericViaBolagCtx: m.detectWorkContext('Jag fakturerar kunden via bolaget men är anställd.'),
   selfDetected: m.detect('Jag driver eget och slog av en tand när jag jobbade i verksamheten.'),
   invoiceDetected: m.detect('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand på jobbet under uppdraget.'),
   selfHref: m.handoffHref('sv', 'self_employed'),
@@ -100,6 +103,9 @@ out = json.loads(run.stdout)
 assert out["selfCtx"] == "self_employed"
 assert out["invoiceCtx"] == "invoiced_worker"
 assert out["employeeCtx"] == "employee"
+assert out["ownAbCtx"] == "self_employed", "explicit own-company language should remain self-employed"
+assert out["colloquialEmployerCtx"] == "employee", "plain 'mitt företag' must not imply business ownership"
+assert out["genericViaBolagCtx"] == "employee", "generic invoicing via a company must not imply invoicing-company employment"
 assert out["selfDetected"] is True
 assert out["invoiceDetected"] is True
 assert "actor_type=self_employed" in out["selfHref"]
@@ -116,4 +122,4 @@ assert "fetch(" not in module and "XMLHttpRequest" not in module
 assert "localStorage" not in module and "sessionStorage" not in module
 assert "sv: {" in module and "ar: {" in module and "fa: {" in module
 
-print("work-injury worker-context v37: OK (same module; bounded context; FK/Fora truth layers separated)")
+print("work-injury worker-context v37: OK (same module; bounded context; false-positive guards; FK/Fora truth layers separated)")
