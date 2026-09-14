@@ -1,4 +1,22 @@
 (() => {
+  function installAssistanceRoute(){
+    try{
+      if(typeof KEYWORDS!=='undefined'){
+        KEYWORDS.assistance=[
+          'personlig assistans','assistans','hjälp med hygien','personlig hygien','hjälp med påklädning','påklädning','hjälp med toalett','toalett','hjälp att äta','hjälp med måltider','hjälp med kommunikation','andning',
+          'مساعدة شخصية','النظافة الشخصية','المساعدة في اللباس','ارتداء الملابس','المساعدة في الأكل','المساعدة في التواصل','التنفس',
+          'کمک شخصی','بهداشت شخصی','کمک برای لباس پوشیدن','لباس پوشیدن','کمک برای غذا خوردن','کمک در ارتباط','تنفس'
+        ];
+      }
+      if(typeof I18N!=='undefined'){
+        if(I18N.sv&&I18N.sv.routes) I18N.sv.routes.assistance=['Personlig hjälp i vardagen','Hygien, påklädning, måltider, kommunikation eller annat omfattande hjälpbehov','person-pilot.html?actor_type=private_person&focus=assistance'];
+        if(I18N.ar&&I18N.ar.routes) I18N.ar.routes.assistance=['مساعدة شخصية في الحياة اليومية','النظافة الشخصية، اللباس، الوجبات، التواصل أو احتياجات مساعدة واسعة','person-pilot.html?actor_type=private_person&focus=assistance'];
+        if(I18N.fa&&I18N.fa.routes) I18N.fa.routes.assistance=['کمک شخصی در زندگی روزمره','بهداشت شخصی، لباس پوشیدن، غذا، ارتباط یا نیاز گسترده به کمک','person-pilot.html?actor_type=private_person&focus=assistance'];
+      }
+    }catch(_err){/* the source shell remains usable if governed route augmentation cannot load */}
+  }
+  installAssistanceRoute();
+
   const box=document.getElementById('engineResults');
   if(!box) return;
 
@@ -22,6 +40,8 @@
   function routeKey(url){
     const mode=safeToken(url.searchParams.get('mode'));
     if(mode==='dental'||mode==='vision') return mode;
+    const focus=safeToken(url.searchParams.get('focus'));
+    if(focus==='assistance') return 'assistance';
     if(url.pathname.endsWith('company-pilot.html')) return 'company';
     const actor=safeToken(url.searchParams.get('actor_type'));
     return {employee:'work',student:'study',association:'association',private_person:'economy',relative:'general',other:'general'}[actor]||'general';
