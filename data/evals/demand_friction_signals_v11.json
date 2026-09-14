@@ -19,6 +19,6 @@
     "discovery_sources": ["https://www.reddit.com/r/sweden/comments/12j0zyj", "https://www.reddit.com/r/Sverige/comments/183070n"],
     "primary_sources": ["https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar", "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"],
     "recommended_learning_action": "Add a bounded young_housing handoff inside the existing shared shell/person module. Pass only a coarse income-change context, ask only age and housing facts that can change the route, skip repeated income-change questions when the shell already knows that coarse fact, and give source-grounded 2026 annual-estimate/change-reporting guidance without promising eligibility or amount.",
-    "truth_rule": "Community discussion may reveal wording and friction only. Current income-period, change-reporting, housing-form and application facts must come from Försäkringskassan. The existing support record stays NEEDS_REVIEW and no model output may promote material fields to VERIFIED."
+    "truth_rule": "Community discussion may reveal wording and friction only. Current income-period, change-reporting, housing-form and application facts must be verified against Försäkringskassan primary sources before they can affect truth-bearing product behavior. The existing support record stays NEEDS_REVIEW and no model output may promote material fields to VERIFIED."
   }]
 }
