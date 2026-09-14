@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regression for the single Stödassistenten learning system. It protects the national-to-municipal economic-assistance handoff from stale or guessed local links without creating 290 duplicated support truth records. Municipality identity is resolved from SCB; the national support truth stays source-grounded in Socialstyrelsen; an actual local application/contact route requires a current municipality primary source. No real user story or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-economic-assistance-municipal-route-friction-2026",
+      "observation": "Socialstyrelsen directs a person who needs economic assistance to social services in the person's municipality, while actual local application routes can differ by municipality and by first versus repeat application. Current municipality primary sources show examples where a first application uses paper/contact while later applications can use an e-service, and where a non-BankID alternative is needed. SCB maintains the authoritative current municipality names and codes. Therefore the product must resolve municipality identity separately from support eligibility, verify the current local route before showing a direct link, and fail closed to municipality contact when the route is stale, changed or unknown.",
+      "primary_sources": [
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/",
+        "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+        "https://mariestad.se/omsorg-och-stod/ekonomi-och-pengar/ekonomiskt-bistand-forsorjningsstod/ansok-om-ekonomiskt-bistand",
+        "https://www.soderhamn.se/sidor/omsorg-och-stod/ekonomi-och-forsorjning/forsorjningsstod-ekonomiskt-bistand.html"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-private-economic-assistance-municipal-route-v24-01",
+      "actor_type": "private_person",
+      "story": "Jag behöver ansöka om ekonomiskt bistånd. Jag vet vilken kommun jag bor i men hittar flera olika länkar och en e-tjänst verkar kräva BankID. Jag vill bara veta den säkra vägen att börja.",
+      "expected_support_areas": [
+        "national_economic_assistance_truth_record",
+        "municipality_identity_resolution",
+        "municipality_primary_route_verification",
+        "route_freshness_and_change_detection",
+        "non_eid_fallback_when_needed",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "a_guessed_municipality_domain_or_search_result_is_a_verified_application_route",
+        "a_stale_or_changed_local_link_is_current",
+        "a_verified_local_route_proves_eligibility_for_economic_assistance",
+        "lack_of_bankid_means_the_person_cannot_apply",
+        "examples_from_one_or_two_municipalities_define_the_rules_for_all_290_municipalities",
+        "municipality_specific_application_details_should_be_copied_into_a_parallel_support_truth_record",
+        "the_raw_situation_text_income_health_data_or_personal_identity_should_be_put_in_the_route_url_or_logs"
+      ],
+      "expected_questions": [
+        "q_municipality_only_if_not_already_known_in_session"
+      ],
+      "expected_next_actions": [
+        "resolve_municipality_name_and_code_against_current_scb_identity_data",
+        "preserve_socialstyrelsen_as_the_national_economic_assistance_truth_source",
+        "show_a_direct_local_route_only_when_currently_verified_from_a_municipality_primary_source",
+        "if_route_is_stale_changed_or_unknown_fall_back_to_contacting_the_municipal_social_services_or_current_municipality_site",
+        "if_eid_is_required_keep_a_verified_non_eid_contact_or_paper_or_in_person_path_open",
+        "treat_local_route_change_as_review_signal_not_as_automatic_support_rule_change"
+      ],
+      "source_requirements": [
+        "Socialstyrelsen_current_economic_assistance_guidance",
+        "SCB_current_municipality_names_and_codes",
+        "current_first_party_municipality_route_before_showing_a_direct_local_application_link"
+      ]
+    }
+  ]
+}
