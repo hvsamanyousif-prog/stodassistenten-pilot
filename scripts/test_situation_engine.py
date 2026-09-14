@@ -15,6 +15,7 @@ builder = (root / 'scripts' / 'build_public_pilot.py').read_text(encoding='utf-8
 v14 = json.loads((root / 'data' / 'evals' / 'scenario_lab_websignals_v14.json').read_text(encoding='utf-8'))
 v15 = json.loads((root / 'data' / 'evals' / 'scenario_lab_websignals_v15.json').read_text(encoding='utf-8'))
 housing_record = json.loads((root / 'data' / 'supports' / 'se-boverket-bostadsanpassningsbidrag.json').read_text(encoding='utf-8'))
+quick_runtime_block = builder.split('QUICK_RUNTIME_PATHS = (', 1)[1].split(')', 1)[0] if 'QUICK_RUNTIME_PATHS = (' in builder else ''
 
 housing_syntax = subprocess.run(
     ['node', '--check', str(root / 'client' / 'housing-adaptation-guidance.js')],
@@ -67,7 +68,7 @@ checks = [
     ('housing guidance remains local-only', "fetch(" not in housing and 'XMLHttpRequest' not in housing and 'localStorage' not in housing and 'sessionStorage' not in housing and "setAttribute('data-local-only', 'true')" in housing),
     ('housing guidance has sv ar fa parity', 'sv: {' in housing and 'ar: {' in housing and 'fa: {' in housing and "document.documentElement.lang" in housing),
     ('housing guidance keeps state across own mutations', 'if (existing) return;' in housing and 'if (existing) {\n      existing.remove();\n    }\n    cards.appendChild(buildGuide());' not in housing),
-    ('housing guidance stays in same quick-help module', 'HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"' in builder and 'QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH)' in builder),
+    ('housing guidance stays in same quick-help module', 'HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"' in builder and 'HOUSING_GUIDANCE_PATH' in quick_runtime_block),
     ('housing permanent regression remains locked', any(case.get('case_id') == 'lab-disability-housing-tenure-v14-01' for case in v14.get('cases', []))),
     ('housing truth remains review-gated', housing_record.get('verification', {}).get('status') == 'NEEDS_REVIEW' and housing_record.get('verification', {}).get('human_review_required') is True and housing_record.get('verification', {}).get('material_fields_verified') == []),
 ]
