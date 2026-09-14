@@ -21,3 +21,4 @@ jobs:
           python scripts/validate_work_injury_dental.py
           python scripts/validate_support_records.py
           python scripts/validate_scenario_lab_all.py
+          python scripts/validate_recent_learning_memory.py
