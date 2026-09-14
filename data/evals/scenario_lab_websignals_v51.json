@@ -1,11 +1,11 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-15",
-  "purpose": "Permanent synthetic regressions for separated-parent child maintenance. The cases keep direct underhållsbidrag separate from state underhållsstöd, protect equal-residence and partial-payment boundaries, and fail closed for cross-border cases. Stories are synthetic and contain no reused user or community text.",
+  "purpose": "Permanent synthetic regressions extending the existing v11 child-maintenance scenario without duplicating it. v51 locks the missing public natural-language handoff, the equal-residence boundary and cross-border routing. Stories are synthetic and contain no reused user or community text.",
   "verified_signal_patterns": [
     {
-      "pattern_id": "child-maintenance-route-friction",
-      "observation": "Försäkringskassan maintains separate current guidance for direct maintenance between parents, maintenance support when payment is missing or partial, and cross-border situations. The product had family, VAB and school-support paths but no focused public route for this recurring problem formulation.",
+      "pattern_id": "child-maintenance-public-route-and-long-tail-friction",
+      "observation": "The canonical v11 scenario already distinguished direct underhållsbidrag from underhållsstöd, but the public product had not converted that learning into a focused route. Current Försäkringskassan guidance also makes equal-residence and cross-border cases materially different enough to require dedicated regressions.",
       "primary_sources": [
         "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
         "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
@@ -15,13 +15,13 @@
   ],
   "cases": [
     {
-      "case_id": "lab-family-maintenance-unpaid-mostly-resident-v51-01",
+      "case_id": "lab-family-maintenance-public-route-v51-01",
       "actor_type": "parent_guardian",
-      "story": "Barnet bor största delen av tiden hos mig och den andra föräldern betalar inget underhåll. Jag vet inte om jag ska försöka ordna underhållsbidrag eller kontrollera underhållsstöd.",
-      "expected_support_areas": ["direct_maintenance_vs_state_support_split", "maintenance_support_candidate", "residence_and_payment_information_gain"],
-      "must_not_claim": ["separation_plus_nonpayment_proves_maintenance_support_eligibility", "a_fixed_support_amount_is_guaranteed", "the_product_can_decide_custody_registration_relationship_or_insurance_conditions", "underhallsbidrag_and_underhallsstod_are_the_same_payment"],
+      "story": "Jag skriver bara att den andra föräldern inte betalar underhåll och vill snabbt förstå vilken väg jag ska kontrollera.",
+      "expected_support_areas": ["natural_language_child_maintenance_handoff", "same_person_product_route", "residence_then_payment_information_gain"],
+      "must_not_claim": ["the_product_must_collect_all_material_eligibility_facts_before_showing_the_primary_source", "separation_plus_nonpayment_proves_maintenance_support_eligibility", "underhallsbidrag_and_underhallsstod_are_the_same_route", "a_fixed_support_amount_is_guaranteed"],
       "expected_questions": ["q_child_residence_pattern_if_unknown", "q_other_parent_payment_full_partial_none_or_unclear_if_unknown"],
-      "expected_next_actions": ["verify_current_maintenance_support_conditions_at_forsakringskassan", "do_not_calculate_or_guarantee_amount_or_eligibility"],
+      "expected_next_actions": ["route_with_focus_child_maintenance_inside_the_existing_person_product", "verify_current_material_conditions_at_forsakringskassan_without_calculating_eligibility"],
       "source_requirements": ["Forsakringskassan_current_underhall_overview", "Forsakringskassan_current_underhallsstod_when_payment_missing"]
     },
     {
@@ -35,17 +35,7 @@
       "source_requirements": ["Forsakringskassan_current_underhall_overview"]
     },
     {
-      "case_id": "lab-family-maintenance-partial-payment-v51-03",
-      "actor_type": "parent_guardian",
-      "story": "Barnet bor mest hos mig och den andra föräldern betalar lite varje månad men inte hela det underhåll vi har utgått från.",
-      "expected_support_areas": ["partial_payment_boundary", "maintenance_support_candidate", "current_agreement_or_decision_check"],
-      "must_not_claim": ["partial_payment_automatically_means_the_state_pays_the_full_difference", "the_product_can_infer_the_correct_private_maintenance_amount", "a_community_example_or_previous_ai_answer_can_establish_the_payment_rule"],
-      "expected_questions": ["q_other_parent_payment_full_partial_none_or_unclear_if_unknown"],
-      "expected_next_actions": ["verify_partial_payment_route_at_current_forsakringskassan_primary_source", "keep_exact_amounts_and_case_documents_out_of_public_eval_and_feedback"],
-      "source_requirements": ["Forsakringskassan_current_underhallsstod_when_payment_missing"]
-    },
-    {
-      "case_id": "lab-family-maintenance-cross-border-v51-04",
+      "case_id": "lab-family-maintenance-cross-border-v51-03",
       "actor_type": "parent_guardian",
       "story": "Barnet bor mest hos mig i Sverige och den andra föräldern bor utomlands. Jag vet inte vem som kan hjälpa när underhållet inte fungerar.",
       "expected_support_areas": ["cross_border_maintenance_route", "country_specific_authority_help", "maintenance_support_candidate_when_current_conditions_fit"],
