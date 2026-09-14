@@ -1,0 +1,52 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic relative-care regression for the single Stödassistenten scenario laboratory. It protects people supporting a severely ill relative, friend or neighbour from missing the near-relative benefit path or being promised eligibility from relationship, diagnosis or ordinary ageing alone. It contains no real person or copied community story.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-relative-care-hidden-income-replacement",
+      "observation": "Current Försäkringskassan guidance describes near-relative benefit for a person who needs to refrain from work or certain other compensation in order to support someone with a life-threatening health condition. The authority also explicitly says many people do not know this support exists. The product must distinguish a life-threatening-condition route from ordinary long-term or age-related help, and must not treat family relationship or a diagnosis alone as eligibility.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/sjukdom-och-skada/moter-du-svart-sjuka-personer-och-deras-narstaende"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-relative-severe-illness-care-v21-01",
+      "actor_type": "relative_or_close_person",
+      "story": "Min partner är mycket svårt sjuk och vården har sagt att tillståndet är livshotande. Jag behöver vara ledig från jobbet för att vara nära men vet inte om det finns något stöd eller vad jag ska fråga efter.",
+      "expected_support_areas": [
+        "near_relative_benefit_candidate",
+        "life_threatening_condition_boundary",
+        "foregone_work_or_replacement_benefit",
+        "medical_statement_next_step",
+        "caregiver_support_if_specific_cash_benefit_does_not_fit"
+      ],
+      "must_not_claim": [
+        "family_relationship_alone_guarantees_near_relative_benefit",
+        "diagnosis_or_serious_wording_alone_proves_life_threatening_condition",
+        "ordinary_age_related_help_need_qualifies_for_near_relative_benefit",
+        "one_hundred_days_belong_to_each_helper_individually",
+        "the_product_can_decide_eligibility_or_amount_without_forsakringskassan_assessment",
+        "the_raw_situation_text_should_be_put_in_the_handoff_url_or_feedback",
+        "a_discovery_signal_or_previous_ai_answer_is_a_truth_source"
+      ],
+      "expected_questions": [
+        "q_has_healthcare_described_condition_as_life_threatening",
+        "q_must_helper_refrain_from_work_a_kassa_or_parental_benefit"
+      ],
+      "expected_next_actions": [
+        "if_life_threatening_and_foregoing_work_or_replacement_benefit_check_current_forsakringskassan_near_relative_benefit_route",
+        "ask_healthcare_about_the_required_medical_statement_before_assuming_the_support_applies",
+        "if_life_threatening_condition_is_no_or_unclear_do_not_promise_near_relative_benefit_and_keep_broader_caregiver_support_open",
+        "do_not_promote_the_existing_near_relative_support_record_from_needs_review_to_verified"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_near_relative_benefit_guidance",
+        "Forsakringskassan_current_medical_statement_guidance"
+      ]
+    }
+  ]
+}
