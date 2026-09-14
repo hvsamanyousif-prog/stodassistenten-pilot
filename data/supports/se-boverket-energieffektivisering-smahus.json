@@ -1,0 +1,166 @@
+{
+  "support_id": "se-boverket-energieffektivisering-smahus",
+  "name": "Bidrag för energieffektivisering i småhus (Villaeffekten)",
+  "category": "housing_energy",
+  "subtype": "small_house_energy_efficiency_grant",
+  "provider": {
+    "name": "Länsstyrelsen / Boverket",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": "Nationellt reglerat stöd. Ansökan prövas av länsstyrelsen i det län där småhuset ligger; Boverket tillhandahåller e-tjänsten och betalar ut beviljat bidrag."
+  },
+  "audience": {
+    "segments": [
+      "home_owner",
+      "small_house",
+      "permanent_residence",
+      "energy_efficiency",
+      "renovation"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "villaeffekten.owner_and_resident",
+        "field": "ownership_and_permanent_residence",
+        "operator": "text_condition",
+        "value": "Bidrag får lämnas till den som helt eller delvis äger småhuset och som senast när utbetalning begärs stadigvarande bor där.",
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Fritidshus ska inte behandlas som automatiskt stödberättigat permanentboende."
+      },
+      {
+        "rule_id": "villaeffekten.value_year_before_1990",
+        "field": "property_value_year",
+        "operator": "lte",
+        "value": 1989,
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Förordningen kräver värdeår tidigare än 1990 vid ansökningstillfället."
+      },
+      {
+        "rule_id": "villaeffekten.not_district_heating_connected",
+        "field": "district_heating_connected_at_application",
+        "operator": "eq",
+        "value": false,
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Huset får inte vara anslutet till fjärrvärmenät vid ansökningstillfället. Ny anslutning till fjärrvärme kan samtidigt vara en stödberättigande åtgärd enligt 7 §."
+      },
+      {
+        "rule_id": "villaeffekten.eligible_measure",
+        "field": "planned_or_completed_measure",
+        "operator": "in",
+        "value": [
+          "waterborne_heat_distribution",
+          "district_heating_connection",
+          "heat_recovery_ventilation",
+          "eligible_heat_pump_or_heat_pump_water_heater",
+          "automatic_biofuel_heating",
+          "building_envelope_insulation",
+          "window_or_door_improvement_or_replacement",
+          "building_envelope_air_sealing"
+        ],
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Exakt produkt- och energieffektivitetskrav måste kontrolleras mot aktuell Boverket-vägledning och förordning innan produkten beskriver en specifik åtgärd som bidragsberättigad."
+      },
+      {
+        "rule_id": "villaeffekten.material_order_date",
+        "field": "material_ordered_at",
+        "operator": "gte",
+        "value": "2025-10-17",
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Bidrag får endast lämnas för kostnader för material som beställts tidigast den 17 oktober 2025."
+      },
+      {
+        "rule_id": "villaeffekten.funds_available",
+        "field": "appropriation_funds_available",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Förordningen anger att bidrag får lämnas om det finns medel. En teknisk matchning får därför aldrig lova beslut eller utbetalning."
+      }
+    ],
+    "exclusions": [
+      {
+        "rule_id": "villaeffekten.previously_unheated_space",
+        "field": "measure_heats_previously_unheated_space_or_extension",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "Bidrag får inte täcka åtgärder som avser uppvärmning av utrymmen eller tillbyggnader som inte varit uppvärmda tidigare."
+      }
+    ],
+    "missing_information_questions": [
+      {
+        "question_id": "villaeffekten.ownership_residence",
+        "prompt": "Äger du hela eller en del av småhuset, och är det din permanentbostad eller kommer du att stadigvarande bo där senast när utbetalning begärs?",
+        "reason": "Ägande och stadigvarande boende kan ändra om stödvägen är relevant."
+      },
+      {
+        "question_id": "villaeffekten.value_year",
+        "prompt": "Vilket värdeår har huset enligt fastighetstaxeringen?",
+        "reason": "Värdeåret måste vara tidigare än 1990 enligt den aktuella förordningen."
+      },
+      {
+        "question_id": "villaeffekten.district_heating",
+        "prompt": "Är huset redan anslutet till ett fjärrvärmenät?",
+        "reason": "En befintlig fjärrvärmeanslutning ändrar stödvägen enligt grundvillkoret."
+      },
+      {
+        "question_id": "villaeffekten.measure",
+        "prompt": "Vilken konkret energieffektiviseringsåtgärd planerar du eller har du påbörjat?",
+        "reason": "Stödet omfattar vissa definierade värmesystem-, ventilations- och klimatskärmsåtgärder, inte renovering generellt."
+      },
+      {
+        "question_id": "villaeffekten.timing",
+        "prompt": "När beställdes materialet och när började själva installations- eller byggarbetet?",
+        "reason": "Materialets beställningsdatum och åtgärdens startdatum kan ändra om och när ansökan måste lämnas in."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "reimbursement",
+    "amount_text": "Högst 30 procent av bidragsberättigande materialkostnader och högst 60 000 kronor sammanlagt per småhus. Bidrag lämnas inte om det beräknade bidraget understiger 10 000 kronor.",
+    "calculation_text": "Endast bidragsberättigande materialkostnader enligt den aktuella förordningen räknas. Arbetskostnad ingår inte. Bidrag får lämnas vid högst två tillfällen och tidigare bidrag inom samma stöd måste beaktas mot maxbeloppet. Tillgång på anslagsmedel och länsstyrelsens prövning styr beslutet.",
+    "recurrence": "one_off"
+  },
+  "documents": [
+    "Teknisk specifikation eller produktinformationsblad för centrala installationer och material",
+    "Specificerade fakturor eller kvitton om åtgärden redan är genomförd",
+    "Specificerad offert eller beställningsorder om åtgärden inte är genomförd"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+    "deadline_text": "Ansökan ska normalt ha kommit in inom sex månader från att åtgärden påbörjades och senast 1 juni 2030. För åtgärder som påbörjades 17 oktober 2025–31 augusti 2026 gäller övergångsfristen 28 februari 2027.",
+    "next_step": "Kontrollera värdeår, befintlig fjärrvärmeanslutning, den konkreta åtgärden samt materialets beställningsdatum och arbetets startdatum. Öppna därefter Boverkets aktuella stödväg och skicka ansökan via e-tjänst eller aktuell blankett till länsstyrelsen i länet där småhuset ligger; länsstyrelsen prövar rätten till bidrag."
+  },
+  "source": {
+    "source_id": "se-boverket-small-house-energy-grant",
+    "url": "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+    "source_type": "official_web",
+    "published_at": "2022-11-08T00:00:00+01:00",
+    "updated_at": "2026-09-10T00:00:00+02:00",
+    "retrieved_at": "2026-09-14T13:30:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad 2026-09-14 från Boverkets aktuella primärvägledning och gällande Förordning (2023:402), ändrad t.o.m. SFS 2026:1519. Mänsklig sakgranskning krävs före VERIFIED. Kontrollera särskilt exakt produkt-/energieffektivitetskrav, anslagsläge, hur tidigare bidrag räknas mot maxbeloppet, aktuell ansökningsblankett/e-tjänst och eventuella ändringar efter 2026-09-14. Nyhetsartikeln om Villaeffekten är discovery-signal, inte regelkälla.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T13:30:00Z",
+    "last_seen_at": "2026-09-14T13:30:00Z",
+    "valid_from": "2026-09-01",
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
