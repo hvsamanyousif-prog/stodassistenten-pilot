@@ -1,0 +1,43 @@
+name: Validate economic assistance product
+
+on:
+  pull_request:
+    paths:
+      - 'client/economic-assistance.js'
+      - 'client/economic-assistance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_economic_assistance_product.py'
+      - 'scripts/validate_recent_learning_memory.py'
+      - 'scripts/validate_support_records.py'
+      - 'data/supports/se-socialstyrelsen-ekonomiskt-bistand.json'
+      - 'data/evals/scenario_lab_websignals_v23.json'
+      - '.github/workflows/economic-assistance-product.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/economic-assistance.js'
+      - 'client/economic-assistance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_economic_assistance_product.py'
+      - 'scripts/validate_recent_learning_memory.py'
+      - 'scripts/validate_support_records.py'
+      - 'data/supports/se-socialstyrelsen-ekonomiskt-bistand.json'
+      - 'data/evals/scenario_lab_websignals_v23.json'
+      - '.github/workflows/economic-assistance-product.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate economic assistance transition and public build
+        run: python scripts/validate_economic_assistance_product.py
