@@ -4,15 +4,17 @@
   "mappings": [
     {
       "signal_id": "df-job-premium-assistance-to-work-transition-v01",
-      "product_miss": "The normalized Försäkringskassan job-premium record already exists, but the public situation/person intelligence has no explicit route for the reverse transition from municipal social assistance to employment salary. Without a guarded route, the product can either miss a time-limited support candidate or overgeneralize from vague facts such as 'I had social assistance last year and now work'.",
+      "product_miss": "The normalized Försäkringskassan job-premium record existed while the public situation/person intelligence had no explicit route for the reverse transition from municipal social assistance to employment salary. Without a guarded route, the product could either miss a time-limited support candidate or overgeneralize from vague facts such as 'I had social assistance last year and now work'. v46 closes the public discovery gap and additionally protects the distinction between state job premium and municipal job stimulation.",
       "regression_case_ids": [
         "lab-private-social-assistance-to-work-job-premium-v45-01",
-        "lab-private-job-premium-qualification-or-deadline-fail-closed-v45-02"
+        "lab-private-job-premium-qualification-or-deadline-fail-closed-v45-02",
+        "lab-private-job-premium-natural-language-public-route-v46-01",
+        "lab-private-job-premium-vs-job-stimulation-v46-02"
       ],
-      "fix_or_guardrail": "Keep one Stödassistenten. When the public person intelligence is extended, recognize the reverse transition from municipal social assistance to employment salary and ask only fixed-period, claim-month, household and deadline-changing facts. Do not create a job-premium app and do not treat the existing normalized support record as proof that the public route is complete.",
-      "truth_guardrail": "The normalized support remains NEEDS_REVIEW with material_fields_verified empty. Eligibility, amount, duration, historical qualification period, household rule, deadline and application channel must be checked against the current Försäkringskassan primary source before they become truth-bearing behavior.",
-      "privacy_guardrail": "Synthetic cases contain no real case data. Do not copy exact wages, household identities, municipal case details, personal identifiers or raw social-assistance history into public eval data, handoff URLs or anonymous product feedback.",
-      "coverage_status": "REGRESSION_AND_SIGNAL_READY_PUBLIC_ROUTE_GAP_REMAINS"
+      "fix_or_guardrail": "Keep one Stödassistenten. Recognize the reverse transition from municipal social assistance to employment salary, ask only fixed-period, claim-month and household facts that can change the route, and keep job premium separate from municipal job stimulation. The public route must fail closed to current primary sources instead of becoming a job-premium eligibility, amount or deadline engine.",
+      "truth_guardrail": "The normalized support remains NEEDS_REVIEW with material_fields_verified empty. Eligibility, amount, duration, historical qualification period, household rule, deadline and application channel stay source-grounded and must not be autonomously promoted to VERIFIED.",
+      "privacy_guardrail": "Synthetic cases contain no real case data. Do not copy exact wages, employer, municipality, household identities, municipal case details, personal identifiers or raw social-assistance history into public eval data, handoff URLs or anonymous product feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY_TRUTH_REMAINS_REVIEW_GATED"
     }
   ]
 }

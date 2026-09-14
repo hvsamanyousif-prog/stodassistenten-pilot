@@ -94,9 +94,12 @@ mapping_pack = json.loads(MAPPING.read_text(encoding="utf-8"))
 assert len(mapping_pack["mappings"]) == 1
 mapping = mapping_pack["mappings"][0]
 assert mapping["signal_id"] == signal["signal_id"]
-assert set(mapping["regression_case_ids"]) == expected_ids
+assert expected_ids <= set(mapping["regression_case_ids"]), "v45 regressions must remain mapped after later product learning"
 assert "NEEDS_REVIEW" in mapping["truth_guardrail"]
-assert mapping["coverage_status"] == "REGRESSION_AND_SIGNAL_READY_PUBLIC_ROUTE_GAP_REMAINS"
-assert "Do not create a job-premium app" in mapping["fix_or_guardrail"]
+assert mapping["coverage_status"] in {
+    "REGRESSION_AND_SIGNAL_READY_PUBLIC_ROUTE_GAP_REMAINS",
+    "GUARDED_PUBLIC_ROUTE_READY_TRUTH_REMAINS_REVIEW_GATED",
+}
+assert "one Stödassistenten" in mapping["fix_or_guardrail"]
 
-print("job-premium v45 validation: OK (transition/deadline regressions + demand/friction signal + review-gated truth)")
+print("job-premium v45 validation: OK (transition/deadline regressions retained + demand/friction signal + review-gated truth)")

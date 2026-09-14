@@ -10,6 +10,7 @@ property_runtime = (root / "client" / "property-accessibility-focus.js").read_te
 dental67_runtime = (root / "client" / "dental-67-guidance.js").read_text(encoding="utf-8")
 relative_runtime = (root / "client" / "relative-care.js").read_text(encoding="utf-8")
 work_injury_dental_runtime = (root / "client" / "work-injury-dental.js").read_text(encoding="utf-8")
+job_premium_runtime = (root / "client" / "job-premium-guidance.js").read_text(encoding="utf-8")
 
 required_rows = [
     "| Privatperson |",
@@ -52,6 +53,9 @@ assert "trafikolycka på arbetsresan" in matrix
 assert "work_context=self_employed" in matrix
 assert "work_context=invoiced_worker" in matrix
 assert "aldrig rå skadeberättelse" in matrix
+assert "focus=job_premium" in matrix
+assert "jobbpremie kontra jobbstimulans" in matrix
+assert "v45–v46" in matrix
 assert "NEEDS_REVIEW" in matrix
 
 # Runtime/artifact existence backs the updated matrix claims. These checks do not
@@ -63,6 +67,8 @@ for rel in [
     "client/relative-care.js",
     "client/work-injury-dental.js",
     "client/property-charging-guidance.js",
+    "client/job-premium-guidance.js",
+    "client/job-premium-guidance.test.cjs",
     "data/evals/scenario_lab_websignals_v16.json",
     "data/evals/scenario_lab_websignals_v17.json",
     "data/evals/scenario_lab_websignals_v19.json",
@@ -74,11 +80,15 @@ for rel in [
     "data/evals/scenario_lab_websignals_v37.json",
     "data/evals/scenario_lab_websignals_v42.json",
     "data/evals/scenario_lab_websignals_v44.json",
+    "data/evals/scenario_lab_websignals_v45.json",
+    "data/evals/scenario_lab_websignals_v46.json",
     "data/evals/demand_friction_signals_v23.json",
+    "data/evals/demand_friction_regression_map_v23.json",
     "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
     "data/supports/se-forsakringskassan-narstaendepenning.json",
     "data/supports/se-forsakringskassan-arbetsskada-tandvard.json",
     "data/supports/se-socialtjanstlagen-anhorigstod-stodkontakt.json",
+    "data/supports/se-forsakringskassan-jobbpremie.json",
 ]:
     assert (root / rel).exists(), f"matrix references missing artifact: {rel}"
 
@@ -99,7 +109,12 @@ assert "Var händelsen på arbetsresan en trafikolycka?" in work_injury_dental_r
 assert "Har företaget ett aktuellt försäkringsavtal eller grundavtal hos Fora?" in work_injury_dental_runtime
 assert "get('q')" not in work_injury_dental_runtime and 'get("q")' not in work_injury_dental_runtime
 assert "fetch(" not in work_injury_dental_runtime and "XMLHttpRequest" not in work_injury_dental_runtime
+assert "focus=job_premium" in job_premium_runtime
+assert "actor_type=private_person&focus=job_premium&lang=" in job_premium_runtime
+assert "separate_job_stimulation" in job_premium_runtime
+for forbidden in ["salary=", "employer=", "municipality=", "household=", "story=", "situation="]:
+    assert forbidden not in job_premium_runtime, f"job-premium handoff leaked private context: {forbidden}"
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 
-print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v44 caregiver split)")
+print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v46 job-premium route)")
