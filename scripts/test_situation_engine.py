@@ -6,15 +6,24 @@ import subprocess
 root = Path(__file__).resolve().parents[1]
 index = (root / 'index.html').read_text(encoding='utf-8')
 quick = (root / 'quick-help.html').read_text(encoding='utf-8')
+person = (root / 'person-pilot.html').read_text(encoding='utf-8')
 routing = (root / 'client' / 'privacy-routing.js').read_text(encoding='utf-8')
 assistance = (root / 'client' / 'assistance-focus.js').read_text(encoding='utf-8')
+family_age = (root / 'client' / 'family-age-routing.js').read_text(encoding='utf-8')
 housing = (root / 'client' / 'housing-adaptation-guidance.js').read_text(encoding='utf-8')
 builder = (root / 'scripts' / 'build_public_pilot.py').read_text(encoding='utf-8')
 v14 = json.loads((root / 'data' / 'evals' / 'scenario_lab_websignals_v14.json').read_text(encoding='utf-8'))
+v15 = json.loads((root / 'data' / 'evals' / 'scenario_lab_websignals_v15.json').read_text(encoding='utf-8'))
 housing_record = json.loads((root / 'data' / 'supports' / 'se-boverket-bostadsanpassningsbidrag.json').read_text(encoding='utf-8'))
 
 housing_syntax = subprocess.run(
     ['node', '--check', str(root / 'client' / 'housing-adaptation-guidance.js')],
+    capture_output=True,
+    text=True,
+    check=False,
+)
+family_age_syntax = subprocess.run(
+    ['node', '--check', str(root / 'client' / 'family-age-routing.js')],
     capture_output=True,
     text=True,
     check=False,
@@ -42,6 +51,12 @@ checks = [
     ('assistance uses primary authority sources', 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna' in assistance and 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn' in assistance),
     ('assistance results stay uncertain', "resultCard(r,i+2)" in assistance and 'Produkten avgör inte rätt till stöd.' in assistance),
     ('assistance stays in same person module', 'ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"' in builder and 'ASSISTANCE_FOCUS_PATH,' in builder),
+    ('family source flow contains a real age question', "if(screen==='family1')" in person and "'childAge'" in person and "'child','no'" in person and "'child','unsure'" in person),
+    ('family age guard javascript syntax', family_age_syntax.returncode == 0),
+    ('family age gate changes the route', "key === 'child'" in family_age and "scenario === 'family'" in family_age and "val !== 'yes'" in family_age and "scenario = 'general'" in family_age and "go('general1')" in family_age),
+    ('family age gate preserves answer but blocks child results', "answers[key] = val" in family_age and "return originalChooseAnswer(key, val, next)" in family_age),
+    ('family age guard stays in same person module', 'FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"' in builder and 'FAMILY_AGE_ROUTING_PATH,' in builder),
+    ('family age permanent regression remains locked', any(case.get('case_id') == 'lab-family-age-gate-v15-01' for case in v15.get('cases', []))),
     ('housing guidance javascript syntax', housing_syntax.returncode == 0),
     ('housing guidance is narrowly gated', "mode !== 'vision'" in housing and "need !== 'home'" in housing),
     ('housing guidance asks information-gain facts', 'Är detta bostaden där personen bor permanent?' in housing and 'Hur ser ägande- eller nyttjanderätten ut?' in housing and 'Finns de skriftliga medgivanden som behövs?' in housing),
@@ -61,6 +76,8 @@ failed = [name for name, ok in checks if not ok]
 if failed:
     detail = ''
     if housing_syntax.returncode:
-        detail = ' | node --check: ' + (housing_syntax.stderr or housing_syntax.stdout).strip()
+        detail += ' | housing node --check: ' + (housing_syntax.stderr or housing_syntax.stdout).strip()
+    if family_age_syntax.returncode:
+        detail += ' | family age node --check: ' + (family_age_syntax.stderr or family_age_syntax.stdout).strip()
     raise SystemExit('situation engine validation failed: ' + ', '.join(failed) + detail)
 print(f'situation engine validation: OK ({len(checks)} invariants)')
