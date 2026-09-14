@@ -54,16 +54,21 @@ expected_ids = {
     'lab-brf-ladda-bilen-residents-v42-01',
     'lab-property-company-ladda-bilen-start-v42-02',
     'lab-resident-own-parking-charging-right-v42-03',
+    'lab-property-company-guest-start-exception-v42-04',
 }
 assert set(cases) == expected_ids
-assert 'q_who_will_primarily_use_association_charging' in cases['lab-brf-ladda-bilen-residents-v42-01']['expected_questions']
+assert 'q_who_will_primarily_use_association_charging_only_if_not_already_clear' in cases['lab-brf-ladda-bilen-residents-v42-01']['expected_questions']
 assert 'company_pre_start_rule_always_applies_to_resident_member_charging' in cases['lab-brf-ladda-bilen-residents-v42-01']['must_not_claim']
-assert 'q_has_installation_work_started' in cases['lab-property-company-ladda-bilen-start-v42-02']['expected_questions']
-assert 'support_can_be_granted_through_the_company_path_after_installation_work_has_started' in cases['lab-property-company-ladda-bilen-start-v42-02']['must_not_claim']
+assert 'q_has_installation_work_started_after_internal_company_use_is_known' in cases['lab-property-company-ladda-bilen-start-v42-02']['expected_questions']
+assert 'support_can_be_granted_for_employee_or_own_tenant_charging_after_installation_work_has_started' in cases['lab-property-company-ladda-bilen-start-v42-02']['must_not_claim']
 resident = cases['lab-resident-own-parking-charging-right-v42-03']
-assert resident['expected_questions'] == ['q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home']
+assert resident['expected_questions'] == ['q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home_only_if_not_already_clear']
 assert 'the_resident_personally_receives_the_association_ladda_bilen_grant' in resident['must_not_claim']
 assert resident['source_requirements'] == ['Sveriges riksdag']
+guest = cases['lab-property-company-guest-start-exception-v42-04']
+assert guest['expected_questions'] == ['q_who_will_primarily_use_company_charging_only_if_not_already_clear']
+assert 'all_company_charging_is_ineligible_once_installation_has_started' in guest['must_not_claim']
+assert guest['source_requirements'] == ['Naturvårdsverket']
 
 support = json.loads(SUPPORT.read_text(encoding='utf-8'))
 assert support['support_id'] == 'se-naturvardsverket-ladda-bilen-forening-boende'
@@ -96,6 +101,7 @@ assert signal['signal_id'] == 'df-property-charging-brf-rights-v01'
 assert signal['priority_band'] == 'HIGH'
 assert signal['current_product_coverage_gap']['score'] == 5
 assert 'not truth' in signal['truth_rule'].lower()
+assert 'verify' in signal['truth_rule'].lower() or 'do not' in signal['truth_rule'].lower()
 assert all('naturvardsverket.se' in url or 'riksdagen.se' in url for url in signal['primary_sources'])
 
 mapping = json.loads(MAP.read_text(encoding='utf-8'))['mappings'][0]
