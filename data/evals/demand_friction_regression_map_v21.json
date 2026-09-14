@@ -1,0 +1,27 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Maps the v42 property-charging demand/friction signal into the same canonical Stödassistenten regression system.",
+  "mappings": [
+    {
+      "signal_id": "df-property-charging-brf-rights-v01",
+      "product_miss": "The coverage matrix already named mobility/vehicle/charging as a high-priority verified domain, but the BRF/property actor had only a housing-adaptation route. A generic answer could collapse a BRF's Ladda bilen application, company employee/tenant charging, the distinct company guest exception and an individual resident's 2026 charging-point request into one path, creating wrong timing, amount or approval implications. Red Team specifically falsified the first implementation because it incorrectly applied the company employee/tenant pre-start rule to guest charging even though Naturvårdsverket allows the guest path both before and after installation starts.",
+      "regression_case_ids": [
+        "lab-brf-ladda-bilen-residents-v42-01",
+        "lab-property-company-ladda-bilen-start-v42-02",
+        "lab-resident-own-parking-charging-right-v42-03",
+        "lab-property-company-guest-start-exception-v42-04"
+      ],
+      "product_surfaces": [
+        "index.html natural-language situation engine",
+        "person-pilot.html existing shared actor journey",
+        "client/property-charging-guidance.js same-product focused route",
+        "single canonical scenario lab",
+        "shared source registry and support-record schema"
+      ],
+      "fix_or_guardrail": "Use one property_charging capability in the existing shell/person product. Preserve only explicit coarse route facts, separate association and company use categories before applying state-aid/timing rules, ask work-start state only where it can change the route, preserve the company guest-start exception, and send individual resident requests to the separate current housing-law source rather than the organisation grant path. No property charging app or duplicate matcher.",
+      "privacy_guardrail": "Do not place address, organisation number, parking-space identifier, exact project cost, quote text, vehicle details, aid-history documents, tenancy documents or raw story in URL, public eval feedback or learning events. Handoff is limited to coarse actor/focus/language plus optional coarse charging context, use category and resident parking scope when those facts were already explicit.",
+      "truth_guardrail": "Naturvårdsverket and current Riksdagen sources govern material claims. Normalized charging records remain NEEDS_REVIEW with human review required and zero AI-promoted material fields. Do not infer grant approval, aid intensity, de-minimis headroom, state-aid classification, work-start eligibility or resident statutory eligibility from natural-language input."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Permanent synthetic regressions for the single Stödassistenten product after v42 discovery found that BRF/property charging is high-demand but must keep association grants, company user categories and the resident's separate 2026 charging-point right apart.",
+  "cases": [
+    {
+      "case_id": "lab-brf-ladda-bilen-residents-v42-01",
+      "actor_type": "property_actor",
+      "story": "Vår bostadsrättsförening vill installera laddpunkter som främst ska användas av de boende. Finns det stöd och spelar det någon roll om installationen redan är klar?",
+      "expected_support_areas": ["ladda_bilen_association", "eligible_cost_cap_boundary", "association_application_timing"],
+      "must_not_claim": [
+        "every_brf_automatically_receives_50_percent_or_15000_sek_per_point",
+        "the_15000_sek_cap_is_a_guaranteed_payment",
+        "company_pre_start_rule_always_applies_to_resident_member_charging",
+        "completed_association_installation_is_automatically_too_late_to_apply",
+        "submission_of_an_application_means_the_grant_is_approved"
+      ],
+      "expected_questions": ["q_who_will_primarily_use_association_charging_only_if_not_already_clear"],
+      "expected_next_actions": [
+        "use_current_naturvardsverket_association_path",
+        "separate_resident_member_guest_and_external_use_before_applying_timing_or_state_aid_rules",
+        "if_resident_member_installation_is_complete_check_the_current_six_month_application_window"
+      ],
+      "source_requirements": ["Naturvårdsverket"],
+      "privacy_constraints": ["do_not_copy_address_organisation_number_parking_identifier_exact_cost_vehicle_details_or_raw_story_into_url_feedback_or_public_eval"]
+    },
+    {
+      "case_id": "lab-property-company-ladda-bilen-start-v42-02",
+      "actor_type": "property_actor",
+      "story": "Ett fastighetsbolag vill sätta upp laddning för hyresgäster och arbetet kan redan ha börjat.",
+      "expected_support_areas": ["ladda_bilen_company", "economic_activity_boundary", "work_start_timing"],
+      "must_not_claim": [
+        "association_resident_member_rules_can_be_reused_unchanged_for_a_property_company",
+        "support_can_be_granted_for_employee_or_own_tenant_charging_after_installation_work_has_started",
+        "company_size_or_aid_intensity_can_be_guessed_from_the_story",
+        "the_product_can_decide_state_aid_classification_from_legal_form_alone"
+      ],
+      "expected_questions": ["q_has_installation_work_started_after_internal_company_use_is_known"],
+      "expected_next_actions": ["verify_current_company_property_path_and_work_start_definition_before_further_commitment"],
+      "source_requirements": ["Naturvårdsverket"],
+      "privacy_constraints": ["do_not_collect_or_transfer_company_identity_address_quote_exact_cost_or_project_document_text_for_route_selection"]
+    },
+    {
+      "case_id": "lab-resident-own-parking-charging-right-v42-03",
+      "actor_type": "private_person",
+      "story": "Jag bor i bostadsrätt och vill ha en laddpunkt vid min egen parkeringsplats. Kan föreningen säga nej och får jag Ladda bilen-bidrag själv?",
+      "expected_support_areas": ["resident_charging_request_right", "association_vs_individual_grant_boundary", "own_home_parking_scope"],
+      "must_not_claim": [
+        "the_resident_personally_receives_the_association_ladda_bilen_grant",
+        "every_resident_request_must_be_approved",
+        "the_right_to_request_is_the_same_as_a_right_to_free_installation",
+        "the_housing_association_can_never_refuse",
+        "the_product_can_decide_that_all_statutory_conditions_are_met_from_the_story"
+      ],
+      "expected_questions": ["q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home_only_if_not_already_clear"],
+      "expected_next_actions": ["check_current_parking_and_tenure_conditions_and_make_the_request_to_landlord_or_housing_association", "use_current_statutory_source_if_a_request_is_refused"],
+      "source_requirements": ["Sveriges riksdag"],
+      "privacy_constraints": ["do_not_copy_home_address_parking_space_identifier_tenure_documents_vehicle_details_or_raw_dispute_text_into_public_feedback_or_url"]
+    },
+    {
+      "case_id": "lab-property-company-guest-start-exception-v42-04",
+      "actor_type": "property_actor",
+      "story": "Vårt fastighetsbolag har redan börjat installera laddpunkter för gäster och besökare. Är Ladda bilen automatiskt kört?",
+      "expected_support_areas": ["ladda_bilen_company_guest", "guest_de_minimis_boundary", "guest_start_timing_exception"],
+      "must_not_claim": [
+        "all_company_charging_is_ineligible_once_installation_has_started",
+        "employee_or_tenant_pre_start_rule_applies_unchanged_to_company_guest_charging",
+        "guest_support_is_guaranteed_or_automatically_15000_sek_per_point",
+        "de_minimis_headroom_can_be_inferred_without_current_organisation_aid_history"
+      ],
+      "expected_questions": ["q_who_will_primarily_use_company_charging_only_if_not_already_clear"],
+      "expected_next_actions": ["use_current_naturvardsverket_company_guest_path_and_verify_de_minimis_context_without_rejecting_only_because_work_started"],
+      "source_requirements": ["Naturvårdsverket"],
+      "privacy_constraints": ["do_not_collect_or_transfer_company_identity_address_exact_cost_aid_history_documents_or_raw_story_for_initial_route_selection"]
+    }
+  ]
+}

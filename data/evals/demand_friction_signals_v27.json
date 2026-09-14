@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for property charging in the single Stödassistenten learning system. These are not measured search volumes; scores prioritize product work and are not eligibility evidence or a source of legal truth.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-property-charging-brf-rights-v01",
+      "actor_types": ["property_actor", "private_person"],
+      "natural_language_queries": [
+        "kan brf få bidrag till laddstolpar",
+        "ladda bilen brf hur mycket får man",
+        "vi har redan börjat installera laddboxar kan vi få stöd",
+        "fastighetsbolag laddstolpar hyresgäster stöd",
+        "jag bor i bostadsrätt kan föreningen neka laddbox på min parkering",
+        "هل يمكن لجمعية السكن الحصول على دعم لمحطات شحن",
+        "هل يحق لي طلب شاحن في موقف السكن",
+        "آیا انجمن ساختمان برای شارژر خودرو کمک می‌گیرد",
+        "آیا می‌توانم برای جای پارک خودم شارژر بخواهم"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Naturvårdsverket reported 52,802 charging points receiving Ladda bilen support in 2025 and more than 7,400 applications across Klimatklivet/Ladda bilen, while 2026 introduced a new statutory resident charging-request path. This is an official demand/usage signal, not a count of current user searches."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A BRF can have resident/member, guest and external-user charging under different state-aid and timing rules; property companies have a separate pre-start rule; and a resident's own-cost statutory request is a different legal path from the organisation's grant."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Conflating the paths can cause an organisation to start work before a required application, make an incorrect funding assumption, or tell a resident that a request is guaranteed or personally grant-funded when it is not."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Current facts are split across Naturvårdsverket's association/boende and company/property guidance plus the amended housing legislation and Riksdagen materials."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as bidragsberättigad kostnad, ekonomisk verksamhet, de minimis, extern användare, påbörjad installation and befogad anledning are easy to collapse into an oversimplified 'BRF gets a charging grant' answer, especially across languages."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The route can be shortened to project owner/context, primary user category and work-start state only where they can change the path; an individual resident request should bypass organisation-grant questions and ask only a statutory-scope fact if it can change the route."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The same recurring ambiguities concern who applies, who uses the chargers, whether work may already have started, what the 50%/15,000 cap means, and whether the new resident right is a grant or guaranteed approval."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The coverage matrix had a BRF/property actor entry only for housing-adaptation takeover/consent. Mobility/charging was explicitly high-priority when verified support exists, but no focused same-shell property charging capability consumed it."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.naturvardsverket.se/om-oss/aktuellt/nyheter-och-pressmeddelanden/2026/januari/rekordar-52-000-nya-laddstolpar-fick-stod-av-klimatklivet-under-2025/"
+      ],
+      "primary_sources": [
+        "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+        "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-fastighetsbolag-och-foretag/",
+        "https://data.riksdagen.se/dokument/sfs-1991-614.html"
+      ],
+      "recommended_learning_action": "Add one bounded property_charging route to the existing shell/person product. Preserve a coarse context in the handoff only when it is explicit, ask only route-changing usage/start/statutory-scope facts, keep organisation grant paths separate from the resident's statutory request, and make all material support/legal claims primary-source governed and review-gated.",
+      "truth_rule": "Demand, usage and natural-language signals are not truth. VERIFY current grant amount caps, eligible-cost rules, applicant categories, work-start rules and resident charging rights against current Naturvårdsverket/Riksdagen primary sources before they become truth-bearing. Do not infer grant approval, state-aid classification, a guaranteed resident installation or individual statutory eligibility from story text."
+    }
+  ]
+}

@@ -133,6 +133,38 @@
       "notes": "Current primary guidance for the 2026 small-house energy-efficiency grant (Villaeffekten). Material eligibility, application timing and decision authority must stay grounded in current Boverket guidance plus the current SFS; source verification does not imply user eligibility."
     },
     {
+      "source_id": "se-naturvardsverket-ladda-bilen-association",
+      "owner": "Naturvårdsverket",
+      "authority_type": "national_agency",
+      "url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
+      "geography": "SE",
+      "coverage": ["housing", "energy", "mobility", "ev_charging", "associations", "property"],
+      "source_type": "official_guidance",
+      "ingestion_method": "html_guidance",
+      "priority": "P0",
+      "suggested_review_frequency_days": 7,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-14",
+      "adapter_state": "CANDIDATE",
+      "notes": "Association/boendeorganisation charging guidance. User category and economic-activity context affect support/timing rules. Source verification does not mean a project is eligible or a stated cap is guaranteed."
+    },
+    {
+      "source_id": "se-riksdagen-resident-charging-right",
+      "owner": "Sveriges riksdag",
+      "authority_type": "parliament",
+      "url": "https://data.riksdagen.se/dokument/sfs-1991-614.html",
+      "geography": "SE",
+      "coverage": ["housing", "ev_charging", "tenant", "condominium", "rights"],
+      "source_type": "official_legislation",
+      "ingestion_method": "html_legislation",
+      "priority": "P0",
+      "suggested_review_frequency_days": 30,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-14",
+      "adapter_state": "CANDIDATE",
+      "notes": "Current statutory source for the 2026 charging-point request rules. A right to request at own cost is not a Ladda bilen grant and does not imply unconditional approval in every case."
+    },
+    {
       "source_id": "se-lansstyrelserna-foundation-search",
       "owner": "Länsstyrelserna",
       "authority_type": "government_registry",
