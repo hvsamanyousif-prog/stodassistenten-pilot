@@ -14,7 +14,9 @@ def require(ok: bool, message: str) -> None:
 
 def main() -> int:
     require('QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"' in BUILD, 'quick-help guidance path missing from build')
-    require('QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH)' in BUILD, 'quick-help runtime order is not explicit')
+    runtime_line = next((line for line in BUILD.splitlines() if line.startswith('QUICK_RUNTIME_PATHS =')), '')
+    require('QUICK_LEARNING_PATH' in runtime_line and 'QUICK_GUIDANCE_PATH' in runtime_line, 'quick-help core runtimes missing from build')
+    require(runtime_line.index('QUICK_LEARNING_PATH') < runtime_line.index('QUICK_GUIDANCE_PATH'), 'quick-help learning must load before direct guidance')
     for token in (
         "dental:new Set(['cost','care','support','unsure'])",
         "vision:new Set(['home','tech','work','unsure'])",
