@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v46 turns the v45 job-premium discovery gap into a guarded public route while protecting a newly surfaced confusion boundary between the state job premium and municipal job stimulation. No real user case data is stored and no eligibility, amount or deadline engine is created.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-job-premium-vs-job-stimulation-boundary-2026",
+      "observation": "Current Socialstyrelsen guidance explicitly distinguishes jobbstimulans, which can operate while a household still receives social assistance, from the temporary state job premium, which is handled by Försäkringskassan and requires that the household is no longer receiving social assistance for the claimed month. This distinction is easy to lose when a user simply says they now work but still need municipal support.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/jobbpremien/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-private-job-premium-natural-language-public-route-v46-01",
+      "actor_type": "private_person_employee_transition",
+      "story": "Jag hade försörjningsstöd och jobbar nu deltid med lön. Jag vet inte vad stödet heter eller om något finns när man går över till arbete.",
+      "expected_support_areas": [
+        "job_premium_candidate_discovery",
+        "natural_language_transition_recognition",
+        "minimum_route_changing_questions",
+        "source_grounded_next_action",
+        "privacy_safe_handoff"
+      ],
+      "must_not_claim": [
+        "natural_language_match_proves_job_premium_eligibility",
+        "part_time_work_excludes_the_job_premium_route",
+        "a_new_job_is_required_for_the_route_to_be_relevant",
+        "the_public_route_can_calculate_or_guarantee_amount_payment_or_deadline",
+        "raw_salary_employer_municipality_household_identity_or_social_assistance_story_should_be_put_in_handoff_urls_or_feedback"
+      ],
+      "expected_questions": [
+        "q_received_social_assistance_every_month_july_through_december_2025",
+        "q_received_employment_income_in_the_month_being_checked",
+        "q_did_applicant_or_any_household_member_receive_social_assistance_in_that_month"
+      ],
+      "expected_next_actions": [
+        "route_to_current_forsakringskassan_job_premium_guidance_without_declaring_eligibility",
+        "check_the_exact_claim_month_and_current_application_deadline_in_the_primary_source",
+        "keep_the_existing_review_gated_support_record_as_non_verified_truth"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_job_premium_guidance",
+        "Socialstyrelsen_current_job_premium_context"
+      ]
+    },
+    {
+      "case_id": "lab-private-job-premium-vs-job-stimulation-v46-02",
+      "actor_type": "private_person_employee_transition",
+      "story": "Jag har börjat jobba men hushållet får fortfarande försörjningsstöd. Är jobbpremie och jobbstimulans samma sak?",
+      "expected_support_areas": [
+        "job_premium_vs_job_stimulation_disambiguation",
+        "municipal_vs_state_route_split",
+        "household_social_assistance_boundary",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "job_premium_and_job_stimulation_are_the_same_scheme",
+        "current_household_social_assistance_should_be_ignored_when_routing_job_premium",
+        "the_municipality_decides_the_state_job_premium",
+        "forsakringskassan_decides_the_municipal_job_stimulation_calculation",
+        "the_product_can_tell_the_user_to_stop_social_assistance_in_order_to_create_job_premium_eligibility"
+      ],
+      "expected_questions": [
+        "q_did_applicant_or_any_household_member_receive_social_assistance_in_the_month_being_checked"
+      ],
+      "expected_next_actions": [
+        "keep_job_premium_with_forsakringskassan_and_job_stimulation_with_the_municipal_social_assistance_context",
+        "verify_current_rules_before_presenting_either_route_as_actionable",
+        "do_not_advise_ending_social_assistance_to_manufacture_eligibility"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_job_premium_guidance",
+        "Socialstyrelsen_current_job_premium_and_job_stimulation_guidance"
+      ]
+    }
+  ]
+}
