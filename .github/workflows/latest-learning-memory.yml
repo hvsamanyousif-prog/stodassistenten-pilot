@@ -3,7 +3,32 @@ name: Latest learning memory
 on:
   push:
     branches: [main]
+    paths:
+      - 'data/evals/**'
+      - 'data/supports/**'
+      - 'scripts/validate_latest_learning_memory.py'
+      - 'scripts/validate_v31_age30_transition.py'
+      - 'scripts/validate_age30_product.py'
+      - 'scripts/validate_v33_procurement_discovery.py'
+      - 'scripts/validate_pension_housing_v38.py'
+      - 'scripts/validate_student_csn_weeks_v39.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_data.py'
+      - '.github/workflows/latest-learning-memory.yml'
   pull_request:
+    paths:
+      - 'data/evals/**'
+      - 'data/supports/**'
+      - 'scripts/validate_latest_learning_memory.py'
+      - 'scripts/validate_v31_age30_transition.py'
+      - 'scripts/validate_age30_product.py'
+      - 'scripts/validate_v33_procurement_discovery.py'
+      - 'scripts/validate_pension_housing_v38.py'
+      - 'scripts/validate_student_csn_weeks_v39.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_data.py'
+      - '.github/workflows/latest-learning-memory.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -13,18 +38,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - name: Lock newest Stodassistenten learning semantics
+          python-version: '3.x'
+      - name: Validate latest semantic learning memory
         run: |
           python scripts/validate_latest_learning_memory.py
           python scripts/validate_v31_age30_transition.py
           python scripts/validate_age30_product.py
           python scripts/validate_v33_procurement_discovery.py
           python scripts/validate_pension_housing_v38.py
+          python scripts/validate_student_csn_weeks_v39.py
           python scripts/validate_scenario_lab_all.py
           python scripts/validate_data.py
