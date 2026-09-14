@@ -154,7 +154,7 @@
       "authority_type": "parliament",
       "url": "https://data.riksdagen.se/dokument/sfs-1991-614.html",
       "geography": "SE",
-      "coverage": ["housing", "ev_charging", "tenant", "condominium", "rights"],
+      "coverage": ["housing", "ev_charging", "condominium", "rights"],
       "source_type": "official_legislation",
       "ingestion_method": "html_legislation",
       "priority": "P0",
@@ -162,7 +162,23 @@
       "source_verification_status": "SOURCE_VERIFIED",
       "last_source_check": "2026-09-14",
       "adapter_state": "CANDIDATE",
-      "notes": "Current statutory source for the 2026 charging-point request rules. A right to request at own cost is not a Ladda bilen grant and does not imply unconditional approval in every case."
+      "notes": "Current Bostadsrättslag (1991:614), 7 kap. 9 a §, for a bostadsrättshavare's 2026 charging-point request. This source does not cover a tenant request under Jordabalken and does not imply unconditional approval in an individual case."
+    },
+    {
+      "source_id": "se-riksdagen-tenant-charging-right",
+      "owner": "Sveriges riksdag",
+      "authority_type": "parliament",
+      "url": "https://data.riksdagen.se/dokument/sfs-1970-994.html",
+      "geography": "SE",
+      "coverage": ["housing", "ev_charging", "tenant", "rights"],
+      "source_type": "official_legislation",
+      "ingestion_method": "html_legislation",
+      "priority": "P0",
+      "suggested_review_frequency_days": 30,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-14",
+      "adapter_state": "CANDIDATE",
+      "notes": "Current Jordabalk (1970:994), 12 kap. 27 a §, for a hyresgäst's 2026 charging-point request. This source does not cover a bostadsrättshavare request under Bostadsrättslagen and does not imply unconditional approval in an individual case."
     },
     {
       "source_id": "se-lansstyrelserna-foundation-search",

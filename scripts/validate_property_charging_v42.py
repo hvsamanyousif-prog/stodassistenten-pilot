@@ -31,9 +31,14 @@ for required in [
     'association_project',
     'company_project',
     'resident_request',
+    'charging_tenure',
+    "new Set(['tenant', 'condominium'])",
     'foreningar-och-boendeorganisationer',
     'fastighetsbolag-och-foretag',
+    'data.riksdagen.se/dokument/sfs-1970-994.html',
     'data.riksdagen.se/dokument/sfs-1991-614.html',
+    '12 kap. 27 a §',
+    '7 kap. 9 a §',
 ]:
     assert required in module, f'missing v42 runtime contract: {required}'
 assert 'property-charging-pilot.html' not in module, 'v42 must not create a parallel app'
@@ -55,6 +60,7 @@ expected_ids = {
     'lab-property-company-ladda-bilen-start-v42-02',
     'lab-resident-own-parking-charging-right-v42-03',
     'lab-property-company-guest-start-exception-v42-04',
+    'lab-resident-tenant-charging-law-source-v42-05',
 }
 assert set(cases) == expected_ids
 assert 'q_who_will_primarily_use_association_charging_only_if_not_already_clear' in cases['lab-brf-ladda-bilen-residents-v42-01']['expected_questions']
@@ -64,11 +70,18 @@ assert 'support_can_be_granted_for_employee_or_own_tenant_charging_after_install
 resident = cases['lab-resident-own-parking-charging-right-v42-03']
 assert resident['expected_questions'] == ['q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home_only_if_not_already_clear']
 assert 'the_resident_personally_receives_the_association_ladda_bilen_grant' in resident['must_not_claim']
+assert 'use_bostadsrattslagen_7_9a_as_the_current_primary_statute' in resident['expected_next_actions']
 assert resident['source_requirements'] == ['Sveriges riksdag']
 guest = cases['lab-property-company-guest-start-exception-v42-04']
 assert guest['expected_questions'] == ['q_who_will_primarily_use_company_charging_only_if_not_already_clear']
 assert 'all_company_charging_is_ineligible_once_installation_has_started' in guest['must_not_claim']
 assert guest['source_requirements'] == ['Naturvårdsverket']
+tenant = cases['lab-resident-tenant-charging-law-source-v42-05']
+assert tenant['expected_questions'] == ['q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home_only_if_not_already_clear']
+assert 'bostadsrattslagen_is_the_only_authoritative_statute_for_a_tenant_request' in tenant['must_not_claim']
+assert 'reuse_explicit_tenant_tenure_without_reasking' in tenant['expected_next_actions']
+assert 'use_jordabalken_12_27a_as_the_current_primary_statute' in tenant['expected_next_actions']
+assert tenant['source_requirements'] == ['Sveriges riksdag']
 
 support = json.loads(SUPPORT.read_text(encoding='utf-8'))
 assert support['support_id'] == 'se-naturvardsverket-ladda-bilen-forening-boende'
@@ -90,9 +103,18 @@ assert support['benefit']['kind'] == 'reimbursement'
 assert support['benefit']['recurrence'] == 'one_off'
 
 registry = json.loads(REGISTRY.read_text(encoding='utf-8'))
-source_ids = {source['source_id'] for source in registry['sources']}
-assert 'se-naturvardsverket-ladda-bilen-association' in source_ids
-assert 'se-riksdagen-resident-charging-right' in source_ids
+by_id = {source['source_id']: source for source in registry['sources']}
+assert 'se-naturvardsverket-ladda-bilen-association' in by_id
+assert 'se-riksdagen-resident-charging-right' in by_id
+assert 'se-riksdagen-tenant-charging-right' in by_id
+condo_source = by_id['se-riksdagen-resident-charging-right']
+tenant_source = by_id['se-riksdagen-tenant-charging-right']
+assert condo_source['url'].endswith('sfs-1991-614.html')
+assert condo_source['coverage'] == ['housing', 'ev_charging', 'condominium', 'rights']
+assert '7 kap. 9 a §' in condo_source['notes']
+assert tenant_source['url'].endswith('sfs-1970-994.html')
+assert tenant_source['coverage'] == ['housing', 'ev_charging', 'tenant', 'rights']
+assert '12 kap. 27 a §' in tenant_source['notes']
 
 signals = json.loads(SIGNALS.read_text(encoding='utf-8'))
 assert len(signals['signals']) == 1
@@ -108,6 +130,9 @@ mapping = json.loads(MAP.read_text(encoding='utf-8'))['mappings'][0]
 assert mapping['signal_id'] == signal['signal_id']
 assert set(mapping['regression_case_ids']) == expected_ids
 assert 'No property charging app or duplicate matcher' in mapping['fix_or_guardrail']
+assert 'tenant/condominium tenure' in mapping['privacy_guardrail']
+assert 'Jordabalken 12 kap. 27 a §' in mapping['truth_guardrail']
+assert 'Bostadsrättslagen 7 kap. 9 a §' in mapping['truth_guardrail']
 assert 'NEEDS_REVIEW' in mapping['truth_guardrail']
 assert 'raw story' in mapping['privacy_guardrail']
 
