@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/municipal-route-1.0.0.json",
+  "title": "Stödassistenten Municipal Route Contract",
+  "description": "Public-safe routing metadata for resolving a national support record to a municipality-owned application or contact route. This is not a second support truth layer and must never assert eligibility, amount or a municipal decision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "support_id",
+    "municipality",
+    "identity_source",
+    "route",
+    "verification",
+    "guardrails"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "support_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"
+    },
+    "municipality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scb_code", "name"],
+      "properties": {
+        "scb_code": {"type": "string", "pattern": "^[0-9]{4}$"},
+        "name": {"type": "string", "minLength": 2, "maxLength": 120}
+      }
+    },
+    "identity_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "url", "source_type"],
+      "properties": {
+        "owner": {"const": "Statistiska centralbyrån (SCB)"},
+        "url": {
+          "type": "string",
+          "const": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/"
+        },
+        "source_type": {"const": "official_municipality_identity"}
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route_kind", "official_url", "source_url", "source_owner", "source_type"],
+      "properties": {
+        "route_kind": {
+          "type": "string",
+          "enum": ["application_page", "e_service", "contact_page", "phone_or_in_person", "unknown"]
+        },
+        "official_url": {"type": ["string", "null"], "format": "uri", "maxLength": 1000},
+        "source_url": {"type": "string", "format": "uri", "maxLength": 1000},
+        "source_owner": {"type": "string", "minLength": 2, "maxLength": 160},
+        "source_type": {
+          "type": "string",
+          "enum": ["municipality_primary_source", "municipality_e_service", "other"]
+        },
+        "e_id_required": {"type": ["boolean", "null"]},
+        "alternative_without_e_id": {
+          "type": ["string", "null"],
+          "enum": ["paper", "phone", "in_person", "contact_page", "unknown", null]
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checked_at", "max_age_days", "human_review_required"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["SOURCE_IDENTIFIED", "VERIFIED_ROUTE", "CHANGED", "STALE", "BLOCKED"]
+        },
+        "checked_at": {"type": "string", "format": "date"},
+        "max_age_days": {"type": "integer", "minimum": 1, "maximum": 90},
+        "human_review_required": {"type": "boolean"}
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eligibility_inference_forbidden",
+        "amount_inference_forbidden",
+        "guessed_route_forbidden",
+        "stale_route_fails_closed",
+        "raw_situation_in_url_forbidden",
+        "local_rule_duplication_forbidden"
+      ],
+      "properties": {
+        "eligibility_inference_forbidden": {"const": true},
+        "amount_inference_forbidden": {"const": true},
+        "guessed_route_forbidden": {"const": true},
+        "stale_route_fails_closed": {"const": true},
+        "raw_situation_in_url_forbidden": {"const": true},
+        "local_rule_duplication_forbidden": {"const": true}
+      }
+    }
+  }
+}
