@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1.0",
-  "generated_at": "2026-09-13",
+  "generated_at": "2026-09-15",
   "purpose": "Qualitative demand/friction intelligence for prioritizing the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. Community/Q&A sources may support recurrence discovery only; truth-bearing facts require the listed primary sources.",
   "scoring": {
     "scale": "1-5",
@@ -14,24 +14,27 @@
       "natural_language_queries": [
         "den andra föräldern betalar inte vad kan jag få",
         "vad är skillnaden på underhåll och underhållsstöd",
-        "förälder betalar bara ibland vem ska jag ringa"
+        "förälder betalar bara ibland vem ska jag ringa",
+        "barnet bor varannan vecka ska någon betala underhåll",
+        "den andra föräldern bor utomlands vem hjälper med underhåll"
       ],
-      "demand_signal": {"score": 4, "basis": "Recurring public questions and a dedicated Försäkringskassan information path indicate repeated need."},
-      "friction_signal": {"score": 5, "basis": "Everyday language collapses underhållsbidrag and underhållsstöd into one word although routes and conditions differ."},
-      "miss_consequence": {"score": 5, "basis": "Wrong routing can delay a child-related payment/application and create incorrect amount expectations."},
-      "source_fragmentation": {"score": 3, "basis": "Core truth is concentrated at Försäkringskassan, but users encounter agreements, direct parent payments and agency support as separate concepts."},
-      "language_accessibility_friction": {"score": 3, "basis": "Legal/administrative terms are harder than the natural-language problem statement; multilingual explanation can reduce ambiguity."},
-      "steps_to_action": {"score": 3, "basis": "The correct path depends on residence/registration, payment status and whether an agreement or decision already exists."},
-      "recurrence_signal": {"score": 4, "basis": "Public Q&A contains repeated variations of who pays, what happens after separation and what underhåll means."},
-      "current_product_coverage_gap": {"score": 5, "basis": "No permanent canonical scenario previously forced the product to distinguish these two maintenance routes."},
+      "demand_signal": {"score": 5, "basis": "Försäkringskassan maintains a dedicated national section with separate current guidance for direct maintenance, missing/partial payment and cross-border cases, plus dedicated maintenance-support statistics. This is a qualitative reach signal, not measured search volume."},
+      "friction_signal": {"score": 5, "basis": "Everyday language collapses underhållsbidrag and underhållsstöd into one word, while equal residence, partial payment and cross-border context can change the relevant route."},
+      "miss_consequence": {"score": 5, "basis": "Wrong routing can delay a child-related payment/application, create incorrect amount expectations or produce avoidable conflict between parents."},
+      "source_fragmentation": {"score": 4, "basis": "Core truth is concentrated at Försäkringskassan, but separate pages and processes cover direct parent payments, state support and international cases; disagreement can also lead to municipal collaboration talks or legal help."},
+      "language_accessibility_friction": {"score": 5, "basis": "Terms such as underhållsbidrag, underhållsstöd, växelvist boende and partial payment are less intuitive than the natural-language problem and are difficult to turn into a safe next action across languages."},
+      "steps_to_action": {"score": 4, "basis": "A safe public route needs only the residence pattern and current payment status before choosing the relevant primary source; material eligibility, amount and legal-obligation facts should not all be collected before showing the source."},
+      "recurrence_signal": {"score": 5, "basis": "Public Q&A and community discussions repeatedly vary the same questions around who pays, what happens after separation, equal residence and whether state support fills a payment gap. Those sources are discovery only, never truth."},
+      "current_product_coverage_gap": {"score": 4, "basis": "A v11 canonical regression already protected the terminology split, but the public product had not converted that learning into a focused natural-language handoff and had no permanent equal-residence or cross-border regression. v51 closes those specific gaps without creating a new engine."},
       "priority_band": "HIGH",
-      "discovery_sources": ["https://soctanter.malmo.se/fraga/11713"],
+      "discovery_sources": ["https://soctanter.malmo.se/fraga/11713", "https://www.reddit.com/r/Asksweddit/"],
       "primary_sources": [
         "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
-        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala"
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/nagon-av-foraldrarna-bor-utomlands"
       ],
-      "recommended_learning_action": "Add fail-closed synthetic regression distinguishing direct underhållsbidrag from Försäkringskassan underhållsstöd and ask only facts that can change the route.",
-      "truth_rule": "Discovery signal is not truth; verify current conditions, amounts and application route against Försäkringskassan."
+      "recommended_learning_action": "Convert the existing v11 maintenance learning into a guarded focus=child_maintenance route in the same root/person product, ask only residence and payment facts that change the route, and add equal-residence/cross-border regressions while keeping material eligibility and amounts review-gated.",
+      "truth_rule": "Discovery signal is not truth; VERIFY current conditions, amounts, individual payment obligations and application route against Försäkringskassan. Do not infer entitlement from separation/nonpayment, or infer that equal residence means maintenance can never be relevant."
     },
     {
       "signal_id": "df-partial-sick-leave-scheduling-v01",

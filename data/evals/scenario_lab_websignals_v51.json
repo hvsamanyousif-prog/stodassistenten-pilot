@@ -1,0 +1,48 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Permanent synthetic regressions extending the existing v11 child-maintenance scenario without duplicating it. v51 locks the missing public natural-language handoff, the equal-residence boundary and cross-border routing. Stories are synthetic and contain no reused user or community text.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "child-maintenance-public-route-and-long-tail-friction",
+      "observation": "The canonical v11 scenario already distinguished direct underhållsbidrag from underhållsstöd, but the public product had not converted that learning into a focused route. Current Försäkringskassan guidance also makes equal-residence and cross-border cases materially different enough to require dedicated regressions.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/nagon-av-foraldrarna-bor-utomlands"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-family-maintenance-public-route-v51-01",
+      "actor_type": "parent_guardian",
+      "story": "Jag skriver bara att den andra föräldern inte betalar underhåll och vill snabbt förstå vilken väg jag ska kontrollera.",
+      "expected_support_areas": ["natural_language_child_maintenance_handoff", "same_person_product_route", "residence_then_payment_information_gain"],
+      "must_not_claim": ["the_product_must_collect_all_material_eligibility_facts_before_showing_the_primary_source", "separation_plus_nonpayment_proves_maintenance_support_eligibility", "underhallsbidrag_and_underhallsstod_are_the_same_route", "a_fixed_support_amount_is_guaranteed"],
+      "expected_questions": ["q_child_residence_pattern_if_unknown", "q_other_parent_payment_full_partial_none_or_unclear_if_unknown"],
+      "expected_next_actions": ["route_with_focus_child_maintenance_inside_the_existing_person_product", "verify_current_material_conditions_at_forsakringskassan_without_calculating_eligibility"],
+      "source_requirements": ["Forsakringskassan_current_underhall_overview", "Forsakringskassan_current_underhallsstod_when_payment_missing"]
+    },
+    {
+      "case_id": "lab-family-maintenance-equal-residence-v51-02",
+      "actor_type": "parent_guardian",
+      "story": "Barnet bor ungefär lika mycket hos oss båda. Jag har hört att underhåll aldrig kan vara aktuellt då, men vår ekonomi skiljer sig mycket.",
+      "expected_support_areas": ["equal_residence_boundary", "direct_maintenance_economic_difference_candidate", "no_automatic_state_support"],
+      "must_not_claim": ["equal_residence_means_maintenance_can_never_be_relevant", "equal_residence_automatically_qualifies_for_maintenance_support", "income_difference_alone_proves_a_specific_payment_obligation_or_amount"],
+      "expected_questions": ["q_child_residence_pattern_without_collecting_exact_schedule_when_not_needed"],
+      "expected_next_actions": ["use_current_forsakringskassan_direct_maintenance_guidance_or_calculation_tool_as_a_check_not_as_an_entitlement_decision", "keep_state_support_and_direct_parent_payment_distinct"],
+      "source_requirements": ["Forsakringskassan_current_underhall_overview"]
+    },
+    {
+      "case_id": "lab-family-maintenance-cross-border-v51-03",
+      "actor_type": "parent_guardian",
+      "story": "Barnet bor mest hos mig i Sverige och den andra föräldern bor utomlands. Jag vet inte vem som kan hjälpa när underhållet inte fungerar.",
+      "expected_support_areas": ["cross_border_maintenance_route", "country_specific_authority_help", "maintenance_support_candidate_when_current_conditions_fit"],
+      "must_not_claim": ["the_domestic_administrative_path_is_identical_for_every_country", "living_abroad_proves_or_excludes_maintenance_support", "the_product_can_infer_foreign_law_or_enforcement_from_country_name_alone"],
+      "expected_questions": ["q_cross_border_context_only_when_it_changes_the_next_source_or_action"],
+      "expected_next_actions": ["use_current_forsakringskassan_cross_border_maintenance_guidance", "do_not_collect_country_or_parent_identity_in_public_feedback"],
+      "source_requirements": ["Forsakringskassan_current_cross_border_underhall"]
+    }
+  ]
+}

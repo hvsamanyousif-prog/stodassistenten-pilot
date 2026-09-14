@@ -1,0 +1,115 @@
+{
+  "support_id": "se-forsakringskassan-underhallsstod",
+  "name": "Underhållsstöd",
+  "category": "family",
+  "subtype": "child_maintenance_support",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["parent_guardian", "separated_parents", "child_maintenance"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "maintenance_support.residence",
+        "field": "child_residence_pattern",
+        "operator": "text_condition",
+        "value": "Försäkringskassans aktuella sida anger att barnet ska bo hos den sökande hela eller större delen av tiden för den publicerade underhållsstödsvägen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+        "notes": "Den publika produkten använder boendemönstret endast som route-changing fakta och fattar inte eligibilitybeslut."
+      },
+      {
+        "rule_id": "maintenance_support.payment_missing_or_partial",
+        "field": "other_parent_payment_status",
+        "operator": "text_condition",
+        "value": "Försäkringskassan beskriver underhållsstöd som en möjlig väg när den förälder som ska betala underhåll inte gör det eller bara betalar en del.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+        "notes": "Utebliven eller partiell betalning ensam bevisar inte rätt till underhållsstöd."
+      },
+      {
+        "rule_id": "maintenance_support.other_conditions",
+        "field": "other_material_conditions",
+        "operator": "text_condition",
+        "value": "Den aktuella primärkällan anger ytterligare villkor som rör bland annat vårdnad, folkbokföring, relation till den andra föräldern och försäkring i Sverige.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+        "notes": "Dessa materiella villkor visas inte som autonoma ja/nej-beslut i den publika vägvisaren och kräver mänsklig sakgranskning före VERIFIED."
+      },
+      {
+        "rule_id": "maintenance.equal_residence",
+        "field": "equal_residence_direct_maintenance_boundary",
+        "operator": "text_condition",
+        "value": "Försäkringskassan anger att när barnet bor ungefär lika mycket hos båda behövs normalt inget underhåll, men att stor skillnad i föräldrarnas ekonomi kan göra underhållsbidrag rimligt.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/underhall-sa-funkar-det",
+        "notes": "Produkten får inte översätta detta till ett automatiskt belopp eller en individuell betalningsskyldighet."
+      },
+      {
+        "rule_id": "maintenance.cross_border",
+        "field": "parent_abroad",
+        "operator": "text_condition",
+        "value": "Försäkringskassan anger att hjälp i situationer där föräldrar bor i olika länder kan bero på vilket land den andra föräldern bor i.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/nagon-av-foraldrarna-bor-utomlands",
+        "notes": "Land ska inte samlas in i publik feedback och produkten ska inte göra utländsk rättslig inferens."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "maintenance.residence_pattern",
+        "prompt": "Bor barnet hela eller större delen av tiden hos dig, ungefär lika hos båda, eller är boendet oklart?",
+        "reason": "Boendemönstret skiljer den publicerade underhållsstödsvägen från växelvist boende och direkt underhållsbidrag."
+      },
+      {
+        "question_id": "maintenance.payment_status",
+        "prompt": "Betalar den andra föräldern underhåll fullt, delvis, inget eller är det oklart?",
+        "reason": "Betalningsstatus skiljer en fungerande direktbetalning från en kandidat för vidare kontroll av underhållsstöd."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan bedömer rätten och eventuell nivå enligt aktuella regler. Den publika Stödassistenten räknar inte ut underhållsstöd eller underhållsbidrag.",
+    "recurrence": "monthly_if_granted"
+  },
+  "documents": [],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+    "deadline_text": null,
+    "next_step": "Klargör boendemönster och om underhåll betalas fullt, delvis eller inte alls. Kontrollera därefter aktuella villkor och ansökningsväg direkt hos Försäkringskassan."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-family-maintenance",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/foraldrar-som-inte-lever-ihop/om-den-som-ska-betala-underhall-inte-kan-eller-vill-betala",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-15T01:00:00+02:00",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkällor den 15 september 2026. Mänsklig sakgranskning krävs före VERIFIED, särskilt för alla materiella villkor, ålders-/beloppsnivåer, retroaktivitet, tidsfrister, vårdnad/folkbokföring/försäkring, hotbildsundantag och gränsöverskridande processer. Den publika vägen visar inte eller räknar dessa materialfält autonomt.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T01:00:00+02:00",
+    "last_seen_at": "2026-09-15T01:00:00+02:00",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
