@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility, insurance coverage, contract status or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-self-employed-tfa-contract-boundary-v01",
+      "product_miss": "v29 correctly blocked automatic Afa coverage for self-employed users, but its learned next action could still overcorrect toward private/business insurance and miss that current Afa/Fora guidance allows TFA coverage for a self-employed owner through an actual Fora insurance or ground agreement.",
+      "fix_or_guardrail": "Keep the statutory Forsakringskassan work-injury dental route separate, never infer TFA from actor label or company registration, never exclude TFA solely because the person is self-employed, and use the existence of a current Fora insurance/ground agreement as a minimum information-gain fact before presenting TFA as an actionable separate route.",
+      "regression_case_ids": [
+        "lab-self-employed-tfa-fora-agreement-v30-01",
+        "lab-self-employed-tfa-unknown-contract-v30-02"
+      ]
+    }
+  ]
+}
