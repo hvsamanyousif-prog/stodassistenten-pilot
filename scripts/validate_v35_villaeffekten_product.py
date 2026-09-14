@@ -29,7 +29,7 @@ person = PERSON.read_text(encoding="utf-8")
 for token in [
     "focus=home_energy",
     "actor_type=private_person",
-    "data-home-energy-route",
+    "dataset.homeEnergyRoute",
     "Villaeffekten",
     "HOME_ENERGY_PATTERNS",
 ]:
