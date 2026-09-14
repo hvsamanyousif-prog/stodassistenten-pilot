@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for older people who need help at home and may be unsure whether the next route is municipal eldercare, healthcare at home or both. Scores are not measured search volumes and do not prove eligibility or local process. Current Socialstyrelsen, 1177 and Socialtjänstlag sources carry truth-bearing national boundaries; local process and responsibility must be verified at the responsible municipality or region.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-older-home-support-care-vs-healthcare-v01",
+      "actor_types": ["older_person", "relative", "private_person"],
+      "natural_language_queries": [
+        "jag klarar inte duscha och städa hemma längre vad kan jag få hjälp med",
+        "min mamma klarar inte vardagen hemma vem ska jag ringa",
+        "vad är skillnaden mellan hemtjänst och hemsjukvård",
+        "måste man alltid ha biståndsbedömning för hemtjänst",
+        "vem ansvarar för sjuksköterska hemma kommunen eller regionen",
+        "jag vill bo kvar hemma men behöver hjälp med mat inköp och hygien"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Socialstyrelsen reported on 7 May 2026 that about 16 percent of people over 80 had home help in 2025 compared with more than 20 percent ten years earlier, while the absolute number of older people receiving services increased and older people may be waiting longer before seeking support. This is an official service-use/friction signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A natural request for help at home can refer to social home support, personal care, a safety alarm, healthcare at home or a combination. The local process for social services and the division of home-healthcare responsibility are not safely inferred from one national route."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Misrouting can leave an older person without needed daily support or send a healthcare need to the wrong service. Overclaiming a universal assessment process can also create an unnecessary barrier before the person contacts current local services."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "National boundaries are split across Socialstyrelsen, 1177 and Socialtjänstlag, while the concrete contact process and home-healthcare responsibility depend on current local municipal/region arrangements."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as hemtjänst, hemsjukvård, äldreomsorg, biståndsbedömning and trygghetslarm are difficult to distinguish, especially for relatives, people with low digital familiarity and users who need Arabic or Persian support."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A useful path first separates daily-living support from healthcare at home, then points to current municipal eldercare information and/or 1177/local healthcare responsibility without collecting diagnosis, exact address or personal identity."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Socialstyrelsen's 2026 national reporting describes later and increasingly complex eldercare needs, while its public older-person guidance centers on recurring needs such as meals, cleaning, shopping, personal care and safety at home."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The shared product had pension/economy, dental and relative-care capabilities, but no focused public route for the older person's own daily support at home and no explicit boundary between hemtjänst and healthcare at home."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.socialstyrelsen.se/om-socialstyrelsen/pressrum/press/ny-lagesbild-andelen-aldre-med-hemtjanst-minskar/"
+      ],
+      "primary_sources": [
+        "https://www.socialstyrelsen.se/stod-i-livet/aldre/",
+        "https://www.1177.se/sa-fungerar-varden/olika-vardformer/aldreomsorg/",
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/"
+      ],
+      "product_miss": "The shared product could interpret pension, economy and a relative's own caregiver-support situation, but it did not turn natural older-person home-support problems into a focused route or separate social home support from healthcare at home.",
+      "future_guardrail": "Keep one shared person product. Route only when the situation expresses help-at-home/eldercare needs. Ask at most which broad need dominates: daily-living support, healthcare at home, both or unsure. Do not steal serious-illness caregiver-benefit stories that lack an older-person daily-support signal. Never infer a universal municipal process or local home-healthcare responsibility.",
+      "regression_case": [
+        "lab-older-home-support-daily-living-v53-01",
+        "lab-older-home-support-vs-home-healthcare-v53-02",
+        "lab-relative-older-needs-support-not-caregiver-benefit-v53-03",
+        "lab-older-local-process-no-universal-bistandsprovning-v53-04"
+      ],
+      "evaluation_method": "Run the four v53 older-home-support scenarios; require sv/ar/fa route detection, one high-information need split, privacy-safe handoff, structured anonymous feedback, separate social-care and healthcare sources, preservation of the existing caregiver route and fail-closed local process/responsibility claims.",
+      "recommended_learning_action": "Add a guarded older_home_support capability to the same public shell/person pilot and wire it through the existing build. Keep local municipal/region details outside the URL and outside truth-bearing claims until current official local information is verified.",
+      "truth_rule": "VERIFY current local municipal process and the responsible local healthcare actor before giving a concrete contact/process claim. Current Socialtjänstlag allows many personal-needs services without individual needs assessment but does not prove that a specific municipality offers this specific service that way. Do not infer eligibility, hours, fees or medical need."
+    }
+  ]
+}
