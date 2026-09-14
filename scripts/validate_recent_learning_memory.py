@@ -20,7 +20,7 @@ for path in paths:
             raise AssertionError(f"duplicate scenario id: {cid}")
         cases[cid] = case
 
-assert len(cases) >= 66, f"expected at least 66 cases after v23, got {len(cases)}"
+assert len(cases) >= 68, f"expected at least 68 cases after v25, got {len(cases)}"
 
 locks = {
     "lab-young-post-study-no-job-v20-01": {
@@ -84,14 +84,58 @@ locks = {
             "the_product_can_guarantee_amount_or_payment_date",
             "the_raw_situation_text_exact_income_bank_data_or_health_details_should_be_put_in_the_handoff_url_or_feedback",
         ],
-        "expected_questions": [
-            "q_none_when_coarse_basic_need_or_housing_context_is_already_known",
-        ],
+        "expected_questions": ["q_none_when_coarse_basic_need_or_housing_context_is_already_known"],
         "expected_next_actions": [
             "contact_social_services_in_the_users_municipality_to_apply",
             "ask_the_municipality_which_household_housing_income_asset_and_expense_documents_are_required",
             "treat_the_socialstyrelsen_trial_calculation_as_orientation_not_a_decision",
             "do_not_block_an_application_because_the_public_pilot_is_unsure",
+        ],
+    },
+    "lab-private-economic-assistance-municipal-route-v24-01": {
+        "expected_support_areas": [
+            "national_economic_assistance_truth_record",
+            "municipality_identity_resolution",
+            "municipality_primary_route_verification",
+            "non_eid_fallback_when_needed",
+        ],
+        "must_not_claim": [
+            "a_guessed_municipality_domain_or_search_result_is_a_verified_application_route",
+            "a_stale_or_changed_local_link_is_current",
+            "a_verified_local_route_proves_eligibility_for_economic_assistance",
+            "lack_of_bankid_means_the_person_cannot_apply",
+            "municipality_specific_application_details_should_be_copied_into_a_parallel_support_truth_record",
+        ],
+        "expected_next_actions": [
+            "resolve_municipality_name_and_code_against_current_scb_identity_data",
+            "preserve_socialstyrelsen_as_the_national_economic_assistance_truth_source",
+            "show_a_direct_local_route_only_when_currently_verified_from_a_municipality_primary_source",
+            "if_route_is_stale_changed_or_unknown_fall_back_to_contacting_the_municipal_social_services_or_current_municipality_site",
+        ],
+    },
+    "lab-employee-preventive-treatment-work-v25-01": {
+        "expected_support_areas": [
+            "preventive_sickness_benefit_candidate",
+            "doctor_ordered_medical_treatment_or_rehabilitation",
+            "treatment_plan_approval",
+            "per_ocassion_work_absence_threshold",
+        ],
+        "must_not_claim": [
+            "an_ordinary_single_healthcare_visit_automatically_qualifies_for_preventive_sickness_benefit",
+            "diagnosis_or_treatment_name_alone_proves_eligibility",
+            "treatment_plan_approval_guarantees_payment_for_every_treatment_ocassion",
+            "the_product_can_guarantee_eligibility_amount_or_payment_date",
+            "the_raw_situation_text_health_details_or_exact_schedule_should_be_put_in_the_handoff_url_or_feedback",
+        ],
+        "expected_questions": [
+            "q_is_medical_treatment_or_rehabilitation_doctor_ordered_to_prevent_or_shorten_disease",
+            "q_does_treatment_and_relevant_travel_require_at_least_one_quarter_of_daily_work_time_per_ocassion",
+            "q_has_forsakringskassan_approved_the_treatment_plan",
+        ],
+        "expected_next_actions": [
+            "if_plan_is_not_approved_apply_to_forsakringskassan_for_treatment_plan_approval_before_claiming_treatment_ocassions",
+            "after_plan_approval_use_the_current_forsakringskassan_route_to_claim_actual_treatment_ocassions_without_promising_eligibility_or_amount",
+            "if_the_route_does_not_fit_keep_ordinary_sickness_benefit_employer_rehabilitation_and_other_paths_separate",
         ],
     },
 }
@@ -103,4 +147,4 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in case[field], f"{cid}: missing locked {field} token {token}"
 
-print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v23 semantics locked)")
+print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v25 semantics locked)")

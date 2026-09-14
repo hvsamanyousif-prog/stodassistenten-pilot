@@ -1,0 +1,34 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility or factual truth. Community discussion is discovery-only; preventive-sickness-benefit facts must be verified against current Försäkringskassan primary sources and remain review-gated in the truth layer.",
+  "scoring": {"scale": "1-5", "meaning": "1=low, 5=very high", "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."},
+  "signals": [{
+    "signal_id": "df-preventive-treatment-worktime-v01",
+    "actor_types": ["employee", "jobseeker", "self_employed"],
+    "natural_language_queries": [
+      "jag kan jobba men måste gå på behandling varje vecka på arbetstid finns ersättning",
+      "måste till psykolog under arbetstid ska jag sjukskriva mig de timmarna",
+      "läkarordinerad rehab flera gånger i veckan vem betalar tiden från jobbet",
+      "jag är inte sjukskriven hela dagen men behandlingen tar en del av arbetsdagen vad ska jag söka"
+    ],
+    "demand_signal": {"score": 4, "basis": "Public discussion shows people framing recurring treatment during work as a scheduling, disclosure or ordinary-sick-leave question rather than knowing the preventive-sickness-benefit term. This is qualitative discovery only, not measured search volume."},
+    "friction_signal": {"score": 5, "basis": "The route is easy to confuse with an ordinary doctor visit, ordinary sickness benefit, employer rehabilitation, work training or wellness. The official process also has a two-stage structure: treatment-plan approval first, then claims for actual treatment occasions."},
+    "miss_consequence": {"score": 4, "basis": "A missed route can lead a person to skip medically important recurring treatment, use the wrong absence path, or fail to obtain the treatment-plan approval needed before claiming the specific benefit."},
+    "source_fragmentation": {"score": 3, "basis": "Core user conditions and application steps are on one Försäkringskassan page, while the healthcare guidance adds important boundaries such as single visits not qualifying and individual assessment."},
+    "language_accessibility_friction": {"score": 5, "basis": "Natural wording centers on therapy, rehab, physiotherapy, work hours and being able to work between appointments. The support name itself is unlikely to be the phrase a new user starts with, especially across Swedish, Arabic and Persian."},
+    "steps_to_action": {"score": 4, "basis": "The user must distinguish the treatment type, actual absence per occasion and treatment-plan approval status before reaching the safe application step. Asking generic work or diagnosis questions first adds avoidable friction."},
+    "recurrence_signal": {"score": 4, "basis": "The same friction recurs with scheduled psychology, pain treatment, physiotherapy, occupational therapy and other recurring medical rehabilitation that overlaps work or job-seeking time."},
+    "current_product_coverage_gap": {"score": 5, "basis": "The truth layer already contains a review-gated preventive-sickness-benefit support record, but the public shell/person journey has no focused natural-language route that consumes it. The employee coverage matrix also identifies long-tail combinations between work and benefits as a remaining gap."},
+    "priority_band": "HIGH",
+    "discovery_sources": [
+      "https://www.reddit.com/r/sweden/comments/1dpawlu"
+    ],
+    "primary_sources": [
+      "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+      "https://www.forsakringskassan.se/halso-och-sjukvarden/sjukdom-och-skada/utlatande-for-forebyggande-sjukpenning"
+    ],
+    "recommended_learning_action": "Add a bounded preventive_treatment handoff inside the existing shared shell/person module. Detect recurring treatment or rehabilitation plus work-time friction, pass only actor/focus/language, ask only doctor-order/purpose, per-occasion absence and treatment-plan-approval facts that can change the path, and keep ordinary sickness benefit and employer rehabilitation separate instead of forcing every treatment visit into this benefit.",
+    "truth_rule": "Discovery discussions may reveal wording and friction only. Verify current treatment-purpose, doctor-order, time-threshold, plan-approval and application facts against Försäkringskassan primary sources before they affect truth-bearing behavior. Do not promote the existing support record or any material field from NEEDS_REVIEW to VERIFIED without the required human review chain."
+  }]
+}

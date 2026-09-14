@@ -30,6 +30,7 @@ STUDY_TRANSITION_PATH = "client/study-transition.js"
 YOUNG_HOUSING_TRANSITION_PATH = "client/young-housing-transition.js"
 RELATIVE_CARE_PATH = "client/relative-care.js"
 ECONOMIC_ASSISTANCE_PATH = "client/economic-assistance.js"
+PREVENTIVE_TREATMENT_PATH = "client/preventive-treatment.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
@@ -47,6 +48,7 @@ SHELL_RUNTIME_PATHS = (
     YOUNG_HOUSING_TRANSITION_PATH,
     RELATIVE_CARE_PATH,
     ECONOMIC_ASSISTANCE_PATH,
+    PREVENTIVE_TREATMENT_PATH,
 )
 QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH, DENTAL_67_GUIDANCE_PATH)
 SCRIPT_PATHS = (
@@ -63,6 +65,7 @@ SCRIPT_PATHS = (
     YOUNG_HOUSING_TRANSITION_PATH,
     RELATIVE_CARE_PATH,
     ECONOMIC_ASSISTANCE_PATH,
+    PREVENTIVE_TREATMENT_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
