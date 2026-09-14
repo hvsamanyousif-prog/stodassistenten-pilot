@@ -1,0 +1,137 @@
+{
+  "support_id": "se-csn-studiemedel-veckor-sommar",
+  "name": "Studiemedel – tillgängliga veckor och sommarstudier",
+  "category": "education",
+  "subtype": "student_finance_weeks_and_summer_study",
+  "provider": {
+    "name": "Centrala studiestödsnämnden (CSN)",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["student", "adult_learner", "new_student"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "csnweeks.education_level_limit",
+        "field": "education_level",
+        "operator": "text_condition",
+        "value": "CSN anger olika maximala heltidsveckor beroende på utbildningsnivå: högskolenivå 240 veckor, gymnasienivå 80 eller 120 veckor beroende på tidigare utbildning, och grundskolenivå 40, 80 eller 100 veckor beroende på tidigare utbildning.",
+        "source_url": "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+        "notes": "Utbildningsnivå måste vara känd innan en maxgräns används; 240 veckor får inte generaliseras till alla studerande."
+      },
+      {
+        "rule_id": "csnweeks.study_pace",
+        "field": "study_pace",
+        "operator": "text_condition",
+        "value": "CSN anger att deltidsstudier på 75 eller 50 procent kan ge fler kalenderveckor än heltidsstudier eftersom studietakten påverkar hur veckorna används.",
+        "source_url": "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+        "notes": "Produkten ska inte anta att antal kalenderveckor alltid är samma som heltidsveckor med studiemedel."
+      },
+      {
+        "rule_id": "csnweeks.remaining_mina_sidor",
+        "field": "personal_remaining_weeks",
+        "operator": "text_condition",
+        "value": "CSN anger att den studerande på Mina sidor kan se hur många veckor med studiemedel som har använts och hur många som finns kvar.",
+        "source_url": "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+        "notes": "Stödassistenten ska inte försöka härleda ett personligt kvarvarande veckosaldo från fritext, minne eller publika evaldata."
+      },
+      {
+        "rule_id": "csnweeks.summer_minimum",
+        "field": "summer_study_conditions",
+        "operator": "text_condition",
+        "value": "För sommarstudier i Sverige anger CSN bland annat att kursen eller utbildningen ska ge rätt till studiemedel, att studierna ska vara minst 50 procent i minst tre sammanhängande veckor, att den studerande ska vara registrerad och att övriga krav för studiemedel ska vara uppfyllda. För högskolans sommarkurs ska skolan ha rapporterat kursen som sommarkurs till CSN.",
+        "source_url": "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html",
+        "notes": "Antagning eller kursnamn ensamt bevisar inte att sommarstudiemedel kan lämnas."
+      },
+      {
+        "rule_id": "csnweeks.summer_counts_used",
+        "field": "summer_weeks_effect",
+        "operator": "text_condition",
+        "value": "CSN anger att veckor med studiemedel under sommaren räknas som använda veckor.",
+        "source_url": "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html",
+        "notes": "Personligt kvarvarande saldo måste fortfarande kontrolleras på Mina sidor."
+      },
+      {
+        "rule_id": "csnweeks.summer_income_context",
+        "field": "income_half_year_context",
+        "operator": "text_condition",
+        "value": "CSN anger att fribeloppet varierar med hur många veckor den studerande har studiemedel under ett kalenderhalvår och att sommarstudiemedel därför kan påverka fribeloppet för vår- och höstterminen.",
+        "source_url": "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html",
+        "notes": "Exakt fribelopp eller belopp ska alltid kontrolleras i aktuell CSN-källa; denna post lagrar inget personligt inkomstvärde."
+      }
+    ],
+    "exclusions": [
+      {
+        "rule_id": "csnweeks.summer_self_study",
+        "field": "summer_study_form",
+        "operator": "eq",
+        "value": "self_study_without_scheduled_summer_course",
+        "source_url": "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html",
+        "notes": "CSN anger att självstudier under sommaren inte ger rätt till studiemedel."
+      }
+    ],
+    "missing_information_questions": [
+      {
+        "question_id": "csnweeks.education_level",
+        "prompt": "Vilken utbildningsnivå gäller frågan: grundskolenivå, gymnasienivå eller eftergymnasial/högskolenivå?",
+        "reason": "Maximalt antal veckor beror på utbildningsnivå och i vissa fall tidigare utbildning."
+      },
+      {
+        "question_id": "csnweeks.study_pace_period",
+        "prompt": "Vilken studietakt och vilken studieperiod planerar du?",
+        "reason": "Studietakt och period påverkar hur studiemedelsveckorna används och hur sommarstudier bedöms."
+      },
+      {
+        "question_id": "csnweeks.summer_registration",
+        "prompt": "Om det gäller sommaren: ger kursen rätt till studiemedel, är du registrerad och uppfyller perioden minst 50 procent i minst tre sammanhängande veckor?",
+        "reason": "Det är route-changing villkor i CSN:s aktuella sommarväg."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "mixed",
+    "amount_text": null,
+    "calculation_text": "Denna post beskriver hur tillgängliga veckor och sommarstudier behöver kontrolleras, inte ett personligt belopp. Exakt studiemedel och eventuellt fribelopp ska kontrolleras mot aktuell CSN-information för den faktiska studieperioden och studietakten.",
+    "recurrence": "periodic"
+  },
+  "documents": [],
+  "application": {
+    "method": "online",
+    "url": "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html",
+    "deadline_text": null,
+    "next_step": "Kontrollera utbildningsnivå och planerad studietakt/studieperiod. Se personligt använda och kvarvarande veckor på CSN Mina sidor. Om frågan gäller sommarstudier, kontrollera den aktuella kursens rätt till studiemedel, registrering och CSN:s aktuella sommarvillkor innan du planerar finansieringen."
+  },
+  "source": {
+    "source_id": "se-csn-grants-loans",
+    "url": "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-03-24T00:00:00+01:00",
+    "retrieved_at": "2026-09-14T16:43:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från CSN:s aktuella primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt nivågränser, deltidslogik, aktuella sommarvillkor, registreringskrav och fribeloppets aktuella regler. Personligt kvarvarande veckosaldo får aldrig härledas av AI utan ska hämtas från användarens aktuella CSN-kontoinformation. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T16:43:00Z",
+    "last_seen_at": "2026-09-14T16:43:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
