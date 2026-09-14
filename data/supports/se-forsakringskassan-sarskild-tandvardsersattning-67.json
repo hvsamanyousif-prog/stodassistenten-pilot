@@ -129,7 +129,7 @@
     "source_type": "official_web",
     "published_at": null,
     "updated_at": null,
-    "retrieved_at": "2026-09-14T05:30:00Z",
+    "retrieved_at": "2026-09-14T05:20:00Z",
     "content_hash": null
   },
   "verification": {
@@ -140,8 +140,8 @@
     "material_fields_verified": []
   },
   "lifecycle": {
-    "first_seen_at": "2026-09-14T05:30:00Z",
-    "last_seen_at": "2026-09-14T05:30:00Z",
+    "first_seen_at": "2026-09-14T05:20:00Z",
+    "last_seen_at": "2026-09-14T05:20:00Z",
     "valid_from": "2026-01-01",
     "valid_to": null,
     "version": 1,
