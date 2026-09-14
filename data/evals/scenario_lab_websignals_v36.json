@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v36 falsifies the generic association/company result bundle and makes funding discovery source-aware without creating an association engine. No case contains real association, member, applicant or bid data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-association-funding-fragmentation-2026",
+      "observation": "A generic request such as 'our association needs money for a project or premises' does not safely map to one national grant. MUCF grants are purpose-specific, municipal association support is local, Allmänna arvsfonden separates support forms, and Länsstyrelsen's Stiftelsesök is a discovery register rather than an open-call guarantee. The existing person pilot nevertheless returned the same sports-heavy result bundle for associations and small companies regardless of selected need.",
+      "primary_sources": [
+        "https://www.mucf.se/bidrag",
+        "https://skr.se/kommunerochregioner/kommunerlista.8288.html",
+        "https://www.arvsfonden.se/ansokan/vara-stodformer",
+        "https://stiftelser.lansstyrelsen.se/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-association-generic-funding-source-split-v36-01",
+      "actor_type": "association",
+      "story": "Vi är en ideell förening och behöver pengar till verksamhet och ett mindre projekt. Vart ska vi söka?",
+      "expected_support_areas": [
+        "association_funding_discovery",
+        "municipal_vs_national_source_split",
+        "purpose_specific_grant_verification",
+        "foundation_discovery_boundary"
+      ],
+      "must_not_claim": [
+        "being_an_association_automatically_makes_lok_support_relevant",
+        "rf_facility_support_is_a_generic_grant_for_all_nonprofit_associations",
+        "one_national_grant_directory_covers_all_local_association_support",
+        "a_foundation_registry_hit_means_an_application_is_open",
+        "association_status_alone_proves_eligibility_for_mucf_or_arvsfonden"
+      ],
+      "expected_questions": [
+        "reuse_known_actor_association_without_asking_association_vs_company_again",
+        "q_need_funding_facility_or_procurement_only_when_it_changes_next_action"
+      ],
+      "expected_next_actions": [
+        "for_local_activity_start_with_the_own_municipality_official_site",
+        "for_national_or_eu_grants_check_current_mucf_calls_and_each_calls_applicant_and_purpose_rules",
+        "check_arvsfonden_support_form_only_when_project_or_premises_context_matches",
+        "use_stiftelsesok_for_discovery_then_contact_the_foundation_for_current_application_rules"
+      ],
+      "source_requirements": [
+        "MUCF_current_grants_primary_source",
+        "SKR_official_municipality_directory_for_local_source_discovery",
+        "Allmanna_arvsfonden_current_support_forms_primary_source",
+        "Lansstyrelserna_current_stiftelsesok_boundary"
+      ]
+    },
+    {
+      "case_id": "lab-company-org-flow-no-association-support-v36-02",
+      "actor_type": "company",
+      "story": "Jag valde litet företag och finansiering i den breda ingången. Visa nästa steg utan att ge mig föreningsstöd.",
+      "expected_support_areas": [
+        "same_product_company_handoff",
+        "company_vs_association_context_preservation",
+        "avoid_false_positive_nonprofit_support"
+      ],
+      "must_not_claim": [
+        "small_company_selection_should_return_lok_support",
+        "small_company_selection_should_return_rf_association_facility_support",
+        "small_company_selection_should_return_arvsfonden_as_a_generic_company_grant",
+        "switching_to_the_existing_company_pilot_creates_a_separate_product_or_truth_layer"
+      ],
+      "expected_questions": [
+        "do_not_repeat_company_vs_association_after_company_is_known"
+      ],
+      "expected_next_actions": [
+        "handoff_to_the_existing_company_pilot_inside_the_same_product",
+        "preserve_source_aware_financing_vs_procurement_logic_without_copying_raw_story"
+      ],
+      "source_requirements": [
+        "same_product_company_pilot_contract"
+      ]
+    },
+    {
+      "case_id": "lab-association-ar-fa-language-parity-v36-03",
+      "actor_type": "association",
+      "story": "جمعيتنا تحتاج تمويلاً لمشروع محلي ولا نعرف هل نبدأ من البلدية أم من منحة وطنية.",
+      "expected_support_areas": [
+        "association_funding_discovery",
+        "arabic_persian_language_parity",
+        "local_vs_national_source_split"
+      ],
+      "must_not_claim": [
+        "arabic_or_persian_actor_context_may_fall_back_to_swedish_only_result_explanations",
+        "local_association_support_is_uniform_across_swedish_municipalities",
+        "translation_may_turn_a_discovery_source_into_an_eligibility_claim"
+      ],
+      "expected_questions": [
+        "reuse_actor_context_and_ask_only_need_when_that_changes_route"
+      ],
+      "expected_next_actions": [
+        "show_localized_source_aware_next_actions",
+        "keep_primary_source_links_identical_across_languages",
+        "verify_current_rules_in_the_responsible_primary_source"
+      ],
+      "source_requirements": [
+        "MUCF_current_grants_primary_source",
+        "SKR_official_municipality_directory_for_local_source_discovery"
+      ]
+    }
+  ]
+}
