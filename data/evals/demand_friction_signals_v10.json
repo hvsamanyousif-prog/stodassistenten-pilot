@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system; these scores are not measured search volumes and do not prove eligibility or factual truth. Primary sources are required before support guidance affects the product.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-relative-severe-illness-hidden-support-v01",
+      "actor_types": ["relative", "friend", "caregiver", "employee"],
+      "natural_language_queries": [
+        "min mamma är svårt sjuk kan jag vara ledig från jobbet och få ersättning",
+        "min partner är livshotande sjuk vem ska jag ringa om jag måste vara hemma",
+        "jag behöver vara hos en svårt sjuk vän finns det något stöd",
+        "jag hjälper min sjuka förälder vad kan jag få om jag inte kan jobba"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan states that many people do not know near-relative benefit exists, while its published statistics and information show recurring use by people supporting severely ill close persons. This is a qualitative demand signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "People naturally describe the crisis as needing to be with a severely ill parent, partner, friend or neighbour rather than naming the benefit. The same words can also describe ordinary long-term or age-related caregiving, so a generic relative route can either miss the support or overclaim it."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Missing the route can leave a person without a concrete income-replacement path while taking time away from work; overclaiming can create false expectations during a serious health crisis."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "Försäkringskassan provides the central benefit and medical-statement guidance, while the product also needs to preserve broader caregiver-support paths when this specific benefit does not fit."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Users may say 'svårt sjuk', 'livshotande', 'måste vara hos mamma' or equivalent Arabic/Persian phrases rather than administrative terms. A safe route must understand those formulations without transferring raw crisis text."
+      },
+      "steps_to_action": {
+        "score": 3,
+        "basis": "The first safe actions are relatively short once the critical facts are known: clarify whether healthcare describes the condition as life-threatening, establish whether work or certain compensation must be foregone, then check the official route and required medical statement."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Severe illness of a close person is a recurring life event across family, friendship and employment contexts, and the official authority explicitly reports low awareness of the benefit."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The truth layer already contains a NEEDS_REVIEW near-relative benefit support record and the public product has a broad 'I help someone' actor entry, but it lacks a focused natural-language handoff and minimum information-gain questions for the severe-illness income-replacement path."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/sjukdom-och-skada/moter-du-svart-sjuka-personer-och-deras-narstaende"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/sjukdom-och-skada/utlatande-for-narstaendepenning"
+      ],
+      "recommended_learning_action": "Add a bounded natural-language relative-care handoff to the existing shared shell, pass only actor_type=relative and focus=relative_care, ask only whether healthcare describes the condition as life-threatening and whether the helper must forego work or specified replacement benefits, then point to the current primary source without deciding eligibility or promoting the support record to VERIFIED.",
+      "truth_rule": "Do not treat relationship, diagnosis, severe wording, community material or a previous AI answer as proof. Verify the benefit boundary and required medical statement against current Försäkringskassan primary sources, and keep the machine-readable support record review-gated."
+    }
+  ]
+}

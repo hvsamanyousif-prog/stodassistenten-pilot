@@ -8,6 +8,7 @@ privacy = (root / "client" / "privacy-routing.js").read_text(encoding="utf-8")
 vab_runtime = (root / "client" / "vab-focus.js").read_text(encoding="utf-8")
 property_runtime = (root / "client" / "property-accessibility-focus.js").read_text(encoding="utf-8")
 dental67_runtime = (root / "client" / "dental-67-guidance.js").read_text(encoding="utf-8")
+relative_runtime = (root / "client" / "relative-care.js").read_text(encoding="utf-8")
 
 required_rows = [
     "| Privatperson |",
@@ -15,7 +16,7 @@ required_rows = [
     "| Äldre person |",
     "| Person med funktionsnedsättning |",
     "| Anställd |",
-    "| Anhörig som hjälper annan |",
+    "Anhörig/vän som hjälper annan",
     "| Barn via vårdnadshavare/familj |",
     "| Företag |",
     "| Förening/ideell |",
@@ -32,6 +33,9 @@ assert "focus=vab" in matrix
 assert "property_actor" in matrix and "property_accessibility" in matrix
 assert "dental quick-help med åldersmedveten 67+-handoff" in matrix
 assert "Handoffen får inte avgöra exakt eligibility, åtgärdsomfattning eller slutkostnad" in matrix
+assert "relative_care" in matrix
+assert "livshotande tillstånd och avstående från arbete" in matrix
+assert "NEEDS_REVIEW" in matrix
 
 # Runtime/artifact existence backs the updated matrix claims. These checks do not
 # turn the matrix into a truth source; they only prevent documentation drift.
@@ -39,10 +43,13 @@ for rel in [
     "client/assistance-focus.js",
     "client/housing-adaptation-guidance.js",
     "client/dental-67-guidance.js",
+    "client/relative-care.js",
     "data/evals/scenario_lab_websignals_v16.json",
     "data/evals/scenario_lab_websignals_v17.json",
     "data/evals/scenario_lab_websignals_v19.json",
+    "data/evals/scenario_lab_websignals_v21.json",
     "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
+    "data/supports/se-forsakringskassan-narstaendepenning.json",
 ]:
     assert (root / rel).exists(), f"matrix references missing artifact: {rel}"
 
@@ -50,6 +57,8 @@ assert "focus !== 'vab'" in vab_runtime
 assert "focus !== 'property_accessibility'" in property_runtime
 assert "new Set(['cost', 'support', 'unsure'])" in dental67_runtime
 assert "get('q')" not in dental67_runtime and 'get("q")' not in dental67_runtime
+assert "focus=relative_care" in relative_runtime
+assert "get('q')" not in relative_runtime and 'get("q")' not in relative_runtime
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 

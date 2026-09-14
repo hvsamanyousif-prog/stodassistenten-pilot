@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-14",
-  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Community discussions are discovery signals only; timing, registration and unemployment-insurance facts must come from current primary sources before they affect product guidance.",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. The scores are not measured search volumes. Community discussions are discovery signals only; timing, registration and unemployment-insurance facts must come from current primary sources before they affect product guidance.",
   "scoring": {
     "scale": "1-5",
     "meaning": "1=low, 5=very high",
@@ -59,7 +59,7 @@
         "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa"
       ],
       "recommended_learning_action": "Recognize completed-study transition phrases in the existing shared shell, hand off only a coarse study_to_work focus without raw situation text, ask only whether a job starts immediately and when unemployment begins, then give source-grounded first-day registration guidance without promising a-kassa eligibility.",
-      "truth_rule": "Community discussions may reveal wording and friction only. Registration timing and downstream a-kassa guidance must be grounded in current Arbetsförmedlingen information, and the product must state that the a-kassa separately decides entitlement."
+      "truth_rule": "Community discussions may reveal wording and friction only. Do not treat community discussion, registration or a previous AI answer as proof of unemployment-insurance eligibility. Verify registration timing against current Arbetsförmedlingen guidance, and keep the a-kassa as the separate decision-maker for entitlement."
     }
   ]
 }
