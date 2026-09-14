@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for caregiver support in the single Stödassistenten learning system. These are not measured search volumes; community material is discovery only and cannot establish legal rights, eligibility or local service availability.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-caregiver-municipal-vs-benefit-route-v01",
+      "actor_types": ["relative_or_close_person"],
+      "natural_language_queries": [
+        "jag vårdar min mamma vem ska jag ringa",
+        "kan jag få stöd när jag hjälper min äldre pappa",
+        "jag måste gå ner i arbetstid för att hjälpa anhörig vad kan jag få",
+        "anhörigstöd eller närståendepenning vad är skillnaden",
+        "min partner är långvarigt sjuk stöd till mig som anhörig",
+        "vem kontaktar jag om anhörigstöd i kommunen",
+        "أعتني بوالد مسن وأحتاج إلى دعم لمن أتصل",
+        "از والد سالمندم مراقبت می کنم برای حمایت با چه کسی تماس بگیرم"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Recent community questions repeatedly show relatives asking where to turn and whether municipal caregiver support exists, while Försäkringskassan separately reports that many people may not know about near-relative benefit. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Everyday words such as anhörig, vårda and stöd can refer either to a national income-replacement benefit for a life-threatening condition or to municipal support for a caregiver of an older, long-term ill or disabled close person. The routes have different decision makers and route-changing facts."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Collapsing the routes can make a caregiver wrongly conclude that no support exists because the illness is not life-threatening, or wrongly expect cash compensation or a specific local service from municipal caregiver support."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "The national income-replacement route is governed by Försäkringskassan, while the caregiver-support duty sits in current social-services legislation and practical access is local to the municipality."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Near-relative benefit, caregiver support and support contact are institution-specific terms whose distinctions can disappear in plain-language or translated questions, especially when the user asks only who to contact."
+      },
+      "steps_to_action": {
+        "score": 3,
+        "basis": "If the situation already states older/long-term illness/disability and caregiver support need, the product can skip life-threatening and work-absence questions and go directly to the municipal support-contact route. The benefit route still needs its separate high-value facts."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Discovery material repeatedly contains the same misunderstandings: not knowing the term anhörigstöd, not knowing whether to call healthcare, municipality or Försäkringskassan, and assuming that caring for a relative must map to one universal benefit."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The existing relative_care capability only detected explicit near-relative benefit or severe/life-threatening illness and linked fail-closed outcomes back to Försäkringskassan. The coverage matrix explicitly listed municipal/local caregiver support as an unresolved gap."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/sweden/comments/1v2wc17/kan_terapi_hj%C3%A4lpa_mig_att_bli_en_b%C3%A4ttre_f%C3%B6r%C3%A4lder/",
+        "https://www.reddit.com/r/sweden/comments/uhzu71/jag_beh%C3%B6ver_hj%C3%A4lp_seri%C3%B6s_min_pappa_%C3%A4r_d%C3%B6d/",
+        "https://www.reddit.com/r/PsykiskHalsa/comments/1rudcr4/nybliven_ensamst%C3%A5ende_pappa_vet_inte_hur_jag_ska/"
+      ],
+      "primary_sources": [
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "https://www.1177.se/sa-fungerar-varden/anhorig---narstaende/anhorigstod---stod-for-dig-som-vardar-eller-stodjer-en-narstaende/"
+      ],
+      "recommended_learning_action": "Extend the existing relative_care capability instead of creating a caregiver app. Detect explicit municipal caregiver-support intent and bounded older/long-term illness/disability caregiver situations, preserve only a coarse care_context in handoff, skip irrelevant benefit questions when the municipal route is already clear, and keep Försäkringskassan income replacement and municipal caregiver support as separate source-governed routes.",
+      "truth_rule": "Community and natural-language signals are discovery only and are not truth. VERIFY the current national caregiver-support duty against the current Socialtjänstlag, near-relative benefit conditions against Försäkringskassan and exact local services/access with the responsible municipality before making truth-bearing claims. Do not infer cash payment, a specific respite service, local service availability or benefit eligibility from story text."
+    }
+  ]
+}
