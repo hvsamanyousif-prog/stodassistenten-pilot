@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for people who become sick for a longer period while participating in an Arbetsförmedlingen programme. Scores are not measured search volumes and do not prove eligibility. Natural problem formulations are discovery signals; current Arbetsförmedlingen and Försäkringskassan primary sources carry the truth-bearing transition rules.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-af-programme-long-sickness-transition-v01",
+      "actor_types": ["private_person", "jobseeker"],
+      "natural_language_queries": [
+        "jag går i program med aktivitetsstöd och har varit sjuk över 30 dagar vad händer nu",
+        "arbetsförmedlingen program sjuk mer än 30 dagar sjukpenning",
+        "jag är fortfarande i programmet men har varit helt sjuk länge ska jag söka sjukpenning",
+        "jag blev utskriven ur arbetsförmedlingens program efter lång sjukdom vad gör jag dagen efter"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Arbetsförmedlingen and Försäkringskassan both maintain dedicated current guidance for sickness during labour-market programmes, including the >30-day boundary. This is a qualitative national reach proxy, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users can easily collapse three different facts into one: sickness duration, full-time versus partial sickness and whether Arbetsförmedlingen has actually ended the programme. Only the actual status change makes the post-programme sickness-benefit route relevant."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "An automatic switch based only on 30 days can send a person to the wrong authority too early, while missing an actual programme exit can delay a time-sensitive sickness-benefit application and the correct medical-certificate route."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Arbetsförmedlingen explains programme absence, adaptation and programme exit, while Försäkringskassan separately explains the sickness-benefit route after the programme has been ended."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as heltidssjuk, programdeltagare, utskriven, läkarintyg and sjukpenning describe different transition states and are easy to interpret as an automatic 30-day rule."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The useful path is short but conditional: stay on the programme sickness route, consider adaptation, establish whether full-time sickness exceeded 30 days, verify whether the programme was actually ended, and only then use the post-programme Försäkringskassan route."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Both agencies keep current dedicated guidance for the boundary and Arbetsförmedlingen explicitly publishes a subsection for sickness longer than 30 days, indicating a durable recurring information need."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The shared v47 route correctly handled first-day reporting and the seven-day medical-certificate boundary but stopped before the >30-day full-time transition and therefore could not distinguish still-enrolled from actually-written-out users."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-deltar-i-ett-program/anmal-franvaro-nar-du-blir-sjuk-och-deltar-i-ett-program",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/om-du-deltar-i-program-hos-arbetsformedlingen-och-blir-sjuk"
+      ],
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-deltar-i-ett-program/anmal-franvaro-nar-du-blir-sjuk-och-deltar-i-ett-program/om-du-ar-sjuk-i-mer-an-sju-dagar",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/om-du-deltar-i-program-hos-arbetsformedlingen-och-blir-sjuk"
+      ],
+      "recommended_learning_action": "Extend the existing unemployed_sick route instead of creating a new matcher. Keep the normal programme route immediate; expose the >30-day branch only when relevant. Distinguish full-time sickness from partial sickness and actual programme exit from duration. Only after confirmed programme exit point to the Försäkringskassan post-programme application route, while preserving separate eligibility assessment.",
+      "truth_rule": "VERIFY the >30-day transition against current Arbetsförmedlingen and Försäkringskassan primary sources. Do not treat 30 days alone as automatic programme exit, do not apply the full-time transition to partial sickness, and do not turn an actual programme exit into a guarantee of sickness-benefit eligibility."
+    }
+  ]
+}
