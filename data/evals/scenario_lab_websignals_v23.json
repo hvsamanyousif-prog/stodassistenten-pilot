@@ -31,7 +31,9 @@
         "the_product_can_guarantee_amount_or_payment_date",
         "the_raw_situation_text_exact_income_bank_data_or_health_details_should_be_put_in_the_handoff_url_or_feedback"
       ],
-      "expected_questions": [],
+      "expected_questions": [
+        "q_none_when_coarse_basic_need_or_housing_context_is_already_known"
+      ],
       "expected_next_actions": [
         "contact_social_services_in_the_users_municipality_to_apply",
         "ask_the_municipality_which_household_housing_income_asset_and_expense_documents_are_required",
