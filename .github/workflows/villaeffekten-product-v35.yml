@@ -42,7 +42,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           p=Path('client/person-context-learning.js').read_text()
-          for token in ['homeEnergyGuidance','state={owner:null,valueYear:null,district:null,measure:null,timing:null}','qOwner','qValue','qDistrict','qMeasure','qTiming','boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/','energimyndigheten.se/effektiv-energianvandning/']:
+          for token in ['homeEnergyGuidance','state={owner:null,valueYear:null,district:null,measure:null,timing:null}','qOwner','qValue','qDistrict','qMeasure','qTiming','senast när du begär utbetalning','boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/','energimyndigheten.se/effektiv-energianvandning/']:
               assert token in p, token
           assert p.index('if(!state.owner)') < p.index('if(!state.valueYear)') < p.index('if(!state.district)') < p.index('if(!state.measure)') < p.index('if(!state.timing)')
           PY
@@ -54,12 +54,13 @@ jobs:
           e=Path('data/evals')
           cases=json.loads((e/'scenario_lab_websignals_v35.json').read_text())['cases']
           ids={c['case_id'] for c in cases}
-          assert ids=={'lab-homeowner-villaeffekten-public-route-v35-01','lab-nonowner-villaeffekten-failclosed-v35-02','lab-homeowner-villaeffekten-timing-docs-budget-v35-03'}
+          assert ids=={'lab-homeowner-villaeffekten-public-route-v35-01','lab-nonowner-villaeffekten-failclosed-v35-02','lab-homeowner-villaeffekten-timing-docs-budget-v35-03','lab-owner-future-residence-villaeffekten-v35-04'}
           signal=json.loads((e/'demand_friction_signals_v21.json').read_text())
           assert 'not measured search volumes' in signal['purpose']
           assert signal['signals'][0]['priority_band']=='HIGH'
           mapping=json.loads((e/'demand_friction_regression_map_v15.json').read_text())['mappings'][0]
           assert set(mapping['regression_case_ids'])==ids
+          assert 'payment-request timing boundary' in mapping['fix_or_guardrail'].lower()
           PY
       - name: Validate full v35 public product route
         run: python scripts/validate_v35_villaeffekten_product.py
