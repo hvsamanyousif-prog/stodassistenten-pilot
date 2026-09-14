@@ -1,0 +1,13 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-relative-severe-illness-hidden-support-v01",
+      "product_miss": "A person describing a severely ill parent, partner, friend or neighbour can enter the broad relative route without discovering the existing near-relative benefit candidate, while overly broad keyword routing could wrongly imply that ordinary ageing, diagnosis or family relationship proves eligibility.",
+      "fix_or_guardrail": "Detect only bounded near-relative-benefit or severe-illness-plus-close-person language, pass a coarse relative_care focus without raw story text, ask whether healthcare describes the condition as life-threatening and whether work or specified replacement benefit must be foregone, and preserve the existing NEEDS_REVIEW truth boundary.",
+      "regression_case_ids": ["lab-relative-severe-illness-care-v21-01"]
+    }
+  ]
+}
