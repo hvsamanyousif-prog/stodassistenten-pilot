@@ -26,6 +26,7 @@ QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
+STUDY_TRANSITION_PATH = "client/study-transition.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
@@ -35,7 +36,7 @@ FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 VAB_FOCUS_PATH = "client/vab-focus.js"
 PROPERTY_FOCUS_PATH = "client/property-accessibility-focus.js"
-SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
+SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH, STUDY_TRANSITION_PATH)
 QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH, DENTAL_67_GUIDANCE_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
@@ -47,6 +48,7 @@ SCRIPT_PATHS = (
     ASSISTANCE_FOCUS_PATH,
     VAB_FOCUS_PATH,
     PROPERTY_FOCUS_PATH,
+    STUDY_TRANSITION_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
