@@ -1,0 +1,150 @@
+{
+  "support_id": "se-forsakringskassan-sarskild-tandvardsersattning-67",
+  "name": "Särskild tandvårdsersättning från året du fyller 67",
+  "category": "health_dental",
+  "subtype": "special_dental_reimbursement_67_plus",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "older_person",
+      "individual"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "dental67.calendar_year_age_route",
+        "field": "calendar_year_age",
+        "operator": "text_condition",
+        "value": "Särskild tandvårdsersättning är det förstärkta högkostnadsskydd som gäller från och med året personen fyller 67. För 2026 beskriver Försäkringskassan målgruppen som den som fyller 67 år eller mer under 2026.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "Fråga efter kalenderårs-/åldersfakta; en persons exakta ålder på behandlingsdagen får inte ensam användas för att avfärda spåret om personen fyller 67 senare samma kalenderår."
+      },
+      {
+        "rule_id": "dental67.covered_measure_scope",
+        "field": "planned_treatment_measure",
+        "operator": "text_condition",
+        "value": "Det förstärkta skyddet gäller vissa ersättningsberättigande behandlingar och material, bland annat behandling vid sjukdom, smärta och tandlossning, lagning av hål samt viss protetik i de främre tio tänderna i övre och nedre käke. Exakt åtgärd och villkor styrs av TLV:s gällande föreskrift.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "En generell beskrivning som 'jag behöver tandvård' räcker inte för att avgöra om just den planerade åtgärden omfattas."
+      },
+      {
+        "rule_id": "dental67.price_basis",
+        "field": "reference_price_and_provider_price",
+        "operator": "text_condition",
+        "value": "För ersättningsberättigande åtgärder inom särskild tandvårdsersättning betalar patienten 10 procent av referenspriset, eller 10 procent av vårdgivarens pris om det priset är lägre. Försäkringskassan anger att vårdgivaren inte får ta ett högre pris än referenspriset inom den särskilda tandvårdsersättningen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod",
+        "notes": "Formuleringen 'tiotandvård' får aldrig översättas till att hela tandläkarfakturan automatiskt kostar 10 procent."
+      },
+      {
+        "rule_id": "dental67.ordinary_protection_remains",
+        "field": "non_special_measures",
+        "operator": "text_condition",
+        "value": "Det ordinarie högkostnadsskyddet finns kvar för ersättningsberättigande tandvård som inte ingår i den särskilda tandvårdsersättningen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "En åtgärd utanför det förstärkta skyddet får därför inte automatiskt tolkas som 'inget statligt tandvårdsstöd'."
+      },
+      {
+        "rule_id": "dental67.tlv_measure_authority",
+        "field": "measure_and_reference_price_authority",
+        "operator": "text_condition",
+        "value": "TLV bestämmer vilka tandvårdsåtgärder som ger rätt till statligt tandvårdsstöd och vilka referenspriser som gäller. HSLF-FS 2025:68 gäller från 1 januari 2026 och innehåller villkor för särskild tandvårdsersättning.",
+        "source_url": "https://www.tlv.se/tandvard/regelverk-om-tandvardsstodet.html",
+        "notes": "Stödassistenten ska hänvisa till aktuell åtgärd och gällande TLV-regelverk när en behandling behöver bedömas mer detaljerat."
+      }
+    ],
+    "exclusions": [
+      {
+        "rule_id": "dental67.exam_not_special",
+        "field": "planned_treatment_measure",
+        "operator": "eq",
+        "value": "examination",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "Undersökningar ingår inte i just det förstärkta högkostnadsskyddet. Kontrollera i stället ordinarie tandvårdsstöd; detta är inte ett påstående om att ingen ersättning kan finnas."
+      },
+      {
+        "rule_id": "dental67.preventive_not_special",
+        "field": "planned_treatment_measure",
+        "operator": "eq",
+        "value": "preventive_care",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "Förebyggande vård, till exempel rengöring och tandsten, ingår inte i just det förstärkta högkostnadsskyddet. Kontrollera andra delar av tandvårdsstödet."
+      },
+      {
+        "rule_id": "dental67.xray_not_special",
+        "field": "planned_treatment_measure",
+        "operator": "eq",
+        "value": "xray",
+        "source_url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod/ett-battre-skydd-mot-hoga-tandvardskostnader",
+        "notes": "Röntgen ingår inte i just det förstärkta högkostnadsskyddet. Kontrollera andra delar av tandvårdsstödet."
+      }
+    ],
+    "missing_information_questions": [
+      {
+        "question_id": "dental67.calendar_year_age",
+        "prompt": "Fyller du 67 år eller mer under det kalenderår då behandlingen görs?",
+        "reason": "Det förstärkta skyddets åldersväg utgår från året personen fyller 67, inte bara åldern exakt på behandlingsdagen."
+      },
+      {
+        "question_id": "dental67.planned_measure",
+        "prompt": "Vilken undersökning eller behandling har tandläkaren föreslagit, och har du fått åtgärdskoder eller ett behandlingsförslag?",
+        "reason": "Det är den konkreta åtgärden och TLV:s villkor som avgör om den hör till särskild tandvårdsersättning, ordinarie högkostnadsskydd eller en annan väg."
+      },
+      {
+        "question_id": "dental67.price_information",
+        "prompt": "Har du fått prisuppgift som visar vårdgivarens pris och referenspriset för de planerade åtgärderna?",
+        "reason": "Kostnadsförklaringen blir annars lätt missvisande; '10 procent' gäller inte generellt hela besöket eller alla åtgärder."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "reimbursement",
+    "amount_text": "För ersättningsberättigande åtgärder inom särskild tandvårdsersättning betalar patienten 10 procent av referenspriset, eller 10 procent av vårdgivarens pris om det är lägre.",
+    "calculation_text": "Detta är inte 10 procent av hela tandläkarfakturan. Exakt utfall beror på vilka åtgärder som utförs och vilka delar som omfattas av särskild respektive ordinarie tandvårdsersättning. Undersökningar, förebyggande vård och röntgen ligger utanför det förstärkta skyddet enligt Försäkringskassans aktuella vägledning.",
+    "recurrence": "variable"
+  },
+  "documents": [
+    "Prisuppgift eller behandlingsförslag med planerade åtgärder och referenspriser när vårdgivaren har lämnat detta"
+  ],
+  "application": {
+    "method": "provider_contact",
+    "url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod",
+    "deadline_text": null,
+    "next_step": "Be tandläkaren eller tandhygienisten gå igenom behandlingsförslaget åtgärd för åtgärd och visa vårdgivarpris, referenspris och om varje åtgärd omfattas av särskild tandvårdsersättning eller det ordinarie högkostnadsskyddet. Kontrollera alltid aktuell Försäkringskasse- och TLV-information innan ett exakt kostnadspåstående görs."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/tandvard/tandvardsstod",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T05:30:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuella primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt kalenderårsregeln från 67, exakt åtgärdsomfattning enligt gällande TLV-föreskrift, prisregeln, undantagen för undersökning/förebyggande vård/röntgen samt samspelet med ordinarie högkostnadsskydd. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T05:30:00Z",
+    "last_seen_at": "2026-09-14T05:30:00Z",
+    "valid_from": "2026-01-01",
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
