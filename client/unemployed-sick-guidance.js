@@ -21,6 +21,8 @@
   const DIRECT_PATTERNS = [
     /(?:arbetslös|arbetssökande|inskriven\s+(?:på|hos)\s+arbetsförmedlingen).*(?:sjuk|sjukanmäl|sjukskriv)/i,
     /(?:sjuk|sjukanmäl|sjukskriv).*(?:arbetslös|arbetssökande|arbetsförmedlingen)/i,
+    /(?:program|programmet|programdeltagare|aktivitetsstöd).*(?:arbetsförmedlingen).*(?:sjuk|sjukanmäl|sjukskriv)/i,
+    /(?:sjuk|sjukanmäl|sjukskriv).*(?:program|programmet|programdeltagare|aktivitetsstöd).*(?:arbetsförmedlingen)/i,
     /(?:باحث\s+عن\s+عمل|عاطل\s+عن\s+العمل|مسجل\s+في\s+مكتب\s+العمل).*(?:مريض|مرض|إجازة\s+مرضية)/i,
     /(?:مريض|مرض|إجازة\s+مرضية).*(?:باحث\s+عن\s+عمل|عاطل\s+عن\s+العمل|مكتب\s+العمل)/i,
     /(?:بیکار|جویای\s+کار|ثبت.?نام\s+در\s+اداره\s+کار).*(?:بیمار|بیماری|مرخصی\s+استعلاجی)/i,
