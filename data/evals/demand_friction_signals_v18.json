@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, payment continuity or factual truth. Community discussion is discovery-only; material claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-activity-compensation-age30-transition-v01",
+      "actor_types": ["young_adult_disability", "person_disability"],
+      "natural_language_queries": [
+        "jag fyller 30 och har aktivitetsersättning vad händer med pengarna",
+        "går aktivitetsersättning automatiskt över till sjukersättning när jag fyller 30",
+        "jag har låg SGI och aktivitetsersättningen slutar vad ska jag söka",
+        "fortsätter bostadstillägget när aktivitetsersättningen tar slut vid 30",
+        "vad är skillnaden mellan bostadstillägg och boendetillägg efter aktivitetsersättning"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Open community questions show recurring uncertainty about what replaces activity compensation and how housing support behaves around age 30. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Several similarly named benefits can become relevant at the same age boundary: sickness compensation, regular sickness benefit, sickness benefit in special cases, bostadstillägg and boendetillägg. Their conditions differ and no single actor label resolves the route."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Assuming automatic conversion or automatic housing-support continuity can create an income or rent-payment gap at a predictable transition point for a financially vulnerable user."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Current Försäkringskassan guidance is split across activity compensation, sickness compensation, sickness benefit in special cases and housing-support pages, so a user must connect multiple benefit boundaries correctly."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Aktivitetsersättning, aktivitetsstöd, sjukersättning, sjukpenning i särskilda fall, bostadstillägg and boendetillägg are easy to confuse, especially for users with limited administrative or Swedish-language fluency."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe route first establishes the current activity-compensation end point and future work-capacity prognosis, then asks only the SGI/protection facts needed for the special-cases branch, and only after that determines which housing-support path needs verification."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Every recipient approaching the age limit can face the same route split, and the housing-support question can recur regardless of whether the next path is sickness compensation, special-cases sickness benefit, work or another route."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository has a review-gated activity-compensation record and broad disability routing, but the coverage matrix and public flow do not yet represent the age-30 route split or protect against automatic-conversion and housing-support-continuity assumptions."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/1o4ib2j"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukersattning-resten-av-arbetslivet-sjukpension",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "https://www.forsakringskassan.se/privatperson/e-tjanster-blanketter-och-informationsmaterial/e-tjanster-blanketter-och-berakningsverktyg"
+      ],
+      "recommended_learning_action": "Add permanent age-30 transition regressions to the existing disability learning loop and add a review-gated support record for sickness benefit in special cases. The product should ask the minimum facts that separate sickness compensation, sickness benefit in special cases and other routes, then verify housing support only after the primary income-replacement route is clear. Do not create a separate age-30 app or promote unreviewed rules to VERIFIED.",
+      "truth_rule": "Community wording is discovery only. Verify the current age limit, work-capacity conditions, SGI/protection requirements and housing-support relationship against current Försäkringskassan primary sources. Do not infer automatic conversion, eligibility, amount, payment continuity or housing-support entitlement from age, diagnosis or previous activity compensation alone."
+    }
+  ]
+}
