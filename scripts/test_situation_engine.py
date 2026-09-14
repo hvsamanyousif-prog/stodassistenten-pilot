@@ -37,7 +37,7 @@ checks = [
     ('natural assistance route', 'KEYWORDS.assistance' in routing and 'hjälp med hygien' in routing and 'hjälp med påklädning' in routing and 'focus=assistance' in routing),
     ('assistance is need-led not diagnosis-led', 'adhd' not in routing.lower() and 'autism' not in routing.lower() and 'diagnos' not in routing.lower()),
     ('assistance focus is bounded', "focus!=='assistance'" in assistance and "params.get('focus')" in assistance),
-    ('assistance asks high-value facts', "assistWho:'Vem gäller hjälpbehovet?'" in assistance and "assistNeed:'Gäller hjälpen grundläggande vardagsbehov? parts'" not in assistance and 'Din uppskattning är bara en vägvisare' in assistance),
+    ('assistance asks high-value facts', "assistWho:'Vem gäller hjälpbehovet?'" in assistance and "assistNeed:'Gäller hjälpen grundläggande vardagsbehov?'" in assistance and 'Din uppskattning är bara en vägvisare' in assistance),
     ('assistance authority split is fail-closed', '20 timmar eller mindre' in assistance and 'mer än 20 timmar' in assistance and 'En egen timuppskattning är inte samma sak som myndighetens bedömning.' in assistance),
     ('assistance uses primary authority sources', 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna' in assistance and 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn' in assistance),
     ('assistance results stay uncertain', "resultCard(r,i+2)" in assistance and 'Produkten avgör inte rätt till stöd.' in assistance),
