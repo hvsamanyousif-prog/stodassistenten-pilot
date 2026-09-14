@@ -1,14 +1,14 @@
 (() => {
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const params=new URLSearchParams(window.location.search);
-  const ALLOWED_PERSON_ACTORS=new Set(['private_person','relative','student','employee','association','other']);
+  const ALLOWED_PERSON_ACTORS=new Set(['private_person','relative','student','employee','association','property_actor','other']);
   const rawActor=params.get('actor_type')||'private_person';
   const sanitizedActor=String(rawActor).toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,32)||'private_person';
   const actor=ALLOWED_PERSON_ACTORS.has(sanitizedActor)?sanitizedActor:'other';
   const copy={
-    sv:{heading:'Din ingång',private_person:'Privatperson',relative:'Anhörig / hjälper någon',student:'Student / ung vuxen',employee:'Anställd',association:'Förening',other:'Bred ingång'},
-    ar:{heading:'مدخلك',private_person:'فرد',relative:'قريب / أساعد شخصاً',student:'طالب / شاب بالغ',employee:'موظف',association:'جمعية',other:'مدخل عام'},
-    fa:{heading:'ورودی شما',private_person:'فرد',relative:'خویشاوند / کمک به دیگری',student:'دانشجو / جوان',employee:'کارمند',association:'انجمن',other:'ورودی عمومی'}
+    sv:{heading:'Din ingång',private_person:'Privatperson',relative:'Anhörig / hjälper någon',student:'Student / ung vuxen',employee:'Anställd',association:'Förening',property_actor:'BRF / fastighetsaktör',other:'Bred ingång'},
+    ar:{heading:'مدخلك',private_person:'فرد',relative:'قريب / أساعد شخصاً',student:'طالب / شاب بالغ',employee:'موظف',association:'جمعية',property_actor:'جمعية سكنية / مالك عقار',other:'مدخل عام'},
+    fa:{heading:'ورودی شما',private_person:'فرد',relative:'خویشاوند / کمک به دیگری',student:'دانشجو / جوان',employee:'کارمند',association:'انجمن',property_actor:'انجمن ساختمان / مالک ملک',other:'ورودی عمومی'}
   };
   function lang(){const value=document.documentElement.lang||'sv';return copy[value]?value:'sv'}
   function label(){const c=copy[lang()];return c[actor]||c.other}
