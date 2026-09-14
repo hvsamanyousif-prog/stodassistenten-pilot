@@ -1,0 +1,166 @@
+{
+  "support_id": "se-forsakringskassan-bostadsbidrag-unga",
+  "name": "Bostadsbidrag till unga under 29 år",
+  "category": "housing_energy",
+  "subtype": "housing_benefit_young_under_29",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "young_adult",
+      "student",
+      "employee",
+      "low_income_household"
+    ],
+    "age_min": null,
+    "age_max": 28
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "bhyoung.age_under_29",
+        "field": "age",
+        "operator": "lte",
+        "value": 28,
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "Försäkringskassan beskriver detta spår för personer under 29 år. Ålder ensam innebär inte rätt till bidrag."
+      },
+      {
+        "rule_id": "bhyoung.single_income_housing_2026",
+        "field": "single_household_income_and_housing_cost",
+        "operator": "text_condition",
+        "value": "För ensamstående anger den aktuella 2026-sidan sammanlagd årsinkomst före skatt på högst 86 720 kronor och bostadskostnad över 1 800 kronor per månad som villkor för att kunna ha rätt till bidrag.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "Trösklarna är versionskänsliga och ska kontrolleras mot aktuell primärkälla före produktionsanvändning."
+      },
+      {
+        "rule_id": "bhyoung.couple_income_2026",
+        "field": "couple_combined_annual_income",
+        "operator": "text_condition",
+        "value": "För make eller sambo som ansöker tillsammans anger den aktuella 2026-sidan en gemensam årsinkomst på högst 103 720 kronor för att kunna ha rätt till bidrag.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "Beloppsgränsen är versionskänslig och får inte användas utan aktuell källkontroll."
+      },
+      {
+        "rule_id": "bhyoung.housing_route",
+        "field": "housing_form",
+        "operator": "text_condition",
+        "value": "Den aktuella sidan anger att den unga kan hyra eller äga bostaden och även hyra i andra hand. Normalt ska personen vara folkbokförd i bostaden, med angivna undantag.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "Boendeform och folkbokföring påverkar både bedömning och vilka bilagor som behövs."
+      },
+      {
+        "rule_id": "bhyoung.annual_income_basis_2026",
+        "field": "income_period_for_current_rules",
+        "operator": "text_condition",
+        "value": "Med nuvarande regler uppskattas inkomsten för hela året. Vid oregelbundet arbete ska den sökande ange vad hen tror att den sammanlagda inkomsten blir januari till december och ändra uppgiften om utfallet förändras.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "En enskild månads inkomst får inte behandlas som säker årsinkomst."
+      },
+      {
+        "rule_id": "bhyoung.monthly_income_transition_2027",
+        "field": "decision_start_date",
+        "operator": "text_condition",
+        "value": "För sökande som omfattas av ändringen anger Försäkringskassan att nya regler med månadsinkomst gäller endast beslut från och med 1 januari 2027. Den som redan har bostadsbidrag går över först när det pågående beslutet löper ut under 2027 och ett nytt bostadsbidrag söks.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027",
+        "notes": "Detta är change-intelligence, inte en signal om att dagens 2026-regler ska ersättas i förtid. Den aktuella 2027-sidan anger att egenföretagare och personer med inkomst från utlandet inte berörs av lagändringen."
+      }
+    ],
+    "exclusions": [
+      {
+        "rule_id": "bhyoung.lodger_exclusion",
+        "field": "housing_form",
+        "operator": "eq",
+        "value": "lodger",
+        "source_url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "notes": "Försäkringskassans aktuella FAQ anger att den som söker ungdomsspåret inte kan få bostadsbidrag som inneboende."
+      }
+    ],
+    "missing_information_questions": [
+      {
+        "question_id": "bhyoung.age",
+        "prompt": "Hur gammal är du?",
+        "reason": "Det här bostadsbidragsspåret gäller personer under 29 år."
+      },
+      {
+        "question_id": "bhyoung.household",
+        "prompt": "Bor du ensam eller tillsammans med make eller sambo?",
+        "reason": "Hushållssituationen ändrar bland annat vilken inkomstgräns och ansökningsprocess som behöver kontrolleras."
+      },
+      {
+        "question_id": "bhyoung.housing",
+        "prompt": "Hur bor du: förstahand, andrahand, bostadsrätt, eget hus eller som inneboende, och är du normalt folkbokförd där?",
+        "reason": "Boendeform och folkbokföring kan ändra både kandidatvägen och vilka dokument som behövs."
+      },
+      {
+        "question_id": "bhyoung.annual_income",
+        "prompt": "Vad tror du att din sammanlagda inkomst blir under hela kalenderåret, inklusive oregelbundet arbete och andra inkomster som Försäkringskassan räknar med?",
+        "reason": "Nuvarande 2026-regler bygger på uppskattad årsinkomst; en enskild månad räcker inte för bedömningen."
+      },
+      {
+        "question_id": "bhyoung.known_changes",
+        "prompt": "Vet du redan nu om inkomsten, boendekostnaden eller vem du bor med kommer att ändras?",
+        "reason": "Sådana förändringar kan påverka bidraget och ska enligt aktuell vägledning meddelas när de blir kända."
+      },
+      {
+        "question_id": "bhyoung.decision_period",
+        "prompt": "Söker du för ett beslut som ska börja under 2026, eller gäller frågan ett nytt beslut från 2027?",
+        "reason": "Försäkringskassan har bekräftat ett byte från årsinkomst till månadsinkomst för nya beslut från 1 januari 2027 för sökande som omfattas av ändringen."
+      },
+      {
+        "question_id": "bhyoung.2027_exception",
+        "prompt": "Om frågan gäller ett nytt beslut från 2027: är du egenföretagare eller får du inkomst från utlandet?",
+        "reason": "Den aktuella 2027-sidan anger att dessa grupper inte berörs av lagändringen till månadsinkomst."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Bidraget beror bland annat på hushåll, boende, bostadskostnad och inkomster. För nuvarande 2026-regler ska årsinkomsten uppskattas; nya beslut från 1 januari 2027 får en annan inkomstmodell för sökande som omfattas av reformen. Exakt belopp ska kontrolleras i Försäkringskassans aktuella beräknings- eller ansökningstjänst.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Aktuell hyres- eller avgiftsspecifikation som visar vad som ingår i boendekostnaden",
+    "Bostadsspecifika avtal eller intyg enligt boendeformen, till exempel andrahandskontrakt och relevant godkännande",
+    "Vid bostadsrätt eller eget hus: de låne-, ränte- och bostadsunderlag som den aktuella ansökningssidan efterfrågar"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+    "deadline_text": "Bostadsbidrag kan enligt den aktuella sidan bara lämnas från och med den månad ansökan görs, inte för tidigare månader. Vid gemensam digital ansökan ska den andra personen godkänna uppgifterna inom 10 dagar.",
+    "next_step": "Kontrollera först ålder, hushåll, boendeform, aktuell bostadskostnad och rätt inkomstperiod. För ett 2026-beslut: uppskatta hela årets inkomst och använd Försäkringskassans aktuella beräkning före ansökan. Anmäl senare kända ändringar direkt. För ett nytt beslut 2027: kontrollera månadsreglerna och om något uttryckligt undantag gäller innan du använder den nya modellen."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-07-20T00:00:00+02:00",
+    "retrieved_at": "2026-09-14T04:20:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuella primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt 2026 års inkomst- och boendetrösklar, inneboenderegeln, inkomstslag, dokument, ändringsskyldighet och ansökningsmånad. Separat review krävs för 2027-övergången till månadsinkomst, uttryckliga undantag för egenföretagare/utlandsinkomst och andra 2027-regeländringar. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T04:20:00Z",
+    "last_seen_at": "2026-09-14T04:20:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
