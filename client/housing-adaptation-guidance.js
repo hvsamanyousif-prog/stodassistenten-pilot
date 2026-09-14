@@ -161,9 +161,7 @@
     }
     const cards = box.querySelector('.cards');
     if (!cards) return;
-    if (existing) {
-      existing.remove();
-    }
+    if (existing) return;
     cards.appendChild(buildGuide());
   }
 
