@@ -1,0 +1,123 @@
+{
+  "support_id": "se-forsakringskassan-merkostnadsersattning-vuxna",
+  "name": "Merkostnadsersättning för vuxna",
+  "category": "disability",
+  "subtype": "adult_additional_cost_compensation",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["adult", "disability", "additional_costs"],
+    "age_min": 18,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "adult_extra_costs.duration",
+        "field": "disability_expected_duration",
+        "operator": "text_condition",
+        "value": "Försäkringskassans aktuella sida anger att funktionsnedsättningen ska finnas kvar minst ett år.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "notes": "Diagnosnamn i sig ska inte användas som produktens beslut om rätt till ersättning."
+      },
+      {
+        "rule_id": "adult_extra_costs.definition",
+        "field": "qualifying_additional_costs",
+        "operator": "text_condition",
+        "value": "Försäkringskassan bedömer varje kostnad för sig. Kostnaden ska bland annat bero på funktionsnedsättningen, vara högre än för en jämförbar person utan funktionsnedsättning, vara rimlig och betalas av den sökande själv.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "notes": "Vanliga hushållskostnader eller hela utgiftsbeloppet får inte automatiskt behandlas som merkostnad."
+      },
+      {
+        "rule_id": "adult_extra_costs.threshold_2026",
+        "field": "assessed_annual_additional_costs",
+        "operator": "text_condition",
+        "value": "Den aktuella primärkällan anger en årsgräns för Försäkringskassans bedömda merkostnader under 2026. Beloppet ska verifieras mot aktuell källa före användning i produktbeslut.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "notes": "Produktens publika väg visar inte beloppsgränsen och räknar inte eligibility."
+      },
+      {
+        "rule_id": "adult_extra_costs.applicant_18_21",
+        "field": "applicant_route_age_study",
+        "operator": "text_condition",
+        "value": "För personer 18–20 år kan pågående studier på grund-/gymnasienivå eller motsvarande ändra vem som ska ansöka. Från 21 års ålder anger primärkällan att personen alltid ansöker för sig själv.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "notes": "Ålder utan studiesituation får inte ensam styra sökandevägen för 18–20-åringar."
+      },
+      {
+        "rule_id": "adult_extra_costs.no_double_compensation",
+        "field": "other_public_financing",
+        "operator": "text_condition",
+        "value": "Kostnader som redan ersätts av exempelvis region, kommun eller assistansersättning kan inte samtidigt räknas som samma merkostnad i denna ersättning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "notes": "Samtidig assistansersättning och merkostnadsersättning kan förekomma, men samma kostnad får inte dubbelkompenseras."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "adult_extra_costs.extra_vs_ordinary",
+        "prompt": "Är kostnaden extra på grund av funktionsnedsättningen, jämfört med en vanlig kostnad i motsvarande situation?",
+        "reason": "Det skiljer merkostnad från vanlig hushållsutgift utan att fråga efter diagnos eller exakt belopp."
+      },
+      {
+        "question_id": "adult_extra_costs.payer",
+        "prompt": "Betalar du kostnaden själv eller ersätts den helt eller delvis av region, kommun, assistansersättning eller annat stöd?",
+        "reason": "Vem som betalar kan ändra om samma kostnad är relevant att ta med."
+      },
+      {
+        "question_id": "adult_extra_costs.applicant_boundary",
+        "prompt": "Om du är 18–20 år: studerar du fortfarande på grund-/gymnasienivå eller motsvarande, eller är du klar med den utbildningen?",
+        "reason": "För vissa 18–20-åringar ändrar studiesituationen vem som ska ansöka."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan bedömer vilka kostnader som kan räknas som merkostnader och deras sammanlagda årsbelopp. Den publika Stödassistenten räknar inte ut ersättningsnivå eller rätt till ersättning.",
+    "recurrence": "monthly_if_granted"
+  },
+  "documents": [
+    "Beskrivning av kostnad, varför den uppstår på grund av funktionsnedsättningen, hur den har beräknats och vem som betalar",
+    "Läkarutlåtande när Försäkringskassan behöver det"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+    "deadline_text": null,
+    "next_step": "Förbered en privat sammanställning av kostnadstyp, orsak, ungefärlig årskostnad och betalare. Kontrollera därefter aktuell ansökningsväg och vem som ska ansöka i Försäkringskassans primärkälla."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-07-20T00:00:00+02:00",
+    "retrieved_at": "2026-09-15T00:45:00+02:00",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkälla den 15 september 2026. Mänsklig sakgranskning krävs före VERIFIED, särskilt för årsgräns, pensionsåldersrelaterade regler, garanterade nivåer, sökandegränsen 18–21 år och dubbelkompensationsgränser. Den publika vägen ska inte visa eller räkna belopp utifrån denna post.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T00:45:00+02:00",
+    "last_seen_at": "2026-09-15T00:45:00+02:00",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}

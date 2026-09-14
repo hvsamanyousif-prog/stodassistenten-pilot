@@ -1,0 +1,36 @@
+name: Adult extra costs v50
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-adult-extra-costs-v50:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check same-product adult extra-cost guidance
+        run: |
+          node --check client/adult-extra-costs-guidance.js
+          node client/adult-extra-costs-guidance.test.cjs
+      - name: Validate v50 semantic truth and regression guards
+        run: python scripts/validate_adult_extra_costs_v50.py
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with same route
+        run: |
+          python scripts/build_public_pilot.py --output _site-v50
+          grep -q 'client/adult-extra-costs-guidance.js' _site-v50/index.html
+          grep -q 'client/adult-extra-costs-guidance.js' _site-v50/person-pilot.html

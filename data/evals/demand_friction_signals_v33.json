@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for adults with disability-related recurring extra costs. Scores are not measured search volumes and do not prove eligibility. Current Försäkringskassan primary sources carry truth-bearing rules; natural problem formulations are discovery signals only.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-adult-disability-extra-costs-v01",
+      "actor_types": ["private_person", "person_with_disability"],
+      "natural_language_queries": [
+        "jag har funktionsnedsättning och extra kostnader vad kan jag få",
+        "vilka extra kostnader räknas som merkostnad",
+        "kommunen betalar vissa hjälpmedel kan jag ändå söka merkostnadsersättning",
+        "jag är 19 och studerar vem ska söka merkostnadsersättning"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan publishes eight short videos for the most common questions about merkostnadsersättning, including who can apply, what counts as an additional cost and whether costs paid by others can be compensated. Official 2026 statistics report about 18,500 adult recipients in December 2025. This is a qualitative national reach signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users can easily conflate total spending with qualifying additional costs, assume all disability-related expenses count in full, overlook who actually pays a cost, or miss the 18–20 study-status applicant split."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "Missing the route can leave a potentially relevant national support unexplored, while overconfident guidance can cause poor documentation, double-counted costs or the wrong applicant route."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "The core truth is concentrated at Försäkringskassan, but cost responsibility can cross region, municipality, assistive-device, housing-adaptation and personal-assistance systems."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as merkostnad, rimlig kostnad, motsvarande ålder and who pays the cost are conceptually difficult; Försäkringskassan also provides sign-language versions of its common-question guidance, indicating a durable accessibility need."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A useful path requires distinguishing extra from ordinary cost, identifying the payer, choosing the correct applicant route and then preparing a yearly cost explanation before the official application process."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan labels these questions as the most common questions it receives about merkostnadsersättning, including precisely the cost-definition, payer and applicant boundaries."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The canonical base scenario already expected adult additional-cost support, but the public product had no focused natural-language route and no normalized adult merkostnadsersättning support record."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sa-har-fungerar-merkostnadsersattning",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/merkostnadsersattning-for-vuxna",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sa-har-fungerar-merkostnadsersattning"
+      ],
+      "recommended_learning_action": "Turn the existing canonical adult extra-cost scenario into a guarded route in the same root/person product. Ask only whether the cost is genuinely extra because of disability, who pays it, and the applicant age/study boundary. Keep exact costs and health details out of URL/feedback and keep eligibility/amount review-gated.",
+      "truth_rule": "VERIFY material rules against current Försäkringskassan primary sources. Do not infer that diagnosis proves entitlement, total spending equals qualifying additional costs, costs paid by another support can be double-counted, or turning 18 alone fixes who applies."
+    }
+  ]
+}
