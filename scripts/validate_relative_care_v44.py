@@ -30,7 +30,6 @@ for required in [
     "near_relative_benefit",
     "municipal_support",
     "care_context",
-    "Socialtjänstlag",
     "13 kap. 9 §",
     "stödkontakt",
     "sfs-2025-400",
@@ -38,6 +37,7 @@ for required in [
     "1177.se",
 ]:
     assert required in module, f"missing v44 runtime contract: {required}"
+assert "socialtjänstlag" in module.lower(), "runtime must name the current legal source family"
 assert "relative-care-pilot.html" not in module, "v44 must extend same product, not create caregiver app"
 assert "fetch(" not in module, "public module must not create a competing client-side truth fetcher"
 assert "localStorage" not in module and "sessionStorage" not in module
