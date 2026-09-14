@@ -3,26 +3,29 @@
 
   // SAME PRODUCT: one bounded route inside the existing shell/person pilot.
   // Only coarse route-changing facts may cross surfaces. Never transfer an
-  // address, organisation number, parking identifier, exact cost, vehicle data
-  // or raw situation text in the URL, feedback or public learning event.
+  // address, organisation number, parking identifier, exact cost, vehicle data,
+  // tenure documents or raw situation text in URL, feedback or public learning.
   const FOCUS = 'property_charging';
   const NV_ASSOC = 'https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/';
   const NV_COMPANY = 'https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-fastighetsbolag-och-foretag/';
-  const RIKSDAGEN = 'https://data.riksdagen.se/dokument/sfs-1991-614.html';
+  const RIKSDAGEN_TENANT = 'https://data.riksdagen.se/dokument/sfs-1970-994.html';
+  const RIKSDAGEN_CONDO = 'https://data.riksdagen.se/dokument/sfs-1991-614.html';
 
   const CONTEXTS = new Set(['association_project', 'company_project', 'resident_request']);
   const USES = new Set(['members', 'guests', 'external', 'company_internal', 'company_guests', 'mixed']);
   const RESIDENT_SCOPES = new Set(['own_home_parking', 'other_or_unclear']);
+  const RESIDENT_TENURES = new Set(['tenant', 'condominium']);
   const clean = (value, allowed) => allowed.has(String(value || '').toLowerCase()) ? String(value).toLowerCase() : '';
   const cleanContext = (value) => clean(value, CONTEXTS);
   const cleanUse = (value) => clean(value, USES);
   const cleanResidentScope = (value) => clean(value, RESIDENT_SCOPES);
+  const cleanResidentTenure = (value) => clean(value, RESIDENT_TENURES);
 
   function inferRoute(text) {
     const s = String(text || '').toLowerCase();
     const company = /(fastighetsbolag|företag|arbetsgivare|anställda|tjänstebil|verksamhetsbil|شركة عقارية|شركة|موظفين|شرکت.*ملک|شرکت|کارکنان)/i.test(s);
     const association = /(brf|bostadsrättsförening|samfällighet|föreningen.*ladd|ladd.*boende|جمعية.*سكن|اتحاد.*سكن|انجمن.*ساختمان|تعاونی.*مسکن)/i.test(s);
-    const resident = /(jag.*(bostadsrätt|hyresgäst|parkering|laddbox)|min egen parkeringsplats|min p-plats|egen parkering|أنا.*(ساكن|موقف)|موقف سيارتي|من.*(ساکن|پارکینگ)|پارکینگ خودم|جای پارک خودم)/i.test(s);
+    const resident = /(jag.*(bostadsrätt|hyresgäst|parkering|laddbox)|min egen parkeringsplats|min p-plats|egen parkering|أنا.*(ساكن|مستأجر|موقف)|موقف سيارتي|من.*(ساکن|مستأجر|پارکینگ)|پارکینگ خودم|جای پارک خودم)/i.test(s);
 
     if (company) {
       const guest = /(gäst|besökare|زائر|ضيف|مهمان|بازدیدکننده)/i.test(s);
@@ -38,9 +41,15 @@
     }
     if (resident) {
       const own = /(min egen parkeringsplats|min p-plats|egen parkering|egna parkeringsplats|موقف سيارتي|موقفي|پارکینگ خودم|جای پارک خودم)/i.test(s);
-      return {context: 'resident_request', residentScope: own ? 'own_home_parking' : ''};
+      const tenant = /(hyresgäst|jag hyr|مستأجر|اجاره)/i.test(s);
+      const condo = /(bostadsrätt(?!sförening)|bostadsrättshavare|صاحب.*شقة|شقة تمليك|مالک.*آپارتمان|مالکیت.*آپارتمان)/i.test(s);
+      return {
+        context: 'resident_request',
+        residentScope: own ? 'own_home_parking' : '',
+        tenure: tenant && !condo ? 'tenant' : condo && !tenant ? 'condominium' : ''
+      };
     }
-    return {context: '', use: '', residentScope: ''};
+    return {context: '', use: '', residentScope: '', tenure: ''};
   }
 
   const ROOT_COPY = {
@@ -79,6 +88,8 @@
         else url.searchParams.delete('charging_use');
         if (route.residentScope) url.searchParams.set('charging_resident_scope', route.residentScope);
         else url.searchParams.delete('charging_resident_scope');
+        if (route.tenure) url.searchParams.set('charging_tenure', route.tenure);
+        else url.searchParams.delete('charging_tenure');
         first.href = url.pathname.split('/').pop() + url.search;
         box.dataset.primaryRoute = FOCUS;
       } catch (_err) { /* retain the already-safe base route */ }
@@ -101,6 +112,7 @@
   const initialContext = cleanContext(params.get('charging_context'));
   const initialUse = cleanUse(params.get('charging_use'));
   const initialResidentScope = cleanResidentScope(params.get('charging_resident_scope'));
+  const initialResidentTenure = cleanResidentTenure(params.get('charging_tenure'));
 
   const copy = {
     sv: {
@@ -125,10 +137,14 @@
       startedStopBody: 'Om arbetet redan har startat ska Stödassistenten inte lova stöd för anställda, verksamhets-/tjänstebilar eller egna hyresgäster via denna väg. Kontrollera Naturvårdsverkets aktuella definition och andra verifierade vägar innan fler kostnader tas.',
       residentTitle: 'Boendes rätt att begära laddpunkt är en annan fråga än organisationens bidrag',
       residentBody: 'Sedan 29 maj 2026 kan hyresgäster och bostadsrättshavare i vissa fall på egen bekostnad begära en laddpunkt på den egna parkeringsplatsen om platsen ligger i samma hus som bostaden eller i närheten. Det är inte ett personligt Ladda bilen-bidrag och inte en garanti om godkännande.',
-      residentNextTitle: 'Begäran går till hyresvärd eller bostadsrättsförening',
-      residentNextBody: 'När lagens villkor är uppfyllda får installation bara vägras om det finns befogad anledning. Stödassistenten avgör inte om ett enskilt fall uppfyller alla villkor; använd aktuell lagkälla om begäran avslås.',
+      tenantTitle: 'Hyresgästens begäran har sin lagkälla i jordabalken',
+      tenantBody: 'För hyresgäster finns den aktuella regeln i 12 kap. 27 a § jordabalken. När lagens villkor är uppfyllda får hyresvärden bara vägra installation om det finns befogad anledning. Stödassistenten avgör inte om ett enskilt fall uppfyller alla villkor.',
+      condoTitle: 'Bostadsrättshavarens begäran har sin lagkälla i bostadsrättslagen',
+      condoBody: 'För bostadsrättshavare finns den aktuella regeln i 7 kap. 9 a § bostadsrättslagen. När lagens villkor är uppfyllda får föreningen bara vägra installation om det finns befogad anledning. Stödassistenten avgör inte om ett enskilt fall uppfyller alla villkor.',
+      residentNextTitle: 'Begäran går till rätt motpart för boendeformen',
+      residentNextBody: 'Hyresgästen vänder sig till hyresvärden och bostadsrättshavaren till bostadsrättsföreningen. Om boendeformen inte redan är tydlig visar Stödassistenten båda primärkällorna i stället för att gissa.',
       residentUnclearTitle: 'Parkeringsplatsens koppling till bostaden måste först klaras ut',
-      residentUnclearBody: 'Den nya regeln gäller en boendes bilparkeringsplats i samma hus som bostadslägenheten eller i närheten. Om det inte är klart ska Stödassistenten inte lova rätt till installation; kontrollera upplåtelsen och aktuell lagkälla.',
+      residentUnclearBody: 'Reglerna gäller en boendes bilparkeringsplats i samma hus som bostadslägenheten eller i närheten. Om det inte är klart ska Stödassistenten inte lova rätt till installation; kontrollera upplåtelsen och rätt lagkälla för boendeformen.',
       unsureTitle: 'Börja med att skilja projektägare från boendes egen begäran',
       unsureBody: 'Det avgör om nästa steg är föreningens Ladda bilen-väg, företags-/fastighetsbolagsvägen eller den separata bostadsrätts-/hyresrättsregeln. Kontrollera detta innan belopp eller tidsregler används.'
     },
@@ -145,8 +161,10 @@
       companyGuestTitle: 'شحن ضيوف الشركة له قاعدة زمنية مختلفة', companyGuestBody: 'للضيوف والزوار تذكر Naturvårdsverket 50% من التكاليف المؤهلة وبحد أقصى 15,000 كرونة لكل نقطة كدعم de minimis، وتسمح الإرشادات الحالية بالتقديم قبل أو بعد بدء التركيب.',
       startedStopTitle: 'بدء العمل يوقف مسار الشركة هذا', startedStopBody: 'إذا بدأ العمل فلا تعد بالدعم لمسار الموظفين أو سيارات العمل أو المستأجرين. تحقق من التعريف الحالي لدى Naturvårdsverket ومن مسارات أخرى موثقة قبل تكاليف إضافية.',
       residentTitle: 'حق الساكن في طلب الشاحن يختلف عن منحة المنظمة', residentBody: 'منذ 29 مايو 2026 يمكن للمستأجر أو صاحب bostadsrätt في بعض الحالات وعلى نفقته طلب نقطة شحن في موقفه إذا كان في نفس مبنى السكن أو بالقرب منه. هذا ليس منحة Ladda bilen شخصية ولا ضماناً بالموافقة.',
-      residentNextTitle: 'يقدم الطلب إلى المالك أو جمعية السكن', residentNextBody: 'عندما تنطبق شروط القانون لا يجوز الرفض إلا لسبب مبرر. Stödassistenten لا يقرر أن الحالة الفردية تستوفي كل الشروط؛ استخدم المصدر القانوني الحالي إذا رفض الطلب.',
-      residentUnclearTitle: 'يجب أولاً توضيح ارتباط موقف السيارة بالسكن', residentUnclearBody: 'تتعلق القاعدة الجديدة بموقف الساكن في نفس مبنى السكن أو بالقرب منه. إذا لم يكن ذلك واضحاً فلا تعد بحق في التركيب؛ تحقق من حق استخدام الموقف ومن القانون الحالي.',
+      tenantTitle: 'المصدر القانوني لطلب المستأجر هو jordabalken', tenantBody: 'بالنسبة للمستأجر توجد القاعدة الحالية في الفصل 12، 27 a § من jordabalken. عند تحقق شروط القانون لا يجوز للمالك الرفض إلا لسبب مبرر. Stödassistenten لا يحسم تحقق جميع الشروط في حالة فردية.',
+      condoTitle: 'المصدر القانوني لطلب صاحب bostadsrätt هو bostadsrättslagen', condoBody: 'بالنسبة لصاحب bostadsrätt توجد القاعدة الحالية في الفصل 7، 9 a § من bostadsrättslagen. عند تحقق شروط القانون لا يجوز للجمعية الرفض إلا لسبب مبرر. Stödassistenten لا يحسم تحقق جميع الشروط في حالة فردية.',
+      residentNextTitle: 'يقدم الطلب إلى الجهة الصحيحة حسب نوع السكن', residentNextBody: 'المستأجر يتوجه إلى المالك وصاحب bostadsrätt إلى جمعية السكن. إذا لم يكن نوع السكن واضحاً يعرض Stödassistenten المصدرين الرسميين بدلاً من التخمين.',
+      residentUnclearTitle: 'يجب أولاً توضيح ارتباط موقف السيارة بالسكن', residentUnclearBody: 'تتعلق القواعد بموقف الساكن في نفس مبنى السكن أو بالقرب منه. إذا لم يكن ذلك واضحاً فلا تعد بحق في التركيب؛ تحقق من حق استخدام الموقف ومن المصدر القانوني الصحيح لنوع السكن.',
       unsureTitle: 'افصل أولاً بين مشروع المنظمة وطلب الساكن الشخصي', unsureBody: 'هذا يحدد إن كان المسار هو Ladda bilen للجمعية أو للشركة أو قاعدة السكن المنفصلة. لا تستخدم مبالغ أو مواعيد قبل تحديد المسار.'
     },
     fa: {
@@ -162,8 +180,10 @@
       companyGuestTitle: 'شارژ مهمانان شرکت زمان‌بندی متفاوتی دارد', companyGuestBody: 'برای مهمانان Naturvårdsverket 50 درصد هزینه‌های واجد شرایط تا سقف 15,000 کرون برای هر نقطه را به عنوان de minimis ذکر می‌کند و راهنمای فعلی درخواست قبل یا بعد از شروع نصب را مجاز می‌داند.',
       startedStopTitle: 'شروع کار این مسیر شرکت را متوقف می‌کند', startedStopBody: 'اگر کار شروع شده است، برای مسیر کارکنان، خودروهای کاری یا مستأجران وعده کمک ندهید. تعریف فعلی Naturvårdsverket و مسیرهای معتبر دیگر را پیش از هزینه بیشتر بررسی کنید.',
       residentTitle: 'حق ساکن برای درخواست شارژر با کمک سازمان فرق دارد', residentBody: 'از 29 مه 2026 مستأجر یا دارنده bostadsrätt در برخی موارد می‌تواند با هزینه خود برای جای پارک خود در همان ساختمان محل سکونت یا نزدیک آن درخواست نقطه شارژ کند. این کمک شخصی Ladda bilen یا تضمین پذیرش نیست.',
-      residentNextTitle: 'درخواست به مالک یا انجمن ساختمان ارائه می‌شود', residentNextBody: 'اگر شرایط قانون برقرار باشد رد نصب فقط با دلیل موجه ممکن است. Stödassistenten تشخیص نهایی پرونده را نمی‌دهد؛ در صورت رد درخواست از منبع قانونی فعلی استفاده کنید.',
-      residentUnclearTitle: 'ابتدا ارتباط جای پارک با محل سکونت را روشن کنید', residentUnclearBody: 'قاعده جدید درباره جای پارک ساکن در همان ساختمان مسکونی یا نزدیک آن است. اگر این موضوع روشن نیست حق نصب را قطعی ندانید؛ حق استفاده از پارکینگ و قانون فعلی را بررسی کنید.',
+      tenantTitle: 'منبع قانونی درخواست مستأجر jordabalken است', tenantBody: 'برای مستأجر، قاعده فعلی در فصل 12، 27 a § از jordabalken است. اگر شرایط قانون برقرار باشد مالک فقط با دلیل موجه می‌تواند نصب را رد کند. Stödassistenten احراز نهایی همه شرایط پرونده را انجام نمی‌دهد.',
+      condoTitle: 'منبع قانونی درخواست دارنده bostadsrätt، bostadsrättslagen است', condoBody: 'برای دارنده bostadsrätt، قاعده فعلی در فصل 7، 9 a § از bostadsrättslagen است. اگر شرایط قانون برقرار باشد انجمن فقط با دلیل موجه می‌تواند نصب را رد کند. Stödassistenten احراز نهایی همه شرایط پرونده را انجام نمی‌دهد.',
+      residentNextTitle: 'درخواست باید بر اساس نوع سکونت به طرف درست داده شود', residentNextBody: 'مستأجر به مالک و دارنده bostadsrätt به انجمن ساختمان مراجعه می‌کند. اگر نوع سکونت روشن نباشد Stödassistenten هر دو منبع رسمی را نشان می‌دهد و حدس نمی‌زند.',
+      residentUnclearTitle: 'ابتدا ارتباط جای پارک با محل سکونت را روشن کنید', residentUnclearBody: 'قواعد درباره جای پارک ساکن در همان ساختمان مسکونی یا نزدیک آن است. اگر این موضوع روشن نیست حق نصب را قطعی ندانید؛ حق استفاده از پارکینگ و منبع قانونی درست برای نوع سکونت را بررسی کنید.',
       unsureTitle: 'ابتدا پروژه سازمان را از درخواست شخصی ساکن جدا کنید', unsureBody: 'این مشخص می‌کند مسیر مناسب Ladda bilen انجمن، مسیر شرکت یا قانون جداگانه مسکن است. پیش از تعیین این موضوع از مبلغ یا مهلت استفاده نکنید.'
     }
   };
@@ -185,6 +205,7 @@
   const context = () => cleanContext(answers.chargingContext || initialContext);
   const usage = () => cleanUse(answers.chargingUse || initialUse);
   const residentScope = () => cleanResidentScope(answers.chargingResidentScope || initialResidentScope);
+  const residentTenure = () => cleanResidentTenure(answers.chargingTenure || initialResidentTenure);
 
   function nextForContext(value) {
     if (value === 'association_project') {
@@ -231,6 +252,19 @@
     return baseFlow();
   };
 
+  function addResidentLawRows(rows, c, scopeOk) {
+    const tenure = residentTenure();
+    const tenantRow = [scopeOk ? c.tenantTitle : c.residentUnclearTitle, scopeOk ? c.tenantBody : c.residentUnclearBody, RIKSDAGEN_TENANT];
+    const condoRow = [scopeOk ? c.condoTitle : c.residentUnclearTitle, scopeOk ? c.condoBody : c.residentUnclearBody, RIKSDAGEN_CONDO];
+    if (tenure === 'tenant') rows.push(tenantRow);
+    else if (tenure === 'condominium') rows.push(condoRow);
+    else rows.push(tenantRow, condoRow);
+    if (scopeOk && tenure) {
+      const source = tenure === 'tenant' ? RIKSDAGEN_TENANT : RIKSDAGEN_CONDO;
+      rows.push([c.residentNextTitle, c.residentNextBody, source]);
+    }
+  }
+
   getRows = function () {
     if (scenario !== 'property_charging') return baseGetRows();
     const c = copy[currentLang()] || copy.sv;
@@ -251,10 +285,7 @@
       } else if (use === 'company_guests') rows.push([c.companyGuestTitle, c.companyGuestBody, NV_COMPANY]);
       else rows.push([c.mixedTitle, c.mixedBody, NV_COMPANY]);
     } else if (ctx === 'resident_request') {
-      if (residentScope() === 'own_home_parking') {
-        rows.push([c.residentTitle, c.residentBody, RIKSDAGEN]);
-        rows.push([c.residentNextTitle, c.residentNextBody, RIKSDAGEN]);
-      } else rows.push([c.residentUnclearTitle, c.residentUnclearBody, RIKSDAGEN]);
+      addResidentLawRows(rows, c, residentScope() === 'own_home_parking');
     } else rows.push([c.unsureTitle, c.unsureBody, NV_ASSOC]);
     return rows.slice(0, 4);
   };
@@ -271,6 +302,7 @@
     if (initialContext) answers.chargingContext = initialContext;
     if (initialUse) answers.chargingUse = initialUse;
     if (initialResidentScope) answers.chargingResidentScope = initialResidentScope;
+    if (initialResidentTenure) answers.chargingTenure = initialResidentTenure;
     matchRatings = {};
     finalFeedback = {};
     submitState = 'idle';
