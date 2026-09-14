@@ -1,0 +1,172 @@
+{
+  "schema_version": "1.0.0",
+  "as_of_date": "2026-09-14",
+  "purpose": "Synthetic Red Team fixtures for the municipal route resolver. No real user data or copied municipal application data is stored.",
+  "cases": [
+    {
+      "case_id": "fresh_verified_primary_route",
+      "record": {
+        "schema_version": "1.0.0",
+        "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+        "municipality": {"scb_code": "0180", "name": "Testkommun A"},
+        "identity_source": {
+          "owner": "Statistiska centralbyrån (SCB)",
+          "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+          "source_type": "official_municipality_identity"
+        },
+        "route": {
+          "route_kind": "application_page",
+          "official_url": "https://kommun-a.example/ekonomiskt-bistand",
+          "source_url": "https://kommun-a.example/ekonomiskt-bistand",
+          "source_owner": "Testkommun A",
+          "source_type": "municipality_primary_source",
+          "e_id_required": null,
+          "alternative_without_e_id": "contact_page"
+        },
+        "verification": {"status": "VERIFIED_ROUTE", "checked_at": "2026-09-14", "max_age_days": 30, "human_review_required": false},
+        "guardrails": {
+          "eligibility_inference_forbidden": true,
+          "amount_inference_forbidden": true,
+          "guessed_route_forbidden": true,
+          "stale_route_fails_closed": true,
+          "raw_situation_in_url_forbidden": true,
+          "local_rule_duplication_forbidden": true
+        }
+      },
+      "expected_decision": "DIRECT_OFFICIAL_ROUTE",
+      "expected_reason": "fresh_verified_route"
+    },
+    {
+      "case_id": "stale_route_falls_back_to_municipality_contact",
+      "record": {
+        "schema_version": "1.0.0",
+        "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+        "municipality": {"scb_code": "1480", "name": "Testkommun B"},
+        "identity_source": {
+          "owner": "Statistiska centralbyrån (SCB)",
+          "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+          "source_type": "official_municipality_identity"
+        },
+        "route": {
+          "route_kind": "e_service",
+          "official_url": "https://e-tjanst.kommun-b.example/ansokan",
+          "source_url": "https://kommun-b.example/ekonomiskt-bistand",
+          "source_owner": "Testkommun B",
+          "source_type": "municipality_primary_source",
+          "e_id_required": true,
+          "alternative_without_e_id": "phone"
+        },
+        "verification": {"status": "VERIFIED_ROUTE", "checked_at": "2026-07-01", "max_age_days": 30, "human_review_required": false},
+        "guardrails": {
+          "eligibility_inference_forbidden": true,
+          "amount_inference_forbidden": true,
+          "guessed_route_forbidden": true,
+          "stale_route_fails_closed": true,
+          "raw_situation_in_url_forbidden": true,
+          "local_rule_duplication_forbidden": true
+        }
+      },
+      "expected_decision": "CONTACT_MUNICIPALITY",
+      "expected_reason": "stale_route"
+    },
+    {
+      "case_id": "changed_route_requires_review",
+      "record": {
+        "schema_version": "1.0.0",
+        "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+        "municipality": {"scb_code": "1280", "name": "Testkommun C"},
+        "identity_source": {
+          "owner": "Statistiska centralbyrån (SCB)",
+          "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+          "source_type": "official_municipality_identity"
+        },
+        "route": {
+          "route_kind": "contact_page",
+          "official_url": "https://kommun-c.example/kontakt",
+          "source_url": "https://kommun-c.example/ekonomiskt-bistand",
+          "source_owner": "Testkommun C",
+          "source_type": "municipality_primary_source",
+          "e_id_required": null,
+          "alternative_without_e_id": "phone"
+        },
+        "verification": {"status": "CHANGED", "checked_at": "2026-09-14", "max_age_days": 30, "human_review_required": true},
+        "guardrails": {
+          "eligibility_inference_forbidden": true,
+          "amount_inference_forbidden": true,
+          "guessed_route_forbidden": true,
+          "stale_route_fails_closed": true,
+          "raw_situation_in_url_forbidden": true,
+          "local_rule_duplication_forbidden": true
+        }
+      },
+      "expected_decision": "REVIEW_REQUIRED",
+      "expected_reason": "route_changed"
+    },
+    {
+      "case_id": "search_result_cannot_be_promoted_to_route",
+      "record": {
+        "schema_version": "1.0.0",
+        "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+        "municipality": {"scb_code": "0380", "name": "Testkommun D"},
+        "identity_source": {
+          "owner": "Statistiska centralbyrån (SCB)",
+          "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+          "source_type": "official_municipality_identity"
+        },
+        "route": {
+          "route_kind": "unknown",
+          "official_url": null,
+          "source_url": "https://search.example/result",
+          "source_owner": "Search result",
+          "source_type": "other",
+          "e_id_required": null,
+          "alternative_without_e_id": "unknown"
+        },
+        "verification": {"status": "SOURCE_IDENTIFIED", "checked_at": "2026-09-14", "max_age_days": 30, "human_review_required": true},
+        "guardrails": {
+          "eligibility_inference_forbidden": true,
+          "amount_inference_forbidden": true,
+          "guessed_route_forbidden": true,
+          "stale_route_fails_closed": true,
+          "raw_situation_in_url_forbidden": true,
+          "local_rule_duplication_forbidden": true
+        }
+      },
+      "expected_decision": "CONTACT_MUNICIPALITY",
+      "expected_reason": "no_verified_primary_route"
+    },
+    {
+      "case_id": "raw_situation_query_is_blocked",
+      "record": {
+        "schema_version": "1.0.0",
+        "support_id": "se-socialstyrelsen-ekonomiskt-bistand",
+        "municipality": {"scb_code": "0580", "name": "Testkommun E"},
+        "identity_source": {
+          "owner": "Statistiska centralbyrån (SCB)",
+          "url": "https://www.scb.se/hitta-statistik/regional-statistik-och-kartor/regionala-indelningar/lan-och-kommuner/lan-och-kommuner-i-kodnummerordning/",
+          "source_type": "official_municipality_identity"
+        },
+        "route": {
+          "route_kind": "application_page",
+          "official_url": "https://kommun-e.example/ansok?situation=jag-har-ingen-inkomst",
+          "source_url": "https://kommun-e.example/ekonomiskt-bistand",
+          "source_owner": "Testkommun E",
+          "source_type": "municipality_primary_source",
+          "e_id_required": null,
+          "alternative_without_e_id": "contact_page"
+        },
+        "verification": {"status": "VERIFIED_ROUTE", "checked_at": "2026-09-14", "max_age_days": 30, "human_review_required": false},
+        "guardrails": {
+          "eligibility_inference_forbidden": true,
+          "amount_inference_forbidden": true,
+          "guessed_route_forbidden": true,
+          "stale_route_fails_closed": true,
+          "raw_situation_in_url_forbidden": true,
+          "local_rule_duplication_forbidden": true
+        }
+      },
+      "expected_decision": "REVIEW_REQUIRED",
+      "expected_reason": "unsafe_route_url"
+    }
+  ]
+}
