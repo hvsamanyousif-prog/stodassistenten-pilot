@@ -92,23 +92,39 @@ assert.equal(global.screen, 'chargingResidentScope');
 question = global.flow();
 assert.equal(question.title, 'chargingResidentScope');
 
-// Explicit own-home-parking scope skips the duplicate question and stays on the separate statutory route.
+// Unknown tenure stays fail-closed on legal source choice by showing both current statutory paths.
 load('?actor_type=property_actor&focus=property_charging&charging_context=resident_request&charging_resident_scope=own_home_parking&lang=sv');
 assert.equal(global.screen, 'chargingR');
 rows = global.getRows();
 assert.equal(rows.length, 2);
-assert.ok(rows.every(row => row[2].includes('riksdagen.se')));
-assert.ok(rows[0][1].includes('egen bekostnad'));
-assert.ok(rows[0][1].includes('inte ett personligt Ladda bilen-bidrag'));
-assert.ok(rows[0][1].includes('inte en garanti'));
+assert.ok(rows.some(row => row[2].includes('sfs-1970-994')));
+assert.ok(rows.some(row => row[2].includes('sfs-1991-614')));
+assert.ok(rows.some(row => row[1].includes('12 kap. 27 a §')));
+assert.ok(rows.some(row => row[1].includes('7 kap. 9 a §')));
 
-// Unknown/non-home parking scope fails closed rather than asserting the statutory right.
-load('?actor_type=property_actor&focus=property_charging&charging_context=resident_request&charging_resident_scope=other_or_unclear&lang=sv');
+// Permanent Red Team regression: an explicit hyresgäst must not be sourced only to Bostadsrättslagen.
+load('?actor_type=property_actor&focus=property_charging&charging_context=resident_request&charging_resident_scope=own_home_parking&charging_tenure=tenant&lang=sv');
+rows = global.getRows();
+assert.equal(rows.length, 2);
+assert.ok(rows.every(row => row[2].includes('sfs-1970-994')));
+assert.ok(rows[0][0].includes('Hyresgästens'));
+assert.ok(!rows.some(row => row[2].includes('sfs-1991-614')));
+
+// Existing bostadsrätt route stays on its own primary statute.
+load('?actor_type=property_actor&focus=property_charging&charging_context=resident_request&charging_resident_scope=own_home_parking&charging_tenure=condominium&lang=sv');
+rows = global.getRows();
+assert.equal(rows.length, 2);
+assert.ok(rows.every(row => row[2].includes('sfs-1991-614')));
+assert.ok(rows[0][0].includes('Bostadsrättshavarens'));
+
+// Unknown/non-home parking scope fails closed and uses the already-known coarse tenure only for source selection.
+load('?actor_type=property_actor&focus=property_charging&charging_context=resident_request&charging_resident_scope=other_or_unclear&charging_tenure=tenant&lang=sv');
 rows = global.getRows();
 assert.equal(rows.length, 1);
 assert.ok(rows[0][1].includes('inte lova rätt till installation'));
+assert.ok(rows[0][2].includes('sfs-1970-994'));
 
-// RTL language parity retains the same statutory-source split.
+// RTL language parity retains the statutory split.
 global.document.documentElement.lang = 'ar';
 rows = global.getRows();
 assert.ok(rows[0][0].includes('موقف'));
@@ -117,13 +133,14 @@ global.document.documentElement.lang = 'fa';
 rows = global.getRows();
 assert.ok(rows[0][0].includes('پارک'));
 
-// Public handoff remains bounded; no sensitive identifiers or raw story fields are supported.
+// Public handoff remains bounded; coarse tenure is allowed, documents and raw story are not.
 const source = fs.readFileSync(modulePath, 'utf8');
 for (const forbidden of ['organisation_number=', 'org_number=', 'address=', 'parking_id=', 'exact_cost=', 'vehicle_registration=', 'raw_story=']) {
   assert.ok(!source.includes(forbidden), `forbidden handoff field: ${forbidden}`);
 }
-for (const allowedCoarse of ['charging_context', 'charging_use', 'charging_resident_scope']) assert.ok(source.includes(allowedCoarse));
+for (const allowedCoarse of ['charging_context', 'charging_use', 'charging_resident_scope', 'charging_tenure']) assert.ok(source.includes(allowedCoarse));
 assert.ok(source.includes("const FOCUS = 'property_charging'"));
+assert.ok(source.includes("new Set(['tenant', 'condominium'])"));
 assert.ok(!source.includes('property-charging-pilot.html'));
 assert.ok(!source.includes('fetch('));
 
