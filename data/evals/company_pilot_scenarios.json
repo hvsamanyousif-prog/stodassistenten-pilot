@@ -63,6 +63,13 @@
       "expected_gaps": ["göra kapacitet och geografiskt åtagande tydligare","strukturera relevanta referenser och tidigare leveranser","samla vanliga företagsunderlag och bevis på ett ställe"],
       "must_include": ["inte ett beslut om stöd, kvalificering eller kontrakt"],
       "must_exclude": ["du har rätt till bidrag","garanterad finansiering","garanterat kontrakt","ni kommer vinna"]
+    },
+    {
+      "id": "procurement-discovery-is-not-one-database",
+      "input": {"goal":"procurement","sector":"consulting","geography":"local","capacity":"yes","references":"partial","docs":"yes"},
+      "expected_gaps": ["strukturera relevanta referenser och tidigare leveranser"],
+      "must_include": ["En enda databas","Direktupphandlingar behöver inte annonseras","CPV","registrerade annonsdatabaser"],
+      "must_exclude": ["alla offentliga affärer annonseras","garanterar att ni får en förfrågan"]
     }
   ]
 }

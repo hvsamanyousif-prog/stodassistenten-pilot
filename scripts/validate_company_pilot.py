@@ -5,7 +5,8 @@ import sys
 
 FEEDBACK_ENDPOINT = 'https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback'
 FORBIDDEN_PAYLOAD_FIELDS = ('description', 'sector', 'geography', 'capacity', 'references', 'docs')
-TRUTHFUL_PRIVACY_MARKER = 'Dina situationssvar och företagsbeskrivningen stannar i webbläsaren.'
+TRUTHFUL_PRIVACY_MARKER = 'Dina svar stannar i webbläsaren. Om du själv skickar feedback skickas bara anonym produktfeedback'
+FEEDBACK_PRIVACY_MARKER = 'Vi skickar inte sektor, geografi, kapacitet, referenser eller dokumentstatus.'
 LEGACY_MISLEADING_MARKER = 'Dina svar i den här v0.1-sidan stannar i webbläsaren och skickas inte till Stödassistenten.'
 
 
@@ -49,8 +50,19 @@ def validate(text):
     ]:
         require(forbidden.lower() not in text.lower(), f'unsafe claim found: {forbidden}')
 
-    require('maxlength="500"' in text, 'local company description must stay bounded')
-    require(TRUTHFUL_PRIVACY_MARKER in text, 'company pilot must distinguish local situation data from optional product feedback')
+    # The current information-gain contract deliberately removed free-text company
+    # description from the interactive flow. Privacy validation must protect that
+    # design rather than requiring a stale hidden/free-text field merely because an
+    # older validator once expected one.
+    for stale_free_text in (
+        'Beskriv företaget med egna ord',
+        '<textarea',
+        'state.description',
+        'description:null',
+    ):
+        require(stale_free_text not in text, f'free-text company description must not return: {stale_free_text}')
+    require(TRUTHFUL_PRIVACY_MARKER in text, 'company pilot must explain local answers versus optional product feedback')
+    require(FEEDBACK_PRIVACY_MARKER in text, 'company pilot must name which structured situation fields are excluded from feedback')
     require(LEGACY_MISLEADING_MARKER not in text, 'misleading blanket privacy claim must not remain when product feedback can be sent')
 
     require(
@@ -115,5 +127,9 @@ expect_rejected(
     text.replace(TRUTHFUL_PRIVACY_MARKER, LEGACY_MISLEADING_MARKER, 1),
     'misleading privacy disclosure',
 )
+expect_rejected(
+    text.replace('const state={', 'const state={description:null,', 1),
+    'free-text situation state reintroduced',
+)
 
-print('company pilot validation + feedback privacy red-team: OK')
+print('company pilot validation + no-free-text feedback privacy red-team: OK')

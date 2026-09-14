@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove qualification, contract probability, invitation or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-procurement-discovery-fragmentation-v01",
+      "product_miss": "The company pilot has real official sources and useful readiness checks, but its result path still frames the next step as choosing an advertised opportunity. That can make one portal look complete, hide the unadvertised direct-procurement route, and miss that an active dynamic purchasing system may still accept new qualifying suppliers.",
+      "fix_or_guardrail": "Keep the same company pilot and learning system, but make the discovery split explicit: advertised opportunities require registered-database search without assuming one database is complete; direct procurement may require buyer visibility because prior advertising is not always required; dynamic purchasing systems must be checked against their current documents because they can remain open to new suppliers. Never turn generic guidance into a qualification or award promise.",
+      "regression_case_ids": [
+        "lab-company-procurement-fragmented-search-v33-01",
+        "lab-company-dynamic-purchasing-system-late-entry-v33-02"
+      ]
+    }
+  ]
+}

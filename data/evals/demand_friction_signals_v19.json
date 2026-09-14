@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of qualification, contract probability or factual truth. Community and search-language patterns are discovery-only; material procurement claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-procurement-discovery-fragmentation-v01",
+      "actor_types": ["company", "association_supplier", "future_supplier"],
+      "natural_language_queries": [
+        "var hittar jag alla offentliga upphandlingar",
+        "jag hittar inga upphandlingar för mitt företag",
+        "räcker det att bevaka en upphandlingsportal",
+        "hur får kommunen veta att mitt företag finns vid direktupphandling",
+        "kan jag gå med i ett dynamiskt inköpssystem som redan har startat",
+        "företag vill lämna anbud vem ska jag kontakta"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Finding public-sector opportunities is a recurring first-step supplier need, and current official guidance devotes explicit support to where suppliers must search and how non-advertised routes differ. This is qualitative discovery evidence, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Sweden has no single national procurement-ad database; one database is not guaranteed to provide complete coverage, direct procurements need not be advertised, and dynamic purchasing systems have a different entry model from a closed-framework assumption."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "A supplier can incorrectly conclude that no market exists, miss relevant advertised opportunities, spend time searching the wrong place, or abandon an active dynamic purchasing system that still accepts qualifying suppliers."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Opportunity discovery spans registered private ad databases, TED for many above-threshold procurements, buyer websites, direct-procurement visibility and method-specific guidance such as dynamic purchasing systems."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as annonsdatabas, direktupphandling, CPV, ramavtal and dynamiskt inköpssystem describe materially different routes but are easy for new suppliers to collapse into the generic word 'upphandling'."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The safe next action depends on whether the supplier is searching advertised procurements, trying to become visible for direct procurement, or evaluating a method such as a dynamic purchasing system; only after that should the product move to the specific documents and requirements."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The discoverability problem can recur for every supplier sector and geography because the fragmentation is structural rather than tied to one support program or one buyer."
+      },
+      "current_product_coverage_gap": {
+        "score": 4,
+        "basis": "The company pilot already provides official links and readiness questions, but its result path tells users to choose an advertised opportunity and can therefore underrepresent direct procurement, incomplete single-database coverage and late entry to dynamic purchasing systems."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/hitta-affaren-i-offentlig-sektor"
+      ],
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/hitta-affaren-i-offentlig-sektor",
+        "https://www.konkurrensverket.se/upphandling/registrerade-annonsdatabaser/annonsdatabasregistret/",
+        "https://www.upphandlingsmyndigheten.se/inkopsprocessen/forbered-upphandling/valja-upphandlingsforfarande/dynamiskt-inkopssystem/"
+      ],
+      "recommended_learning_action": "Correct the existing company-pilot result path so it no longer treats one advertised opportunity as the only public-sector route. Permanently regress the one-database, all-purchases-advertised and DIS-too-late misconceptions. Keep specific requirements, deadlines, qualification and award conclusions grounded in the current procurement documents rather than generic guidance.",
+      "truth_rule": "Discovery wording is not a truth source. Verify current advertising, registered-database and dynamic-purchasing-system behavior against Upphandlingsmyndigheten and Konkurrensverket. Do not infer that one database is complete, that all public purchases are advertised, that supplier registration guarantees an invitation, or that an active DIS automatically qualifies a supplier."
+    }
+  ]
+}
