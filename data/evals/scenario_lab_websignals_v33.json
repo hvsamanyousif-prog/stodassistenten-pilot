@@ -1,0 +1,87 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v33 Red Teams a real company-procurement friction: Sweden has no single national procurement-ad database, one database is not guaranteed to provide complete coverage, direct procurements do not have to be advertised, and a dynamic purchasing system can remain open to new suppliers during its validity. These scenarios are synthetic and contain no real company, bid or confidential procurement data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-procurement-search-fragmented-and-direct-2026",
+      "observation": "Current Upphandlingsmyndigheten guidance says Sweden has no national procurement-ad database, suppliers may need to use multiple registered databases because one is not guaranteed to give complete coverage, and direct procurement does not have to be advertised. The product must therefore not equate 'public business opportunity' with 'one advertised tender found in one portal'.",
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/hitta-affaren-i-offentlig-sektor",
+        "https://www.konkurrensverket.se/upphandling/registrerade-annonsdatabaser/annonsdatabasregistret/"
+      ]
+    },
+    {
+      "pattern_id": "signal-dynamic-purchasing-system-late-entry-2026",
+      "observation": "Current Upphandlingsmyndigheten guidance says a dynamic purchasing system is open to new suppliers throughout its validity when qualification requirements are met. A supplier who discovers an active DIS later must not automatically be told that the opportunity is closed just because the system has already started.",
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/inkopsprocessen/forbered-upphandling/valja-upphandlingsforfarande/dynamiskt-inkopssystem/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-company-procurement-fragmented-search-v33-01",
+      "actor_type": "company",
+      "story": "Vi är ett litet företag och vill lämna anbud till kommuner, men vi hittar nästan inget i portalen vi använder. Betyder det att det inte finns några affärer för oss?",
+      "expected_support_areas": [
+        "registered_procurement_ad_databases",
+        "multi_database_and_cpv_search_strategy",
+        "advertised_procurement_and_direct_procurement_kept_distinct",
+        "buyer_visibility_for_non_advertised_direct_procurement_without_promising_invitation"
+      ],
+      "must_not_claim": [
+        "one_procurement_database_is_guaranteed_to_cover_all_swedish_public_procurements",
+        "all_public_sector_purchases_must_be_advertised",
+        "absence_of_a_matching_ad_means_no_public_buyer_can_purchase_the_service",
+        "registering_in_a_supplier_list_or_contacting_a_buyer_guarantees_a_direct_procurement_request",
+        "a_discovery_site_or_community_post_is_a_truth_source_for_requirements_deadlines_or_award_conditions",
+        "the_product_can_infer_qualification_or_contract_probability_without_the_specific_procurement_documents",
+        "real_bid_content_competitor_information_or_confidential_procurement_material_should_be_copied_into_public_eval_data"
+      ],
+      "expected_questions": [
+        "q_is_the_user_trying_to_find_advertised_procurements_or_become_visible_for_direct_procurement_opportunities_only_if_that_changes_the_next_action",
+        "q_which_goods_services_and_geography_define_the_search_if_not_already_known"
+      ],
+      "expected_next_actions": [
+        "for_advertised_procurements_search_registered_databases_and_do_not_assume_one_database_is_complete",
+        "use_relevant_cpv_search_terms_and_broader_parent_categories_when_a_narrow_search_returns_too_little",
+        "for_direct_procurement_map_relevant_public_buyers_and_how_they_source_suppliers_because_prior_advertising_is_not_always_required",
+        "when_a_specific_opportunity_is_found_open_the_primary_procurement_documents_and_verify_requirements_deadlines_and_submission_route_before_recommending_action"
+      ],
+      "source_requirements": [
+        "Upphandlingsmyndigheten_current_find_the_business_primary_source",
+        "Konkurrensverket_current_registered_ad_database_registry"
+      ]
+    },
+    {
+      "case_id": "lab-company-dynamic-purchasing-system-late-entry-v33-02",
+      "actor_type": "company",
+      "story": "Jag hittade ett dynamiskt inköpssystem som redan startade förra året. Är det för sent för mitt företag att komma med?",
+      "expected_support_areas": [
+        "dynamic_purchasing_system_distinguished_from_closed_framework_assumption",
+        "supplier_qualification_before_individual_bid_invitations",
+        "current_system_documents_control_category_and_qualification_requirements"
+      ],
+      "must_not_claim": [
+        "an_active_dynamic_purchasing_system_is_closed_to_all_new_suppliers_after_its_start_date",
+        "finding_a_dynamic_purchasing_system_automatically_qualifies_the_supplier",
+        "qualification_in_a_dynamic_purchasing_system_guarantees_a_contract",
+        "all_framework_agreements_and_dynamic_purchasing_systems_follow_the_same_supplier_entry_rules",
+        "the_product_can_replace_the_current_system_documents_with_generic_guidance"
+      ],
+      "expected_questions": [
+        "q_is_the_opportunity_actually_a_dynamic_purchasing_system_and_which_category_is_relevant",
+        "q_does_the_supplier_meet_the_current_qualification_requirements_in_the_system_documents"
+      ],
+      "expected_next_actions": [
+        "open_the_current_dynamic_purchasing_system_notice_and_documents",
+        "verify_that_the_relevant_category_is_open_and_submit_an_application_to_qualify_if_the_requirements_can_be_met",
+        "only_after_qualification_treat_individual_bid_invitations_as_opportunities_to_decide_whether_to_submit_an_offer"
+      ],
+      "source_requirements": [
+        "Upphandlingsmyndigheten_current_dynamic_purchasing_system_primary_source"
+      ]
+    }
+  ]
+}
