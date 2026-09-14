@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-child-maintenance-payment-route-v01",
+      "product_miss": "The public product already supported family-related journeys but did not have a focused natural-language route for unpaid or partial child maintenance, so it could miss the distinction between direct underhållsbidrag and state underhållsstöd and lose equal-residence or cross-border context.",
+      "regression_case_ids": [
+        "lab-family-maintenance-unpaid-mostly-resident-v51-01",
+        "lab-family-maintenance-equal-residence-v51-02",
+        "lab-family-maintenance-partial-payment-v51-03",
+        "lab-family-maintenance-cross-border-v51-04"
+      ],
+      "fix_or_guardrail": "Extend the same root/person product with focus=child_maintenance. Preserve only coarse cross-border context in handoff, ask residence pattern and payment status only when they can change the route, and route to current Försäkringskassan guidance without calculating entitlement, amount or an individual private payment obligation.",
+      "truth_guardrail": "Försäkringskassan is the truth-bearing primary source. Separation or nonpayment alone is not entitlement, equal residence does not mean maintenance can never be relevant, partial payment does not let the product infer an exact state top-up, and cross-border administration can depend on the country involved. The normalized support record remains NEEDS_REVIEW with no material fields verified.",
+      "privacy_guardrail": "Do not put child name or exact age, other-parent identity, address, country, custody information, exact amount, agreement contents or raw situation text in URL, public eval data or structured feedback. Feedback carries only language, route and product ratings.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY_TRUTH_REMAINS_REVIEW_GATED"
+    }
+  ]
+}
