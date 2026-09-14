@@ -48,6 +48,7 @@ def main() -> int:
     require("focus=young_housing" in runtime, "handoff must use bounded young_housing focus")
     require("context=${safe}" in runtime, "handoff must carry only a coarse governed context")
     require("actor_type=student" in runtime, "handoff must stay inside the shared student/person module")
+    require("if (context !== 'income_change')" in runtime, "known income-change context must suppress the duplicate follow-up question")
     require("Försäkringskassan" in runtime, "guidance must name the responsible primary source")
     require("hela kalenderåret" in runtime, "2026 annual-income next action is missing")
     require("uppdatera uppgifterna direkt" in runtime, "income-change reporting next action is missing")
@@ -58,6 +59,9 @@ def main() -> int:
     require(verification.get("status") == "NEEDS_REVIEW", "young housing truth record must remain review-gated")
     require(verification.get("human_review_required") is True, "young housing truth record must require human review")
     require(verification.get("material_fields_verified") == [], "AI must not promote young housing material fields to VERIFIED")
+    support_text = json.dumps(support, ensure_ascii=False)
+    require("bhyoung.annual_income_basis_2026" in support_text, "truth record must retain the current 2026 annual-income rule")
+    require("bhyoung.monthly_income_transition_2027" in support_text, "truth record must version the 2027 transition separately")
 
     signals = {item.get("signal_id"): item for item in signal.get("signals", [])}
     sig = signals.get("df-young-post-study-housing-change-v01")
@@ -82,6 +86,7 @@ def main() -> int:
     require(learned is not None, "friction signal is not mapped to permanent learning")
     require("lab-young-post-study-housing-change-v22-01" in learned.get("regression_case_ids", []), "signal is not linked to v22 regression")
     require("studier, bostad och första anställning" in coverage, "coverage matrix no longer contains the combined transition contract")
+    require("Ung bostadsövergång v22" in coverage and "focus=young_housing" in coverage, "coverage matrix must reflect the actual v22 public capability")
 
     with tempfile.TemporaryDirectory() as tmp:
         output = Path(tmp) / "site"
