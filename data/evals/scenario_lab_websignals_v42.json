@@ -52,7 +52,7 @@
         "the_housing_association_can_never_refuse",
         "the_product_can_decide_that_all_statutory_conditions_are_met_from_the_story"
       ],
-      "expected_questions": [],
+      "expected_questions": ["q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home"],
       "expected_next_actions": ["check_current_parking_and_tenure_conditions_and_make_the_request_to_landlord_or_housing_association", "use_current_statutory_source_if_a_request_is_refused"],
       "source_requirements": ["Sveriges riksdag"],
       "privacy_constraints": ["do_not_copy_home_address_parking_space_identifier_tenure_documents_vehicle_details_or_raw_dispute_text_into_public_feedback_or_url"]
