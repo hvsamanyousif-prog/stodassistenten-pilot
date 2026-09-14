@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the boundary between sickness reporting as an ordinary jobseeker and sickness absence inside an Arbetsförmedlingen programme, inside the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility. Natural problem formulations and public guidance are discovery signals; Försäkringskassan and Arbetsförmedlingen carry the truth-bearing current rules.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-unemployed-sick-first-day-authority-v01",
+      "actor_types": ["private_person", "jobseeker", "programme_participant"],
+      "natural_language_queries": [
+        "jag är arbetslös och blev sjuk vem ska jag sjukanmäla mig till",
+        "sjuk när jag är inskriven på arbetsförmedlingen",
+        "jag har aktivitetsstöd och är sjuk idag vad gör jag",
+        "jag söker jobb på deltid och har också en anställning hur sjukanmäler jag mig"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "The situation can affect ordinary jobseekers, programme participants and part-time jobseekers with employment. Current national guidance maintains separate public routes for these groups, indicating recurring practical need. This is a qualitative reach proxy, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The first-day reporting destination changes with programme status and employment context. Natural user language such as 'I am unemployed and sick' often omits exactly the fact that determines whether the first report goes to Försäkringskassan or Arbetsförmedlingen."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A missed or misrouted first-day sickness report can affect compensation. Overconfident eligibility wording can also make a person assume sickness benefit before Försäkringskassan has assessed the separate conditions."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Försäkringskassan publishes the route for ordinary jobseekers and mixed employment, while Arbetsförmedlingen publishes the sickness-absence route for programme participants. The user must know which system applies before acting."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as programme participation, aktivitetsstöd, sickness report and sickness-benefit application are administrative. A person may only say 'I am registered at Arbetsförmedlingen and got sick' without distinguishing programme participation from ordinary registration."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The user first needs to distinguish programme status and employment context, then report sickness to the correct recipient, and in some routes later apply for benefit or provide a medical certificate."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Both national authorities publish dedicated sickness guidance for these neighbouring states, and the same confusion recurs across ordinary jobseeking, programme participation and part-time employment boundaries."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository covers work, a-kassa and sickness broadly but did not expose a focused natural-language route that asks programme status first and keeps the two first-day reporting authorities separate."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-arbetssokande",
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-blir-sjuk-eller-vardar-sjukt-barn"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-arbetssokande",
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-deltar-i-ett-program/anmal-franvaro-nar-du-blir-sjuk-och-deltar-i-ett-program"
+      ],
+      "recommended_learning_action": "Teach the existing person intelligence to recognize 'jobseeker + sick' as an authority-disambiguation situation. Ask programme status first because it can change the first-day recipient; ask employment context only when programme status is no; ask registration/active-jobseeking only when the ordinary full-jobseeker route remains relevant. Keep eligibility, SGI, diagnosis, amount and medical assessment outside the public matcher.",
+      "truth_rule": "VERIFY first-day reporting, certificate timing and ordinary-jobseeker conditions against current Försäkringskassan and Arbetsförmedlingen primary sources. Discovery wording is not truth. Do not infer programme participation merely from being registered at Arbetsförmedlingen, and do not infer sickness-benefit eligibility from a sickness report."
+    }
+  ]
+}

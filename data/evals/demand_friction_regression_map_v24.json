@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "mappings": [
+    {
+      "signal_id": "df-unemployed-sick-first-day-authority-v01",
+      "product_miss": "The shared public product covered work, unemployment and sickness broadly but had no focused source-grounded route for the authority boundary between an ordinary jobseeker, an Arbetsförmedlingen programme participant and a part-time jobseeker who also has employment.",
+      "regression_case_ids": [
+        "lab-unemployed-sick-first-day-authority-v47-01",
+        "lab-program-participant-sick-first-day-v47-02",
+        "lab-parttime-jobseeker-with-employment-v47-03",
+        "lab-unemployed-sick-uncertain-program-v47-04"
+      ],
+      "fix_or_guardrail": "Use the existing shell and person surface with focus=unemployed_sick. Ask programme status first because it can change the first-day recipient; fail closed when programme status is uncertain; keep mixed employment separate; never turn reporting guidance into an eligibility decision.",
+      "truth_guardrail": "Försäkringskassan and Arbetsförmedlingen current primary pages carry the truth. Sickness reporting is not proof of sickness-benefit eligibility and registration at Arbetsförmedlingen is not proof of programme participation.",
+      "privacy_guardrail": "Only coarse route state stays in the client session. Do not place diagnosis, medical certificate content, SGI, salary, employer, identity or the person's situation text in URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}

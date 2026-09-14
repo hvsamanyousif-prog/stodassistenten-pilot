@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Permanent synthetic regressions for the high-friction boundary between ordinary jobseeker sickness reporting, Arbetsförmedlingen programme sickness absence and mixed part-time employment. The stories are synthetic and contain no reused community text or personal data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "unemployed-sick-first-day-authority",
+      "observation": "Natural problem statements often say only that a person is unemployed or registered at Arbetsförmedlingen and became sick. Current primary sources show that programme participation can change the first-day reporting authority, so programme status is a high-information first question rather than a detail to infer.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-arbetssokande",
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-deltar-i-ett-program/anmal-franvaro-nar-du-blir-sjuk-och-deltar-i-ett-program"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-unemployed-sick-first-day-authority-v47-01",
+      "actor_type": "private_person",
+      "story": "Jag är arbetslös och blev sjuk idag. Ska jag sjukanmäla mig till Försäkringskassan eller Arbetsförmedlingen?",
+      "expected_support_areas": ["first_day_authority_disambiguation", "programme_status_information_gain"],
+      "must_not_claim": ["all_jobseekers_report_sickness_to_the_same_authority", "being_registered_at_arbetsformedlingen_means_programme_participation", "sickness_report_guarantees_sickness_benefit"],
+      "expected_questions": ["ask_if_currently_participating_in_an_arbetsformedlingen_programme_with_programme_benefit_before_choosing_first_day_authority"],
+      "expected_next_actions": ["route_programme_participant_to_arbetsformedlingen_first_day_or_ordinary_full_jobseeker_to_forsakringskassan_first_day_after_status_is_known"],
+      "source_requirements": ["Forsakringskassan_current_jobseeker_sickness_guidance", "Arbetsformedlingen_current_programme_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-program-participant-sick-first-day-v47-02",
+      "actor_type": "private_person",
+      "story": "Jag deltar i ett program hos Arbetsförmedlingen med aktivitetsstöd och är sjuk idag.",
+      "expected_support_areas": ["programme_sickness_absence", "medical_certificate_after_seven_days"],
+      "must_not_claim": ["programme_participant_should_first_report_sickness_to_forsakringskassan", "programme_sickness_automatically_converts_to_sickness_benefit", "medical_certificate_is_never_needed_in_programme_sickness"],
+      "expected_questions": ["do_not_repeat_jobseeker_registration_question_when_programme_status_is_already_known"],
+      "expected_next_actions": ["report_sickness_to_arbetsformedlingen_on_first_sick_day", "if_sick_longer_than_seven_days_follow_current_medical_certificate_route"],
+      "source_requirements": ["Arbetsformedlingen_current_programme_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-parttime-jobseeker-with-employment-v47-03",
+      "actor_type": "private_person",
+      "story": "Jag söker jobb på deltid, har också en anställning och har blivit sjuk.",
+      "expected_support_areas": ["mixed_employment_context", "separate_employer_sickness_reporting"],
+      "must_not_claim": ["part_time_jobseeker_with_employment_has_only_one_reporting_recipient", "mixed_employment_automatically_qualifies_for_sickness_benefit", "benefit_coordination_can_be_inferred_without_assessment"],
+      "expected_questions": ["ask_only_route_changing_employment_context_if_not_already_known"],
+      "expected_next_actions": ["preserve_employer_sickness_reporting_alongside_current_jobseeker_guidance_and_send_eligibility_assessment_to_primary_authority"],
+      "source_requirements": ["Forsakringskassan_current_jobseeker_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-unemployed-sick-uncertain-program-v47-04",
+      "actor_type": "private_person",
+      "story": "Jag är inskriven på Arbetsförmedlingen och sjuk men vet inte om det jag deltar i räknas som ett program.",
+      "expected_support_areas": ["uncertainty_fail_closed", "programme_status_verification"],
+      "must_not_claim": ["registration_alone_proves_programme_participation", "guess_first_day_authority_when_programme_status_is_uncertain", "request_diagnosis_to_resolve_authority_route"],
+      "expected_questions": ["verify_programme_status_without_requesting_diagnosis_sgi_salary_or_identity"],
+      "expected_next_actions": ["show_both_current_primary_sources_and_verify_programme_status_before_selecting_the_first_day_route"],
+      "source_requirements": ["Forsakringskassan_current_jobseeker_sickness_guidance", "Arbetsformedlingen_current_programme_sickness_guidance"]
+    }
+  ]
+}
