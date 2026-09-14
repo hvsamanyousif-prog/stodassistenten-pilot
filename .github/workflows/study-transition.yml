@@ -1,0 +1,43 @@
+name: Validate study-to-work transition
+
+on:
+  pull_request:
+    paths:
+      - 'client/study-transition.js'
+      - 'client/study-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_study_transition.py'
+      - 'data/evals/demand_friction_signals_v09.json'
+      - 'data/evals/demand_friction_regression_map_v03.json'
+      - 'data/evals/scenario_lab_websignals_v20.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/study-transition.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/study-transition.js'
+      - 'client/study-transition.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_study_transition.py'
+      - 'data/evals/demand_friction_signals_v09.json'
+      - 'data/evals/demand_friction_regression_map_v03.json'
+      - 'data/evals/scenario_lab_websignals_v20.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/study-transition.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate multilingual study transition and public build
+        run: python scripts/validate_study_transition.py
