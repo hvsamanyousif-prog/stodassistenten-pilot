@@ -1,0 +1,102 @@
+{
+  "support_id": "se-skolverket-extra-anpassningar-sarskilt-stod",
+  "name": "Extra anpassningar och särskilt stöd i skolan",
+  "category": "education",
+  "subtype": "school_support_and_special_support",
+  "provider": {
+    "name": "Skolverket",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["child_via_guardian", "student", "school_support_need"],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "school_support.diagnosis_not_required",
+        "field": "diagnosis",
+        "operator": "text_condition",
+        "value": "Skolverket anger att en diagnos aldrig får vara ett villkor för att en elev ska få extra anpassningar eller särskilt stöd. En diagnos innebär inte heller automatiskt att eleven behöver en viss stödåtgärd.",
+        "source_url": "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+        "notes": "Produkten ska fråga om hur svårigheterna påverkar skolsituationen, inte göra diagnosstatus till en obligatorisk route-gate."
+      },
+      {
+        "rule_id": "school_support.extra_adjustments",
+        "field": "risk_of_not_meeting_minimum_criteria",
+        "operator": "text_condition",
+        "value": "Om det kan befaras att en elev inte kommer att uppfylla de betygskriterier eller kriterier för bedömning av kunskaper som minst ska uppfyllas ska eleven skyndsamt ges stöd i form av extra anpassningar inom den ordinarie undervisningen.",
+        "source_url": "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+        "notes": "Detta får inte omvandlas till löfte om en viss specifik anpassning."
+      },
+      {
+        "rule_id": "school_support.special_support_investigation",
+        "field": "special_support_investigation",
+        "operator": "text_condition",
+        "value": "Om extra anpassningar inte räcker, eller det finns särskilda skäl att anta att sådana anpassningar inte skulle vara tillräckliga, ska detta anmälas till rektorn och elevens behov av särskilt stöd skyndsamt utredas. Behovet ska även utredas om eleven uppvisar andra svårigheter i sin skolsituation. Samråd ska ske med elevhälsan om det inte är uppenbart obehövligt.",
+        "source_url": "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+        "notes": "Produkten ska hålla isär extra anpassningar, utredning av särskilt stöd och ett eventuellt senare åtgärdsprogram."
+      },
+      {
+        "rule_id": "school_support.action_program_appeal",
+        "field": "formal_decision_and_appeal",
+        "operator": "text_condition",
+        "value": "Beslut om åtgärdsprogram, eller beslut att inte utarbeta ett åtgärdsprogram, kan överklagas till Skolväsendets överklagandenämnd.",
+        "source_url": "https://www.overklagandenamnden.se/hur-du-overklagar/beslut-som-kan-overklagas/",
+        "notes": "Stödassistenten får inte lova bifall, viss stödåtgärd eller överklagandeutfall."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "school_support.current_school_response",
+        "prompt": "Vad har skolan gjort hittills: inga tydliga anpassningar, extra anpassningar som inte räcker, eller ett formellt beslut om åtgärdsprogram/att inte göra ett?",
+        "reason": "Detta ändrar nästa säkra handling mellan att konkretisera behov och anpassningar, be rektor utreda särskilt stöd eller kontrollera överklagandevägen."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "service",
+    "amount_text": null,
+    "calculation_text": "Detta är en stöd- och processväg i skolan, inte ett kontantbelopp. Vilka åtgärder som är lämpliga ska utgå från elevens individuella behov och skolans utredning.",
+    "recurrence": null
+  },
+  "documents": [],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.skolverket.se/lattlast/lattlast-information-fran-skolverket/hjalp-om-ditt-barn-behover-extra-stod-pa-lattlast-svenska",
+    "deadline_text": null,
+    "next_step": "Beskriv konkreta svårigheter i skolsituationen och vad skolan redan har prövat. Kontakta lärare och vid behov rektor. Om extra anpassningar inte räcker eller andra svårigheter motiverar det, be rektor ta ställning till en skyndsam utredning av särskilt stöd. Vid ett formellt beslut om åtgärdsprogram eller att inte utarbeta ett sådant, kontrollera den officiella överklagandevägen om ni inte är nöjda."
+  },
+  "source": {
+    "source_id": "se-skolverket-school-support",
+    "url": "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T17:50:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuella primärkällor hos Skolverket och Skolväsendets överklagandenämnd, kontrollerade 2026-09-14. Mänsklig granskning krävs före VERIFIED. AI har inte verifierat några materialfält. Kontrollera särskilt gränsen mellan extra anpassningar och särskilt stöd, rektors utredningsansvar, elevhälsosamråd och aktuell överklagandeinformation före framtida materialisering som VERIFIED.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T17:50:00Z",
+    "last_seen_at": "2026-09-14T17:50:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
