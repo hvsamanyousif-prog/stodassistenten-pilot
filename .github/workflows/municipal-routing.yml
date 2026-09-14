@@ -1,0 +1,44 @@
+name: Validate municipal routing
+
+on:
+  pull_request:
+    paths:
+      - 'data/municipal_route.schema.json'
+      - 'tests/fixtures/municipal_routing/**'
+      - 'scripts/validate_municipal_routing.py'
+      - 'scripts/test_change_detection.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_public_repo_boundary.py'
+      - 'data/evals/scenario_lab_websignals_v24.json'
+      - '.github/workflows/municipal-routing.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'data/municipal_route.schema.json'
+      - 'tests/fixtures/municipal_routing/**'
+      - 'scripts/validate_municipal_routing.py'
+      - 'scripts/test_change_detection.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_public_repo_boundary.py'
+      - 'data/evals/scenario_lab_websignals_v24.json'
+      - '.github/workflows/municipal-routing.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate fail-closed municipal route contract
+        run: python scripts/validate_municipal_routing.py
+      - name: Re-run material change detection contract
+        run: python scripts/test_change_detection.py --self-test
+      - name: Keep v24 inside the single scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Re-check public repository boundary
+        run: python scripts/validate_public_repo_boundary.py
