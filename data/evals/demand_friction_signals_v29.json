@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the temporary 2026 job premium inside the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility. First-party municipal pages and search-like natural formulations are discovery signals; Försäkringskassan carries the truth-bearing national conditions.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-job-premium-assistance-to-work-transition-v01",
+      "actor_types": ["private_person", "employee", "former_social_assistance_recipient"],
+      "natural_language_queries": [
+        "jag har börjat jobba efter försörjningsstöd vad kan jag få",
+        "jag hade socialbidrag förra året och jobbar deltid nu finns stöd",
+        "får jag jobbpremie om jobbet inte är nytt",
+        "kan man få jobbpremie när man jobbar deltid",
+        "jag fick försörjningsstöd nästan hela 2025 kan jag söka jobbpremie",
+        "hur sent kan jag söka jobbpremie för en lönemånad",
+        "min partner får försörjningsstöd kan jag få jobbpremie",
+        "vem söker jag jobbpremie hos kommunen eller Försäkringskassan"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "The benefit is new in 2026 and Försäkringskassan stated at introduction that the government expected about 6,900 people per month to be eligible to apply. Multiple municipalities have published explainer pages for former social-assistance recipients. This is a qualitative reach/awareness proxy, not measured search volume or observed application demand."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The route depends on a fixed six-month historical social-assistance window, month-specific employment income, household social-assistance status and a separate deadline for every claim month. Natural user language such as 'I had social assistance last year and now work' omits several route-changing facts."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Missing the support can cost a time-limited application opportunity, while overconfident routing can make a person expect money despite failing the exact historical, household or month-specific conditions."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "Försäkringskassan decides and pays the state benefit, while municipal social-assistance history is part of the investigation and Socialstyrelsen provides municipal-context guidance. The truth can remain national, but the user's history spans two systems."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as försörjningsstöd, jobbpremie, claim month and household status are administrative. A user may describe the transition as 'socialbidrag to work' without knowing the benefit name or the distinction between municipal assistance and the state premium."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The user must identify the exact historical qualification period, the specific salary month, current household assistance status and then make a separate application for each month within its deadline."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan's FAQ and multiple municipal explainer pages repeat the same misunderstandings the product must guard against: whether the job must be new, whether part-time work counts, who handles the application and how the monthly deadline works."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository already has a review-gated normalized job-premium support record, but the current public person and root situation flows contain no explicit job-premium route. Existing economic-assistance scenarios focus on needing municipal support, not the reverse transition from assistance to salary."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.strangnas.se/omsorg-och-hjalp/pengar-bidrag-och-ekonomi/jobbpremie",
+        "https://www.tierp.se/tierp.se/omsorg-och-stod/ekonomi-och-konsumentvagledning/ekonomiskt-bistand.html",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-02-nu-infors-den-tillfalliga-ersattningen-jobbpremie"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/jobbpremien/"
+      ],
+      "recommended_learning_action": "Teach the existing person intelligence to recognize the transition 'former municipal social assistance -> employment salary' as a job-premium candidate, then ask only the route-changing historical/month/household facts. Keep the support review-gated and do not create a separate employment or benefit app. Until the public route is source-reviewed, make the missing route an explicit coverage gap rather than silently treating the normalized support record as user-ready.",
+      "truth_rule": "Discovery and qualitative demand signals are not truth. VERIFY the current eligibility, amount, duration, household rule, deadline and application channel against Försäkringskassan before any truth-bearing behavior. Municipal pages may help discover the user wording but must not override the national decision source. Never infer the six historical payment months, claim-month salary or household social-assistance status from a vague story."
+    }
+  ]
+}

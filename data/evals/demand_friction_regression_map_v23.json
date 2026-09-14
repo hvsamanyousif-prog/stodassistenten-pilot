@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "mappings": [
+    {
+      "signal_id": "df-job-premium-assistance-to-work-transition-v01",
+      "regression_case_ids": [
+        "lab-private-social-assistance-to-work-job-premium-v45-01",
+        "lab-private-job-premium-qualification-or-deadline-fail-closed-v45-02"
+      ],
+      "fix_or_guardrail": "Keep one Stödassistenten. When the public person intelligence is extended, recognize the reverse transition from municipal social assistance to employment salary and ask only fixed-period, claim-month, household and deadline-changing facts. Do not create a job-premium app and do not treat the existing normalized support record as proof that the public route is complete.",
+      "truth_guardrail": "The normalized support remains NEEDS_REVIEW with material_fields_verified empty. Eligibility, amount, duration, historical qualification period, household rule, deadline and application channel must be checked against the current Försäkringskassan primary source before they become truth-bearing behavior.",
+      "privacy_guardrail": "Synthetic cases contain no real case data. Do not copy exact wages, household identities, municipal case details, personal identifiers or raw social-assistance history into public eval data, handoff URLs or anonymous product feedback.",
+      "coverage_status": "REGRESSION_AND_SIGNAL_READY_PUBLIC_ROUTE_GAP_REMAINS"
+    }
+  ]
+}

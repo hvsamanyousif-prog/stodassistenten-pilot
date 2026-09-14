@@ -1,0 +1,89 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v45 protects the transition from municipal economic assistance to salary from two high-consequence errors: missing the temporary state job premium entirely, and treating a broad history of social assistance or a job start as enough to prove eligibility. Truth-bearing conditions remain review-gated and source-grounded in Försäkringskassan; no parallel employment or benefit engine is created and no real user story is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-job-premium-hidden-transition-and-monthly-deadline-2026",
+      "observation": "Försäkringskassan introduced the temporary job premium on 1 March 2026 for a narrow transition group. The current primary source requires social assistance for every month July-December 2025, employment income in the month claimed, and no social assistance in that month; the public page also states that no other household member may receive social assistance that month. Applications are monthly and must reach Försäkringskassan no later than three calendar months after the month claimed. The job does not have to be new and part-time employment can be relevant. This creates a hidden-support and deadline-friction pattern for people who naturally say only that they previously had municipal assistance and now work.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/jobbpremie",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-02-nu-infors-den-tillfalliga-ersattningen-jobbpremie",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/jobbpremien/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-private-social-assistance-to-work-job-premium-v45-01",
+      "actor_type": "private_person_employee_transition",
+      "story": "Jag hade försörjningsstöd förra året och jobbar nu deltid med lön. Kommunens stöd är avslutat och jag undrar om det finns något tillfälligt stöd när man börjar klara sig på arbete.",
+      "expected_support_areas": [
+        "job_premium_candidate_discovery",
+        "social_assistance_to_employment_transition",
+        "monthly_claim_context",
+        "household_social_assistance_boundary",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "having_received_social_assistance_at_some_point_in_2025_proves_job_premium_eligibility",
+        "the_employment_must_be_new_for_job_premium_to_be_relevant",
+        "part_time_employment_is_automatically_excluded",
+        "salary_alone_proves_job_premium_eligibility",
+        "job_premium_is_the_same_as_municipal_social_assistance",
+        "the_product_can_guarantee_eligibility_amount_or_payment_date",
+        "raw_income_household_or_social_services_case_details_should_be_copied_into_public_eval_feedback_or_handoff_urls"
+      ],
+      "expected_questions": [
+        "q_received_social_assistance_every_month_july_through_december_2025",
+        "q_received_employment_income_in_the_month_being_claimed",
+        "q_did_applicant_or_any_household_member_receive_social_assistance_in_that_month",
+        "q_which_calendar_month_is_being_claimed_if_deadline_status_is_unknown"
+      ],
+      "expected_next_actions": [
+        "verify_the_current_job_premium_conditions_with_forsakringskassan_before_presenting_it_as_actionable",
+        "if_the_transition_facts_fit_check_the_month_specific_application_deadline",
+        "use_forsakringskassan_current_application_route_or_paper_form_without_requiring_a_new_job",
+        "keep_municipal_social_assistance_and_state_job_premium_as_separate_decisions"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_job_premium_guidance",
+        "Socialstyrelsen_job_premium_information_for_municipal_context"
+      ]
+    },
+    {
+      "case_id": "lab-private-job-premium-qualification-or-deadline-fail-closed-v45-02",
+      "actor_type": "private_person_employee_transition",
+      "story": "Jag jobbar nu och fick försörjningsstöd under flera månader 2025, men jag minns inte om jag fick det varje månad juli till december. Jag vill också söka för en äldre lönemånad och är osäker på om tiden har gått ut.",
+      "expected_support_areas": [
+        "job_premium_missing_fact_detection",
+        "fixed_historical_qualification_period",
+        "month_specific_deadline_check",
+        "fail_closed_without_guessing",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "long_term_or_repeated_social_assistance_is_equivalent_to_receiving_it_every_month_july_through_december_2025",
+        "a_job_start_date_alone_determines_job_premium_eligibility",
+        "an_application_for_any_old_salary_month_is_still_open",
+        "the_three_calendar_month_rule_can_be_replaced_by_a_rough_ninety_day_estimate",
+        "municipal_or_ai_memory_should_be_used_to_guess_missing_historical_payment_months",
+        "the_product_can_override_forsakringskassan_deadline_or_decision"
+      ],
+      "expected_questions": [
+        "q_confirm_each_social_assistance_month_july_through_december_2025",
+        "q_exact_calendar_month_the_job_premium_claim_would_cover",
+        "q_current_month_household_social_assistance_status_when_relevant"
+      ],
+      "expected_next_actions": [
+        "verify_the_historical_social_assistance_months_instead_of_inferring_them_from_a_general_history",
+        "calculate_deadline_status_from_the_exact_claim_month_using_the_current_primary_source_rule",
+        "if_the_deadline_or_qualification_fact_is_uncertain_fail_closed_to_forsakringskassan_guidance_or_contact",
+        "do_not_surface_an_amount_as_expected_payment_before_a_decision"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_job_premium_guidance"
+      ]
+    }
+  ]
+}
