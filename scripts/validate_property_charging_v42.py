@@ -61,7 +61,7 @@ assert 'company_pre_start_rule_always_applies_to_resident_member_charging' in ca
 assert 'q_has_installation_work_started' in cases['lab-property-company-ladda-bilen-start-v42-02']['expected_questions']
 assert 'support_can_be_granted_through_the_company_path_after_installation_work_has_started' in cases['lab-property-company-ladda-bilen-start-v42-02']['must_not_claim']
 resident = cases['lab-resident-own-parking-charging-right-v42-03']
-assert resident['expected_questions'] == [], 'resident legal-right route must not inherit organisation grant questions'
+assert resident['expected_questions'] == ['q_is_the_requested_charging_point_for_the_residents_own_parking_space_at_or_near_the_home']
 assert 'the_resident_personally_receives_the_association_ladda_bilen_grant' in resident['must_not_claim']
 assert resident['source_requirements'] == ['Sveriges riksdag']
 
