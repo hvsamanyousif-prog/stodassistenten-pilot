@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [{
+    "signal_id": "df-young-post-study-housing-change-v01",
+    "product_miss": "Natural young-person transition language can contain studies, rent and a changing first income at the same time, while the visible product previously split study-to-work and housing support into separate shallow routes. That risks missing the 2026 annual-income/change-reporting next action or repeating facts already known from the situation.",
+    "fix_or_guardrail": "Detect only bounded young/study plus housing-benefit or housing+income-change language, pass a coarse young_housing focus and income_change context without raw story or exact age, ask only route-changing age/housing questions, and keep eligibility/amount in the verified review chain.",
+    "regression_case_ids": ["lab-young-post-study-housing-change-v22-01"]
+  }]
+}

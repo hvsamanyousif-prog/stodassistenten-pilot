@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regression for the shared Stödassistenten scenario laboratory. It locks the young study-to-work + housing + changing-income combination into one privacy-preserving product journey without making a review-gated housing-benefit record or a future 2027 rule into production truth. No real user story is stored.",
+  "verified_signal_patterns": [{
+    "pattern_id": "signal-young-study-housing-income-change-2026",
+    "observation": "Current Försäkringskassan guidance says young people under 29 with low income may have a housing-benefit route, that current 2026 decisions use an estimated calendar-year income, and that known income/housing/household changes should be reported. Community discussion shows repeated confusion when studies end and irregular work or a first salary changes the estimate; community material is discovery-only.",
+    "primary_sources": ["https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar"]
+  }],
+  "cases": [{
+    "case_id": "lab-young-post-study-housing-change-v22-01",
+    "actor_type": "student",
+    "story": "Jag är 24, hyr en lägenhet och är precis klar med studierna. Jag har haft extrajobb med olika lön och börjar mitt första jobb senare under 2026. Jag vill veta om bostadsbidrag kan vara relevant och vad jag behöver ändra när lönen kommer.",
+    "expected_support_areas": ["young_housing_benefit_candidate", "annual_income_estimation_2026", "income_change_reporting", "housing_form_check", "repayment_risk", "source_grounded_next_action"],
+    "must_not_claim": ["one_month_income_is_enough_for_a_2026_housing_benefit_assessment", "starting_a_job_means_the_user_can_keep_the_same_income_estimate_without_reporting_change", "the_2027_monthly_income_model_applies_to_a_2026_decision", "the_product_can_guarantee_housing_benefit_or_a_specific_amount", "being_a_student_or_new_graduate_alone_proves_housing_benefit_eligibility", "the_raw_situation_text_or_exact_age_should_be_put_in_the_handoff_url_or_feedback"],
+    "expected_questions": ["q_is_user_under_29", "q_housing_form_if_youth_route_continues"],
+    "expected_next_actions": ["use_a_january_to_december_income_estimate_for_a_2026_decision", "report_known_income_or_housing_changes_to_forsakringskassan", "use_current_forsakringskassan_calculation_and_application_guidance_before_claiming_fit_or_amount", "do_not_repeat_an_income_change_question_when_the_coarse_shell_context_already_establishes_that_fact"],
+    "source_requirements": ["Forsakringskassan_current_young_housing_benefit_guidance"]
+  }]
+}

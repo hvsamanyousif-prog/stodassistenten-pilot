@@ -27,6 +27,7 @@ SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 STUDY_TRANSITION_PATH = "client/study-transition.js"
+YOUNG_HOUSING_TRANSITION_PATH = "client/young-housing-transition.js"
 RELATIVE_CARE_PATH = "client/relative-care.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
@@ -42,6 +43,7 @@ SHELL_RUNTIME_PATHS = (
     SHELL_LEARNING_PATH,
     SHELL_GUIDANCE_PATH,
     STUDY_TRANSITION_PATH,
+    YOUNG_HOUSING_TRANSITION_PATH,
     RELATIVE_CARE_PATH,
 )
 QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH, DENTAL_67_GUIDANCE_PATH)
@@ -56,6 +58,7 @@ SCRIPT_PATHS = (
     VAB_FOCUS_PATH,
     PROPERTY_FOCUS_PATH,
     STUDY_TRANSITION_PATH,
+    YOUNG_HOUSING_TRANSITION_PATH,
     RELATIVE_CARE_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
