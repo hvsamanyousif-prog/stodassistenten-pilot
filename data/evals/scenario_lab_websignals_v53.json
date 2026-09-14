@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Permanent synthetic regressions for older people who need help at home, including the boundary between social home support, healthcare at home and a relative's own caregiver-support needs. Stories are synthetic and contain no reused community text or personal data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "older-home-support-social-care-vs-healthcare-friction",
+      "observation": "Socialstyrelsen reports that older people increasingly receive eldercare later in life while 1177 distinguishes home help from healthcare at home. Current Socialtjänstlag (2025:400) also permits municipalities to provide many personal-needs services without individual needs assessment, so the product must not hard-code one universal municipal application process.",
+      "primary_sources": [
+        "https://www.socialstyrelsen.se/stod-i-livet/aldre/",
+        "https://www.socialstyrelsen.se/om-socialstyrelsen/pressrum/press/ny-lagesbild-andelen-aldre-med-hemtjanst-minskar/",
+        "https://www.1177.se/sa-fungerar-varden/olika-vardformer/aldreomsorg/",
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-older-home-support-daily-living-v53-01",
+      "actor_type": "older_person",
+      "story": "Jag är äldre och vill bo kvar hemma men har svårt att duscha, städa och handla. Vad kan jag få hjälp med?",
+      "expected_support_areas": ["older_home_support", "social_care", "municipal_eldercare_verification"],
+      "must_not_claim": ["the_story_proves_entitlement_to_home_help", "a_diagnosis_is_required_for_home_help", "the_product_can_decide_hours_or_fees", "all_municipalities_use_the_same_application_process", "home_help_always_requires_individual_needs_assessment"],
+      "expected_questions": ["ask_only_whether_the_primary_need_is_daily_living_support_healthcare_at_home_both_or_unsure", "do_not_request_diagnosis_income_exact_address_personal_identity_or_raw_story"],
+      "expected_next_actions": ["route_daily_living_support_to_current_official_municipal_eldercare_information_without_promising_eligibility_or_process"],
+      "source_requirements": ["Socialstyrelsen_current_older_support_information", "Socialtjanstlag_2025_400_current_text"]
+    },
+    {
+      "case_id": "lab-older-home-support-vs-home-healthcare-v53-02",
+      "actor_type": "older_person",
+      "story": "Min pappa behöver hjälp med dusch och mat men också sjuksköterska hemma för omläggning. Är allt hemtjänst?",
+      "expected_support_areas": ["older_home_support", "social_care", "home_healthcare", "local_responsibility_verification"],
+      "must_not_claim": ["home_help_and_home_healthcare_are_the_same_service", "home_help_staff_are_always_responsible_for_medical_treatment", "municipality_always_runs_home_healthcare_nationally", "region_always_runs_home_healthcare_nationally", "the_product_can_assess_medical_need"],
+      "expected_questions": ["do_not_collect_medical_details_when_the_route_boundary_is_already_clear", "preserve_both_social_and_healthcare_tracks"],
+      "expected_next_actions": ["use_current_municipal_eldercare_information_for_daily_support_and_1177_or_current_local_healthcare_information_for_home_healthcare"],
+      "source_requirements": ["Socialstyrelsen_current_older_support_information", "1177_current_eldercare_home_healthcare_information"]
+    },
+    {
+      "case_id": "lab-relative-older-needs-support-not-caregiver-benefit-v53-03",
+      "actor_type": "relative",
+      "story": "Min mamma klarar inte vardagen hemma längre och behöver hjälp med mat och dusch. Vem ska jag ringa?",
+      "expected_support_areas": ["older_home_support", "relative_as_helper_not_automatic_caregiver_claim"],
+      "must_not_claim": ["a_relative_asking_for_help_proves_the_relative_needs_carer_support", "the_story_proves_near_relative_cash_benefit", "the_relative_must_become_the_caregiver", "the_product_should_route_away_from_the_older_persons_own_support_need"],
+      "expected_questions": ["prioritize_the_older_persons_daily_support_route", "do_not_ask_about_the_relatives_income_or_work_absence_unless_their_own_caregiver_support_goal_is_explicit"],
+      "expected_next_actions": ["show_the_older_persons_current_municipal_support_route_first_and_keep_caregiver_support_as_a_separate_goal"],
+      "source_requirements": ["Socialstyrelsen_current_older_support_information"]
+    },
+    {
+      "case_id": "lab-older-local-process-no-universal-bistandsprovning-v53-04",
+      "actor_type": "older_person",
+      "story": "Måste jag alltid ansöka hos en biståndshandläggare och få en individuell bedömning innan jag kan få hjälp hemma?",
+      "expected_support_areas": ["older_home_support", "local_process_verification", "social_services_law_boundary"],
+      "must_not_claim": ["all_personal_need_services_always_require_individual_needs_assessment", "the_current_law_means_this_specific_local_service_is_available_without_assessment", "one_national_contact_route_applies_to_every_municipality"],
+      "expected_questions": ["do_not_add_a_generic_question_when_the_user_is_asking_about_the_process_boundary"],
+      "expected_next_actions": ["explain_that_current_law_allows_many_personal_need_services_without_individual_assessment_but_require_current_official_municipal_verification_for_the_specific_service_and_process"],
+      "source_requirements": ["Socialtjanstlag_2025_400_11_chapter_current_text", "current_official_municipal_process_before_action"]
+    }
+  ]
+}
