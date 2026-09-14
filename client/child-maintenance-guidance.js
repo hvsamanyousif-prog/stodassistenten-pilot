@@ -21,7 +21,7 @@
   const DIRECT_PATTERNS = [
     /\bunderhållsstöd\b/i,
     /\bunderhållsbidrag\b/i,
-    /(?:andra\s+föräldern|barnets\s+(?:pappa|mamma)|mitt\s+ex).*(?:betalar\s+(?:inte|inget|för\s+lite)|underhåll)/i,
+    /(?:andra\s+föräldern|barnets\s+(?:pappa|mamma)|mitt\s+ex).*\bunderhåll(?:sstöd|sbidrag)?\b/i,
     /(?:betalar\s+(?:inte|inget|för\s+lite)).*(?:barn|underhåll)/i,
     /(?:نفقة|إعالة\s+الطفل|دعم\s+النفقة)/i,
     /(?:نفقه|هزینه\s+فرزند|کمک\s+هزینه\s+فرزند)/i,
