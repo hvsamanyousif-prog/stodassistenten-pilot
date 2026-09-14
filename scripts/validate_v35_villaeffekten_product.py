@@ -48,6 +48,7 @@ for token in [
     "qDistrict",
     "qMeasure",
     "qTiming",
+    "senast när du begär utbetalning",
     "role','group'",
     "aria-label",
     "aria-pressed",
@@ -74,6 +75,7 @@ expected_ids = {
     "lab-homeowner-villaeffekten-public-route-v35-01",
     "lab-nonowner-villaeffekten-failclosed-v35-02",
     "lab-homeowner-villaeffekten-timing-docs-budget-v35-03",
+    "lab-owner-future-residence-villaeffekten-v35-04",
 }
 assert set(cases) == expected_ids
 locks = {
@@ -90,6 +92,11 @@ locks = {
         "thirty_percent_applies_to_the_entire_contractor_invoice",
         "submission_reserves_or_guarantees_budget",
         "unknown_start_date_is_safe_to_ignore_for_deadline_risk",
+    ],
+    "lab-owner-future-residence-villaeffekten-v35-04": [
+        "not_permanently_resident_on_application_day_always_disqualifies_villaeffekten",
+        "stating_future_permanent_residence_proves_final_eligibility_or_payment",
+        "future_residence_allows_skipping_value_year_district_heating_measure_or_timing_checks",
     ],
 }
 for cid, tokens in locks.items():
@@ -115,6 +122,7 @@ assert mapping["signal_id"] == signal["signal_id"]
 assert set(mapping["regression_case_ids"]) == expected_ids
 assert "one product" in mapping["fix_or_guardrail"].lower()
 assert "raw story" in mapping["fix_or_guardrail"].lower()
+assert "payment-request timing boundary" in mapping["fix_or_guardrail"].lower()
 
 # v34 and v35 must coexist as one learning memory: truth boundaries + public consumption.
 v34 = json.loads((EVAL / "scenario_lab_websignals_v34.json").read_text(encoding="utf-8"))
@@ -142,4 +150,4 @@ def assert_no_forbidden_field_keys(value, path="root"):
 
 assert_no_forbidden_field_keys({"signal": signal, "cases": list(cases.values())})
 
-print("Villaeffekten v35 product guard: OK (same shell/person module; privacy, information-gain, source and review gates locked)")
+print("Villaeffekten v35 product guard: OK (same shell/person module; privacy, residence timing, information-gain, source and review gates locked)")
