@@ -5,7 +5,7 @@ const mod = require('./economic-assistance.js');
 
 assert.equal(mod.detect('Pengarna räcker inte till mat och hyran den här månaden'), true);
 assert.equal(mod.detect('Jag vill söka ekonomiskt bistånd hos socialtjänsten'), true);
-assert.equal(mod.detect('المال لا يكفي للإيجار والطعام هذا الشهر'), true);
+assert.equal(mod.detect('النقود لا تكفي للإيجار والطعام هذا الشهر'), true);
 assert.equal(mod.detect('پول برای اجاره و غذا کافی نیست'), true);
 assert.equal(mod.detect('Jag har ont i tanden och är orolig för kostnaden'), false);
 assert.equal(mod.detect('Jag driver företag och vill hitta finansiering'), false);
