@@ -1,0 +1,56 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regression for the single Stödassistenten learning system. It protects a hidden-but-high-friction preventive-sickness-benefit path for people who can otherwise work but need recurring doctor-ordered medical treatment or rehabilitation during work time. Discovery language is not a truth source; current factual conditions come from Försäkringskassan and the existing support record remains review-gated. No real user story or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-preventive-sickness-benefit-treatment-work-2026",
+      "observation": "People can describe this as a work-scheduling problem—needing recurring treatment, rehabilitation, psychology, physiotherapy or occupational therapy during work time—rather than knowing the term preventive sickness benefit. Försäkringskassan states that preventive sickness benefit can be relevant when medical treatment or rehabilitation is doctor-ordered to prevent or shorten disease, the person must refrain from work or job seeking, each occasion reaches at least one quarter of daily work time, and the treatment plan has been approved. A single visit or general wellness is not the same route, and plan approval is separate from the later claim for actual treatment occasions.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/forebyggande-sjukpenning-rehabilitering-eller-planerad-vard",
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/sjukdom-och-skada/utlatande-for-forebyggande-sjukpenning"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-preventive-treatment-work-v25-01",
+      "actor_type": "employee",
+      "story": "Jag kan jobba men måste gå på en läkarordinerad behandling flera gånger under arbetstid. Ska jag bara sjukskriva mig för de timmarna eller finns det någon särskild ersättning för behandlingen?",
+      "expected_support_areas": [
+        "preventive_sickness_benefit_candidate",
+        "doctor_ordered_medical_treatment_or_rehabilitation",
+        "treatment_plan_approval",
+        "per_ocassion_work_absence_threshold",
+        "ordinary_sickness_benefit_and_rehabilitation_paths_kept_separate",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "an_ordinary_single_healthcare_visit_automatically_qualifies_for_preventive_sickness_benefit",
+        "diagnosis_or_treatment_name_alone_proves_eligibility",
+        "being_able_to_work_outside_treatment_automatically_proves_or_disproves_eligibility",
+        "any_therapy_or_wellness_activity_counts_regardless_of_doctor_order_plan_approval_or_time_requirement",
+        "treatment_plan_approval_guarantees_payment_for_every_treatment_ocassion",
+        "the_employer_must_pay_ordinary_sick_pay_for_preventive_sickness_benefit",
+        "the_product_can_guarantee_eligibility_amount_or_payment_date",
+        "the_raw_situation_text_health_details_or_exact_schedule_should_be_put_in_the_handoff_url_or_feedback"
+      ],
+      "expected_questions": [
+        "q_is_medical_treatment_or_rehabilitation_doctor_ordered_to_prevent_or_shorten_disease",
+        "q_does_treatment_and_relevant_travel_require_at_least_one_quarter_of_daily_work_time_per_ocassion",
+        "q_has_forsakringskassan_approved_the_treatment_plan"
+      ],
+      "expected_next_actions": [
+        "if_order_or_purpose_is_unclear_ask_the_doctor_whether_a_medical_statement_and_treatment_plan_for_preventive_sickness_benefit_is_relevant",
+        "if_time_threshold_is_unclear_establish_actual_treatment_and_relevant_travel_absence_per_ocassion",
+        "if_plan_is_not_approved_apply_to_forsakringskassan_for_treatment_plan_approval_before_claiming_treatment_ocassions",
+        "after_plan_approval_use_the_current_forsakringskassan_route_to_claim_actual_treatment_ocassions_without_promising_eligibility_or_amount",
+        "if_the_route_does_not_fit_keep_ordinary_sickness_benefit_employer_rehabilitation_and_other_paths_separate"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_preventive_sickness_benefit_primary_source",
+        "Forsakringskassan_current_healthcare_statement_guidance_for_single_visit_and_individual_assessment_boundaries"
+      ]
+    }
+  ]
+}
