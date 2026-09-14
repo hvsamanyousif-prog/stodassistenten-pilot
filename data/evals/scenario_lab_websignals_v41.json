@@ -1,0 +1,72 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Permanent synthetic regressions for the single Stödassistenten product after v41 self-review found that canonical child school-support benchmarks existed but the public family journey still returned generic family-benefit rows instead of a source-aware school route.",
+  "cases": [
+    {
+      "case_id": "lab-child-school-support-no-diagnosis-v41-01",
+      "actor_type": "child_via_guardian",
+      "story": "Mitt barn har stora läs- och skrivsvårigheter och koncentrationsproblem. Skolan säger att vi får vänta på utredning eller diagnos innan mer stöd sätts in.",
+      "expected_support_areas": [
+        "school_extra_adjustments",
+        "special_support_assessment",
+        "needs_before_diagnosis_boundary"
+      ],
+      "must_not_claim": [
+        "a_medical_or_neurodevelopmental_diagnosis_is_required_before_school_support_can_start",
+        "adhd_dyslexia_or_any_other_diagnosis_automatically_guarantees_a_specific_school_measure",
+        "the_school_must_wait_for_healthcare_assessment_before_considering_extra_adjustments_or_special_support",
+        "the_product_can_diagnose_dyslexia_adhd_or_other_neurodevelopmental_conditions_from_the_story",
+        "a_particular_tool_assistant_group_or_school_placement_is_guaranteed"
+      ],
+      "expected_questions": [
+        "q_child_age_gate",
+        "q_what_has_school_done_so_far"
+      ],
+      "expected_next_actions": [
+        "describe_concrete_school_situation_barriers_without_making_diagnosis_the_need_description",
+        "ask_teacher_and_principal_what_adjustments_have_been_tried_and_how_they_are_followed_up",
+        "if_difficulties_persist_or_adjustments_are_insufficient_ask_principal_to_consider_prompt_special_support_investigation"
+      ],
+      "source_requirements": [
+        "Skolverket"
+      ],
+      "privacy_constraints": [
+        "do_not_copy_child_name_school_name_diagnosis_healthcare_details_or_raw_story_into_public_eval_feedback_or_url",
+        "handoff_may_keep_only_coarse_actor_focus_language_and_non_sensitive_route_state"
+      ]
+    },
+    {
+      "case_id": "lab-child-school-support-formal-decision-v41-02",
+      "actor_type": "child_via_guardian",
+      "story": "Skolan har redan provat stöd och rektor har fattat ett beslut om åtgärdsprogram, men vårdnadshavaren förstår inte vad nästa steg är om beslutet inte möter barnets behov.",
+      "expected_support_areas": [
+        "formal_action_program_decision",
+        "official_school_support_appeal_path",
+        "support_need_follow_up"
+      ],
+      "must_not_claim": [
+        "every_school_support_disagreement_can_be_appealed_in_the_same_way_without_a_formal_decision",
+        "an_appeal_will_be_successful",
+        "the_appeal_board_can_be_promised_to_order_a_specific_support_measure",
+        "a_diagnosis_alone_is_a_complete_description_of_the_childs_support_need"
+      ],
+      "expected_questions": [
+        "q_what_has_school_done_so_far"
+      ],
+      "expected_next_actions": [
+        "obtain_the_written_action_program_or_decision_not_to_create_one",
+        "check_that_needs_measures_responsibility_and_follow_up_are_clear_when_an_action_program_exists",
+        "use_current_official_appeal_information_if_the_guardian_or_student_is_not_satisfied_with_the_formal_decision"
+      ],
+      "source_requirements": [
+        "Skolverket",
+        "Skolväsendets överklagandenämnd"
+      ],
+      "privacy_constraints": [
+        "do_not_copy_the_childs_action_program_medical_information_school_identity_or_raw_case_text_into_public_eval_feedback",
+        "feedback_remains_structured_anonymous_product_feedback"
+      ]
+    }
+  ]
+}
