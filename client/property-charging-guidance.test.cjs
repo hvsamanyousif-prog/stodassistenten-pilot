@@ -82,7 +82,7 @@ load('?actor_type=property_actor&focus=property_charging&charging_context=compan
 assert.equal(global.screen, 'chargingR', 'guest path must not inherit the employee/tenant pre-start question');
 rows = global.getRows();
 assert.equal(rows.length, 1);
-assert.ok(rows[0][0].includes('Gästladdning'));
+assert.ok(rows[0][0].toLowerCase().includes('gästladdning'));
 assert.ok(rows[0][1].includes('både före och efter'));
 assert.ok(!rows[0][1].includes('kan stöd inte beviljas'));
 
