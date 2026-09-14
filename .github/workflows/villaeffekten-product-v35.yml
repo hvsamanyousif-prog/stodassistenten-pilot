@@ -23,7 +23,45 @@ jobs:
         run: |
           node --check client/experience-learning.js
           node --check client/person-context-learning.js
-      - name: Validate v35 public product route
+      - name: Probe review-gated truth and shell handoff
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('data/supports/se-boverket-energieffektivisering-smahus.json').read_text())
+          assert s['verification']['status']=='NEEDS_REVIEW'
+          assert s['verification']['human_review_required'] is True
+          assert s['verification']['material_fields_verified']==[]
+          shell=Path('client/experience-learning.js').read_text()
+          for token in ['focus=home_energy','actor_type=private_person','dataset.homeEnergyRoute','HOME_ENERGY_PATTERNS']:
+              assert token in shell, token
+          assert 'encodeURIComponent(input.value)' not in shell
+          PY
+      - name: Probe person information-gain path
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('client/person-context-learning.js').read_text()
+          for token in ['homeEnergyGuidance','state={owner:null,valueYear:null,district:null,measure:null,timing:null}','qOwner','qValue','qDistrict','qMeasure','qTiming','boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/','energimyndigheten.se/effektiv-energianvandning/']:
+              assert token in p, token
+          assert p.index('if(!state.owner)') < p.index('if(!state.valueYear)') < p.index('if(!state.district)') < p.index('if(!state.measure)') < p.index('if(!state.timing)')
+          PY
+      - name: Probe v35 regression and demand memory
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          e=Path('data/evals')
+          cases=json.loads((e/'scenario_lab_websignals_v35.json').read_text())['cases']
+          ids={c['case_id'] for c in cases}
+          assert ids=={'lab-homeowner-villaeffekten-public-route-v35-01','lab-nonowner-villaeffekten-failclosed-v35-02','lab-homeowner-villaeffekten-timing-docs-budget-v35-03'}
+          signal=json.loads((e/'demand_friction_signals_v21.json').read_text())
+          assert 'not measured search volumes' in signal['purpose']
+          assert signal['signals'][0]['priority_band']=='HIGH'
+          mapping=json.loads((e/'demand_friction_regression_map_v15.json').read_text())['mappings'][0]
+          assert set(mapping['regression_case_ids'])==ids
+          PY
+      - name: Validate full v35 public product route
         run: python scripts/validate_v35_villaeffekten_product.py
       - name: Preserve v34 truth boundary
         run: python scripts/validate_villaeffekten_v34.py
