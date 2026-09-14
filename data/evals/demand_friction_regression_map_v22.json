@@ -1,0 +1,26 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Maps the v44 caregiver demand/friction signal into the same canonical Stödassistenten regression system without creating a separate caregiver engine.",
+  "mappings": [
+    {
+      "signal_id": "df-caregiver-municipal-vs-benefit-route-v01",
+      "product_miss": "The existing relative_care route was optimized for hidden near-relative benefit and intentionally detected only explicit benefit or severe/life-threatening illness. The product therefore missed ordinary natural caregiver situations even after the 2026 law clarified municipal support and a support-contact duty, and fail-closed benefit outcomes still pointed only to Försäkringskassan instead of separating the municipal route.",
+      "regression_case_ids": [
+        "lab-relative-older-parent-municipal-support-v44-01",
+        "lab-relative-longterm-disability-support-contact-v44-02",
+        "lab-relative-life-threatening-income-route-v44-03"
+      ],
+      "product_surfaces": [
+        "index.html natural-language situation engine",
+        "person-pilot.html existing shared actor journey",
+        "client/relative-care.js same-product focused route",
+        "single canonical scenario lab",
+        "shared support-record truth discipline"
+      ],
+      "fix_or_guardrail": "Extend the existing relative_care capability only. Use a bounded care_context=municipal_support or near_relative_benefit when the natural-language facts already establish the route family, skip benefit-only questions for a clearly municipal caregiver-support query, and ask the older/long-term illness/disability scope question only when it can change the route after a benefit path fails closed. No caregiver app, duplicate matcher or separate truth layer.",
+      "privacy_guardrail": "Do not put names, relationship details beyond the coarse actor, diagnosis, exact health narrative, employer, work schedule, municipality-specific case data or raw caregiver story in handoff, public eval feedback or learning events. The optional handoff context is limited to the coarse route family.",
+      "truth_guardrail": "Current Socialtjänstlag 13 kap. 9 § governs the national caregiver-support/support-contact duty, Försäkringskassan governs near-relative benefit, and the responsible municipality governs exact local services and access. Do not infer cash payment, a guaranteed local respite measure, benefit eligibility or local service availability. The normalized municipal caregiver-support record stays NEEDS_REVIEW with human review required and zero AI-promoted material fields."
+    }
+  ]
+}

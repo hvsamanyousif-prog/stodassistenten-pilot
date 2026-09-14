@@ -34,10 +34,19 @@ assert "VAB 12+ och deltidssjukskrivning + VAB finns som evals men ännu inte so
 assert "tandflödet är ännu generiskt" not in matrix
 assert "focus=vab" in matrix
 assert "property_actor" in matrix and "property_accessibility" in matrix
+assert "property_charging" in matrix, "matrix must include already-shipped v42 property charging capability"
 assert "dental quick-help med åldersmedveten 67+-handoff" in matrix
 assert "Handoffen får inte avgöra exakt eligibility, åtgärdsomfattning eller slutkostnad" in matrix
 assert "relative_care" in matrix
-assert "livshotande tillstånd och avstående från arbete" in matrix
+for caregiver_token in [
+    "livshotande",
+    "avstående från arbete",
+    "kommunalt anhörigstöd",
+    "care_context",
+    "stödkontakt",
+    "v44",
+]:
+    assert caregiver_token in matrix, f"coverage matrix missing current caregiver routing token: {caregiver_token}"
 assert "work_injury_dental" in matrix
 assert "trafikolycka på arbetsresan" in matrix
 assert "work_context=self_employed" in matrix
@@ -53,6 +62,7 @@ for rel in [
     "client/dental-67-guidance.js",
     "client/relative-care.js",
     "client/work-injury-dental.js",
+    "client/property-charging-guidance.js",
     "data/evals/scenario_lab_websignals_v16.json",
     "data/evals/scenario_lab_websignals_v17.json",
     "data/evals/scenario_lab_websignals_v19.json",
@@ -62,10 +72,13 @@ for rel in [
     "data/evals/scenario_lab_websignals_v29.json",
     "data/evals/scenario_lab_websignals_v30.json",
     "data/evals/scenario_lab_websignals_v37.json",
+    "data/evals/scenario_lab_websignals_v42.json",
+    "data/evals/scenario_lab_websignals_v44.json",
     "data/evals/demand_friction_signals_v23.json",
     "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
     "data/supports/se-forsakringskassan-narstaendepenning.json",
     "data/supports/se-forsakringskassan-arbetsskada-tandvard.json",
+    "data/supports/se-socialtjanstlagen-anhorigstod-stodkontakt.json",
 ]:
     assert (root / rel).exists(), f"matrix references missing artifact: {rel}"
 
@@ -74,6 +87,7 @@ assert "focus !== 'property_accessibility'" in property_runtime
 assert "new Set(['cost', 'support', 'unsure'])" in dental67_runtime
 assert "get('q')" not in dental67_runtime and 'get("q")' not in dental67_runtime
 assert "focus=relative_care" in relative_runtime
+assert "care_context" in relative_runtime and "municipal_support" in relative_runtime
 assert "get('q')" not in relative_runtime and 'get("q")' not in relative_runtime
 assert "focus=work_injury_dental" in work_injury_dental_runtime
 assert "actor_type=employee&focus=work_injury_dental&lang=" in work_injury_dental_runtime
@@ -88,4 +102,4 @@ assert "fetch(" not in work_injury_dental_runtime and "XMLHttpRequest" not in wo
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 
-print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v37 worker context)")
+print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v44 caregiver split)")
