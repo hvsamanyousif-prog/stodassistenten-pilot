@@ -68,17 +68,14 @@
     ]
   },
   "benefit": {
-    "kind": "one_time",
+    "kind": "reimbursement",
     "amount_text": "För egna boende eller medlemmar: 50 procent av bidragsberättigade kostnader, högst 15 000 kronor per laddpunkt enligt Naturvårdsverkets vägledning kontrollerad 2026-09-14. Gäst-/extern användning har separata statsstödsregler.",
     "calculation_text": "Stödnivå och statsstödsregel beror på användarkategori och organisations-/verksamhetskontext. Stödassistenten ska inte ersätta Naturvårdsverkets prövning eller räkna ett garanterat belopp från en offert.",
-    "recurrence": null
+    "recurrence": "one_off"
   },
   "documents": [
-    {
-      "name": "Ekonomiskt och kostnadsunderlag enligt aktuell Naturvårdsverket-väg",
-      "required": false,
-      "notes": "Exakta bilagor och versionskrav ska kontrolleras på den aktuella ansöknings-/utbetalningssidan innan ansökan."
-    }
+    "Ekonomiskt underlag enligt aktuell Naturvårdsverket-väg",
+    "Specificerade kostnadsunderlag och betalbevis när den aktuella processen kräver det"
   ],
   "application": {
     "method": "online",
@@ -91,7 +88,7 @@
     "url": "https://www.naturvardsverket.se/amnesomraden/klimatomstallningen/ladda-bilen/ladda-bilen-for-foreningar-och-boendeorganisationer/",
     "source_type": "official_web",
     "published_at": null,
-    "updated_at": "2026-09-07",
+    "updated_at": "2026-09-07T00:00:00Z",
     "retrieved_at": "2026-09-14T18:25:00Z",
     "content_hash": null
   },
