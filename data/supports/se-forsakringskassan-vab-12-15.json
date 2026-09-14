@@ -1,0 +1,144 @@
+{
+  "support_id": "se-forsakringskassan-vab-12-15",
+  "name": "Tillfällig föräldrapenning (vab) för barn 12–15 år",
+  "category": "family_children",
+  "subtype": "temporary_parental_benefit_child_age_12_15",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "parent_guardian",
+      "child_age_12_15",
+      "employee",
+      "unemployed_parent"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "vab12.child_age",
+        "field": "child_age",
+        "operator": "between",
+        "value": [12, 15],
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "notes": "Den här posten modellerar vägen för barn som har fyllt 12 men inte 16 år. Åldern ensam avgör inte rätt till ersättning."
+      },
+      {
+        "rule_id": "vab12.qualifying_reason",
+        "field": "reason_for_vab",
+        "operator": "text_condition",
+        "value": "För barn som har fyllt 12 men inte 16 år krävs en aktuell situation som omfattas av reglerna, till exempel sjukdom eller försämring där barnet har ett särskilt behov av vård eller tillsyn, eller en annan uttryckligen angiven vab-situation.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "notes": "Diagnos, funktionsnedsättning eller barnets ålder får inte ensamt tolkas som att villkoren är uppfyllda."
+      },
+      {
+        "rule_id": "vab12.work_or_akassa_loss",
+        "field": "work_or_akassa_loss",
+        "operator": "text_condition",
+        "value": "Den som ansöker ska enligt Försäkringskassans vanliga vab-villkor avstå från att arbeta eller gå miste om a-kassa under den tid som ersättningen söks för.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "notes": "Arbetslöshet eller deltidsarbetslöshet har särskilda uppgifter i ansökan och tidrapporteringen."
+      },
+      {
+        "rule_id": "vab12.insured_sweden",
+        "field": "insured_in_sweden",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "notes": "Försäkringskassans aktuella sida anger att den sökande ska vara försäkrad i Sverige."
+      },
+      {
+        "rule_id": "vab12.child_residence_area",
+        "field": "child_residence_area",
+        "operator": "text_condition",
+        "value": "Barnet ska enligt Försäkringskassans aktuella vägledning bo i Sverige, EU, EES, Schweiz eller Storbritannien.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "notes": "Gränsöverskridande situationer kan kräva ytterligare kontroll och får inte avgöras av den publika piloten."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "vab12.first_day",
+        "prompt": "Vilken var den första dagen du behövde avstå från arbete eller gå miste om a-kassa för den här vab-perioden?",
+        "reason": "För dagar från och med 1 april 2026 är huvudregeln att ansökan ska lämnas senast 30 dagar efter den första vab-dagen."
+      },
+      {
+        "question_id": "vab12.child_age",
+        "prompt": "Hur gammalt är barnet?",
+        "reason": "Reglerna och dokumentkraven skiljer sig mellan yngre barn, barn som har fyllt 12 men inte 16 år och andra åldersgrupper."
+      },
+      {
+        "question_id": "vab12.reason",
+        "prompt": "Varför behöver du vara borta från arbete eller gå miste om a-kassa just nu, och vilket särskilt vård- eller tillsynsbehov finns?",
+        "reason": "För barn 12–15 år kan orsaken och behovet ändra både vägen och vilket medicinskt underlag som krävs."
+      },
+      {
+        "question_id": "vab12.prior_decision",
+        "prompt": "Finns ett aktuellt förhandsbeslut från Försäkringskassan om vab för barnet?",
+        "reason": "Ett förhandsbeslut kan ändra från vilken dag medicinskt intyg behövs i en vårdperiod."
+      },
+      {
+        "question_id": "vab12.medical_documentation",
+        "prompt": "Har läkare skickat eller gett dig det medicinska underlag som behövs för den aktuella situationen?",
+        "reason": "Utan förhandsbeslut behövs enligt den aktuella vägledningen läkarutlåtande från första ersättningsdagen vid sjukdom för barn som fyllt 12 men inte 16 år."
+      },
+      {
+        "question_id": "vab12.work_status",
+        "prompt": "Skulle du ha arbetat, fått a-kassa eller deltagit i ett program hos Arbetsförmedlingen under tiden?",
+        "reason": "Arbetsstatus påverkar vilka uppgifter och frånvaroanmälningar som behöver göras, utan att i sig avgöra rätten till ersättning."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Vab-ersättningen är tillfällig föräldrapenning. Exakt ersättningsnivå och beräkning ska alltid kontrolleras i Försäkringskassans aktuella primärkälla och får inte räknas fram av den publika posten.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Vid sjukdom och utan förhandsbeslut: läkarutlåtande från första ersättningsdagen enligt aktuell Försäkringskassevägledning",
+    "Vid gällande förhandsbeslut: intyg från och med dag 8 i vårdperioden enligt aktuell Försäkringskassevägledning",
+    "Vid enstaka läkarbesök: underlag som intygar att förälderns närvaro var nödvändig"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+    "deadline_text": "För vab-dagar från och med 1 april 2026 är huvudregeln ansökan senast 30 dagar efter första dagen hemma med barnet. Undantag finns och måste kontrolleras mot aktuell Försäkringskassekälla.",
+    "next_step": "Kontrollera först barnets ålder, den första vab-dagen, varför frånvaron behövs och om ett förhandsbeslut finns. Säkerställ rätt medicinskt underlag och ansök skyndsamt via Försäkringskassans aktuella kanal; använd inte den äldre 90-dagarsregeln för nya vab-dagar från 1 april 2026."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-08-11T00:00:00+02:00",
+    "retrieved_at": "2026-09-14T02:20:28Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt åldersgränsen 12–15 år, vad som räknas som särskilt vård-/tillsynsbehov eller annan kvalificerande situation, 30-dagarsfristen och dess undantag, medicinskt underlag med/utan förhandsbeslut samt arbets-/a-kassa- och försäkringstillhörighet. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T02:20:28Z",
+    "last_seen_at": "2026-09-14T02:20:28Z",
+    "valid_from": "2026-04-01",
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
