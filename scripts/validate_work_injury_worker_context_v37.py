@@ -84,10 +84,10 @@ probe = r'''
 const m = require(process.argv[1]);
 const out = {
   selfCtx: m.detectWorkContext('Jag driver eget och slog av en tand när jag jobbade i verksamheten.'),
-  invoiceCtx: m.detectWorkContext('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand under uppdraget.'),
+  invoiceCtx: m.detectWorkContext('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand på jobbet under uppdraget.'),
   employeeCtx: m.detectWorkContext('Jag slog av en tand på jobbet.'),
   selfDetected: m.detect('Jag driver eget och slog av en tand när jag jobbade i verksamheten.'),
-  invoiceDetected: m.detect('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand under uppdraget.'),
+  invoiceDetected: m.detect('Jag fakturerar uppdrag via ett faktureringsföretag och skadade en tand på jobbet under uppdraget.'),
   selfHref: m.handoffHref('sv', 'self_employed'),
   invoiceHref: m.handoffHref('sv', 'invoiced_worker'),
   employeeHref: m.handoffHref('sv', 'employee')
