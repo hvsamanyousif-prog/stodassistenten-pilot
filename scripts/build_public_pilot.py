@@ -28,10 +28,11 @@ SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
+HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
-QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH)
+QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
@@ -107,7 +108,7 @@ def repair_known_inline_syntax(html: str, page: str) -> str:
 
 
 def validate_inline_javascript(html: str, label: str) -> None:
-    scripts = re.findall(r"<script(?:\\s[^>]*)?>(.*?)</script>", html, flags=re.S)
+    scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", html, flags=re.S)
     with tempfile.TemporaryDirectory() as tmp:
         for i, script in enumerate(scripts):
             if not script.strip():
