@@ -1,0 +1,110 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic caregiver-route regressions for the single Stödassistenten scenario laboratory. They prevent municipal caregiver support under current social-services law from being collapsed into Försäkringskassan near-relative benefit, while keeping both routes in the same product and truth discipline. No real user story or sensitive caregiver data is included.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-caregiver-municipal-support-vs-income-replacement",
+      "observation": "Current Socialtjänstlag 13 kap. 9 § requires the social welfare committee to offer information, guidance or other support and a support contact to people caring for or supporting an older or long-term ill close person, or supporting a close person with disability. This is a separate route from Försäkringskassan near-relative benefit, which requires a life-threatening health condition plus foregoing work or certain replacement benefits.",
+      "primary_sources": [
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/stodja-en-svart-sjuk-narstaende",
+        "https://www.1177.se/sa-fungerar-varden/anhorig---narstaende/anhorigstod---stod-for-dig-som-vardar-eller-stodjer-en-narstaende/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-relative-older-parent-municipal-support-v44-01",
+      "actor_type": "relative_or_close_person",
+      "story": "Jag vårdar min äldre förälder i vardagen och behöver själv stöd och vägledning. Tillståndet är inte beskrivet som livshotande och jag frågar inte efter ersättning för ledighet.",
+      "expected_support_areas": [
+        "municipal_caregiver_support",
+        "support_contact",
+        "information_and_guidance",
+        "near_relative_benefit_kept_separate"
+      ],
+      "must_not_claim": [
+        "ordinary_age_related_care_need_qualifies_for_near_relative_benefit",
+        "municipal_caregiver_support_is_the_same_as_near_relative_benefit",
+        "municipality_must_pay_a_cash_caregiver_allowance",
+        "a_specific_local_respite_service_is_guaranteed_without_local_assessment",
+        "the_product_can_infer_exact_local_services_from_national_law",
+        "raw_caregiver_story_or_health_details_should_be_put_in_handoff_or_feedback"
+      ],
+      "expected_questions": [
+        "q_is_person_older_long_term_ill_or_disabled_only_if_scope_not_already_clear"
+      ],
+      "expected_next_actions": [
+        "reuse_explicit_older_or_long_term_care_context_without_reasking",
+        "route_to_the_users_municipality_for_caregiver_support_or_support_contact",
+        "keep_local_service_type_and_individual_assessment_open_until_current_municipal_information_is_checked",
+        "do_not_replace_or_merge_the_separate_forsakringskassan_near_relative_benefit_route"
+      ],
+      "source_requirements": [
+        "Sveriges_riksdag_current_socialtjanstlag_13_9",
+        "current_municipal_or_1177_contact_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-relative-longterm-disability-support-contact-v44-02",
+      "actor_type": "relative_or_close_person",
+      "story": "Jag hjälper en närstående med långvarig sjukdom eller funktionsnedsättning och undrar vem jag ska kontakta för stöd till mig som anhörig.",
+      "expected_support_areas": [
+        "municipal_caregiver_support",
+        "support_contact",
+        "caregiver_own_support_need",
+        "local_service_variation"
+      ],
+      "must_not_claim": [
+        "life_threatening_condition_is_required_for_all_caregiver_support",
+        "foregoing_work_is_required_for_municipal_caregiver_support",
+        "support_contact_means_a_specific_cash_payment_or_respite_measure_is_approved",
+        "every_municipality_has_identical_service_names_delivery_or_application_steps",
+        "previous_ai_or_community_answer_is_a_truth_source"
+      ],
+      "expected_questions": [
+        "q_is_person_older_long_term_ill_or_disabled_only_if_scope_not_already_clear"
+      ],
+      "expected_next_actions": [
+        "when_scope_is_explicit_skip_life_threatening_and_work_absence_questions_for_the_municipal_route",
+        "contact_the_responsible_municipality_and_ask_for_caregiver_support_or_support_contact",
+        "verify_exact_local_service_and_access_process_with_the_municipality_before_claiming_it_exists"
+      ],
+      "source_requirements": [
+        "Sveriges_riksdag_current_socialtjanstlag_13_9",
+        "current_municipal_or_1177_contact_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-relative-life-threatening-income-route-v44-03",
+      "actor_type": "relative_or_close_person",
+      "story": "Vården har beskrivit min närståendes tillstånd som livshotande och jag behöver avstå från arbete för att vara nära personen.",
+      "expected_support_areas": [
+        "near_relative_benefit_candidate",
+        "life_threatening_condition_boundary",
+        "foregone_work_or_replacement_benefit",
+        "municipal_caregiver_support_kept_separate"
+      ],
+      "must_not_claim": [
+        "municipal_support_contact_replaces_near_relative_benefit_income_replacement",
+        "life_threatening_wording_alone_guarantees_near_relative_benefit",
+        "municipal_caregiver_support_and_forsakringskassan_share_one_eligibility_decision",
+        "the_product_can_guarantee_amount_or_approval"
+      ],
+      "expected_questions": [
+        "q_has_healthcare_described_condition_as_life_threatening",
+        "q_must_helper_refrain_from_work_a_kassa_or_parental_benefit"
+      ],
+      "expected_next_actions": [
+        "keep_forsakringskassan_near_relative_benefit_as_the_income_replacement_route",
+        "check_required_medical_statement_and_current_forsakringskassan_application_route",
+        "keep_municipal_caregiver_support_available_as_a_separate_support_layer_without_merging_decisions"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_near_relative_benefit_guidance",
+        "Sveriges_riksdag_current_socialtjanstlag_13_9"
+      ]
+    }
+  ]
+}
