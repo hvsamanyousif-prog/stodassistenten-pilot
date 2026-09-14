@@ -69,9 +69,9 @@
         "rule_id": "bhyoung.monthly_income_transition_2027",
         "field": "decision_start_date",
         "operator": "text_condition",
-        "value": "Försäkringskassan anger att nya regler med månadsinkomst gäller endast beslut från och med 1 januari 2027. Den som redan har bostadsbidrag går över först när det pågående beslutet löper ut under 2027 och ett nytt bostadsbidrag söks.",
+        "value": "För sökande som omfattas av ändringen anger Försäkringskassan att nya regler med månadsinkomst gäller endast beslut från och med 1 januari 2027. Den som redan har bostadsbidrag går över först när det pågående beslutet löper ut under 2027 och ett nytt bostadsbidrag söks.",
         "source_url": "https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027",
-        "notes": "Detta är change-intelligence, inte en signal om att dagens 2026-regler ska ersättas i förtid."
+        "notes": "Detta är change-intelligence, inte en signal om att dagens 2026-regler ska ersättas i förtid. Den aktuella 2027-sidan anger att egenföretagare och personer med inkomst från utlandet inte berörs av lagändringen."
       }
     ],
     "exclusions": [
@@ -113,14 +113,19 @@
       {
         "question_id": "bhyoung.decision_period",
         "prompt": "Söker du för ett beslut som ska börja under 2026, eller gäller frågan ett nytt beslut från 2027?",
-        "reason": "Försäkringskassan har bekräftat ett byte från årsinkomst till månadsinkomst för nya beslut från 1 januari 2027."
+        "reason": "Försäkringskassan har bekräftat ett byte från årsinkomst till månadsinkomst för nya beslut från 1 januari 2027 för sökande som omfattas av ändringen."
+      },
+      {
+        "question_id": "bhyoung.2027_exception",
+        "prompt": "Om frågan gäller ett nytt beslut från 2027: är du egenföretagare eller får du inkomst från utlandet?",
+        "reason": "Den aktuella 2027-sidan anger att dessa grupper inte berörs av lagändringen till månadsinkomst."
       }
     ]
   },
   "benefit": {
     "kind": "cash",
     "amount_text": null,
-    "calculation_text": "Bidraget beror bland annat på hushåll, boende, bostadskostnad och inkomster. För nuvarande 2026-regler ska årsinkomsten uppskattas; nya beslut från 1 januari 2027 får en annan inkomstmodell. Exakt belopp ska kontrolleras i Försäkringskassans aktuella beräknings- eller ansökningstjänst.",
+    "calculation_text": "Bidraget beror bland annat på hushåll, boende, bostadskostnad och inkomster. För nuvarande 2026-regler ska årsinkomsten uppskattas; nya beslut från 1 januari 2027 får en annan inkomstmodell för sökande som omfattas av reformen. Exakt belopp ska kontrolleras i Försäkringskassans aktuella beräknings- eller ansökningstjänst.",
     "recurrence": "monthly"
   },
   "documents": [
@@ -132,7 +137,7 @@
     "method": "mixed",
     "url": "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
     "deadline_text": "Bostadsbidrag kan enligt den aktuella sidan bara lämnas från och med den månad ansökan görs, inte för tidigare månader. Vid gemensam digital ansökan ska den andra personen godkänna uppgifterna inom 10 dagar.",
-    "next_step": "Kontrollera först ålder, hushåll, boendeform, aktuell bostadskostnad och rätt inkomstperiod. För ett 2026-beslut: gör bästa möjliga uppskattning av hela årets inkomst, använd Försäkringskassans aktuella beräkning och samla rätt boendeunderlag före ansökan. Anmäl senare kända ändringar direkt och kontrollera 2027-reglerna separat om ett nytt beslut ska börja då."
+    "next_step": "Kontrollera först ålder, hushåll, boendeform, aktuell bostadskostnad och rätt inkomstperiod. För ett 2026-beslut: uppskatta hela årets inkomst och använd Försäkringskassans aktuella beräkning före ansökan. Anmäl senare kända ändringar direkt. För ett nytt beslut 2027: kontrollera månadsreglerna och om något uttryckligt undantag gäller innan du använder den nya modellen."
   },
   "source": {
     "source_id": "se-forsakringskassan-benefits-a-z",
@@ -147,7 +152,7 @@
     "status": "NEEDS_REVIEW",
     "last_verified_at": null,
     "human_review_required": true,
-    "review_notes": "Maskinellt normaliserad från aktuella primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt åldersspåret, 2026 års inkomst- och boendetrösklar, inneboenderegeln, vilka inkomstslag som ska räknas, dokument per boendeform, ändringsskyldighet och ansökningsmånad. Separat review krävs för övergången till månadsinkomst för beslut från 2027-01-01 och andra 2027-regeländringar. AI har inte verifierat några materialfält.",
+    "review_notes": "Maskinellt normaliserad från aktuella primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt 2026 års inkomst- och boendetrösklar, inneboenderegeln, inkomstslag, dokument, ändringsskyldighet och ansökningsmånad. Separat review krävs för 2027-övergången till månadsinkomst, uttryckliga undantag för egenföretagare/utlandsinkomst och andra 2027-regeländringar. AI har inte verifierat några materialfält.",
     "material_fields_verified": []
   },
   "lifecycle": {
