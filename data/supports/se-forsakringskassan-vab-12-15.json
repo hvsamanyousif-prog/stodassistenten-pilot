@@ -1,6 +1,6 @@
 {
   "support_id": "se-forsakringskassan-vab-12-15",
-  "name": "Tillfällig föräldrapenning (vab) för barn 12–15 år",
+  "name": "Tillfällig föräldrapenning (vab) för barn som fyllt 12 men inte 16 år",
   "category": "family_children",
   "subtype": "temporary_parental_benefit_child_age_12_15",
   "provider": {
@@ -71,7 +71,7 @@
       {
         "question_id": "vab12.first_day",
         "prompt": "Vilken var den första dagen du behövde avstå från arbete eller gå miste om a-kassa för den här vab-perioden?",
-        "reason": "För dagar från och med 1 april 2026 är huvudregeln att ansökan ska lämnas senast 30 dagar efter den första vab-dagen."
+        "reason": "Ansökningsfristen ändrades den 1 april 2026, så första dagen avgör vilket tidsfönster som behöver kontrolleras."
       },
       {
         "question_id": "vab12.child_age",
@@ -114,7 +114,7 @@
   "application": {
     "method": "online",
     "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
-    "deadline_text": "För vab-dagar från och med 1 april 2026 är huvudregeln ansökan senast 30 dagar efter första dagen hemma med barnet. Undantag finns och måste kontrolleras mot aktuell Försäkringskassekälla.",
+    "deadline_text": "För vab-dagar från och med 1 april 2026 är huvudregeln ansökan senast 30 dagar efter första vab-dagen; för tidigare dagar gällde den äldre 90-dagarsregeln. Undantag finns och måste kontrolleras mot aktuell Försäkringskassekälla.",
     "next_step": "Kontrollera först barnets ålder, den första vab-dagen, varför frånvaron behövs och om ett förhandsbeslut finns. Säkerställ rätt medicinskt underlag och ansök skyndsamt via Försäkringskassans aktuella kanal; använd inte den äldre 90-dagarsregeln för nya vab-dagar från 1 april 2026."
   },
   "source": {
@@ -130,13 +130,13 @@
     "status": "NEEDS_REVIEW",
     "last_verified_at": null,
     "human_review_required": true,
-    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt åldersgränsen 12–15 år, vad som räknas som särskilt vård-/tillsynsbehov eller annan kvalificerande situation, 30-dagarsfristen och dess undantag, medicinskt underlag med/utan förhandsbeslut samt arbets-/a-kassa- och försäkringstillhörighet. AI har inte verifierat några materialfält.",
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans primärkällor 2026-09-14. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt åldersgränsen 12–15 år, vad som räknas som särskilt vård-/tillsynsbehov eller annan kvalificerande situation, 30-dagarsfristen från 1 april 2026 och dess undantag, äldre 90-dagarsperioder, medicinskt underlag med/utan förhandsbeslut samt arbets-/a-kassa- och försäkringstillhörighet. AI har inte verifierat några materialfält.",
     "material_fields_verified": []
   },
   "lifecycle": {
     "first_seen_at": "2026-09-14T02:20:28Z",
     "last_seen_at": "2026-09-14T02:20:28Z",
-    "valid_from": "2026-04-01",
+    "valid_from": null,
     "valid_to": null,
     "version": 1,
     "change_hash": null
