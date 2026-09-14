@@ -25,5 +25,6 @@ jobs:
           python scripts/validate_v31_age30_transition.py
           python scripts/validate_age30_product.py
           python scripts/validate_v33_procurement_discovery.py
+          python scripts/validate_pension_housing_v38.py
           python scripts/validate_scenario_lab_all.py
           python scripts/validate_data.py
