@@ -1,0 +1,34 @@
+name: Employee sickness v48
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-employee-sickness-v48:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check guidance syntax and behavior
+        run: |
+          node --check client/employee-sick-guidance.js
+          node client/employee-sick-guidance.test.cjs
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with shared route
+        run: |
+          python scripts/build_public_pilot.py --output _site-v48
+          grep -q 'client/employee-sick-guidance.js' _site-v48/index.html
+          grep -q 'client/employee-sick-guidance.js' _site-v48/person-pilot.html

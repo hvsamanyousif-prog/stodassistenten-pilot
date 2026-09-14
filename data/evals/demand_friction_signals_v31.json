@@ -1,0 +1,66 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the boundary between employee sickness with employer sick pay, employment without sick pay, ordinary part-time work and partial sickness absence, inside the single Stödassistenten learning system. These scores are not measured search volumes and do not prove eligibility. Natural problem formulations are discovery signals; Försäkringskassan carries the truth-bearing current rules.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-employee-sick-pay-parttime-boundary-v01",
+      "actor_types": ["employee", "private_person"],
+      "natural_language_queries": [
+        "jag jobbar deltid och är sjuk vem ska jag anmäla till",
+        "jag är timanställd och får ingen sjuklön vad gör jag",
+        "jag jobbar deltid och är sjukskriven resten",
+        "betyder deltid att jag får halv sjukpenning",
+        "vem betalar när jag är anställd och sjuk"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Employee sickness is a broad national situation and Försäkringskassan maintains separate current public guidance for employees with ordinary sick pay and employees without sick pay. The recurring part-time question adds a common boundary. This is a qualitative reach proxy, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Natural language often collapses employment extent, sickness-absence extent and payment route into one phrase. The route changes with whether the employer pays sick pay and whether part-time is ordinary work or partial sickness absence."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Choosing the wrong first reporting route or assuming a sickness-benefit percentage from ordinary part-time work can delay action or create false expectations about entitlement and payment."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Försäkringskassan publishes neighbouring but distinct pages for employees with sick pay and employees without sick pay, while partial-sickness guidance sits inside the employee route. Users need the right branch before acting."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as sjuklön, sjukpenning, normal working time and partial sickness absence are easy to conflate, especially when a user simply says that they work part-time and are sick."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The user first needs to establish whether employer sick pay applies, then distinguish ordinary part-time work from partial sickness absence, and then use the current employer/Försäkringskassan route without the product deciding eligibility."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan maintains dedicated guidance and FAQs for part-time sickness and a separate page for employees without sick pay, indicating a durable recurring information boundary."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository had a normalized employee-sickness support record and a generic person option for part-time sickness, but no focused public route that separates employer sick pay, no-sick-pay employment and ordinary part-time work from partial sickness absence."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld-utan-sjuklon"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukskriven-nar-du-ar-anstalld-utan-sjuklon"
+      ],
+      "recommended_learning_action": "Teach the existing shared product to recognize employee+sickness language, while explicitly deferring mixed jobseeker/employment cases to the existing v47 authority-disambiguation route. Ask whether employer sick pay applies before choosing the first route. Ask whether part-time means ordinary employment extent or reduced work due to sickness before giving partial-sickness worktime guidance. Do not infer eligibility, SGI, sickness percentage, diagnosis or amount.",
+      "truth_rule": "VERIFY reporting route and part-time sickness guidance against current Försäkringskassan primary sources. Do not infer no-sick-pay status merely from hourly employment, do not infer partial sickness absence from ordinary part-time work, and do not turn reporting guidance into an eligibility decision."
+    }
+  ]
+}

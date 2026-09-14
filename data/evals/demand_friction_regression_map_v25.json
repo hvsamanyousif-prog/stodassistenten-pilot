@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "mappings": [
+    {
+      "signal_id": "df-employee-sick-pay-parttime-boundary-v01",
+      "product_miss": "The shared product had a generic employee/partial-sickness option and a normalized employee-sickness support record but no focused public route that separated employer sick pay from employment without sick pay or ordinary part-time employment from partial sickness absence.",
+      "regression_case_ids": [
+        "lab-employee-sick-pay-first-route-v48-01",
+        "lab-employee-without-sick-pay-first-day-v48-02",
+        "lab-employee-parttime-vs-partial-sick-leave-v48-03",
+        "lab-mixed-jobseeker-employee-sickness-route-conflict-v48-04"
+      ],
+      "fix_or_guardrail": "Use the existing shell and person surface with focus=employee_sick. Ask employer sick-pay status first because it can change the first reporting route; distinguish ordinary part-time work from partial sickness absence before giving worktime guidance; explicitly yield mixed jobseeker/employment language to the existing v47 route.",
+      "truth_guardrail": "Current Försäkringskassan employee and employee-without-sick-pay pages carry the truth. Reporting guidance is not an eligibility decision, hourly employment does not automatically prove absence of sick pay, and ordinary part-time work does not prove partial sickness absence or a benefit percentage.",
+      "privacy_guardrail": "Only coarse route state stays in the client session. Do not place diagnosis, medical certificate content, SGI, salary, employer, exact schedule, identity or the person's situation text in URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
