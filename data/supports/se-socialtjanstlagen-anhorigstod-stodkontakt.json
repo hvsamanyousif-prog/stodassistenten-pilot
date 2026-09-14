@@ -1,0 +1,100 @@
+{
+  "support_id": "se-socialtjanstlagen-anhorigstod-stodkontakt",
+  "name": "Kommunalt stöd till den som vårdar eller stödjer en närstående",
+  "category": "caregiver_relative",
+  "subtype": "municipal_caregiver_support_contact",
+  "provider": {
+    "name": "Kommunens socialnämnd",
+    "provider_type": "municipality",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": "Nationell skyldighet i socialtjänstlagen; exakt stöd, kontaktväg och lokal organisering hanteras av ansvarig kommun."
+  },
+  "audience": {
+    "segments": [
+      "caregiver",
+      "relative",
+      "older_close_person",
+      "long_term_illness",
+      "disability"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "caregiver.municipal.older_or_long_term_ill",
+        "field": "close_person_context",
+        "operator": "text_condition",
+        "value": "Den som vårdar eller stödjer en närstående som är äldre eller långvarigt sjuk omfattas av den nationella bestämmelsen om anhörigstöd.",
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+        "notes": "13 kap. 9 § socialtjänstlagen (2025:400), i lydelse enligt lag (2026:673)."
+      },
+      {
+        "rule_id": "caregiver.municipal.disability",
+        "field": "close_person_context",
+        "operator": "text_condition",
+        "value": "Den som stödjer en närstående med funktionsnedsättning omfattas av den nationella bestämmelsen om anhörigstöd.",
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+        "notes": "13 kap. 9 § socialtjänstlagen (2025:400), i lydelse enligt lag (2026:673)."
+      },
+      {
+        "rule_id": "caregiver.municipal.support_contact",
+        "field": "support_form",
+        "operator": "text_condition",
+        "value": "Socialnämnden ska erbjuda information, vägledning eller annat stöd samt en stödkontakt som möter behov av information, vägledning och stöd i planering av åtgärder.",
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+        "notes": "Bestämmelsen anger en nationell stödskyldighet men inte att en viss lokal service, kontant ersättning eller individuell insats är beviljad."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "caregiver.municipal.scope",
+        "prompt": "Är personen du vårdar eller stödjer äldre, långvarigt sjuk eller har en funktionsnedsättning?",
+        "reason": "Detta är den minsta route-changing faktan för att skilja den särskilda kommunala anhörigstödsregeln från andra stödvägar när kontexten inte redan är tydlig."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "mixed",
+    "amount_text": null,
+    "calculation_text": "Den nationella bestämmelsen beskriver information, vägledning eller annat stöd och en stödkontakt. Den fastställer inte ett generellt kontantbelopp eller identisk lokal insats i alla kommuner.",
+    "recurrence": "variable"
+  },
+  "documents": [],
+  "application": {
+    "method": "municipality_contact",
+    "url": "https://www.1177.se/sa-fungerar-varden/anhorig---narstaende/anhorigstod---stod-for-dig-som-vardar-eller-stodjer-en-narstaende/",
+    "deadline_text": null,
+    "next_step": "Kontakta ansvarig kommun och be om anhörigstöd eller stödkontakt. Kontrollera kommunens aktuella kontaktväg och vilka lokala stödformer som faktiskt erbjuds innan en specifik insats presenteras."
+  },
+  "source": {
+    "source_id": "se-riksdagen-socialtjanstlag-caregiver-support",
+    "url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T19:47:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från aktuell SFS-text och praktisk 1177-kontaktväg den 14 september 2026. Mänsklig sakgranskning krävs före VERIFIED, särskilt för lokal tillämpning, stödform, kontaktväg och hur 13 kap. 9 § samspelar med individuellt behovsprövade insatser. Ingen AI-promovering av materiella fält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T19:47:00Z",
+    "last_seen_at": "2026-09-14T19:47:00Z",
+    "valid_from": "2026-07-01",
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
