@@ -5,6 +5,7 @@
   "mappings": [
     {
       "signal_id": "df-pension-housing-low-income-source-recency-v01",
+      "product_miss": "The existing pension journey asked municipality size, living-alone status and dental need before the current route-changing pension-housing facts, while natural-language low-pension/high-housing-cost descriptions had no focused same-product handoff. The product also lacked a permanent guard against using stale official age information or routing sickness/activity-compensation bostadstillägg questions into the pensioner authority path.",
       "regression_case_ids": [
         "lab-pension-low-income-high-housing-cost-v38-01",
         "lab-pension-housing-stale-age-source-v38-02",
