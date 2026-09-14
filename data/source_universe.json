@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Source-universe overlay for the single Stödassistenten discovery and truth pipeline. It references the canonical source registry instead of duplicating source metadata, and it defines what a discovery source may and may not prove before verified support or opportunity records are created.",
+  "invariants": {
+    "references_canonical_source_registry": true,
+    "no_duplicate_source_metadata": true,
+    "discovery_never_implies_open_application": true,
+    "primary_source_required_for_opportunity_state": true,
+    "no_raw_person_data": true,
+    "no_user_case_data": true,
+    "no_ai_promotion_to_verified": true
+  },
+  "families": [
+    {
+      "family_id": "se-foundation-registry-discovery",
+      "source_registry_refs": [
+        "se-lansstyrelserna-foundation-search"
+      ],
+      "domain": "foundations",
+      "discovery_role": "registry_discovery",
+      "opportunity_state_authority": "not_authoritative",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "foundation_name",
+        "purpose_summary",
+        "geography",
+        "official_organization_identifier",
+        "verified_foundation_contact_or_application_url"
+      ],
+      "blocked_fields": [
+        "board_member_names",
+        "auditor_names",
+        "signatory_names",
+        "personal_addresses",
+        "personal_contact_details",
+        "raw_registry_payload"
+      ],
+      "required_verification_before_action": [
+        "Verify with the foundation itself whether an application route exists now, including current application documents, deadline or application period, target group and where the application must be sent.",
+        "Keep Länsstyrelsernas registry role as discovery only: a registered active foundation does not by itself prove that money is currently open for application or that a user is eligible.",
+        "Do not republish people listed in the registry merely because the registry exposes board members, auditors or signatories; the public product needs organization-level facts only."
+      ],
+      "prohibited_promotions": [
+        "registered_foundation_equals_open_opportunity",
+        "purpose_text_equals_user_eligibility",
+        "registry_listing_equals_verified_application_deadline",
+        "registry_contact_person_equals_public_product_contact",
+        "community_advice_equals_truth"
+      ]
+    }
+  ]
+}
