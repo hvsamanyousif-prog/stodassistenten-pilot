@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v27 converts the review-gated v26 work-injury dental truth into one bounded same-shell product path and protects a newly mined commute-traffic boundary between Försäkringskassan and Afa. Community wording is discovery-only; factual conditions come from current primary sources. No real user story or sensitive user data is stored.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-work-injury-dental-natural-route-2026",
+      "observation": "People describe tooth trauma as an accident-and-payment problem rather than by the formal benefit name. A safe product path therefore needs to recognize explicit dental injury plus work/commute context, then ask only route-changing facts while keeping ordinary dental support and separate insurance routes distinct.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/arbetsskadeforsakring"
+      ]
+    },
+    {
+      "pattern_id": "signal-commute-traffic-insurance-split-2026",
+      "observation": "Försäkringskassan includes injury or disease arising on the way to or from work in its work-injury dental-cost conditions. Afa separately states that its collective-agreement work-injury insurance does not apply to a traffic accident on the commute and directs that case to traffic insurance. The product must preserve this cross-system difference instead of merging the decisions.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/arbetsskadeforsakring"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-employee-work-injury-dental-natural-route-v27-01",
+      "actor_type": "employee",
+      "story": "Jag slog i en tand på jobbet och tandläkaren säger att den behöver behandlas. Jag vet inte om jag ska börja med vanlig tandvård, Försäkringskassan eller jobbets försäkring.",
+      "expected_support_areas": [
+        "natural_language_route_to_same_person_module",
+        "work_injury_dental_cost_reimbursement_candidate",
+        "privacy_safe_coarse_handoff",
+        "information_gain_question_order",
+        "ordinary_dental_support_kept_separate",
+        "collective_agreement_insurance_kept_separate"
+      ],
+      "must_not_claim": [
+        "dental_words_plus_employment_without_an_injury_signal_are_enough_to_force_work_injury_routing",
+        "a_workplace_incident_report_or_employer_report_automatically_proves_an_approved_work_injury",
+        "every_dental_bill_after_a_work_injury_is_reimbursed_in_full",
+        "forsakringskassan_dental_cost_reimbursement_and_afa_compensation_are_the_same_decision",
+        "the_product_can_guarantee_eligibility_amount_or_payment_date",
+        "the_raw_injury_story_employer_identity_exact_cost_or_health_details_should_be_put_in_the_handoff_url_or_feedback"
+      ],
+      "expected_questions": [
+        "q_where_did_injury_occur_work_commute_other_or_unsure",
+        "q_is_dental_treatment_necessary_due_to_that_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan"
+      ],
+      "expected_next_actions": [
+        "route_only_explicit_dental_injury_plus_work_or_commute_context_to_the_bounded_same_person_focus",
+        "collect_cost_proposal_receipt_or_invoice_and_confirm_the_dentist_is_connected_to_forsakringskassan",
+        "use_the_current_forsakringskassan_work_injury_cost_route_without_promising_approval_or_full_reimbursement",
+        "check_collective_agreement_insurance_separately_when_relevant_without_assuming_coverage"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Afa_current_collective_agreement_work_injury_primary_source_for_separate_insurance_boundary"
+      ]
+    },
+    {
+      "case_id": "lab-employee-commute-traffic-dental-split-v27-02",
+      "actor_type": "employee",
+      "story": "Jag skadade en tand i en bilolycka på väg till jobbet. Räknas det som arbetsskada och ska jag söka hos Afa, Försäkringskassan eller trafikförsäkringen?",
+      "expected_support_areas": [
+        "commute_work_injury_boundary",
+        "forsakringskassan_dental_cost_route_kept_separate",
+        "afa_commute_traffic_exception",
+        "traffic_insurance_separate_route",
+        "source_grounded_next_action"
+      ],
+      "must_not_claim": [
+        "a_commute_traffic_accident_automatically_proves_eligibility_for_forsakringskassan_dental_cost_reimbursement",
+        "afa_collective_agreement_work_injury_insurance_covers_a_commute_traffic_accident_unchanged",
+        "traffic_insurance_and_forsakringskassan_work_injury_dental_reimbursement_are_the_same_decision",
+        "an_employer_incident_report_settles_the_traffic_insurance_or_forsakringskassan_claim",
+        "the_product_can_guess_which_vehicle_insurer_is_responsible_without_current_case_specific_information"
+      ],
+      "expected_questions": [
+        "q_where_did_injury_occur_work_commute_other_or_unsure",
+        "q_if_commute_was_event_a_traffic_accident",
+        "q_is_dental_treatment_necessary_due_to_that_injury",
+        "q_is_cost_evidence_available_and_is_dentist_connected_to_forsakringskassan"
+      ],
+      "expected_next_actions": [
+        "for_forsakringskassan_keep_the_commute_dental_cost_route_subject_to_current_conditions_and_individual_assessment",
+        "for_a_commute_traffic_accident_do_not_recommend_afa_work_injury_insurance_as_if_it_applied_unchanged",
+        "check_the_relevant_traffic_insurance_route_separately_without_guessing_responsible_insurer",
+        "keep_reference_price_and_document_requirements_visible_before_promising_any_dental_cost_reimbursement"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_work_injury_dental_cost_primary_source",
+        "Afa_current_commute_traffic_accident_primary_source"
+      ]
+    }
+  ]
+}
