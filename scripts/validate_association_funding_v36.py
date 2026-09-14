@@ -29,12 +29,16 @@ required_runtime = [
     "https://skr.se/kommunerochregioner/kommunerlista.8288.html",
     "https://www.arvsfonden.se/ansokan/vara-stodformer",
     "https://stiftelser.lansstyrelsen.se/",
-    "Registerträff betyder inte att det finns en öppen ansökan",
     "فقط برای کشف",
     "للاكتشاف فقط",
 ]
 for token in required_runtime:
     assert token in runtime, f"missing v36 runtime guardrail: {token}"
+
+# Copy may start the sentence with an uppercase or lowercase letter; validate the semantic guardrail.
+assert "registerträff betyder inte att det finns en öppen ansökan" in runtime.lower(), (
+    "missing v36 runtime guardrail: register discovery must not imply an open call"
+)
 
 # The correction must not introduce a new backend, truth store or raw-text handoff.
 for forbidden in ["fetch(", "localStorage", "sessionStorage", "encodeURIComponent(input", "eligibility=true"]:
