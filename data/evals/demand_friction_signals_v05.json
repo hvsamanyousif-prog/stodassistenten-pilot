@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are ordinal discovery priorities, not measured search volumes or eligibility evidence. VAB rules are truth-bearing only after current primary-source verification; discovery material is never used as fact.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. These scores guide eval, retrieval and question-order work only."
+  },
+  "signals": [
+    {
+      "signal_id": "df-vab-12plus-deadline-documentation-v01",
+      "actor_types": ["guardian", "employee", "unemployed_parent"],
+      "natural_language_queries": [
+        "mitt barn är 13 kan jag vabba när barnet blir sämre",
+        "har jag fortfarande 90 dagar på mig att söka vab",
+        "behöver jag läkarintyg första dagen när barnet är över 12",
+        "vad är förhandsbeslut vab och behöver jag det"
+      ],
+      "demand_signal": {"score": 5, "basis": "VAB is a broad parent-facing social-insurance route, and the application deadline changed nationally on 1 April 2026. The score is a qualitative product-priority signal, not measured query volume."},
+      "friction_signal": {"score": 5, "basis": "Users must distinguish the new 30-day deadline from the previous 90-day rule while also understanding that age 12-15 introduces special-care/supervision and documentation conditions that differ from ordinary VAB for younger children."},
+      "miss_consequence": {"score": 5, "basis": "Following the old deadline can cause a late application, while treating age 12-15 as ordinary automatic VAB can produce a false-positive recommendation or missing medical documentation."},
+      "source_fragmentation": {"score": 4, "basis": "The current rule is spread across Försäkringskassan pages for age 12+ VAB, medical statements/prior decisions and the 2026 application-deadline change."},
+      "language_accessibility_friction": {"score": 4, "basis": "Terms such as särskilt behov av vård eller tillsyn, läkarutlåtande, intyg and förhandsbeslut are easy to conflate, especially under time pressure or with limited Swedish/digital familiarity."},
+      "steps_to_action": {"score": 4, "basis": "A safe answer needs only a few high-value facts: first absence date, child age, reason/special care need, whether a prior decision exists and whether required medical documentation is available."},
+      "recurrence_signal": {"score": 5, "basis": "The 2026 deadline change affects new VAB periods nationally, while age-based documentation rules are a stable recurring boundary in Försäkringskassan guidance. This is not a measured frequency claim."},
+      "current_product_coverage_gap": {"score": 5, "basis": "The scenario library covered several family and work-benefit areas but lacked a permanent regression combining the post-1-April-2026 deadline with the age-12-plus documentation boundary."},
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/foralder-och-barn/intyg-och-utlatande-for-vard-av-barn-vab",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-30-kortare-tid-for-att-ansoka-om-vab"
+      ],
+      "recommended_learning_action": "Add a fail-closed synthetic regression that distinguishes age 12-15 from ordinary younger-child VAB, asks whether a prior decision exists, preserves medical-documentation requirements and surfaces the current 30-day application window before older 90-day habits can mislead the user.",
+      "truth_rule": "Verify the current application deadline, age boundary, documentation requirement and any exception against Försäkringskassan; do not infer VAB eligibility from diagnosis, child age or an old 90-day rule alone."
+    }
+  ]
+}
