@@ -1,0 +1,34 @@
+name: Programme long sickness v49
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-programme-long-sickness-v49:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check shared unemployed sickness guidance
+        run: |
+          node --check client/unemployed-sick-guidance.js
+          node client/unemployed-sick-guidance.test.cjs
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with same route
+        run: |
+          python scripts/build_public_pilot.py --output _site-v49
+          grep -q 'client/unemployed-sick-guidance.js' _site-v49/index.html
+          grep -q 'client/unemployed-sick-guidance.js' _site-v49/person-pilot.html

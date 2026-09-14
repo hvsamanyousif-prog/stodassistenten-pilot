@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Permanent synthetic regressions for the >30-day full-time sickness boundary inside an Arbetsförmedlingen programme. The cases distinguish duration from an actual programme exit, preserve partial-sickness handling and prevent an automatic sickness-benefit handoff. Stories are synthetic and contain no reused community text or personal data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "af-programme-long-sickness-transition",
+      "observation": "Current primary sources distinguish ordinary programme sickness absence from the later transition that can follow more than 30 days of full-time sickness. Arbetsförmedlingen first tries to adapt the programme; the sickness-benefit route after the programme becomes relevant only after the person has actually been written out.",
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/extra-stod/nar-du-deltar-i-ett-program/anmal-franvaro-nar-du-blir-sjuk-och-deltar-i-ett-program/om-du-ar-sjuk-i-mer-an-sju-dagar",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/om-du-deltar-i-program-hos-arbetsformedlingen-och-blir-sjuk"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-program-long-sick-still-enrolled-v49-01",
+      "actor_type": "private_person",
+      "story": "Jag går i ett program med aktivitetsstöd och har varit helt sjuk i mer än 30 dagar, men Arbetsförmedlingen har inte skrivit ut mig.",
+      "expected_support_areas": ["programme_sickness_absence", "adaptation_before_transition", "programme_status_information_gain"],
+      "must_not_claim": ["more_than_30_days_automatically_ends_the_programme", "more_than_30_days_automatically_starts_sickness_benefit", "duration_alone_proves_eligibility"],
+      "expected_questions": ["do_not_repeat_programme_status_when_known", "ask_or_verify_actual_programme_exit_only_if_the_long_full_time_transition_is_relevant"],
+      "expected_next_actions": ["keep_the_arbetsformedlingen_programme_route_while_still_enrolled", "verify_adaptation_and_programme_status_before_switching_to_post_programme_sickness_benefit"],
+      "source_requirements": ["Arbetsformedlingen_current_programme_sickness_over_30_days_guidance", "Forsakringskassan_current_programme_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-program-long-sick-actually-ended-v49-02",
+      "actor_type": "private_person",
+      "story": "Jag var helt sjuk i mer än 30 dagar och Arbetsförmedlingen har nu skrivit ut mig ur programmet på grund av sjukfrånvaron. Vad gör jag dagen efter?",
+      "expected_support_areas": ["post_programme_sickness_transition", "first_day_after_programme_exit", "correct_medical_certificate_route"],
+      "must_not_claim": ["programme_exit_guarantees_sickness_benefit", "apply_before_actual_programme_exit", "arbetsformedlingen_medical_certificate_is_always_the_post_exit_certificate"],
+      "expected_questions": ["do_not_request_diagnosis_sgi_salary_or_exact_medical_details_to_choose_the_authority_route"],
+      "expected_next_actions": ["after_actual_programme_exit_point_to_forsakringskassan_sickness_benefit_from_the_first_day_after_exit", "use_forsakringskassan_medical_certificate_for_the_post_exit_application", "preserve_separate_eligibility_assessment"],
+      "source_requirements": ["Arbetsformedlingen_current_programme_sickness_over_30_days_guidance", "Forsakringskassan_current_programme_sickness_guidance"]
+    },
+    {
+      "case_id": "lab-program-partial-sick-over-30-v49-03",
+      "actor_type": "private_person",
+      "story": "Jag deltar fortfarande i programmet men är sjuk på deltid och det har gått mer än 30 dagar.",
+      "expected_support_areas": ["partial_programme_sickness", "medical_certificate_after_seven_days", "full_time_30_day_boundary"],
+      "must_not_claim": ["partial_sickness_over_30_days_triggers_the_full_time_exit_rule", "programme_is_automatically_ended", "partial_sickness_percentage_can_be_inferred_from_story"],
+      "expected_questions": ["do_not_apply_the_full_time_30_day_transition_without_full_time_sickness"],
+      "expected_next_actions": ["retain_current_programme_sickness_route_and_current_medical_certificate_requirement", "refer_programme_adaptation_questions_to_arbetsformedlingen"],
+      "source_requirements": ["Arbetsformedlingen_current_programme_sickness_over_30_days_guidance"]
+    },
+    {
+      "case_id": "lab-program-long-sick-uncertain-exit-v49-04",
+      "actor_type": "private_person",
+      "story": "Jag har varit helt sjuk i över 30 dagar i mitt program men vet inte om jag är utskriven eller fortfarande deltagare.",
+      "expected_support_areas": ["uncertainty_fail_closed", "programme_exit_status_verification", "post_programme_route_boundary"],
+      "must_not_claim": ["assume_programme_exit_from_duration", "assume_continued_programme_status_when_unknown", "choose_sickness_benefit_route_without_actual_exit_status"],
+      "expected_questions": ["verify_actual_programme_status_without_requesting_diagnosis_sgi_salary_or_identity"],
+      "expected_next_actions": ["check_programme_status_with_arbetsformedlingen_before_switching_authority_route", "show_current_primary_sources_without_promising_entitlement"],
+      "source_requirements": ["Arbetsformedlingen_current_programme_sickness_over_30_days_guidance", "Forsakringskassan_current_programme_sickness_guidance"]
+    }
+  ]
+}
