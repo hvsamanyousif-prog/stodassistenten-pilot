@@ -19,10 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check shared older home support syntax and behavior
-        run: |
-          node --check client/older-home-support-guidance.js
-          node client/older-home-support-guidance.test.cjs
+      - name: Check shared older home support syntax
+        run: node --check client/older-home-support-guidance.js
+      - name: Run older home support behavior regressions
+        run: node client/older-home-support-guidance.test.cjs
       - name: Validate v53 safety semantics
         run: python scripts/validate_older_home_support_v53.py
       - name: Validate canonical scenario system
