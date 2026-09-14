@@ -1,0 +1,11 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility or factual truth.",
+  "mappings": [{
+    "signal_id": "df-preventive-treatment-worktime-v01",
+    "product_miss": "The review-gated truth layer already knew about preventive sickness benefit, but a person describing recurring doctor-ordered treatment or rehabilitation during work time had no focused public journey and could be pushed toward generic sickness or work questions instead of the few facts that change this route.",
+    "fix_or_guardrail": "Detect only bounded treatment-or-rehabilitation plus work-time friction, pass only a coarse preventive_treatment focus without the situation text, ask doctor-order/purpose, per-occasion absence and treatment-plan approval in sequence, keep ordinary sickness benefit and employer rehabilitation separate, and never promise eligibility or amount.",
+    "regression_case_ids": ["lab-employee-preventive-treatment-work-v25-01"]
+  }]
+}
