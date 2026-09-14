@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of legal right, a specific school measure, diagnosis, appeal outcome or individual decision. Natural-language pages and community-facing material are discovery signals; school-support facts require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-child-school-support-diagnosis-friction-v01",
+      "actor_types": ["child_via_guardian", "relative"],
+      "natural_language_queries": [
+        "mitt barn har adhd men skolan ger inget stöd",
+        "måste barnet ha diagnos för att få stöd i skolan",
+        "skolan säger att vi ska vänta på utredning",
+        "mitt barn har läs- och skrivsvårigheter vad ska skolan göra",
+        "extra anpassningar räcker inte vem ska jag prata med",
+        "rektor har gjort åtgärdsprogram men stödet fungerar inte vad gör jag nu",
+        "طفلي لديه صعوبة في القراءة والمدرسة تقول انتظروا التشخيص",
+        "هل يحتاج الطفل إلى تشخيص لكي يحصل على دعم في المدرسة",
+        "کودکم مشکل خواندن و تمرکز دارد آیا مدرسه باید منتظر تشخیص بماند"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "The same practical questions recur across parent-facing material: whether diagnosis is needed, what the school should do when reading/writing or concentration difficulties persist, and where to go when meetings or existing adjustments do not resolve the problem. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users can easily conflate diagnosis, extra adjustments, special-support investigation, action programmes, school health involvement, principal responsibility and appeal. The current public family journey offered a school choice but then returned the same generic family-benefit rows regardless of that choice."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A false diagnosis gate can delay school support, while overpromising a particular measure or appeal outcome can mislead a family about rights and next steps during an already consequential school difficulty."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Skolverket separates general support rules, easy-language parent guidance and organisational guidance, while formal action-programme appeals are handled by Skolväsendets överklagandenämnd."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as extra anpassningar, särskilt stöd, utredning, elevhälsa and åtgärdsprogram are process-heavy even in Swedish. Families starting from a concrete problem rather than legal vocabulary face additional friction in Arabic or Persian."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe route can be shortened to child age plus one high-information question about what the school has already done, then branch to teacher/principal clarification, prompt special-support investigation, or the official appeal path when a formal decision exists."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Recurring misunderstandings include believing diagnosis is required, assuming diagnosis guarantees a particular intervention, waiting for healthcare before school action, and not knowing the difference between informal dissatisfaction and a formal appealable action-programme decision."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The canonical scenario lab already contained child ADHD and reading/writing school-support benchmarks and the root shell could route broad family school-support language, but person-pilot's family result list stayed generic and did not use Skolverket or a school-state question to change the next action."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://npfguiden.se/webinar/skola",
+        "https://www.skolverket.se/download/18.5a8347601943e11436367/1736260106641/pdf13187.pdf"
+      ],
+      "primary_sources": [
+        "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+        "https://www.skolverket.se/lattlast/lattlast-information-fran-skolverket/hjalp-om-ditt-barn-behover-extra-stod-pa-lattlast-svenska",
+        "https://www.overklagandenamnden.se/hur-du-overklagar/beslut-som-kan-overklagas/"
+      ],
+      "recommended_learning_action": "Keep one product and one person module. Turn the existing child school-support benchmark into an executable same-shell route: do not ask diagnosis as a gate, ask only what the school has already done after the child age guard, then select the source-grounded next action. Keep any normalized legal/process fields review-gated and retain structured anonymous feedback without raw child, school or health text.",
+      "truth_rule": "Discovery language and qualitative scores are never truth. Verify diagnosis boundaries, extra-adjustment rules, special-support investigation, principal responsibility and appealable decisions against current Skolverket and Skolväsendets överklagandenämnd primary sources. Never infer a diagnosis, guaranteed measure or appeal outcome from user text, feedback, a prior AI answer or discovery material."
+    }
+  ]
+}

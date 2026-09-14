@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Maps the v41 child school-support demand/friction signal into the same canonical Stödassistenten regression system.",
+  "mappings": [
+    {
+      "signal_id": "df-child-school-support-diagnosis-friction-v01",
+      "product_miss": "The canonical lab already knew that diagnosis is not required for school support, but the public family journey still treated 'school' as only a generic family choice and returned benefit-oriented family rows. A parent could therefore reach Omvårdnadsbidrag, merkostnadsersättning and municipal support without a focused Skolverket path, while the product failed to distinguish no clear school action, insufficient extra adjustments and a formal action-programme decision.",
+      "regression_case_ids": [
+        "lab-child-school-support-no-diagnosis-v41-01",
+        "lab-child-school-support-formal-decision-v41-02"
+      ],
+      "product_surfaces": [
+        "index.html natural-language situation engine",
+        "person-pilot.html existing family journey",
+        "client/family-age-routing.js existing child age guard",
+        "client/school-support-guidance.js same-shell focused school route",
+        "single canonical scenario lab"
+      ],
+      "fix_or_guardrail": "Reuse the existing child age guard, never ask diagnosis as a required route fact, and add exactly one high-information school-state question. Route within the same person product to current Skolverket guidance for needs/adjustments or prompt special-support investigation, and only show the official appeal path when the user says a formal action-programme decision exists. Do not create a school app or a separate child matcher.",
+      "privacy_guardrail": "Do not transfer or store the child's name, school, diagnosis, healthcare details, action-programme contents or raw story in URLs, public evals or feedback. Retain only coarse actor/focus/language and non-sensitive route state in the UI; feedback remains structured anonymous product feedback.",
+      "truth_guardrail": "Do not promote the new Skolverket support record to VERIFIED by automation. Diagnosis rules, extra adjustments, special-support investigation, action-programme requirements and appealability remain primary-source governed and subject to human review before material fields become VERIFIED."
+    }
+  ]
+}

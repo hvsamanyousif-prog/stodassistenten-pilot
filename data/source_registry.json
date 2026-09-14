@@ -71,6 +71,22 @@
       "adapter_state": "CANDIDATE"
     },
     {
+      "source_id": "se-skolverket-school-support",
+      "owner": "Skolverket",
+      "authority_type": "national_agency",
+      "url": "https://www.skolverket.se/styrning-och-ansvar/regler-och-ansvar/ansvar-i-skolfragor/extra-anpassningar-sarskilt-stod-och-atgardsprogram",
+      "geography": "SE",
+      "coverage": ["education", "children_youth", "school_support", "special_support"],
+      "source_type": "official_guidance",
+      "ingestion_method": "html_guidance",
+      "priority": "P0",
+      "suggested_review_frequency_days": 14,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-14",
+      "adapter_state": "CANDIDATE",
+      "notes": "Source verification confirms the official authority and current guidance location only. It does not make normalized legal/process fields VERIFIED or decide a pupil's individual support measure. Appeal facts must also be checked against Skolväsendets överklagandenämnd."
+    },
+    {
       "source_id": "se-socialstyrelsen-financial-assistance",
       "owner": "Socialstyrelsen",
       "authority_type": "national_agency",
