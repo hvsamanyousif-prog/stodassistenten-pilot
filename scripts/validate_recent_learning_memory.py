@@ -20,7 +20,7 @@ for path in paths:
             raise AssertionError(f"duplicate scenario id: {cid}")
         cases[cid] = case
 
-assert len(cases) >= 64, f"expected at least 64 cases after v21, got {len(cases)}"
+assert len(cases) >= 65, f"expected at least 65 cases after v22, got {len(cases)}"
 
 locks = {
     "lab-young-post-study-no-job-v20-01": {
@@ -51,6 +51,26 @@ locks = {
             "do_not_promote_the_existing_near_relative_support_record_from_needs_review_to_verified",
         ],
     },
+    "lab-young-post-study-housing-change-v22-01": {
+        "expected_support_areas": [
+            "young_housing_benefit_candidate",
+            "annual_income_estimation_2026",
+            "income_change_reporting",
+            "housing_form_check",
+        ],
+        "must_not_claim": [
+            "one_month_income_is_enough_for_a_2026_housing_benefit_assessment",
+            "starting_a_job_means_the_user_can_keep_the_same_income_estimate_without_reporting_change",
+            "the_2027_monthly_income_model_applies_to_a_2026_decision",
+            "the_product_can_guarantee_housing_benefit_or_a_specific_amount",
+            "the_raw_situation_text_or_exact_age_should_be_put_in_the_handoff_url_or_feedback",
+        ],
+        "expected_next_actions": [
+            "use_a_january_to_december_income_estimate_for_a_2026_decision",
+            "report_known_income_or_housing_changes_to_forsakringskassan",
+            "do_not_repeat_an_income_change_question_when_the_coarse_shell_context_already_establishes_that_fact",
+        ],
+    },
 }
 
 for cid, fields in locks.items():
@@ -60,4 +80,4 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in case[field], f"{cid}: missing locked {field} token {token}"
 
-print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v21 semantics locked)")
+print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v22 semantics locked)")
