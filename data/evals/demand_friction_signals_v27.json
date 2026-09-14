@@ -64,7 +64,7 @@
         "https://data.riksdagen.se/dokument/sfs-1991-614.html"
       ],
       "recommended_learning_action": "Add one bounded property_charging route to the existing shell/person product. Preserve a coarse context in the handoff only when it is explicit, ask only route-changing usage/start/statutory-scope facts, keep organisation grant paths separate from the resident's statutory request, and make all material support/legal claims primary-source governed and review-gated.",
-      "truth_rule": "Demand, usage and natural-language signals are not truth. Current grant amount caps, eligible-cost rules, applicant categories, work-start rules and resident charging rights must be checked against current Naturvårdsverket/Riksdagen primary sources. Never infer grant approval, state-aid classification, a guaranteed resident installation or individual statutory eligibility from story text."
+      "truth_rule": "Demand, usage and natural-language signals are not truth. VERIFY current grant amount caps, eligible-cost rules, applicant categories, work-start rules and resident charging rights against current Naturvårdsverket/Riksdagen primary sources before they become truth-bearing. Do not infer grant approval, state-aid classification, a guaranteed resident installation or individual statutory eligibility from story text."
     }
   ]
 }
