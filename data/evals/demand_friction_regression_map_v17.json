@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove work-injury eligibility, reimbursement amount, insurance coverage or payment.",
+  "mappings": [
+    {
+      "signal_id": "df-work-injury-worker-context-v01",
+      "product_miss": "The public same-shell work-injury dental route already had v29-v30 synthetic truth boundaries for self-employed and invoiced-worker contexts, but every natural-language handoff still hardcoded actor_type=employee and the result layer used generic employee/Afa wording. The eval system therefore knew a distinction that the public product did not consume.",
+      "fix_or_guardrail": "Keep one work-injury dental module. Detect only explicit self-employed or invoiced-worker language, pass bounded work_context rather than raw narrative, keep the Försäkringskassan dental-cost assessment separate from contractual insurance, ask a self-employed user only whether a current Fora insurance/ground agreement exists when that can change the TFA path, and treat an invoicing company as employer context without inferring TFA or converting the user into a sole trader.",
+      "regression_case_ids": [
+        "lab-self-employed-work-injury-dental-public-handoff-v37-01",
+        "lab-invoiced-worker-work-injury-dental-public-handoff-v37-02"
+      ]
+    }
+  ]
+}
