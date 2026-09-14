@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove Villaeffekten eligibility, amount, budget availability or payment.",
+  "mappings": [
+    {
+      "signal_id": "df-villaeffekten-live-rules-v01",
+      "product_miss": "The existing villa-energy benchmark already expected an energy-efficiency-grant route, and issue #11 explicitly identified Villaeffekten, but the common truth layer had no normalized current 2026 support record. Without a current-source regression the product could also collapse old-house intent into eligibility, confuse existing district-heating exclusion with a planned new district-heating connection, or present 30 percent as applying to the whole contractor invoice.",
+      "fix_or_guardrail": "Keep one housing/energy truth layer and one scenario system. Add a review-gated Villaeffekten record grounded in Boverket plus current SFS, ask only route-changing property/measure/timing facts, distinguish existing district-heating status from a new connection measure, separate material from labour cost, preserve the transition deadline and county-board decision boundary, and never guarantee eligibility or amount.",
+      "regression_case_ids": [
+        "lab-homeowner-villaeffekten-candidate-v34-01",
+        "lab-homeowner-villaeffekten-district-heating-v34-02",
+        "lab-homeowner-villaeffekten-timing-cost-v34-03"
+      ]
+    }
+  ]
+}
