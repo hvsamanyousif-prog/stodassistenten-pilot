@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, insurance coverage or factual truth. Community discussion is discovery-only; material claims require current primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-self-employed-tfa-contract-boundary-v01",
+      "actor_types": ["self_employed"],
+      "natural_language_queries": [
+        "jag driver eget utan anställda gäller TFA om jag skadar mig på jobbet",
+        "har jag Afa arbetsskadeförsäkring som egenföretagare om jag har avtal hos Fora",
+        "måste företagare teckna TFA separat eller ingår den i grundavtalet",
+        "jag har eget företag och vet inte om mitt Fora-avtal täcker arbetsskada"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Public questions about own-business insurance repeatedly ask which layer pays when work ability or injury changes. This is a qualitative discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Generic employee-oriented wording can make a business owner think Afa/TFA is unavailable, while current Afa and Fora primary guidance says a self-employed owner can be covered by TFA through a Fora insurance agreement or ground agreement. Company ownership alone still does not prove that such an agreement exists."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A false exclusion can hide a relevant compensation route after a work injury, while automatic inclusion can create false confidence and delay checking the actual insurance agreement."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "The statutory dental-cost route is described by Försäkringskassan, while the self-employed TFA contract boundary is described by Afa Försäkring and Fora. These are separate decisions and sources."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as Afa, TFA, grundavtal, försäkringsavtal and Företagares egen försäkring are provider terms that users may not know when describing a work injury in ordinary language."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe assistant should preserve the Försäkringskassan route, then ask or verify whether the business has a Fora insurance/ground agreement before treating TFA as an actionable separate route."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "The same boundary can recur across dental injury, other work-injury costs and mixed employee/business situations because actor label does not itself establish insurance coverage."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "v29 correctly forbids assuming Afa coverage for every self-employed person, but its next-action memory only says to check business/private accident insurance and does not yet lock the positive TFA-via-Fora-agreement path for self-employed owners."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/PrivatEkonomi/comments/1jyzjah"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/arbetsskada/ersattning-for-sjukvard-tandvard-eller-hjalpmedel-vid-arbetsskada",
+        "https://www.afaforsakring.se/forsakring/foretagares-egen-forsakring",
+        "https://www.fora.se/ms-foretag-inlogg"
+      ],
+      "recommended_learning_action": "Add a permanent self-employed TFA contract-boundary regression to the existing work-injury learning loop. The product must neither exclude Afa/TFA merely because the person is self-employed nor assume TFA merely because a business exists; it should verify the actual Fora insurance/ground agreement and keep that route separate from Försäkringskassan's statutory dental-cost assessment.",
+      "truth_rule": "Community wording is discovery only. Verify the statutory work-injury dental route with current Försäkringskassan guidance and verify self-employed TFA coverage with current Afa/Fora primary guidance. Do not infer coverage, eligibility, amount or contract status from the actor label, company form or F-tax alone."
+    }
+  ]
+}
