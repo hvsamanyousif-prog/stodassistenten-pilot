@@ -7,6 +7,7 @@ matrix = (root / "docs" / "PILOT_COVERAGE_MATRIX.md").read_text(encoding="utf-8"
 privacy = (root / "client" / "privacy-routing.js").read_text(encoding="utf-8")
 vab_runtime = (root / "client" / "vab-focus.js").read_text(encoding="utf-8")
 property_runtime = (root / "client" / "property-accessibility-focus.js").read_text(encoding="utf-8")
+dental67_runtime = (root / "client" / "dental-67-guidance.js").read_text(encoding="utf-8")
 
 required_rows = [
     "| Privatperson |",
@@ -26,23 +27,29 @@ for row in required_rows:
 # Known product capabilities must not regress back into stale documentation.
 assert "ingen tydlig dedikerad publik ingång ännu" not in matrix
 assert "VAB 12+ och deltidssjukskrivning + VAB finns som evals men ännu inte som egna publika fokuserade stödvägar" not in matrix
+assert "tandflödet är ännu generiskt" not in matrix
 assert "focus=vab" in matrix
 assert "property_actor" in matrix and "property_accessibility" in matrix
-assert "tandflödet är ännu generiskt" in matrix
+assert "dental quick-help med åldersmedveten 67+-handoff" in matrix
+assert "Handoffen får inte avgöra exakt eligibility, åtgärdsomfattning eller slutkostnad" in matrix
 
 # Runtime/artifact existence backs the updated matrix claims. These checks do not
 # turn the matrix into a truth source; they only prevent documentation drift.
 for rel in [
     "client/assistance-focus.js",
     "client/housing-adaptation-guidance.js",
+    "client/dental-67-guidance.js",
     "data/evals/scenario_lab_websignals_v16.json",
     "data/evals/scenario_lab_websignals_v17.json",
     "data/evals/scenario_lab_websignals_v19.json",
+    "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
 ]:
     assert (root / rel).exists(), f"matrix references missing artifact: {rel}"
 
 assert "focus !== 'vab'" in vab_runtime
 assert "focus !== 'property_accessibility'" in property_runtime
+assert "new Set(['cost', 'support', 'unsure'])" in dental67_runtime
+assert "get('q')" not in dental67_runtime and 'get("q")' not in dental67_runtime
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 

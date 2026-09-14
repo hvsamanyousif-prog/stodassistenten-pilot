@@ -29,13 +29,14 @@ SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
+DENTAL_67_GUIDANCE_PATH = "client/dental-67-guidance.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
 FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 VAB_FOCUS_PATH = "client/vab-focus.js"
 PROPERTY_FOCUS_PATH = "client/property-accessibility-focus.js"
 SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
-QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH)
+QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH, DENTAL_67_GUIDANCE_PATH)
 SCRIPT_PATHS = (
     "client/capabilities.js",
     "client/pilot-surface.js",
