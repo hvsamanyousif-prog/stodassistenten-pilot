@@ -38,18 +38,16 @@
   ];
   const INVOICED_WORKER = [
     /\begenanställd\b/i,
-    /\bfaktureringsföretag\w*\b/i,
-    /\bfakturerar\b.{0,35}\b(?:via|genom)\b.{0,35}\b(?:företag|bolag)\b/i,
+    /\bfakturerings(?:företag|bolag)\w*\b/i,
+    /\bfakturerar\b.{0,35}\b(?:via|genom)\b.{0,35}\bfakturerings(?:företag|bolag)\w*\b/i,
     /شركة\s+(?:فواتير|فوترة)|أعمل\s+عبر\s+شركة\s+(?:فواتير|فوترة)/i,
     /شرکت\s+(?:صدور\s+فاکتور|فاکتورینگ)|از\s+طریق\s+شرکت.{0,20}فاکتور/i,
   ];
   const SELF_EMPLOYED = [
     /\bdriver\s+eget\b/i,
-    /\beget\s+företag\b/i,
+    /\b(?:mitt\s+)?eget\s+(?:företag|aktiebolag|bolag)\b/i,
     /\begenföretag(?:are)?\b/i,
     /\benskild\s+firma\b/i,
-    /\bmitt\s+företag\b/i,
-    /\bmin\s+firma\b/i,
     /أعمل\s+لحسابي|أدير\s+شركتي|صاحب\s+(?:شركة|عمل)/i,
     /خوداشتغال|کسب\s*و\s*کار\s+خودم|شرکت\s+خودم|صاحب\s+کسب\s*و\s*کار/i,
   ];
