@@ -20,7 +20,7 @@ for path in paths:
             raise AssertionError(f"duplicate scenario id: {cid}")
         cases[cid] = case
 
-assert len(cases) >= 65, f"expected at least 65 cases after v22, got {len(cases)}"
+assert len(cases) >= 66, f"expected at least 66 cases after v23, got {len(cases)}"
 
 locks = {
     "lab-young-post-study-no-job-v20-01": {
@@ -71,6 +71,29 @@ locks = {
             "do_not_repeat_an_income_change_question_when_the_coarse_shell_context_already_establishes_that_fact",
         ],
     },
+    "lab-private-basic-needs-economic-assistance-v23-01": {
+        "expected_support_areas": [
+            "municipal_economic_assistance_candidate",
+            "individual_assessment",
+            "right_to_apply_and_receive_decision",
+        ],
+        "must_not_claim": [
+            "low_income_or_illness_alone_guarantees_economic_assistance",
+            "a_simplified_trial_calculation_is_a_municipal_decision",
+            "illness_alone_removes_all_activity_or_document_requirements",
+            "the_product_can_guarantee_amount_or_payment_date",
+            "the_raw_situation_text_exact_income_bank_data_or_health_details_should_be_put_in_the_handoff_url_or_feedback",
+        ],
+        "expected_questions": [
+            "q_none_when_coarse_basic_need_or_housing_context_is_already_known",
+        ],
+        "expected_next_actions": [
+            "contact_social_services_in_the_users_municipality_to_apply",
+            "ask_the_municipality_which_household_housing_income_asset_and_expense_documents_are_required",
+            "treat_the_socialstyrelsen_trial_calculation_as_orientation_not_a_decision",
+            "do_not_block_an_application_because_the_public_pilot_is_unsure",
+        ],
+    },
 }
 
 for cid, fields in locks.items():
@@ -80,4 +103,4 @@ for cid, fields in locks.items():
         for token in tokens:
             assert token in case[field], f"{cid}: missing locked {field} token {token}"
 
-print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v22 semantics locked)")
+print(f"recent learning memory: OK ({len(cases)} canonical scenarios; v20-v23 semantics locked)")
