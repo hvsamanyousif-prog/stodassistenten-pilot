@@ -1,0 +1,64 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic BRF/property-actor regression for the single Stödassistenten scenario laboratory. It separates the resident's initial application from the optional owner takeover route for already granted cash support in common areas, and stores no real person or community story.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-property-housing-adaptation-owner-takeover",
+      "observation": "A housing association or landlord is not the initial applicant by default. A multifamily-property owner can, after a resident has been granted a cash housing-adaptation grant, voluntarily agree with the resident to take over the right to the grant for measures adjacent to the apartment in common areas. The route does not apply to measures inside the apartment, requires written evidence before payment, and affects later repair/restoration routes.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/hyresvardbostadsrattforening-kan-overta-ratten-till-bidrag/",
+        "https://www.boverket.se/sv/babhandboken/bostadsanpassningsbidrag/handlaggning/guide-for-handlaggning/Fastighetsagarens-medgivande/",
+        "https://www.boverket.se/sv/babhandboken/aterstallningsbidrag/villkor-for-aterstallningsbidrag/vem-kan-beviljas-aterstallningsbidrag/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-property-housing-adaptation-takeover-v17-01",
+      "actor_type": "property_actor",
+      "story": "Jag sitter i styrelsen för en bostadsrättsförening. En medlem behöver en ramp och dörröppnare vid entrén. Vi är osäkra på om föreningen ska söka bostadsanpassningsbidraget från början, om vi kan ta över bidraget senare och vad det betyder för ansvar, reparation och eventuell återställning.",
+      "expected_support_areas": [
+        "housing_adaptation_owner_role",
+        "resident_initial_applicant_boundary",
+        "common_area_vs_inside_apartment",
+        "owner_consent_and_restoration_undertaking",
+        "voluntary_takeover_after_granted_cash_support",
+        "written_takeover_evidence_before_payment",
+        "maintenance_repair_restoration_consequences",
+        "municipal_process_route"
+      ],
+      "must_not_claim": [
+        "brf_or_landlord_is_initial_applicant_by_default",
+        "property_owner_can_take_over_before_resident_has_been_granted_cash_housing_adaptation_support",
+        "owner_takeover_applies_to_measures_inside_the_apartment",
+        "owner_takeover_is_automatic_or_can_be_done_unilaterally",
+        "written_takeover_evidence_is_never_needed_before_municipal_payment",
+        "owner_who_took_over_the_grant_is_guaranteed_a_later_repair_grant",
+        "brf_can_always_get_restoration_support_for_measures_inside_a_member_owned_apartment",
+        "owner_consent_or_takeover_itself_proves_the_residents_eligibility"
+      ],
+      "expected_questions": [
+        "q_is_measure_inside_apartment_or_in_adjacent_common_area",
+        "q_has_resident_already_received_positive_municipal_cash_grant_decision",
+        "q_is_owner_being_asked_only_for_consent_or_considering_formal_takeover",
+        "q_are_resident_and_owner_both_willing_to_make_takeover_agreement",
+        "q_is_question_about_execution_payment_repair_or_later_restoration"
+      ],
+      "expected_next_actions": [
+        "keep_person_with_functional_need_as_initial_applicant_and_separate_owner_consent_from_takeover",
+        "if_no_granted_cash_support_yet_handle_required_owner_consent_without_treating_owner_as_applicant",
+        "if_cash_support_is_granted_for_adjacent_common_area_and_both_parties_agree_verify_takeover_documentation_with_municipality_before_execution_and_payment",
+        "do_not_use_takeover_route_for_measures_inside_the_apartment",
+        "separate_later_repair_and_restoration_questions_from_original_grant_and_verify_current_boverket_rules",
+        "contact_responsible_municipality_for_case_specific_process_without_promising_eligibility"
+      ],
+      "source_requirements": [
+        "Boverket_current_owner_takeover_guidance",
+        "Boverket_current_consent_guidance",
+        "Boverket_current_restoration_guidance",
+        "responsible_municipality"
+      ]
+    }
+  ]
+}
