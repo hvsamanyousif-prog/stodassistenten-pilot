@@ -3,6 +3,7 @@ const api = require('./unemployed-sick-guidance.js');
 
 assert(api.detect('Jag är arbetslös och blev sjuk idag, vem ska jag sjukanmäla mig till?'));
 assert(api.detect('Jag är inskriven hos Arbetsförmedlingen och är sjukskriven nu'));
+assert(api.detect('Jag går i program hos Arbetsförmedlingen och har varit sjuk i över 30 dagar'));
 assert(api.detect('أنا عاطل عن العمل ومرضت اليوم'));
 assert(api.detect('من بیمار شده‌ام و جویای کار هستم'));
 
@@ -14,16 +15,23 @@ assert(!api.detect('Mitt företag vill lämna anbud'));
 
 const href = api.handoffHref('sv');
 assert.strictEqual(href, 'person-pilot.html?actor_type=private_person&focus=unemployed_sick&lang=sv');
-for (const forbidden of ['story=', 'situation=', 'diagnosis=', 'sgi=', 'salary=', 'employer=', 'medical=', 'personnummer=']) {
+for (const forbidden of ['story=', 'situation=', 'diagnosis=', 'sgi=', 'salary=', 'employer=', 'medical=', 'personnummer=', 'duration=', 'sickdays=']) {
   assert(!href.toLowerCase().includes(forbidden));
 }
 
 assert.strictEqual(api.nextStep({program:'', fullyUnemployed:'', activeUntilSick:''}), 'ask_program');
-assert.strictEqual(api.nextStep({program:'yes', fullyUnemployed:'', activeUntilSick:''}), 'program_route');
-assert.strictEqual(api.nextStep({program:'unsure', fullyUnemployed:'', activeUntilSick:''}), 'verify_program_status');
-assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'', activeUntilSick:''}), 'ask_employment_context');
-assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'no', activeUntilSick:''}), 'mixed_employment_route');
-assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'unsure', activeUntilSick:''}), 'verify_employment_context');
+assert.strictEqual(api.nextStep({program:'yes'}), 'program_route');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes'}), 'ask_long_program_sick');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'no'}), 'program_route');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'unsure'}), 'verify_long_program_transition');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'yes'}), 'ask_program_ended');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'yes', programEnded:'yes'}), 'post_program_fk_route');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'yes', programEnded:'no'}), 'long_program_still_enrolled');
+assert.strictEqual(api.nextStep({program:'yes', longCheckRequested:'yes', longProgramSick:'yes', programEnded:'unsure'}), 'verify_program_end_status');
+assert.strictEqual(api.nextStep({program:'unsure'}), 'verify_program_status');
+assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:''}), 'ask_employment_context');
+assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'no'}), 'mixed_employment_route');
+assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'unsure'}), 'verify_employment_context');
 assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'yes', activeUntilSick:''}), 'ask_active_until_sick');
 assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'yes', activeUntilSick:'yes'}), 'jobseeker_route');
 assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'yes', activeUntilSick:'no'}), 'verify_jobseeker_requirement');
@@ -31,4 +39,5 @@ assert.strictEqual(api.nextStep({program:'no', fullyUnemployed:'yes', activeUnti
 
 assert(new URL(api.FK_JOBSEEKER_URL).hostname.endsWith('forsakringskassan.se'));
 assert(new URL(api.AF_PROGRAM_URL).hostname.endsWith('arbetsformedlingen.se'));
-console.log('unemployed sick guidance: OK');
+assert(new URL(api.FK_PROGRAM_SICK_URL).hostname.endsWith('forsakringskassan.se'));
+console.log('unemployed sick guidance v49: OK');
