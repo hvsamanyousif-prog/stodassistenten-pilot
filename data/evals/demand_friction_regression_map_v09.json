@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility, current application state or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-foundation-find-open-application-v01",
+      "product_miss": "The canonical source registry already marked Länsstyrelsernas foundation search as special handling, but the product had no machine-readable source-family boundary preventing a registered-foundation discovery hit from being promoted into a currently open opportunity, eligibility claim or public person-level contact route.",
+      "fix_or_guardrail": "Reference the canonical source registry through a non-truth source-universe overlay, classify the registry as discovery-only and non-authoritative for opportunity state, block board/auditor/signatory and raw registry fields from public reuse, require current primary-provider verification before open/planned/expired or eligibility claims, and lock the boundary with v28 private-person and association regressions plus CI.",
+      "regression_case_ids": [
+        "lab-private-foundation-discovery-boundary-v28-01",
+        "lab-association-foundation-open-window-v28-02"
+      ]
+    }
+  ]
+}
