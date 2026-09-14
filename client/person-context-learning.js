@@ -21,10 +21,10 @@
       qValue:'Har småhuset ett värdeår före 1990? Värdeår är uppgiften vid fastighetstaxeringen och är inte alltid samma som byggåret.',
       qDistrict:'Är huset redan anslutet till fjärrvärmenät?',
       qMeasure:'Vad planerar du främst?',
-      qTiming:'När började eller ska själva installationen/åtgärden börja?',
+      qTiming:'Vilka tidsuppgifter gäller för materialet du vill räkna med och själva åtgärden?',
       yes:'Ja',no:'Nej',unsure:'Osäker',
       heating:'Värmesystem / värmepump',ventilation:'Ventilation',envelope:'Klimatskärm, till exempel isolering/fönster',otherMeasure:'Annat / osäker',
-      notStarted:'Inte påbörjad ännu',transition:'Påbörjad 17 okt 2025–31 aug 2026',recent:'Påbörjad 1 sep 2026 eller senare',unknownTiming:'Osäker på datum',
+      notStarted:'Åtgärden är inte påbörjad; materialet är inte beställt eller beställdes 17 okt 2025 eller senare',transition:'Material beställt 17 okt 2025 eller senare; åtgärden påbörjad 17 okt 2025–31 aug 2026',recent:'Material beställt 17 okt 2025 eller senare; åtgärden påbörjad 1 sep 2026 eller senare',earlyOrder:'Materialet jag vill räkna med beställdes före 17 okt 2025',unknownTiming:'Osäker på beställnings- eller startdatum',
       ownerNoTitle:'Använd inte Villaeffekten som bekräftad väg här',
       ownerNoBody:'Ett nej betyder att den här vägen inte ska presenteras som bekräftad kandidat utifrån nuvarande uppgifter. Boverkets aktuella villkor kräver ägande och att du stadigvarande bor i småhuset senast när du begär utbetalning. Det betyder inte att andra energiråd eller stöd saknas.',
       ownerUnsureTitle:'Bekräfta ägande och boende vid utbetalning först',
@@ -39,10 +39,12 @@
       districtUnsureBody:'Den faktan kan ändra Villaeffekten-vägen och ska inte antas från uppvärmningskostnad eller hustyp.',
       measureUnsureTitle:'Välj inte stöd innan den konkreta åtgärden är känd',
       measureUnsureBody:'Olika åtgärder och produkter har olika krav. Den kostnadsfria kommunala energi- och klimatrådgivningen kan hjälpa dig att ringa in en lämplig åtgärd innan bidragsvillkoren kontrolleras.',
+      earlyOrderTitle:'Skilj materialets beställningsdatum från när arbetet började',
+      earlyOrderBody:'Nuvarande regel anger att bidrag endast får lämnas för kostnader för material som beställts tidigast den 17 oktober 2025. Ett senare startdatum gör inte material som beställdes tidigare stödberättigat. Om du har flera beställningar, skilj dem åt och kontrollera varje relevant materialkostnad mot aktuell primärkälla.',
       candidateTitle:'Villaeffekten är värd att verifiera – men det här är inte ett beslut',
-      candidateBody:'Kontrollera den exakta åtgärden och produkten mot Boverkets aktuella krav. Ta fram tekniskt produktunderlag samt offert, order eller faktura där material och arbete går att skilja åt. Kontrollera också aktuella tidsregler utifrån när åtgärden faktiskt påbörjades. Länsstyrelsens prövning och tillgängliga medel får inte ersättas av ett beräknat belopp i Stödassistenten.',
+      candidateBody:'Kontrollera den exakta åtgärden och produkten mot Boverkets aktuella krav. Ta fram tekniskt produktunderlag samt offert, order eller faktura där material och arbete går att skilja åt. Kontrollera också tidsreglerna separat för när materialet beställdes och när själva åtgärden påbörjades. Länsstyrelsens prövning och tillgängliga medel får inte ersättas av ett beräknat belopp i Stödassistenten.',
       transitionNote:'Du har angett att åtgärden började före 1 september 2026. Boverket har en särskild övergångsregel för den perioden; kontrollera den aktuella tidsfristen direkt på primärkällan innan du väntar med ansökan.',
-      timingUnsureNote:'Exakt startdatum kan ändra sista ansökningsdag. Bekräfta datumet innan du drar slutsats om att ansökan fortfarande är i tid.',
+      timingUnsureNote:'Materialets beställningsdatum och åtgärdens exakta startdatum kan påverka olika delar av vägen. Bekräfta båda innan du drar slutsats om kostnad eller tidsfrist.',
       source:'Boverket: Villaeffekten',advice:'Energimyndigheten: kommunal energi- och klimatrådgivning'
     },
     ar:{
@@ -53,10 +55,10 @@
       qValue:'هل قيمة سنة العقار (värdeår) قبل 1990؟ هذه قيمة ضريبية وليست دائماً سنة البناء نفسها.',
       qDistrict:'هل المنزل متصل بالفعل بشبكة التدفئة المركزية (fjärrvärme)؟',
       qMeasure:'ما الإجراء الرئيسي الذي تخطط له؟',
-      qTiming:'متى بدأ أو سيبدأ التركيب أو الإجراء نفسه؟',
+      qTiming:'ما تواريخ طلب المواد التي تريد احتسابها وبدء الإجراء نفسه؟',
       yes:'نعم',no:'لا',unsure:'غير متأكد',
       heating:'نظام تدفئة / مضخة حرارية',ventilation:'تهوية',envelope:'غلاف المبنى مثل العزل أو النوافذ',otherMeasure:'شيء آخر / غير متأكد',
-      notStarted:'لم يبدأ بعد',transition:'بدأ بين 17 أكتوبر 2025 و31 أغسطس 2026',recent:'بدأ في 1 سبتمبر 2026 أو بعده',unknownTiming:'غير متأكد من التاريخ',
+      notStarted:'لم يبدأ الإجراء؛ المواد لم تُطلب أو طُلبت في 17 أكتوبر 2025 أو بعده',transition:'المواد طُلبت في 17 أكتوبر 2025 أو بعده؛ بدأ الإجراء بين 17 أكتوبر 2025 و31 أغسطس 2026',recent:'المواد طُلبت في 17 أكتوبر 2025 أو بعده؛ بدأ الإجراء في 1 سبتمبر 2026 أو بعده',earlyOrder:'المواد التي أريد احتسابها طُلبت قبل 17 أكتوبر 2025',unknownTiming:'غير متأكد من تاريخ الطلب أو البدء',
       ownerNoTitle:'لا تعرض Villaeffekten هنا كمسار مؤكد',
       ownerNoBody:'تعني الإجابة بلا أن هذا المسار لا ينبغي عرضه كخيار مؤكد بالاعتماد على المعلومات الحالية. تشترط قواعد Boverket الحالية الملكية والسكن الدائم في المنزل على أبعد تقدير عند طلب صرف الدعم. هذا لا يعني عدم وجود نصائح أو مسارات طاقة أخرى.',
       ownerUnsureTitle:'تحقق أولاً من الملكية والسكن عند طلب الصرف',ownerUnsureBody:'قد تغيّر هذه المعلومة المسار. تحقق من شرط الملكية ومن أنك ستسكن بشكل دائم في المنزل على أبعد تقدير عند طلب الصرف قبل متابعة التخطيط.',
@@ -65,9 +67,11 @@
       districtYesTitle:'لا تخلط بين اتصال حالي بالتدفئة المركزية واتصال جديد مخطط له',districtYesBody:'المنزل المتصل بالفعل بالشبكة له حد مختلف عن منزل يفكر في اتصال جديد كإجراء. تحقق من القاعدة الحالية لدى Boverket.',
       districtUnsureTitle:'تأكد هل المنزل متصل بالفعل بالتدفئة المركزية',districtUnsureBody:'هذه المعلومة قد تغيّر المسار ولا ينبغي استنتاجها من تكلفة التدفئة أو نوع المنزل.',
       measureUnsureTitle:'لا تختَر المنحة قبل معرفة الإجراء المحدد',measureUnsureBody:'للإجراءات والمنتجات شروط مختلفة. يمكن للاستشارة البلدية المجانية والمستقلة مساعدتك في تحديد الإجراء قبل فحص شروط المنحة.',
-      candidateTitle:'يستحق مسار Villaeffekten التحقق – لكنه ليس قراراً',candidateBody:'طابق الإجراء والمنتج المحددين مع شروط Boverket الحالية. جهّز مواصفات المنتج وعرض السعر أو الطلب أو الفاتورة بحيث يمكن فصل المواد عن العمل. تحقق أيضاً من قواعد الوقت بحسب تاريخ بدء الإجراء الفعلي. لا تعتبر مبلغاً محسوباً ضماناً لقرار أو دفع.',
+      earlyOrderTitle:'افصل تاريخ طلب المواد عن تاريخ بدء العمل',
+      earlyOrderBody:'تنص القاعدة الحالية على أن الدعم لا يُمنح إلا لتكاليف المواد المطلوبة في 17 أكتوبر 2025 أو بعده. بدء العمل لاحقاً لا يجعل المواد المطلوبة قبل ذلك مؤهلة. إذا كانت لديك طلبات متعددة فافصل بينها وتحقق من كل تكلفة مواد ذات صلة من المصدر الأساسي الحالي.',
+      candidateTitle:'يستحق مسار Villaeffekten التحقق – لكنه ليس قراراً',candidateBody:'طابق الإجراء والمنتج المحددين مع شروط Boverket الحالية. جهّز مواصفات المنتج وعرض السعر أو الطلب أو الفاتورة بحيث يمكن فصل المواد عن العمل. تحقق من قواعد الوقت بشكل منفصل لتاريخ طلب المواد وتاريخ بدء الإجراء نفسه. لا تعتبر مبلغاً محسوباً ضماناً لقرار أو دفع.',
       transitionNote:'ذكرت أن الإجراء بدأ قبل 1 سبتمبر 2026. توجد قاعدة انتقالية لهذه الفترة؛ تحقق من الموعد الحالي مباشرة من المصدر قبل تأخير الطلب.',
-      timingUnsureNote:'قد يغيّر تاريخ البدء الدقيق الموعد النهائي. أكد التاريخ قبل افتراض أن الطلب ما زال في الوقت.',
+      timingUnsureNote:'قد يؤثر تاريخ طلب المواد وتاريخ بدء الإجراء في أجزاء مختلفة من المسار. أكد التاريخين قبل الاستنتاج بشأن التكلفة أو الموعد النهائي.',
       source:'Boverket: Villaeffekten',advice:'Energimyndigheten: استشارة الطاقة والمناخ البلدية'
     },
     fa:{
@@ -78,10 +82,10 @@
       qValue:'آیا värdeår ملک قبل از 1990 است؟ این یک داده مالیاتی است و همیشه با سال ساخت یکسان نیست.',
       qDistrict:'آیا خانه همین حالا به شبکه گرمایش شهری (fjärrvärme) وصل است؟',
       qMeasure:'بیشتر چه اقدامی را برنامه‌ریزی کرده‌اید؟',
-      qTiming:'نصب یا اقدام اصلی چه زمانی شروع شده یا خواهد شد؟',
+      qTiming:'برای موادی که می‌خواهید محاسبه شوند و برای شروع خود اقدام چه تاریخ‌هایی صدق می‌کند؟',
       yes:'بله',no:'نه',unsure:'مطمئن نیستم',
       heating:'سیستم گرمایش / پمپ حرارتی',ventilation:'تهویه',envelope:'پوسته ساختمان، مانند عایق یا پنجره',otherMeasure:'مورد دیگر / نامشخص',
-      notStarted:'هنوز شروع نشده',transition:'بین 17 اکتبر 2025 تا 31 اوت 2026 شروع شده',recent:'از 1 سپتامبر 2026 یا بعد شروع شده',unknownTiming:'تاریخ را نمی‌دانم',
+      notStarted:'اقدام هنوز شروع نشده؛ مواد سفارش داده نشده یا در 17 اکتبر 2025 یا بعد سفارش داده شده',transition:'مواد در 17 اکتبر 2025 یا بعد سفارش داده شده؛ اقدام بین 17 اکتبر 2025 تا 31 اوت 2026 شروع شده',recent:'مواد در 17 اکتبر 2025 یا بعد سفارش داده شده؛ اقدام از 1 سپتامبر 2026 یا بعد شروع شده',earlyOrder:'موادی که می‌خواهم محاسبه شوند پیش از 17 اکتبر 2025 سفارش داده شده‌اند',unknownTiming:'از تاریخ سفارش یا شروع مطمئن نیستم',
       ownerNoTitle:'Villaeffekten را در این وضعیت مسیر تأییدشده نشان ندهید',ownerNoBody:'پاسخ منفی یعنی با اطلاعات فعلی نباید این مسیر به‌عنوان گزینه تأییدشده نمایش داده شود. طبق شرایط فعلی Boverket باید مالک خانه باشید و حداکثر هنگام درخواست پرداخت، سکونت دائم در آن داشته باشید. این به معنی نبودن راهنمایی یا مسیر انرژی دیگر نیست.',
       ownerUnsureTitle:'ابتدا مالکیت و سکونت هنگام پرداخت را روشن کنید',ownerUnsureBody:'این اطلاعات می‌تواند مسیر را تغییر دهد. پیش از ادامه برنامه‌ریزی بررسی کنید که شرط مالکیت را دارید و حداکثر تا زمان درخواست پرداخت در خانه سکونت دائم خواهید داشت.',
       valueNoTitle:'با این värdeår نباید Villaeffekten به عنوان گزینه تأییدشده نمایش داده شود',valueNoBody:'قواعد فعلی محدوده‌ای برای värdeår دارد. داده مالیاتی را بررسی کنید و فقط از سال ساخت یا سن خانه نتیجه نگیرید.',
@@ -89,9 +93,11 @@
       districtYesTitle:'اتصال فعلی به fjärrvärme را با اتصال جدید برنامه‌ریزی‌شده یکی نگیرید',districtYesBody:'خانه‌ای که هم‌اکنون به شبکه وصل است با خانه‌ای که اتصال جدید را به عنوان اقدام در نظر دارد، مرز متفاوتی دارد. قاعده فعلی Boverket را بررسی کنید.',
       districtUnsureTitle:'تأیید کنید خانه اکنون به fjärrvärme وصل است یا نه',districtUnsureBody:'این واقعیت می‌تواند مسیر را تغییر دهد و نباید از هزینه گرمایش یا نوع خانه حدس زده شود.',
       measureUnsureTitle:'پیش از مشخص شدن اقدام دقیق، کمک را انتخاب نکنید',measureUnsureBody:'اقدام‌ها و محصولات شرایط متفاوت دارند. مشاوره رایگان و مستقل انرژی و اقلیم شهرداری می‌تواند قبل از بررسی شرایط کمک، اقدام مناسب را روشن کند.',
-      candidateTitle:'Villaeffekten ارزش بررسی دارد – اما این تصمیم نیست',candidateBody:'اقدام و محصول دقیق را با شرایط فعلی Boverket تطبیق دهید. مشخصات فنی و پیشنهاد قیمت، سفارش یا فاکتوری آماده کنید که مواد و کار را جدا نشان دهد. قواعد زمانی را نیز بر اساس تاریخ شروع واقعی بررسی کنید. مبلغ محاسبه‌شده را تضمین تصمیم یا پرداخت ندانید.',
+      earlyOrderTitle:'تاریخ سفارش مواد را از تاریخ شروع کار جدا نگه دارید',
+      earlyOrderBody:'قاعده فعلی می‌گوید کمک فقط برای هزینه موادی قابل پرداخت است که زودتر از 17 اکتبر 2025 سفارش داده نشده باشند. شروع دیرتر کار، موادی را که پیش از آن سفارش شده‌اند واجد شرایط نمی‌کند. اگر چند سفارش دارید، آن‌ها را جدا کنید و هر هزینه مرتبط را با منبع اصلی فعلی بررسی کنید.',
+      candidateTitle:'Villaeffekten ارزش بررسی دارد – اما این تصمیم نیست',candidateBody:'اقدام و محصول دقیق را با شرایط فعلی Boverket تطبیق دهید. مشخصات فنی و پیشنهاد قیمت، سفارش یا فاکتوری آماده کنید که مواد و کار را جدا نشان دهد. قواعد زمانی را برای تاریخ سفارش مواد و تاریخ شروع خود اقدام جداگانه بررسی کنید. مبلغ محاسبه‌شده را تضمین تصمیم یا پرداخت ندانید.',
       transitionNote:'گفته‌اید اقدام پیش از 1 سپتامبر 2026 شروع شده است. برای این دوره قاعده انتقالی وجود دارد؛ پیش از تأخیر در درخواست، مهلت فعلی را مستقیم از منبع اصلی بررسی کنید.',
-      timingUnsureNote:'تاریخ دقیق شروع می‌تواند مهلت درخواست را تغییر دهد. قبل از نتیجه‌گیری درباره به‌موقع بودن درخواست، تاریخ را تأیید کنید.',
+      timingUnsureNote:'تاریخ سفارش مواد و تاریخ دقیق شروع اقدام می‌تواند بخش‌های متفاوت مسیر را تغییر دهد. پیش از نتیجه‌گیری درباره هزینه یا مهلت، هر دو را تأیید کنید.',
       source:'Boverket: Villaeffekten',advice:'Energimyndigheten: مشاوره انرژی و اقلیم شهرداری'
     }
   };
@@ -140,6 +146,7 @@
       if(!state.measure) return 'q_measure';
       if(state.measure==='unsure') return 'r_measure_unsure';
       if(!state.timing) return 'q_timing';
+      if(state.timing==='early_order') return 'r_order_early';
       return 'r_candidate';
     }
     function choice(label,value,field){
@@ -202,7 +209,8 @@
       if(step==='r_district_unsure') return result(c.districtUnsureTitle,c.districtUnsureBody);
       if(step==='q_measure') return group(c.qMeasure,'measure',[[c.heating,'heating'],[c.ventilation,'ventilation'],[c.envelope,'envelope'],[c.otherMeasure,'unsure']]);
       if(step==='r_measure_unsure') return result(c.measureUnsureTitle,c.measureUnsureBody);
-      if(step==='q_timing') return group(c.qTiming,'timing',[[c.notStarted,'not_started'],[c.transition,'transition'],[c.recent,'recent'],[c.unknownTiming,'unsure']]);
+      if(step==='q_timing') return group(c.qTiming,'timing',[[c.notStarted,'not_started'],[c.transition,'transition'],[c.recent,'recent'],[c.earlyOrder,'early_order'],[c.unknownTiming,'unsure']]);
+      if(step==='r_order_early') return result(c.earlyOrderTitle,c.earlyOrderBody);
       return result(c.candidateTitle,c.candidateBody,state.timing==='transition'?c.transitionNote:(state.timing==='unsure'?c.timingUnsureNote:null));
     }
     render();

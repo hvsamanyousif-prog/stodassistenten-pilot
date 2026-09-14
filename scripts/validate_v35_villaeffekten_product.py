@@ -21,6 +21,12 @@ assert support["verification"]["status"] == "NEEDS_REVIEW"
 assert support["verification"]["human_review_required"] is True
 assert support["verification"]["last_verified_at"] is None
 assert support["verification"]["material_fields_verified"] == []
+material_order_rule = next(
+    rule for rule in support["eligibility"]["conditions"]
+    if rule["rule_id"] == "villaeffekten.material_order_date"
+)
+assert material_order_rule["value"] == "2025-10-17"
+assert "riksdagen.se" in material_order_rule["source_url"]
 
 shell = SHELL.read_text(encoding="utf-8")
 person = PERSON.read_text(encoding="utf-8")
@@ -49,6 +55,9 @@ for token in [
     "qMeasure",
     "qTiming",
     "senast när du begär utbetalning",
+    "earlyOrder",
+    "early_order",
+    "17 okt 2025",
     "role','group'",
     "aria-label",
     "aria-pressed",
@@ -60,8 +69,11 @@ for token in [
 
 # Information-gain order must fail closed before deeper questions when a boundary changes the path.
 assert person.index("if(!state.owner)") < person.index("if(!state.valueYear)") < person.index("if(!state.district)") < person.index("if(!state.measure)") < person.index("if(!state.timing)")
-for branch in ["r_owner_no", "r_owner_unsure", "r_value_no", "r_value_unsure", "r_district_yes", "r_district_unsure", "r_measure_unsure"]:
+for branch in ["r_owner_no", "r_owner_unsure", "r_value_no", "r_value_unsure", "r_district_yes", "r_district_unsure", "r_measure_unsure", "r_order_early"]:
     assert branch in person, f"fail-closed branch missing: {branch}"
+assert "state.timing==='early_order'" in person
+assert "materialet beställdes" in person.lower()
+assert "när själva åtgärden påbörjades" in person.lower()
 
 # No new client-side eligibility engine or raw data sink.
 serialized_runtime = (shell + "\n" + person).lower()
@@ -76,6 +88,7 @@ expected_ids = {
     "lab-nonowner-villaeffekten-failclosed-v35-02",
     "lab-homeowner-villaeffekten-timing-docs-budget-v35-03",
     "lab-owner-future-residence-villaeffekten-v35-04",
+    "lab-villaeffekten-material-order-start-split-v35-05",
 }
 assert set(cases) == expected_ids
 locks = {
@@ -92,11 +105,18 @@ locks = {
         "thirty_percent_applies_to_the_entire_contractor_invoice",
         "submission_reserves_or_guarantees_budget",
         "unknown_start_date_is_safe_to_ignore_for_deadline_risk",
+        "work_start_date_alone_is_enough_to_decide_material_cost_eligibility",
     ],
     "lab-owner-future-residence-villaeffekten-v35-04": [
         "not_permanently_resident_on_application_day_always_disqualifies_villaeffekten",
         "stating_future_permanent_residence_proves_final_eligibility_or_payment",
         "future_residence_allows_skipping_value_year_district_heating_measure_or_timing_checks",
+    ],
+    "lab-villaeffekten-material-order-start-split-v35-05": [
+        "work_started_after_2025_10_17_makes_material_ordered_before_2025_10_17_eligible",
+        "material_order_date_and_measure_start_date_are_the_same_legal_timing_fact",
+        "a_quote_date_or_invoice_date_can_be_assumed_to_equal_the_material_order_date",
+        "one_early_material_order_proves_all_other_material_orders_are_ineligible",
     ],
 }
 for cid, tokens in locks.items():
@@ -113,7 +133,9 @@ assert signal["current_product_coverage_gap"]["score"] == 5
 assert "discovery" in signal["truth_rule"].lower()
 assert "verify" in signal["truth_rule"].lower()
 assert any("mitsubishielectric.se" in url or "vrmepumpsexperterna" in url for url in signal["discovery_sources"])
-assert all("boverket.se" in url or "energimyndigheten.se" in url for url in signal["primary_sources"])
+allowed_primary_hosts = ("boverket.se", "energimyndigheten.se", "riksdagen.se")
+assert all(any(host in url for host in allowed_primary_hosts) for url in signal["primary_sources"])
+assert any("riksdagen.se" in url for url in signal["primary_sources"])
 
 mapping_pack = json.loads((EVAL / "demand_friction_regression_map_v15.json").read_text(encoding="utf-8"))
 assert len(mapping_pack["mappings"]) == 1
@@ -123,6 +145,8 @@ assert set(mapping["regression_case_ids"]) == expected_ids
 assert "one product" in mapping["fix_or_guardrail"].lower()
 assert "raw story" in mapping["fix_or_guardrail"].lower()
 assert "payment-request timing boundary" in mapping["fix_or_guardrail"].lower()
+assert "material-order date" in mapping["fix_or_guardrail"].lower()
+assert "measure-start date" in mapping["fix_or_guardrail"].lower()
 
 # v34 and v35 must coexist as one learning memory: truth boundaries + public consumption.
 v34 = json.loads((EVAL / "scenario_lab_websignals_v34.json").read_text(encoding="utf-8"))
@@ -150,4 +174,4 @@ def assert_no_forbidden_field_keys(value, path="root"):
 
 assert_no_forbidden_field_keys({"signal": signal, "cases": list(cases.values())})
 
-print("Villaeffekten v35 product guard: OK (same shell/person module; privacy, residence timing, information-gain, source and review gates locked)")
+print("Villaeffekten v35 product guard: OK (same shell/person module; privacy, residence timing, material-order/start split, source and review gates locked)")
