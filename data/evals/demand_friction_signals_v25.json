@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Qualitative demand/friction intelligence for the single Stödassistenten learning system. Scores are prioritization signals, not measured search volumes and not proof of eligibility, amount, deadlines or application outcome. Forum phrasing is discovery-only; student-finance facts require current CSN primary-source verification.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-student-csn-weeks-summer-v01",
+      "actor_types": ["student", "new_graduate"],
+      "natural_language_queries": [
+        "hur många CSN-veckor har jag kvar",
+        "räknas deltidsstudier som lika många CSN-veckor",
+        "jag fick inget sommarjobb kan jag läsa sommarkurs och få CSN",
+        "får jag CSN hela sommaren om jag kommer in på en sommarkurs",
+        "jag har redan pluggat flera år räcker veckorna till vidare studier",
+        "var ser jag använda och kvarvarande veckor hos CSN",
+        "كم أسبوعا من دعم الدراسة CSN بقي لي",
+        "إذا درست دورة صيفية هل أحصل على CSN تلقائيا طوال الصيف",
+        "چند هفته CSN برایم باقی مانده و آیا دوره تابستانی از آن کم می‌کند"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Questions about remaining study-finance weeks, part-time conversion and summer financing recur naturally among students planning further study or replacing missing summer work. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The user must combine education level, study pace, used/remaining weeks, summer-course eligibility, registration and sometimes half-year income effects. A generic student path that asks broad money/children/health/housing questions does not resolve the route-changing student-finance facts efficiently."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "Incorrect assumptions can lead a student to plan studies around weeks they do not have, misunderstand part-time use, or expect summer financing before the course and registration conditions are met."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "CSN separates general week limits, personal remaining weeks on Mina sidor, summer-study conditions, study pace and income/fribelopp guidance across several official pages and logged-in information."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Terms such as studiemedel, använda veckor, studietakt, sammanhängande veckor and fribelopp are easy to conflate, especially when the user starts from a practical problem such as no summer job rather than from a benefit name."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A safe route should identify education level and planned pace/period, then send the user to current CSN guidance and Mina sidor for personal week balance instead of collecting or guessing account details."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The same misunderstandings recur around whether 240 weeks applies to everyone, how part-time study consumes weeks, whether a summer course automatically means CSN, and where remaining weeks are actually shown."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The source registry already contains CSN and the public product can retain actor_type=student, but there is no normalized CSN week/summer support record, no permanent CSN week regression, and no focused public student-finance handoff. The current general person flow can ask broad work, money, children, health and housing questions before the education-level/study-pace facts that change this route."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/sweden/comments/15en08x/csn_studiemedel_veckor/",
+        "https://www.reddit.com/r/Asksweddit/comments/1rt6czu/sommarkurser_och_csn/"
+      ],
+      "primary_sources": [
+        "https://www.csn.se/fragor-och-svar/hur-manga-veckor-kan-jag-fa-studiemedel.html",
+        "https://www.csn.se/bidrag-och-lan/studiemedel/sommarstudier-i-sverige-med-studiemedel.html"
+      ],
+      "recommended_learning_action": "Keep one person product and one truth layer. Add CSN remaining-week and summer-study cases to the canonical scenario system, normalize the current CSN facts as NEEDS_REVIEW, and later add a same-shell student-finance focus route that asks only education level and planned study pace/period before sending personal week-balance checks to Mina sidor. Do not create a student app or infer personal week balance from the public story.",
+      "truth_rule": "Forum language and qualitative scores are discovery signals, never truth. Verify week limits, summer-study conditions, study-pace effects and any income/fribelopp claim against current CSN primary sources. Personal remaining weeks must come from the user's current CSN account information, not from a prior AI answer, raw feedback or public eval data."
+    }
+  ]
+}
