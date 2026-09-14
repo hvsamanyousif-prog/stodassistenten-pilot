@@ -59,10 +59,10 @@
       weeksResultBody: 'Utbildningsnivå och studietakt påverkar hur studiemedelsveckor räknas. Ditt personliga antal använda och kvarvarande veckor finns hos CSN, inte i Stödassistenten. Använd aktuell CSN-vägledning för att förstå hur den planerade studietakten påverkar veckorna.',
       summerTitle: 'Vill du finansiera sommarstudier med studiemedel?',
       summerIntro: 'Antagning till en kurs är inte samma sak som ett beslut om studiemedel. Vi kontrollerar bara de få kurs- och registreringsfakta som kan ändra nästa steg och lämnar beslutet till CSN.',
-      qSummerType: 'Vad gäller sommarstudierna?',
-      university: 'Högskola / universitet',
-      otherStudy: 'Komvux eller annan utbildning',
-      notDecided: 'Inte bestämt ännu',
+      qSummerType: 'Har du kontrollerat att kursen eller utbildningen ger rätt till studiemedel, och vilken typ är det?',
+      university: 'Högskola / universitet – kontrollerad CSN-berättigad kurs',
+      otherStudy: 'Komvux / annan utbildning – kontrollerad CSN-berättigad utbildning',
+      notDecided: 'Jag vet inte om utbildningen ger rätt till studiemedel',
       qSummerPace: 'Är den planerade studietakten minst 50 procent i minst tre sammanhängande veckor?',
       yes: 'Ja',
       no: 'Nej',
@@ -100,7 +100,7 @@
       weeksResultBody: 'مستوى الدراسة ووتيرتها يؤثران في كيفية احتساب أسابيع studiemedel. عدد الأسابيع المستخدمة والمتبقية شخصي وموجود لدى CSN، وليس لدى Stödassistenten. استخدم إرشادات CSN الحالية لفهم أثر وتيرة الدراسة.',
       summerTitle: 'هل تريد تمويل الدراسة الصيفية عبر studiemedel؟',
       summerIntro: 'القبول في دورة ليس قراراً بمنح studiemedel. نتحقق فقط من معلومات عامة عن الدورة والتسجيل يمكن أن تغيّر الخطوة التالية، والقرار يبقى لدى CSN.',
-      qSummerType: 'ما نوع الدراسة الصيفية؟', university: 'جامعة / كلية', otherStudy: 'Komvux أو تعليم آخر', notDecided: 'لم أحدد بعد',
+      qSummerType: 'هل تحققت من أن الدورة أو التعليم يعطي حقاً في studiemedel، وما نوعه؟', university: 'جامعة – دورة تم التحقق من أنها مؤهلة لدى CSN', otherStudy: 'Komvux / تعليم آخر – تم التحقق من أهليته لدى CSN', notDecided: 'لا أعرف إن كان التعليم يعطي حقاً في studiemedel',
       qSummerPace: 'هل الدراسة المخطط لها 50 بالمئة على الأقل لمدة ثلاثة أسابيع متصلة على الأقل؟', yes: 'نعم', no: 'لا',
       qRegistration: 'هل أنت مسجل في الدورة، وللدراسة الجامعية: هل أبلغت المؤسسة CSN بأنها دورة صيفية؟',
       summerNoTitle: 'تحقق من ترتيب الدراسة لدى CSN قبل التخطيط للتمويل',
@@ -126,7 +126,7 @@
       weeksResultBody: 'سطح و سرعت تحصیل بر نحوه محاسبه هفته‌های studiemedel اثر می‌گذارد. تعداد شخصی هفته‌های استفاده‌شده و باقی‌مانده نزد CSN است، نه Stödassistenten. برای اثر سرعت تحصیل از راهنمای جاری CSN استفاده کن.',
       summerTitle: 'می‌خواهی برای تحصیل تابستانی studiemedel بگیری؟',
       summerIntro: 'پذیرفته‌شدن در یک دوره به معنی تصمیم درباره studiemedel نیست. فقط چند واقعیت کلی درباره دوره و ثبت‌نام را بررسی می‌کنیم که می‌تواند قدم بعدی را عوض کند؛ تصمیم با CSN است.',
-      qSummerType: 'تحصیل تابستانی از چه نوع است؟', university: 'دانشگاه', otherStudy: 'Komvux یا آموزش دیگر', notDecided: 'هنوز مشخص نیست',
+      qSummerType: 'آیا بررسی کرده‌ای که دوره یا آموزش حق studiemedel دارد و از چه نوعی است؟', university: 'دانشگاه – دوره‌ای که حق CSN آن بررسی شده است', otherStudy: 'Komvux / آموزش دیگر – حق CSN آن بررسی شده است', notDecided: 'نمی‌دانم این آموزش حق studiemedel دارد یا نه',
       qSummerPace: 'آیا برنامه تحصیل حداقل 50 درصد برای دست‌کم سه هفته پیوسته است؟', yes: 'بله', no: 'خیر',
       qRegistration: 'آیا در دوره ثبت‌نام شده‌ای و، برای دانشگاه، آیا مرکز آموزشی آن را به عنوان دوره تابستانی به CSN گزارش کرده است؟',
       summerNoTitle: 'پیش از برنامه‌ریزی مالی، شیوه تحصیل را با CSN بررسی کن',
@@ -214,8 +214,9 @@
 
   function nextSummer(state) {
     if (!state.studyType) return 'ask_study_type';
+    if (state.studyType === 'unsure') return 'verify_summer_setup';
     if (!state.minimum) return 'ask_minimum';
-    if (state.minimum === 'no') return 'verify_summer_setup';
+    if (state.minimum !== 'yes') return 'verify_summer_setup';
     if (!state.registration) return 'ask_registration';
     if (state.registration !== 'yes') return 'verify_summer_setup';
     return 'show_summer_next_action';
@@ -362,10 +363,10 @@
       } else {
         const step = nextSummer(state);
         const parts1 = question(c.qSummerType, [[c.university,'university','studyType'],[c.otherStudy,'other','studyType'],[c.notDecided,'unsure','studyType']]); section.append(...parts1);
-        if (state.studyType) {
+        if (state.studyType && state.studyType !== 'unsure') {
           const parts2 = question(c.qSummerPace, [[c.yes,'yes','minimum'],[c.no,'no','minimum'],[c.unsure,'unsure','minimum']]); section.append(...parts2);
         }
-        if (state.minimum && state.minimum !== 'no') {
+        if (state.minimum === 'yes') {
           const parts3 = question(c.qRegistration, [[c.yes,'yes','registration'],[c.no,'no','registration'],[c.unsure,'unsure','registration']]); section.append(...parts3);
         }
         if (step === 'verify_summer_setup') {
