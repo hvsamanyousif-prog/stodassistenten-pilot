@@ -1,0 +1,132 @@
+{
+  "support_id": "se-forsakringskassan-sjukpenning-sarskilda-fall",
+  "name": "Sjukpenning i särskilda fall efter aktivitetsersättning",
+  "category": "sickness_rehabilitation",
+  "subtype": "sickness_benefit_special_cases_after_activity_compensation",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "former_activity_compensation",
+      "turning_30_transition",
+      "low_or_no_sgi",
+      "reduced_work_capacity"
+    ],
+    "age_min": 30,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "spsf.prior_activity_compensation",
+        "field": "activity_compensation_through_month_before_age_30",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "notes": "Försäkringskassans aktuella sida anger att stödet kan vara relevant för den som haft aktivitetsersättning till och med månaden innan 30-årsdagen."
+      },
+      {
+        "rule_id": "spsf.low_or_no_sgi",
+        "field": "sickness_benefit_qualifying_income_context",
+        "operator": "text_condition",
+        "value": "låg_eller_ingen_SGI_enligt_Försäkringskassans_bedömning",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "notes": "Låg eller ingen sjukpenninggrundande inkomst är en del av målgruppsbeskrivningen; exakt SGI och rätt bedöms av Försäkringskassan."
+      },
+      {
+        "rule_id": "spsf.protected_right",
+        "field": "right_protection_after_activity_compensation",
+        "operator": "text_condition",
+        "value": "rätten_behöver_vara_skyddad_enligt_aktuell_Försäkringskassebedömning",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "notes": "Försäkringskassan ger arbete, inskrivning på Arbetsförmedlingen eller deltagande i program med aktivitetsstöd som exempel på hur rätten kan skyddas. Ett exempel är inte i sig ett automatiskt beslut."
+      },
+      {
+        "rule_id": "spsf.reduced_work_capacity",
+        "field": "current_work_capacity",
+        "operator": "text_condition",
+        "value": "sjukdom_skada_eller_funktionsnedsättning_gör_att_personen_inte_kan_söka_eller_ta_heltidsarbete",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "notes": "Det är arbetsförmågan i den aktuella situationen som är central; diagnosetikett ensam avgör inte rätten."
+      },
+      {
+        "rule_id": "spsf.insured_sweden",
+        "field": "insured_in_sweden",
+        "operator": "text_condition",
+        "value": "försäkrad_i_Sverige_enligt_Försäkringskassans_bedömning",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "notes": "Försäkringstillhörighet ska verifieras i det enskilda fallet."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "spsf.prior_activity_compensation",
+        "prompt": "Hade du aktivitetsersättning till och med månaden innan du fyllde 30 år?",
+        "reason": "Det skiljer denna övergångsväg från flera andra sjukpenning- och ersättningsvägar."
+      },
+      {
+        "question_id": "spsf.sgi_context",
+        "prompt": "Har Försäkringskassan bedömt att du har låg eller ingen SGI, eller är det fortfarande oklart?",
+        "reason": "SGI-läget kan avgöra om sjukpenning i särskilda fall över huvud taget är rätt spår att verifiera."
+      },
+      {
+        "question_id": "spsf.protection",
+        "prompt": "Hur har din rätt till ersättning skyddats efter aktivitetsersättningen, till exempel genom arbete, inskrivning på Arbetsförmedlingen eller program med aktivitetsstöd?",
+        "reason": "Skyddet efter övergången är ett separat villkor och ska inte antas från tidigare aktivitetsersättning."
+      },
+      {
+        "question_id": "spsf.work_capacity",
+        "prompt": "Kan du söka eller ta ett heltidsarbete just nu, eller hindrar sjukdom, skada eller funktionsnedsättning det?",
+        "reason": "Aktuell arbetsförmåga är en central del av prövningen och behövs för att skilja detta spår från arbete, vanlig sjukpenning och andra vägar."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan kan pröva sjukpenning i särskilda fall på olika nivåer beroende på nedsatt arbetsförmåga. Exakta aktuella belopp och nivåer ska hämtas från den aktuella primärkällan och får inte avgöras av produktmotorn.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Läkarintyg med aktuella uppgifter om sjukdom, skada eller funktionsnedsättning och hur arbetsförmågan påverkas"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+    "deadline_text": null,
+    "next_step": "Verifiera först att övergångsvillkoren, SGI-läget, skyddet av rätten och den aktuella arbetsförmågan pekar mot sjukpenning i särskilda fall. Säkerställ därefter aktuellt läkarintyg och använd Försäkringskassans aktuella ansökningsväg."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-14T11:47:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkälla, kontrollerad 2026-09-14. Mänsklig sakgranskning krävs före VERIFIED, särskilt för SGI-gränsen, hur skyddad rätt bedöms, försäkringstillhörighet, nivåer och relationen till boendetillägg/andra övergångsförmåner.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-14T11:47:00Z",
+    "last_seen_at": "2026-09-14T11:47:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}

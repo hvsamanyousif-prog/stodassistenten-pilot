@@ -1,0 +1,99 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v31 Red Teams the high-consequence transition when activity compensation ends around age 30: there is no automatic one-benefit conversion, sickness compensation and sickness benefit in special cases have different conditions, and housing support must not be assumed to continue under the same name or decision. The scenarios are synthetic and store no real user, diagnosis, household or case data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-activity-compensation-age30-route-split-2026",
+      "observation": "Current Försäkringskassan guidance states that activity compensation is for people under 30, while sickness compensation after age 30 depends on a separate assessment of long-term work capacity. A separate route, sickness benefit in special cases, can be relevant for someone who had activity compensation through the month before turning 30, has low or no SGI and meets additional protection and work-capacity conditions. Turning 30 does not itself prove either route.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/aktivitetsersattning-for-unga-vuxna",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukersattning-resten-av-arbetslivet-sjukpension",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall"
+      ]
+    },
+    {
+      "pattern_id": "signal-age30-housing-support-name-and-payment-boundary-2026",
+      "observation": "Current Försäkringskassan guidance distinguishes bostadstillägg for people with activity or sickness compensation from boendetillägg connected to sickness benefit in special cases. The special-cases page states that boendetillägg has its own conditions and is paid monthly in arrears. Therefore the product must not promise automatic continuation of housing support or treat the two supports as the same benefit.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/sjukpenning-i-sarskilda-fall",
+        "https://www.forsakringskassan.se/privatperson/e-tjanster-blanketter-och-informationsmaterial/e-tjanster-blanketter-och-berakningsverktyg"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-activity-compensation-turning-30-route-split-v31-01",
+      "actor_type": "young_adult_disability",
+      "story": "Jag fyller 30 snart och har aktivitetsersättning. Fortsätter den automatiskt eller ska jag söka något annat?",
+      "expected_support_areas": [
+        "activity_compensation_age30_transition",
+        "sickness_compensation_candidate_if_work_capacity_is_permanently_reduced",
+        "sickness_benefit_special_cases_candidate_if_transition_conditions_fit",
+        "regular_sickness_benefit_work_study_and_employment_service_routes_kept_separate"
+      ],
+      "must_not_claim": [
+        "activity_compensation_automatically_converts_to_sickness_compensation_at_age_30",
+        "turning_30_after_activity_compensation_automatically_entitles_the_person_to_sickness_benefit_in_special_cases",
+        "a_diagnosis_or_disability_label_alone_proves_sickness_compensation_eligibility",
+        "low_or_no_sgi_alone_proves_sickness_benefit_in_special_cases_eligibility",
+        "registration_with_the_employment_service_or_any_single_protection_action_alone_guarantees_payment",
+        "the_product_can_choose_a_final_benefit_or_amount_without_the_current_forsakringskassan_assessment",
+        "raw_health_history_diagnosis_household_details_or_case_narrative_should_be_copied_into_public_eval_or_feedback_data"
+      ],
+      "expected_questions": [
+        "q_did_activity_compensation_continue_through_the_month_before_turning_30",
+        "q_is_current_work_capacity_reduction_expected_to_be_permanent_or_is_future_work_possible",
+        "q_is_sgi_low_or_absent_if_the_special_cases_route_is_being_considered",
+        "q_has_the_right_been_protected_through_work_employment_service_registration_or_program_when_relevant"
+      ],
+      "expected_next_actions": [
+        "start_the_transition_check_before_activity_compensation_ends_instead_of_waiting_for_an_automatic_conversion",
+        "if_work_capacity_may_be_permanently_reduced_verify_the_current_sickness_compensation_route_and_medical_evidence_requirements",
+        "if_low_or_no_sgi_and_prior_activity_compensation_make_special_cases_relevant_verify_the_current_protection_and_work_capacity_conditions_before_application",
+        "keep_work_study_regular_sickness_benefit_and_employment_service_routes_available_when_the_facts_point_there_instead_of_forcing_one_disability_benefit",
+        "do_not_promote_any_new_transition_support_record_from_needs_review_to_verified_without_human_review"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_activity_compensation_primary_source",
+        "Forsakringskassan_current_sickness_compensation_primary_source",
+        "Forsakringskassan_current_sickness_benefit_special_cases_primary_source"
+      ]
+    },
+    {
+      "case_id": "lab-activity-compensation-age30-housing-support-v31-02",
+      "actor_type": "young_adult_disability",
+      "story": "Min aktivitetsersättning tar slut när jag fyller 30 och jag har bostadstillägg idag. Fortsätter det, eller får jag boendetillägg automatiskt?",
+      "expected_support_areas": [
+        "primary_benefit_transition_before_housing_support_transition",
+        "bostadstillagg_and_boendetillagg_kept_distinct",
+        "sickness_benefit_special_cases_and_boendetillagg_conditions_kept_separate",
+        "payment_timing_and_cashflow_risk_explained_without_promising_approval"
+      ],
+      "must_not_claim": [
+        "bostadstillagg_automatically_continues_unchanged_when_activity_compensation_ends",
+        "boendetillagg_is_the_same_benefit_as_bostadstillagg",
+        "boendetillagg_is_automatic_because_the_person_previously_had_activity_compensation",
+        "a_new_primary_benefit_automatically_carries_over_the_previous_housing_support_decision",
+        "the_product_can_promise_an_exact_housing_support_amount_or_payment_date_before_the_relevant_decision",
+        "synthetic_regression_data_should_include_real_rent_partner_income_identity_or_health_details"
+      ],
+      "expected_questions": [
+        "q_which_primary_income_replacement_route_is_currently_being_considered_after_activity_compensation_ends",
+        "q_did_activity_compensation_continue_through_the_month_before_turning_30",
+        "q_has_the_right_to_special_cases_support_been_protected_when_that_route_is_relevant"
+      ],
+      "expected_next_actions": [
+        "verify_the_primary_income_replacement_route_first_because_it_changes_which_housing_support_route_is_relevant",
+        "if_sickness_benefit_in_special_cases_is_relevant_verify_boendetillagg_as_a_separate_support_and_note_that_current_guidance_says_it_is_paid_monthly_in_arrears",
+        "if_sickness_compensation_is_relevant_verify_bostadstillagg_separately_instead_of_assuming_the_old_decision_continues",
+        "surface_timing_risk_early_and_direct_the_user_to_current_forsakringskassan_application_status_without_promising_eligibility_or_amount"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_sickness_benefit_special_cases_primary_source",
+        "Forsakringskassan_current_sickness_compensation_primary_source",
+        "Forsakringskassan_current_housing_support_primary_source"
+      ]
+    }
+  ]
+}

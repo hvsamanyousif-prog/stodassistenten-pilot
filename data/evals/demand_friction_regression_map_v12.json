@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Versioned extension of the single Stödassistenten demand/friction regression map. This mapping stores product-learning memory only; it does not prove eligibility, payment continuity, housing-support entitlement or factual truth.",
+  "mappings": [
+    {
+      "signal_id": "df-activity-compensation-age30-transition-v01",
+      "product_miss": "The product already knows activity compensation as a support for young adults but does not yet lock the high-consequence age-30 transition. Without a regression, it can imply an automatic move to sickness compensation, overlook sickness benefit in special cases when low/no SGI and protection facts matter, or treat bostadstillägg and boendetillägg as one continuous housing-support decision.",
+      "fix_or_guardrail": "Keep all transition paths inside the same disability/person learning system. First establish that activity compensation is ending and the work-capacity prognosis; only ask SGI and protection facts when they can change the special-cases route. Never promise automatic conversion. Verify housing support after the primary benefit route is known, and keep bostadstillägg separate from boendetillägg. All material rules remain primary-source dependent and review-gated.",
+      "regression_case_ids": [
+        "lab-activity-compensation-turning-30-route-split-v31-01",
+        "lab-activity-compensation-age30-housing-support-v31-02"
+      ]
+    }
+  ]
+}
