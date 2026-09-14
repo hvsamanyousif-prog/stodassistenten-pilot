@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Verified synthetic regressions for the same Stödassistenten scenario laboratory. This pack locks a self-audited family age-routing miss and a current VAB 12+ timing/documentation friction. It stores no real person, username or community story and promotes no eligibility claim to VERIFIED.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-family-age-gate",
+      "observation": "A family-oriented entry can be selected for an adult relative. Child-specific support results must therefore be age-gated rather than returned after a question whose answer does not change the route. Current Försäkringskassan guidance states that omvårdnadsbidrag can be paid at most through June of the year the child turns 19.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag"
+      ]
+    },
+    {
+      "pattern_id": "signal-vab-12plus-deadline-documentation",
+      "observation": "For VAB days from 1 April 2026 the normal application deadline is 30 days after the first day at home, not the previous 90 days. For a child who has turned 12 but not 16, ordinary sickness VAB also depends on special care/supervision conditions and medical documentation; without a prior decision the medical statement is needed from the first compensated day.",
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "https://www.forsakringskassan.se/halso-och-sjukvarden/foralder-och-barn/intyg-och-utlatande-for-vard-av-barn-vab",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-30-kortare-tid-for-att-ansoka-om-vab"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-family-age-gate-v15-01",
+      "actor_type": "relative",
+      "story": "Jag hjälper min 25-åriga familjemedlem som har stora stödbehov i vardagen. Jag valde familjeingången eftersom vi är familj och vill veta vilket stöd som kan vara relevant.",
+      "expected_support_areas": [
+        "adult_support_routing",
+        "age_scope_disambiguation",
+        "functional_need_not_diagnosis",
+        "same_product_general_or_adult_path"
+      ],
+      "must_not_claim": [
+        "child_specific_supports_apply_unchanged_to_adult_family_member",
+        "omvardnadsbidrag_for_child_is_a_valid_route_for_a_25_year_old",
+        "family_relationship_alone_determines_support_entitlement",
+        "diagnosis_alone_determines_adult_support_entitlement"
+      ],
+      "expected_questions": [
+        "q_age_or_age_band_when_child_specific_route_would_change",
+        "q_whose_support_need_is_being_described",
+        "q_which_concrete_functional_need_or_problem_needs_help"
+      ],
+      "expected_next_actions": [
+        "do_not_continue_into_child_specific_results_when_age_gate_is_not_met",
+        "reroute_within_the_same_product_to_a_broader_adult_safe_path",
+        "preserve_functional_need_context_where_possible",
+        "verify_any_adult_support_candidate_against_current_primary_source_before_claiming_eligibility"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_current_age_scope_for_child_support",
+        "current_primary_source_for_any_adult_support_candidate"
+      ]
+    },
+    {
+      "case_id": "lab-guardian-vab-12plus-v15-02",
+      "actor_type": "guardian",
+      "story": "Mitt barn är 13 år och blir ibland så försämrat att jag måste avstå från jobbet. Jag har hört att man har 90 dagar på sig att ansöka om vab och tänkte samla flera perioder innan jag söker. Jag vet inte om vi har något förhandsbeslut eller vilket läkarunderlag som behövs.",
+      "expected_support_areas": [
+        "temporary_parental_benefit_vab",
+        "child_age_12_to_15_route",
+        "special_care_or_supervision_need",
+        "medical_statement_or_prior_decision",
+        "30_day_application_window_from_2026_04_01"
+      ],
+      "must_not_claim": [
+        "ninety_day_rule_still_applies_to_new_vab_days_after_2026_04_01",
+        "ordinary_sickness_for_age_12_to_15_automatically_qualifies_for_vab",
+        "diagnosis_alone_guarantees_vab_after_age_12",
+        "medical_documentation_is_never_needed_for_age_12_to_15",
+        "late_application_is_guaranteed_to_be_paid",
+        "prior_decision_and_medical_statement_are_the_same_thing"
+      ],
+      "expected_questions": [
+        "q_first_vab_day_and_whether_it_was_before_or_after_2026_04_01",
+        "q_child_age",
+        "q_reason_for_absence_and_special_care_or_supervision_need",
+        "q_is_there_a_current_prior_decision_from_forsakringskassan",
+        "q_has_required_medical_documentation_been_sent"
+      ],
+      "expected_next_actions": [
+        "apply_or_check_application_status_promptly_against_the_current_30_day_rule",
+        "verify_age_12plus_conditions_on_current_forsakringskassan_guidance",
+        "if_no_prior_decision_check_need_for_medical_statement_from_first_compensated_day",
+        "if_prior_decision_exists_follow_current_certificate_rules",
+        "do_not_promise_payment_if_the_application_is_late_or_conditions_are_unclear"
+      ],
+      "source_requirements": [
+        "Forsakringskassan_vab_12_or_older",
+        "Forsakringskassan_medical_certificate_guidance",
+        "Forsakringskassan_current_application_deadline"
+      ]
+    }
+  ]
+}

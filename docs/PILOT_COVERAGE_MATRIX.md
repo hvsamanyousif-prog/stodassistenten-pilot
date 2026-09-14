@@ -1,16 +1,34 @@
 # Pilot coverage matrix
 
-Syftet med denna matris är att göra Stödassistentens bredd mätbar utan att låtsas att allt redan är färdigt.
+Syftet med denna matris är att göra Stödassistentens bredd mätbar utan att låtsas att allt redan är färdigt. Matrisen beskriver publika vägar och regressionsskydd; den är inte en eligibility- eller sanningskälla.
 
-## Aktörstyper
+## Kvalitetsstatus
 
-- privatperson
-- hushåll/familj
-- anhörig som hjälper annan
-- anställd
-- företagare/småföretag
-- förening/ideell organisation
-- BRF/fastighetsaktör
+Varje kombination av aktör × situation × geografi × stödtyp ska kunna märkas som:
+
+- UNDISCOVERED
+- SIGNAL_ONLY
+- SOURCE_IDENTIFIED
+- NEEDS_REVIEW
+- VERIFIED_DATA
+- MATCHING_TESTED
+- PILOT_TESTED
+- PRODUCTION_READY
+
+`PRODUCTION_READY` får aldrig sättas enbart av en AI-modell.
+
+## Operativ publik täckning
+
+| Aktör | Fungerande ingång | Situationsförståelse | Primärkällor när fakta visas | Konkret nästa handling | Anonym feedback | Regression | Aktuell lucka |
+|---|---|---|---|---|---|---|---|
+| Privatperson | root + person-pilot | bred personprofil + tand/syn/ekonomi | ja, per visad stödväg | ja | ja | ja | bred fallback ställer fortfarande fler frågor än vissa fokuserade flöden |
+| Student/nyexaminerad | root `study` → samma personmodul | student/arbete/ekonomi/boende | ja för visade kandidater | ja | ja, aktörssegmenterad | ja | naturligt språk kan fortfarande behöva bättre övergångsdetektion mellan studier och första jobb |
+| Anställd | root `work` → samma personmodul | arbete/sjukskrivning/ekonomi | ja | ja | ja, aktörssegmenterad | ja | fler kombinationsfall behövs för arbete + familjeansvar + sjukdom |
+| Anhörig som hjälper annan | root actor-ingång → samma personmodul | representation och den hjälptes situation hålls isär i regressioner | ja | ja | ja, aktörssegmenterad | ja | fullmakt/representation varierar mellan tjänster och ska fortsatt fail-closed |
+| Barn via vårdnadshavare/familj | person-pilot familjeingång | åldersgrind + behov av omvårdnad/tillsyn/skola | ja för visade barnstöd | ja | ja | ja | root-shell saknar ännu en tydlig naturlig barn/familj-route; VAB 12+ finns som eval men inte som egen publik stödväg |
+| Företag | root + company-pilot | finansiering kontra upphandling med information-gain | ja | ja | ja | ja | fortsatt retrievalbredd för faktiska upphandlingar och lokala finansieringskällor |
+| Förening/ideell | root `association` → samma personmodul | finansiering/lokal/offentliga möjligheter | ja | ja | ja | ja | lokal/geografisk stödvariation är fortfarande tunn |
+| BRF/fastighetsaktör | ingen tydlig dedikerad publik ingång ännu | bostadsanpassning fångar ägare/rättighetshavare som processfakta, inte som full aktörsväg | delvis | delvis | inte egen aktörssegmentering | scenarioregression finns för bostadsanpassning | **svag täckning**: bör prioriteras först när verifierade behov visar att en egen ingång ger högre nytta utan parallell motor |
 
 ## Högprioriterade situationsfamiljer
 
@@ -33,20 +51,11 @@ Syftet med denna matris är att göra Stödassistentens bredd mätbar utan att l
 - stiftelser/fonder
 - kommunala/regionala lokala stöd
 
-## Kvalitetsstatus per cell
+## Aktuell självgranskningsregel
 
-Varje kombination av aktör × situation × geografi × stödtyp ska kunna märkas som:
+En fråga räknas inte som situationsförståelse om svaret inte kan ändra routing, ranking, säker nästa handling eller behovet av verifiering. När en fråga visar att ett specialiserat flöde inte längre passar ska produkten fail-closed inom samma Stödassistenten i stället för att fortsätta till fel målgruppsstöd.
 
-- UNDISCOVERED
-- SIGNAL_ONLY
-- SOURCE_IDENTIFIED
-- NEEDS_REVIEW
-- VERIFIED_DATA
-- MATCHING_TESTED
-- PILOT_TESTED
-- PRODUCTION_READY
-
-`PRODUCTION_READY` får aldrig sättas enbart av en AI-modell.
+Familjeflödet är ett permanent exempel: om åldersgrinden inte stödjer barnspåret får produkten inte fortsätta till barnspecifika resultat. VAB 12+ behandlas separat i Scenario Lab eftersom ålder, särskilt vård-/tillsynsbehov, medicinskt underlag/förhandsbeslut och aktuell ansökningstid kan ändra vägen.
 
 ## Pilotprincip
 

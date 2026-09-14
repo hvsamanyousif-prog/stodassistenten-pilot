@@ -30,6 +30,7 @@ QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
 PERSON_CONTEXT_PATH = "client/person-context-learning.js"
+FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 SHELL_RUNTIME_PATHS = (SHELL_ROUTING_PATH, SHELL_LEARNING_PATH, SHELL_GUIDANCE_PATH)
 QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH)
@@ -39,6 +40,7 @@ SCRIPT_PATHS = (
     "client/public-pilot-ui-gate.js",
     "client/public-pilot-wiring.js",
     PERSON_CONTEXT_PATH,
+    FAMILY_AGE_ROUTING_PATH,
     ASSISTANCE_FOCUS_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
