@@ -1,0 +1,41 @@
+name: Validate dental 67+ public guidance
+
+on:
+  pull_request:
+    paths:
+      - 'client/dental-67-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_dental_67_guidance.py'
+      - 'data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json'
+      - 'data/evals/scenario_lab_websignals_v19.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/dental-67-guidance.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/dental-67-guidance.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_dental_67_guidance.py'
+      - 'data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json'
+      - 'data/evals/scenario_lab_websignals_v19.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/dental-67-guidance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check dental guidance syntax
+        run: node --check client/dental-67-guidance.js
+      - name: Validate dental 67+ truth and UX boundaries
+        run: python scripts/validate_dental_67_guidance.py
