@@ -1,12 +1,24 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import json
+import subprocess
 
 root = Path(__file__).resolve().parents[1]
 index = (root / 'index.html').read_text(encoding='utf-8')
 quick = (root / 'quick-help.html').read_text(encoding='utf-8')
 routing = (root / 'client' / 'privacy-routing.js').read_text(encoding='utf-8')
 assistance = (root / 'client' / 'assistance-focus.js').read_text(encoding='utf-8')
+housing = (root / 'client' / 'housing-adaptation-guidance.js').read_text(encoding='utf-8')
 builder = (root / 'scripts' / 'build_public_pilot.py').read_text(encoding='utf-8')
+v14 = json.loads((root / 'data' / 'evals' / 'scenario_lab_websignals_v14.json').read_text(encoding='utf-8'))
+housing_record = json.loads((root / 'data' / 'supports' / 'se-boverket-bostadsanpassningsbidrag.json').read_text(encoding='utf-8'))
+
+housing_syntax = subprocess.run(
+    ['node', '--check', str(root / 'client' / 'housing-adaptation-guidance.js')],
+    capture_output=True,
+    text=True,
+    check=False,
+)
 
 checks = [
     ('situation composer', 'id="situation"' in index and 'function classify(text)' in index),
@@ -30,9 +42,24 @@ checks = [
     ('assistance uses primary authority sources', 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna' in assistance and 'forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn' in assistance),
     ('assistance results stay uncertain', "resultCard(r,i+2)" in assistance and 'Produkten avgör inte rätt till stöd.' in assistance),
     ('assistance stays in same person module', 'ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"' in builder and 'ASSISTANCE_FOCUS_PATH,' in builder),
+    ('housing guidance javascript syntax', housing_syntax.returncode == 0),
+    ('housing guidance is narrowly gated', "mode !== 'vision'" in housing and "need !== 'home'" in housing),
+    ('housing guidance asks information-gain facts', 'Är detta bostaden där personen bor permanent?' in housing and 'Hur ser ägande- eller nyttjanderätten ut?' in housing and 'Finns de skriftliga medgivanden som behövs?' in housing),
+    ('housing guidance preserves applicant route', 'Personen med funktionsnedsättning är sökande' in housing and 'Hyresrätt eller delat kontrakt utesluter inte vägen.' in housing),
+    ('housing guidance is fail-closed on consent', 'Ett positivt beslut kan inte fattas innan nödvändiga skriftliga medgivanden finns' in housing and 'Medgivande är inte samma sak som rätt till bidrag.' in housing),
+    ('housing guidance handles second hand separately', "tenure === 'secondhand'" in housing and 'Andrahandsboende kan kräva en särskild bedömning av hur långvarig upplåtelsen är.' in housing),
+    ('housing guidance is source-grounded', 'vem-ska-ansoka/' in housing and 'dar-sokanden-bor-permanent/' in housing and 'Fastighetsagarens-medgivande/' in housing and 'guide-for-handlaggning/ansokan/' in housing),
+    ('housing guidance remains local-only', "fetch(" not in housing and 'XMLHttpRequest' not in housing and 'localStorage' not in housing and 'sessionStorage' not in housing and "setAttribute('data-local-only', 'true')" in housing),
+    ('housing guidance has sv ar fa parity', 'sv: {' in housing and 'ar: {' in housing and 'fa: {' in housing and "document.documentElement.lang" in housing),
+    ('housing guidance stays in same quick-help module', 'HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"' in builder and 'QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH)' in builder),
+    ('housing permanent regression remains locked', any(case.get('case_id') == 'lab-disability-housing-tenure-v14-01' for case in v14.get('cases', []))),
+    ('housing truth remains review-gated', housing_record.get('verification', {}).get('status') == 'NEEDS_REVIEW' and housing_record.get('verification', {}).get('human_review_required') is True and housing_record.get('verification', {}).get('material_fields_verified') == []),
 ]
 
 failed = [name for name, ok in checks if not ok]
 if failed:
-    raise SystemExit('situation engine validation failed: ' + ', '.join(failed))
+    detail = ''
+    if housing_syntax.returncode:
+        detail = ' | node --check: ' + (housing_syntax.stderr or housing_syntax.stdout).strip()
+    raise SystemExit('situation engine validation failed: ' + ', '.join(failed) + detail)
 print(f'situation engine validation: OK ({len(checks)} invariants)')
