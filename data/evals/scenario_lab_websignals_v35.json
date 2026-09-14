@@ -1,0 +1,109 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-14",
+  "purpose": "Synthetic regressions for the single Stödassistenten learning system. v35 turns the review-gated Villaeffekten truth and v34 safety semantics into a bounded public route in the existing shared shell/person module. No case contains real household or property data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "signal-villaeffekten-discovery-to-action-2026",
+      "observation": "Boverket's current Villaeffekten guidance is live and now gives operational detail on value year, application timing, supporting documents, material-versus-labour separation and budget queuing. Commercial pages simultaneously frame the scheme around familiar phrases such as heat pumps and 30 percent, which increases discovery demand but must not become truth. The product gap is therefore not another energy matcher: it is a safe natural-language handoff from the common shell to the existing truth boundary and a fail-closed next action.",
+      "primary_sources": [
+        "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+        "https://www.energimyndigheten.se/effektiv-energianvandning/effektiv-energianvandning/program-och-uppdrag/kommunal-energi-och-klimatradgivning/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-homeowner-villaeffekten-public-route-v35-01",
+      "actor_type": "individual",
+      "story": "Jag äger en villa och vill byta värmesystem för att få ner elkostnaden. Jag har hört om Villaeffekten men vet inte om den passar mig eller vad jag ska kontrollera först.",
+      "expected_support_areas": [
+        "root_home_energy_discovery",
+        "same_person_module_handoff",
+        "villaeffekten_candidate_verification",
+        "primary_source_next_action"
+      ],
+      "must_not_claim": [
+        "generic_villa_or_heat_pump_language_proves_villaeffekten_eligibility",
+        "the_raw_situation_story_may_be_forwarded_in_the_route_url",
+        "the_product_can_guarantee_a_grant_amount_or_county_board_decision",
+        "a_heat_pump_category_alone_proves_the_specific_product_is_eligible",
+        "creating_a_public_route_promotes_the_review_gated_support_record_to_verified"
+      ],
+      "expected_questions": [
+        "q_owner_and_permanent_residence",
+        "q_value_year_before_1990_without_guessing_from_build_year",
+        "q_existing_district_heating_connection",
+        "q_specific_measure_family",
+        "q_actual_measure_start_timing"
+      ],
+      "expected_next_actions": [
+        "handoff_only_actor_focus_and_language_not_raw_story",
+        "verify_exact_measure_product_and_timing_against_current_boverket_guidance",
+        "prepare_product_specification_and_itemized_quote_order_or_invoice_with_material_separate_from_labour",
+        "keep_county_board_decision_and_available_funds_outside_product_guarantees"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance",
+        "Energimyndigheten_current_municipal_energy_advice_primary_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-nonowner-villaeffekten-failclosed-v35-02",
+      "actor_type": "individual",
+      "story": "Jag hyr huset jag bor i och elen är dyr. Kan jag använda Villaeffekten för att installera en värmepump?",
+      "expected_support_areas": [
+        "explicit_scheme_discovery_without_false_positive_eligibility",
+        "owner_permanent_residence_boundary",
+        "general_energy_advice_fallback"
+      ],
+      "must_not_claim": [
+        "explicitly_asking_about_villaeffekten_means_the_user_meets_owner_and_residence_conditions",
+        "a_nonowner_should_continue_through_the_same_grant_candidate_questions_as_if_owner_status_were_true",
+        "failing_the_villaeffekten_owner_boundary_means_no_other_energy_advice_or_support_can_exist",
+        "the_product_should_collect_landlord_identity_or_raw_housing_story_to_fail_closed"
+      ],
+      "expected_questions": [
+        "q_owner_and_permanent_residence_before_deeper_grant_questions"
+      ],
+      "expected_next_actions": [
+        "stop_the_specific_villaeffekten_candidate_path_when_owner_permanent_residence_boundary_is_not_met",
+        "offer_current_boverket_information_and_free_municipal_energy_climate_advice_without_claiming_other_support_eligibility"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance",
+        "Energimyndigheten_current_municipal_energy_advice_primary_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-homeowner-villaeffekten-timing-docs-budget-v35-03",
+      "actor_type": "individual",
+      "story": "Vi har redan börjat energirenovera och installatören säger att vi kan få 30 procent. Vilka papper behövs och är pengarna säkrade om vi skickar in ansökan?",
+      "expected_support_areas": [
+        "start_date_information_gain",
+        "document_readiness",
+        "material_labour_separation",
+        "budget_and_decision_uncertainty"
+      ],
+      "must_not_claim": [
+        "thirty_percent_applies_to_the_entire_contractor_invoice",
+        "submission_reserves_or_guarantees_budget",
+        "boverket_e_service_submission_equals_county_board_approval",
+        "a_generic_installer_statement_can_replace_current_primary_source_verification",
+        "unknown_start_date_is_safe_to_ignore_for_deadline_risk"
+      ],
+      "expected_questions": [
+        "q_actual_measure_start_timing_after_property_and_measure_boundaries_are_relevant"
+      ],
+      "expected_next_actions": [
+        "check_current_boverket_timing_rule_using_the_actual_start_date",
+        "prepare_current_product_specification_and_itemized_cost_documents",
+        "separate_material_from_labour_before_any_estimate",
+        "do_not_plan_household_finances_around_guaranteed_payment_before_county_board_decision_and_budget_availability"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance"
+      ]
+    }
+  ]
+}
