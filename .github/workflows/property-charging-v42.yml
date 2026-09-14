@@ -1,0 +1,56 @@
+name: Validate property charging v42
+
+on:
+  pull_request:
+    paths:
+      - 'client/property-charging-guidance.js'
+      - 'client/property-charging-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_property_charging_v42.py'
+      - 'data/evals/scenario_lab_websignals_v42.json'
+      - 'data/evals/demand_friction_signals_v27.json'
+      - 'data/evals/demand_friction_regression_map_v21.json'
+      - 'data/supports/se-naturvardsverket-ladda-bilen-forening-boende.json'
+      - 'data/source_registry.json'
+      - '.github/workflows/property-charging-v42.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/property-charging-guidance.js'
+      - 'client/property-charging-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_property_charging_v42.py'
+      - 'data/evals/scenario_lab_websignals_v42.json'
+      - 'data/evals/demand_friction_signals_v27.json'
+      - 'data/evals/demand_friction_regression_map_v21.json'
+      - 'data/supports/se-naturvardsverket-ladda-bilen-forening-boende.json'
+      - 'data/source_registry.json'
+      - '.github/workflows/property-charging-v42.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate same-product property charging route
+        run: |
+          node --check client/property-charging-guidance.js
+          node client/property-charging-guidance.test.cjs
+          python scripts/validate_property_charging_v42.py
+          python scripts/test_situation_engine.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
+          python scripts/build_public_pilot.py --source . --output /tmp/stod-v42-site
+          test -f /tmp/stod-v42-site/client/property-charging-guidance.js
+          grep -q 'client/property-charging-guidance.js' /tmp/stod-v42-site/index.html
+          grep -q 'client/property-charging-guidance.js' /tmp/stod-v42-site/person-pilot.html
