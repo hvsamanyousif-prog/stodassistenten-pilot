@@ -1,0 +1,58 @@
+name: Validate school support v41
+
+on:
+  pull_request:
+    paths:
+      - 'client/school-support-guidance.js'
+      - 'client/school-support-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_school_support_v41.py'
+      - 'data/evals/scenario_lab_websignals_v41.json'
+      - 'data/evals/demand_friction_signals_v26.json'
+      - 'data/evals/demand_friction_regression_map_v20.json'
+      - 'data/supports/se-skolverket-extra-anpassningar-sarskilt-stod.json'
+      - 'data/source_registry.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/school-support-v41.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/school-support-guidance.js'
+      - 'client/school-support-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_school_support_v41.py'
+      - 'data/evals/scenario_lab_websignals_v41.json'
+      - 'data/evals/demand_friction_signals_v26.json'
+      - 'data/evals/demand_friction_regression_map_v20.json'
+      - 'data/supports/se-skolverket-extra-anpassningar-sarskilt-stod.json'
+      - 'data/source_registry.json'
+      - 'docs/PILOT_COVERAGE_MATRIX.md'
+      - '.github/workflows/school-support-v41.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate same-product school support route
+        run: |
+          node --check client/school-support-guidance.js
+          node client/school-support-guidance.test.cjs
+          python scripts/validate_school_support_v41.py
+          python scripts/test_situation_engine.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
+          python scripts/build_public_pilot.py --source . --output /tmp/stod-v41-site
+          test -f /tmp/stod-v41-site/client/school-support-guidance.js
+          grep -q 'client/school-support-guidance.js' /tmp/stod-v41-site/index.html
+          grep -q 'client/school-support-guidance.js' /tmp/stod-v41-site/person-pilot.html
