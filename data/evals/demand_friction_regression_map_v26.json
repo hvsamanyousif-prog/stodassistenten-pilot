@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-af-programme-long-sickness-transition-v01",
+      "product_miss": "The shared unemployed_sick route handled first-day reporting and the seven-day certificate boundary, but a programme participant with longer sickness had no guarded path to distinguish still being enrolled from an actual programme exit and the subsequent Försäkringskassan route.",
+      "regression_case_ids": [
+        "lab-program-long-sick-still-enrolled-v49-01",
+        "lab-program-long-sick-actually-ended-v49-02",
+        "lab-program-partial-sick-over-30-v49-03",
+        "lab-program-long-sick-uncertain-exit-v49-04"
+      ],
+      "fix_or_guardrail": "Extend the existing focus=unemployed_sick flow. Keep first-day programme guidance immediate and reveal the >30-day branch only when the user says it is relevant. Ask full-time sickness and actual programme-exit status only because those facts can change the authority route. Stay with Arbetsförmedlingen while still enrolled; after confirmed programme exit point to Försäkringskassan from the first day after exit without promising entitlement.",
+      "truth_guardrail": "Current Arbetsförmedlingen and Försäkringskassan programme-sickness pages carry the truth. More than 30 days does not by itself prove an ended programme, the transition is about full-time sickness, and an actual exit does not guarantee sickness-benefit eligibility.",
+      "privacy_guardrail": "Do not put diagnosis, certificate content, SGI, salary, employer, exact sickness duration, identity or the person's story in URL or structured feedback. Store only coarse route state in the transient client session.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
