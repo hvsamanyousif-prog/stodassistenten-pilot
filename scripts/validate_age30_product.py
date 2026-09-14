@@ -54,7 +54,7 @@ def main() -> int:
     require("inte automatiskt" in lower or "inte automatisk" in lower, "automatic-conversion warning is missing")
     require("bostadstillägg" in runtime and "boendetillägg" in runtime, "housing-support boundary is missing")
     require("låg eller saknas" in runtime, "SGI question must be conditional and explicit")
-    require("försäkringskassan.se" in lower, "primary-source links are missing")
+    require("forsakringskassan.se" in lower, "primary-source links are missing")
 
     cases = {case.get("case_id"): case for case in scenario.get("cases", [])}
     route = cases.get("lab-activity-compensation-turning-30-route-split-v31-01")
