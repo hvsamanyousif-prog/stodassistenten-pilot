@@ -7,7 +7,7 @@
           'مساعدة شخصية','النظافة الشخصية','المساعدة في اللباس','ارتداء الملابس','المساعدة في الأكل','المساعدة في التواصل','التنفس',
           'کمک شخصی','بهداشت شخصی','کمک برای لباس پوشیدن','لباس پوشیدن','کمک برای غذا خوردن','کمک در ارتباط','تنفس'
         ];
-        // Need-led family route. Avoid bare "barn"/diagnosis-only triggers so an
+        // Need-led family route. Avoid bare "barn"/label-only triggers so an
         // ordinary VAB story is not sent into the extra-support family flow.
         KEYWORDS.family=[
           'barn behöver extra stöd','barnet behöver extra stöd','extra tillsyn','extra omvårdnad','mycket hjälp i vardagen','stöd i skolan','hjälp i skolan','barn med stödbehov',
