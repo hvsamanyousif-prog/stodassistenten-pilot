@@ -31,7 +31,7 @@
         "creating_a_public_route_promotes_the_review_gated_support_record_to_verified"
       ],
       "expected_questions": [
-        "q_owner_and_permanent_residence",
+        "q_owner_and_residence_by_payment_request",
         "q_value_year_before_1990_without_guessing_from_build_year",
         "q_existing_district_heating_connection",
         "q_specific_measure_family",
@@ -64,10 +64,10 @@
         "the_product_should_collect_landlord_identity_or_raw_housing_story_to_fail_closed"
       ],
       "expected_questions": [
-        "q_owner_and_permanent_residence_before_deeper_grant_questions"
+        "q_owner_and_residence_by_payment_request_before_deeper_grant_questions"
       ],
       "expected_next_actions": [
-        "stop_the_specific_villaeffekten_candidate_path_when_owner_permanent_residence_boundary_is_not_met",
+        "stop_the_specific_villaeffekten_candidate_path_when_owner_or_residence_by_payment_boundary_is_not_met",
         "offer_current_boverket_information_and_free_municipal_energy_climate_advice_without_claiming_other_support_eligibility"
       ],
       "source_requirements": [
@@ -100,6 +100,32 @@
         "prepare_current_product_specification_and_itemized_cost_documents",
         "separate_material_from_labour_before_any_estimate",
         "do_not_plan_household_finances_around_guaranteed_payment_before_county_board_decision_and_budget_availability"
+      ],
+      "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance"
+      ]
+    },
+    {
+      "case_id": "lab-owner-future-residence-villaeffekten-v35-04",
+      "actor_type": "individual",
+      "story": "Jag äger huset men bor inte där ännu. Jag ska flytta in permanent innan jag begär utbetalning. Ska jag automatiskt sorteras bort från Villaeffekten redan nu?",
+      "expected_support_areas": [
+        "owner_residence_timing_boundary",
+        "avoid_false_negative_from_application_day_only",
+        "continue_remaining_candidate_checks_without_guaranteeing_eligibility"
+      ],
+      "must_not_claim": [
+        "not_permanently_resident_on_application_day_always_disqualifies_villaeffekten",
+        "stating_future_permanent_residence_proves_final_eligibility_or_payment",
+        "future_residence_allows_skipping_value_year_district_heating_measure_or_timing_checks"
+      ],
+      "expected_questions": [
+        "q_owner_and_residence_by_payment_request_not_only_application_day"
+      ],
+      "expected_next_actions": [
+        "treat_residence_by_payment_request_as_the_relevant_timing_boundary",
+        "continue_with_value_year_district_heating_measure_and_start_timing_checks",
+        "keep_final_decision_with_county_board_and_current_primary_source"
       ],
       "source_requirements": [
         "Boverket_current_villaeffekten_primary_guidance"
