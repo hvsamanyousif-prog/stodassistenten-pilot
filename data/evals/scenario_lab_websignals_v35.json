@@ -5,9 +5,10 @@
   "verified_signal_patterns": [
     {
       "pattern_id": "signal-villaeffekten-discovery-to-action-2026",
-      "observation": "Boverket's current Villaeffekten guidance is live and now gives operational detail on value year, application timing, supporting documents, material-versus-labour separation and budget queuing. Commercial pages simultaneously frame the scheme around familiar phrases such as heat pumps and 30 percent, which increases discovery demand but must not become truth. The product gap is therefore not another energy matcher: it is a safe natural-language handoff from the common shell to the existing truth boundary and a fail-closed next action.",
+      "observation": "Boverket's current Villaeffekten guidance is live and gives operational detail on residence timing, value year, application timing, supporting documents, material-order timing, material-versus-labour separation and budget queuing. Commercial pages simultaneously frame the scheme around familiar phrases such as heat pumps and 30 percent, which increases discovery demand but must not become truth. The product gap is therefore not another energy matcher: it is a safe natural-language handoff from the common shell to the existing truth boundary and a fail-closed next action.",
       "primary_sources": [
         "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
         "https://www.energimyndigheten.se/effektiv-energianvandning/effektiv-energianvandning/program-och-uppdrag/kommunal-energi-och-klimatradgivning/"
       ]
     }
@@ -35,16 +36,17 @@
         "q_value_year_before_1990_without_guessing_from_build_year",
         "q_existing_district_heating_connection",
         "q_specific_measure_family",
-        "q_actual_measure_start_timing"
+        "q_material_order_date_and_actual_measure_start_timing"
       ],
       "expected_next_actions": [
         "handoff_only_actor_focus_and_language_not_raw_story",
-        "verify_exact_measure_product_and_timing_against_current_boverket_guidance",
+        "verify_exact_measure_product_material_order_and_start_timing_against_current_boverket_and_sfs_guidance",
         "prepare_product_specification_and_itemized_quote_order_or_invoice_with_material_separate_from_labour",
         "keep_county_board_decision_and_available_funds_outside_product_guarantees"
       ],
       "source_requirements": [
         "Boverket_current_villaeffekten_primary_guidance",
+        "SFS_2023_402_current_rule_text",
         "Energimyndigheten_current_municipal_energy_advice_primary_guidance"
       ]
     },
@@ -81,6 +83,7 @@
       "story": "Vi har redan börjat energirenovera och installatören säger att vi kan få 30 procent. Vilka papper behövs och är pengarna säkrade om vi skickar in ansökan?",
       "expected_support_areas": [
         "start_date_information_gain",
+        "material_order_date_information_gain",
         "document_readiness",
         "material_labour_separation",
         "budget_and_decision_uncertainty"
@@ -90,19 +93,21 @@
         "submission_reserves_or_guarantees_budget",
         "boverket_e_service_submission_equals_county_board_approval",
         "a_generic_installer_statement_can_replace_current_primary_source_verification",
-        "unknown_start_date_is_safe_to_ignore_for_deadline_risk"
+        "unknown_start_date_is_safe_to_ignore_for_deadline_risk",
+        "work_start_date_alone_is_enough_to_decide_material_cost_eligibility"
       ],
       "expected_questions": [
-        "q_actual_measure_start_timing_after_property_and_measure_boundaries_are_relevant"
+        "q_material_order_date_and_actual_measure_start_timing_after_property_and_measure_boundaries_are_relevant"
       ],
       "expected_next_actions": [
-        "check_current_boverket_timing_rule_using_the_actual_start_date",
+        "check_current_boverket_and_sfs_timing_rules_using_both_material_order_and_actual_start_dates",
         "prepare_current_product_specification_and_itemized_cost_documents",
         "separate_material_from_labour_before_any_estimate",
         "do_not_plan_household_finances_around_guaranteed_payment_before_county_board_decision_and_budget_availability"
       ],
       "source_requirements": [
-        "Boverket_current_villaeffekten_primary_guidance"
+        "Boverket_current_villaeffekten_primary_guidance",
+        "SFS_2023_402_current_section_15"
       ]
     },
     {
@@ -124,10 +129,40 @@
       ],
       "expected_next_actions": [
         "treat_residence_by_payment_request_as_the_relevant_timing_boundary",
-        "continue_with_value_year_district_heating_measure_and_start_timing_checks",
+        "continue_with_value_year_district_heating_measure_and_material_order_start_timing_checks",
         "keep_final_decision_with_county_board_and_current_primary_source"
       ],
       "source_requirements": [
+        "Boverket_current_villaeffekten_primary_guidance",
+        "SFS_2023_402_current_section_3"
+      ]
+    },
+    {
+      "case_id": "lab-villaeffekten-material-order-start-split-v35-05",
+      "actor_type": "individual",
+      "story": "Vi började installera i november 2025 men materialet som jag vill räkna med beställdes redan i september 2025. Eftersom arbetet började efter 17 oktober borde materialet väl ändå räknas?",
+      "expected_support_areas": [
+        "material_order_date_boundary",
+        "work_start_date_boundary",
+        "keep_cost_eligibility_and_application_deadline_timing_distinct"
+      ],
+      "must_not_claim": [
+        "work_started_after_2025_10_17_makes_material_ordered_before_2025_10_17_eligible",
+        "material_order_date_and_measure_start_date_are_the_same_legal_timing_fact",
+        "a_quote_date_or_invoice_date_can_be_assumed_to_equal_the_material_order_date",
+        "one_early_material_order_proves_all_other_material_orders_are_ineligible",
+        "the_product_can_override_current_sfs_timing_rules_from_installer_marketing"
+      ],
+      "expected_questions": [
+        "q_material_order_date_and_measure_start_date_as_distinct_facts_in_one_high_value_timing_step"
+      ],
+      "expected_next_actions": [
+        "do_not_treat_pre_2025_10_17_material_as_eligible_just_because_work_started_later",
+        "separate_multiple_orders_and_verify_each_relevant_material_cost_against_current_primary_source",
+        "use_measure_start_date_separately_for_the_application_deadline_rule"
+      ],
+      "source_requirements": [
+        "SFS_2023_402_current_section_15",
         "Boverket_current_villaeffekten_primary_guidance"
       ]
     }
