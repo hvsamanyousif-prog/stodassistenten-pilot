@@ -1,0 +1,68 @@
+name: Validate bereavement natural language v75
+
+on:
+  push:
+    branches: [main, 'work/**']
+    paths:
+      - 'client/bereavement-guidance.js'
+      - 'client/bereavement-guidance.test.cjs'
+      - 'data/evals/scenario_lab_websignals_v75.json'
+      - 'data/evals/demand_friction_signals_v75.json'
+      - 'data/evals/demand_friction_regression_map_v75.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V75_APPENDIX.md'
+      - 'scripts/validate_bereavement_v75.py'
+      - 'scripts/build_public_pilot.py'
+      - '.github/workflows/bereavement-v75.yml'
+  pull_request:
+    paths:
+      - 'client/bereavement-guidance.js'
+      - 'client/bereavement-guidance.test.cjs'
+      - 'data/evals/scenario_lab_websignals_v75.json'
+      - 'data/evals/demand_friction_signals_v75.json'
+      - 'data/evals/demand_friction_regression_map_v75.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V75_APPENDIX.md'
+      - 'scripts/validate_bereavement_v75.py'
+      - 'scripts/build_public_pilot.py'
+      - '.github/workflows/bereavement-v75.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  bereavement-v75:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax and permanent regressions
+        id: validate
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_bereavement_v75.py > v75-validation.log 2>&1
+          code=$?
+          cat v75-validation.log
+          {
+            echo '### v75 validation output'
+            echo '```text'
+            cat v75-validation.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bereavement-v75-validation
+          path: v75-validation.log
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v75
+      - name: Confirm the shared bereavement runtime ships on both surfaces
+        run: |
+          grep -q 'client/bereavement-guidance.js' _site-v75/index.html
+          grep -q 'client/bereavement-guidance.js' _site-v75/person-pilot.html
