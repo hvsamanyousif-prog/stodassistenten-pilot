@@ -55,3 +55,52 @@ test('adult and child primary sources remain distinct',()=>{
   assert.match(mod.ADULT_URL,/assistansersattning-for-vuxna$/);
   assert.match(mod.CHILD_URL,/assistansersattning-for-barn$/);
 });
+
+test('v87 care wording routes to omvardnadsbidrag without deciding eligibility',()=>{
+  assert.equal(mod.detectFamilyNeed('Mitt barn behöver mycket mer hjälp och tillsyn hemma än andra barn.'),'care');
+  const rows=mod.familyRows('sv','care');
+  assert.equal(rows.length,1);
+  assert.match(rows[0][0],/Omvårdnadsbidrag/);
+  assert.equal(rows[0][2],mod.OMV_URL);
+  assert.match(rows[0][1],/Diagnosen i sig avgör inte/);
+});
+
+test('v87 extra costs wording routes to child merkostnadsersattning only',()=>{
+  assert.equal(mod.detectFamilyNeed('Mitt barn har en funktionsnedsättning och vi har många extra kostnader.'),'cost');
+  const rows=mod.familyRows('sv','cost');
+  assert.equal(rows.length,1);
+  assert.match(rows[0][0],/Merkostnadsersättning/);
+  assert.equal(rows[0][2],mod.MERK_URL);
+  assert.match(rows[0][1],/Alla utgifter.*inte automatiskt/);
+});
+
+test('v87 combined care and costs keeps both primary source paths',()=>{
+  assert.equal(mod.detectFamilyNeed('Mitt barn behöver extra tillsyn och vi har extra kostnader.'),'both');
+  assert.deepEqual(mod.familyRows('sv','both').map(r=>r[2]),[mod.OMV_URL,mod.MERK_URL]);
+});
+
+test('v87 legacy vardbidrag and diagnosis-only wording remain unsure until the route-changing fact is known',()=>{
+  assert.equal(mod.detectFamilyNeed('Kan jag få vårdbidrag för mitt barn?'),'unsure');
+  assert.equal(mod.detectFamilyNeed('Mitt barn har autism. Vilket bidrag kan vi söka?'),'unsure');
+});
+
+test('v87 professional/research wording does not become a personal family route',()=>{
+  const text='Jag jobbar med barn med funktionsnedsättning och skriver rapport om omvårdnadsbidrag.';
+  assert.equal(mod.isFamilyProfessional(text),true);
+  assert.equal(mod.detectFamilyNeed(text),null);
+});
+
+test('v87 Arabic and Persian preserve the care/cost distinction',()=>{
+  assert.equal(mod.detectFamilyNeed('طفلي يحتاج رعاية إضافية ولدينا تكاليف إضافية'),'both');
+  assert.equal(mod.detectFamilyNeed('فرزندم به نظارت بیشتر نیاز دارد'),'care');
+  assert.equal(mod.detectFamilyNeed('برای فرزندم هزینه‌های اضافی داریم'),'cost');
+  assert.equal(mod.familyRows('ar','both').length,2);
+  assert.equal(mod.familyRows('fa','both').length,2);
+});
+
+test('v87 family handoff carries only a coarse need and never raw child data',()=>{
+  const story='Mitt barn Alma har autism, bor på Exempelgatan 1 och vi har extra kostnader.';
+  const href=mod.rewriteFamilyHandoffHref('person-pilot.html?actor_type=relative&focus=family&lang=sv',story,'https://example.test/index.html');
+  assert.match(href,/support_need=cost/);
+  assert.doesNotMatch(href,/Alma|autism|Exempelgatan|story|situation/i);
+});
