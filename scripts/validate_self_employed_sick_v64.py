@@ -14,8 +14,9 @@ SCENARIOS = ROOT / "data" / "evals" / "scenario_lab_websignals_v64.json"
 SIGNALS = ROOT / "data" / "evals" / "demand_friction_signals_v64.json"
 MAP = ROOT / "data" / "evals" / "demand_friction_regression_map_v64.json"
 BUILD = ROOT / "scripts" / "build_public_pilot.py"
+COVERAGE_APPENDIX = ROOT / "docs" / "PILOT_COVERAGE_MATRIX_V64_APPENDIX.md"
 
-for path in [MODULE, TEST, SCENARIOS, SIGNALS, MAP, BUILD]:
+for path in [MODULE, TEST, SCENARIOS, SIGNALS, MAP, BUILD, COVERAGE_APPENDIX]:
     assert path.is_file(), f"missing v64 artifact: {path.relative_to(ROOT)}"
 
 module = MODULE.read_text(encoding="utf-8")
@@ -80,6 +81,25 @@ assert "focus=employee_sick" in mapping["fix_or_guardrail"]
 build = BUILD.read_text(encoding="utf-8")
 assert 'EMPLOYEE_SICK_WORK_CONTEXT_PATH = "client/employee-sick-work-context-extension.js"' in build
 assert build.count("EMPLOYEE_SICK_WORK_CONTEXT_PATH,") >= 2, "extension must be wired to both shell and person build lists"
+
+# The canonical matrix is intentionally not rewritten wholesale in v64. CI caught
+# that a first attempt truncated established coverage history, so v64 is recorded
+# as an append-only extension and guarded here. This keeps one logical coverage
+# system while making the self-repair permanent.
+coverage = COVERAGE_APPENDIX.read_text(encoding="utf-8")
+for token in [
+    "append-only",
+    "focus=employee_sick",
+    "work_context=self_employed",
+    "work_context=invoiced_worker",
+    "combined_employment",
+    "business_form=limited_company|sole_partnership",
+    "Egenföretagare",
+    "Egenanställd via faktureringsföretag",
+]:
+    assert token in coverage, f"v64 coverage extension missing token: {token}"
+for forbidden in ["separat entreprenörsmotor", "actor_type=self_employed"]:
+    assert forbidden not in coverage, f"v64 coverage extension suggests parallel actor engine: {forbidden}"
 
 subprocess.run(["node", str(TEST)], cwd=ROOT, check=True)
 subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_scenario_lab_all.py")], cwd=ROOT, check=True)
