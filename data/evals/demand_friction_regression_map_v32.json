@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-unemployment-first-day-next-action-v01",
+      "product_miss": "The shared truth/eval layer already contained unemployment-insurance knowledge and synthetic a-kassa cases, but the public shell still treated an explicit current job loss as a broad work journey and could delay the first-day action behind generic questions.",
+      "regression_case_ids": [
+        "lab-unemployment-first-day-v61-01",
+        "lab-unemployment-first-day-v61-03",
+        "lab-unemployment-first-day-v61-04",
+        "lab-unemployment-first-day-v61-07",
+        "lab-unemployment-first-day-v61-08"
+      ],
+      "fix_or_guardrail": "Keep the existing transparent work router and shared person surface. For explicit current unemployment only, add a first-day guidance layer that points first to Arbetsförmedlingen registration and then to the unemployment fund, with a coarse private_person + unemployment_start handoff. Future job loss, permittering and sickness intents must stay on their existing routes.",
+      "truth_guardrail": "Current Arbetsförmedlingen guidance supports registration on the first unemployed day and subsequent unemployment-fund application. Försäkringskassan owns individual SGI assessment. Neither registration nor this route proves eligibility, benefit amount, SGI outcome or which historical/current unemployment-insurance rule applies to the individual.",
+      "privacy_guardrail": "Keep raw situation text, employer, exact employment dates, income, unemployment-fund membership and identity out of URL and structured feedback. The handoff may contain only actor_type=private_person, focus=unemployment_start and language.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
