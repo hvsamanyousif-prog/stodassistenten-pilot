@@ -59,9 +59,10 @@ def main():
     require("if (work === 'unemployed')" in module, "newly unemployed must have a distinct first-day ordering")
     require("baseRows.slice(2)" in module, "v79 must preserve existing overlap candidates instead of replacing the matcher")
 
-    public_text = module + "\n" + test
+    # Scan only code that ships to users. The test intentionally contains
+    # forbidden threshold literals so it can prove they never enter runtime copy.
     for volatile in ("34 000", "34000", "120 000", "120000"):
-        require(volatile not in public_text, f"v79 must not hard-code volatile benefit threshold: {volatile}")
+        require(volatile not in module, f"v79 must not hard-code volatile benefit threshold: {volatile}")
     for forbidden in ("searchParams.set('situation'", "searchParams.set(\"situation\"", "searchParams.set('income'", "searchParams.set('employer'", "searchParams.set('identity'"):
         require(forbidden not in module, f"sensitive public handoff introduced: {forbidden}")
 
