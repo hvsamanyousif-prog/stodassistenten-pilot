@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-young-housing-2027-decision-transition-v01",
+      "product_miss": "The shared truth/support contract and v18 scenario already encoded decision-period versioning and explicit 2027 reform exceptions, but the live young-housing product still exposed only the 2026 annual-income path. The product had learned the miss without operationalizing it.",
+      "regression_case_ids": [
+        "lab-young-housing-2027-transition-v18-01"
+      ],
+      "fix_or_guardrail": "Reuse the existing young_housing route and scenario rather than creating a duplicate engine. Detect explicit 2027 intent, separate current/existing decisions from new decisions starting 1 January 2027, ask about self-employment or foreign income only on the new-2027 path, and keep 2026 users on the current annual-income flow without extra questions.",
+      "truth_guardrail": "Försäkringskassan's current transition page supports the decision-start boundary and states that self-employed people and people with foreign income are not affected by this monthly-income law change. That does not prove individual eligibility, benefit amount, repayment outcome or every rule that may apply to an excluded case. The source must be rechecked before a material action claim.",
+      "privacy_guardrail": "Do not put raw situation text, exact income, employer, business details, foreign country, identity or exact age in URL or structured feedback. Handoff may contain only actor_type=student, focus=young_housing, language and the coarse context transition_2027.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}

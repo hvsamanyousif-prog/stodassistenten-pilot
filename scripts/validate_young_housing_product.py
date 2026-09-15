@@ -12,6 +12,7 @@ RUNTIME_TEST = ROOT / "client/young-housing-transition.test.cjs"
 BUILD = ROOT / "scripts/build_public_pilot.py"
 SIGNAL = ROOT / "data/evals/demand_friction_signals_v11.json"
 SCENARIO = ROOT / "data/evals/scenario_lab_websignals_v22.json"
+SCENARIO_2027 = ROOT / "data/evals/scenario_lab_websignals_v18.json"
 REGRESSION_MAP = ROOT / "data/evals/demand_friction_regression_map_v05.json"
 SUPPORT = ROOT / "data/supports/se-forsakringskassan-bostadsbidrag-unga.json"
 COVERAGE = ROOT / "docs/PILOT_COVERAGE_MATRIX.md"
@@ -29,10 +30,12 @@ def run(command: list[str], label: str) -> None:
 
 def main() -> int:
     runtime = RUNTIME.read_text(encoding="utf-8")
+    runtime_test = RUNTIME_TEST.read_text(encoding="utf-8")
     build = BUILD.read_text(encoding="utf-8")
     coverage = COVERAGE.read_text(encoding="utf-8")
     signal = json.loads(SIGNAL.read_text(encoding="utf-8"))
     scenario = json.loads(SCENARIO.read_text(encoding="utf-8"))
+    scenario_2027 = json.loads(SCENARIO_2027.read_text(encoding="utf-8"))
     mapping = json.loads(REGRESSION_MAP.read_text(encoding="utf-8"))
     support = json.loads(SUPPORT.read_text(encoding="utf-8"))
 
@@ -54,6 +57,16 @@ def main() -> int:
     require("uppdatera uppgifterna direkt" in runtime, "income-change reporting next action is missing")
     require("role', 'group'" in runtime and "aria-pressed" in runtime and "role', 'status'" in runtime, "accessibility states are missing")
     require("sv:" in runtime and "ar:" in runtime and "fa:" in runtime, "young housing guidance must support sv/ar/fa")
+
+    # v60: the already-verified v18 change regression must now constrain the live product.
+    require("transition_2027" in runtime, "2027 transition context is not implemented in live runtime")
+    require("transitionBranch" in runtime, "2027 decision/exception branching is missing")
+    require("bostadsbidrag-nya-regler-fran-1-januari-2027" in runtime, "2027 primary-source route is missing")
+    require("bara gäller beslut från och med 1 januari 2027" in runtime, "existing-decision no-auto-switch boundary is missing")
+    require("vänta inte på 2027-reglerna" in runtime, "current-rule change reporting must survive the 2027 transition branch")
+    require("egenföretagare" in runtime and "inkomst från utlandet" in runtime, "2027 exception boundary is missing")
+    require("new_2027" in runtime_test and "verify_exception" in runtime_test, "2027 branch behavior is not regression-tested")
+    require("٢٠٢٧" in runtime_test and "۲۰۲۷" in runtime_test, "2027 route detection must remain multilingual")
 
     verification = support.get("verification", {})
     require(verification.get("status") == "NEEDS_REVIEW", "young housing truth record must remain review-gated")
@@ -80,6 +93,18 @@ def main() -> int:
     require("the_raw_situation_text_or_exact_age_should_be_put_in_the_handoff_url_or_feedback" in must_not, "privacy regression is missing")
     require(case.get("expected_questions") == ["q_is_user_under_29", "q_housing_form_if_youth_route_continues"], "information-gain question contract drifted")
     require("do_not_repeat_an_income_change_question_when_the_coarse_shell_context_already_establishes_that_fact" in case.get("expected_next_actions", []), "known-fact no-repeat guard is missing")
+
+    transition_cases = {case.get("case_id"): case for case in scenario_2027.get("cases", [])}
+    transition_case = transition_cases.get("lab-young-housing-2027-transition-v18-01")
+    require(transition_case is not None, "canonical 2027 young housing transition regression is missing")
+    transition_must_not = set(transition_case.get("must_not_claim", []))
+    require("monthly_income_rules_apply_to_a_2026_housing_benefit_decision" in transition_must_not, "2027-to-2026 backport guard is missing")
+    require("all_existing_housing_benefit_decisions_switch_automatically_on_2027_01_01" in transition_must_not, "mid-decision auto-switch guard is missing")
+    require("monthly_income_reform_applies_to_self_employed_or_foreign_income_cases_without_current_source_check" in transition_must_not, "2027 exception guard is missing")
+    transition_actions = set(transition_case.get("expected_next_actions", []))
+    require("report_known_income_housing_or_household_changes_under_current_rules" in transition_actions, "current-rule change reporting action is missing")
+    require("do_not_treat_2027_01_01_as_an_automatic_mid_decision_switch_for_existing_housing_benefit" in transition_actions, "existing-decision transition action is missing")
+    require("if_a_new_decision_will_start_from_2027_01_01_verify_the_monthly_income_rules_and_current_exceptions_then" in transition_actions, "new-decision verification action is missing")
 
     mappings = {item.get("signal_id"): item for item in mapping.get("mappings", [])}
     learned = mappings.get("df-young-post-study-housing-change-v01")
