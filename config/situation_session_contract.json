@@ -86,6 +86,10 @@
         "money",
         "children",
         "housing"
+      ],
+      "disability_home_support": [
+        "support_need",
+        "support_for"
       ]
     },
     "max_value_length": 64,

@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Natural-language wording is discovery-only; material personal-assistance guidance must come from current Försäkringskassan and relevant municipal/healthcare primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize context-loss bugs where the product correctly understands a child-via-guardian situation at entry but then silently changes the truth source or next action during handoff."
+  },
+  "signals": [
+    {
+      "signal_id": "df-child-assistance-context-source-drift-v01",
+      "actor_types": ["parent_guardian", "private_person", "employee"],
+      "natural_language_queries": [
+        "mitt barn behöver personlig assistans vart börjar vi",
+        "personlig assistans barn vem ska jag kontakta",
+        "mitt barn behöver personlig assistans och sjuksköterska hemma",
+        "jag behöver personlig assistans hemma",
+        "jag jobbar med barn och personlig assistans vilka regler gäller",
+        "طفلي يحتاج إلى مساعدة شخصية في المنزل",
+        "فرزندم در خانه به کمک شخصی نیاز دارد"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan har separata aktuella primärkällor för assistansersättning för barn respektive vuxna, vilket visar ett återkommande behov av korrekt målpersons-routing. Detta är kvalitativ produktrelevans, not measured search volumes."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Färsk runtime-granskning visar att natural-language disability/home-support-vägen kan förstå personlig assistans men tappar barnkontext i handoffen och därefter alltid visar vuxenkällan. Användaren måste själv upptäcka att källan gäller fel målperson."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Fel barn/vuxen-källa kan ge fel nästa steg, fel materiell regelkontext och onödig återstart. Barnspåret har dessutom särskilda primärkälleuppgifter som föräldraavdrag och vårdnadshavarkontext som inte får ersättas av vuxenlogik."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Statlig assistansersättning, kommunal personlig assistans och eventuell medicinsk vård hemma är separata vägar. Barn och vuxna har separata Försäkringskassan-sidor, och lokala kommun-/vårdvägar måste verifieras separat."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Samma barnkontext måste överleva svenska, arabiska och persiska formuleringar. Om bara svenska bevarar målpersonen uppstår språkdrift i källval och nästa steg."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "Barn/vuxen är redan uttryckt i många naturliga berättelser. Rätt förbättring är att återanvända den grova route-changing faktan i samma handoff i stället för att fråga igen eller skicka användaren till fel primärkälla."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Barn- och vuxensidorna finns parallellt i Försäkringskassans aktuella informationsstruktur och v84:s scenarier visade att guardian-, healthcare- och språkfallen behöver samma gräns. Detta är kvalitativ återkomstsignal, not measured search volumes."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "v84 skapade korrekt child truth och regressioner men dokumenterade uttryckligen att den befintliga natural-language disability/home-support-routen fortfarande kunde falla tillbaka till vuxenkällan. Runtime-fixen saknades på färsk main."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna"
+      ],
+      "product_miss": "The existing disability-home-support natural-language route can detect personal assistance but serializes only support_need, dropping whether the story concerns a child. The focused result then always links to the adult Försäkringskassan source. A professional phrase such as 'jag jobbar med barn och personlig assistans' can also evade the older narrow false-positive guard.",
+      "future_guardrail": "Keep one disability/home-support route and one truth layer. Preserve only coarse support_for=child|adult when the natural story already establishes it; when unknown, do not silently assume adult. Never serialize raw story, diagnosis, exact age, identity or address. Professional/research wording without a personal-need signal must fail closed.",
+      "regression_case": [
+        "lab-child-assistance-runtime-child-sv-v85-01",
+        "lab-child-assistance-runtime-adult-sv-v85-02",
+        "lab-child-assistance-runtime-healthcare-v85-03",
+        "lab-child-assistance-runtime-unknown-subject-v85-04",
+        "lab-child-assistance-runtime-professional-v85-05",
+        "lab-child-assistance-runtime-worker-personal-v85-06",
+        "lab-child-assistance-runtime-language-ar-v85-07",
+        "lab-child-assistance-runtime-language-fa-v85-08"
+      ],
+      "evaluation_method": "Shared-runtime handoff regression + child/adult source distinction + professional false-positive falsification + unknown-subject fail-closed source presentation + sv/ar/fa parity + privacy serialization guard + current Försäkringskassan primary-source cross-check.",
+      "recommended_learning_action": "Preserve the already-known child/adult subject through the existing disability-home-support handoff and source rendering. Add no target-group app and no duplicate matcher; keep the extension inside the same public build and same feedback flow.",
+      "truth_rule": "Discovery wording and route context are never eligibility truth. Verify material personal-assistance eligibility, assessed needs or hours, parental deduction, age rules, amounts, deadlines, application requirements, municipal responsibility and healthcare boundaries against current responsible primary sources before use. Do not promote child or adult eligibility from the coarse support_for routing fact."
+    }
+  ]
+}
