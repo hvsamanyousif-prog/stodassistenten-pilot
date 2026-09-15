@@ -1,0 +1,67 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for suppliers who have found a public procurement but get stuck on an unclear requirement, the official questions-and-answers route, changing published information, or expectations of post-deadline supplementation. Scores are prioritization signals, not measured search volumes and not proof that a bid is compliant or that a correction will be allowed. Search phrasing and community material are discovery-only; current primary sources and the specific procurement documents carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage. Scores are qualitative prioritization, not measured search volume."
+  },
+  "signals": [
+    {
+      "signal_id": "df-procurement-clarification-before-submission-v01",
+      "actor_types": ["company", "association_supplier", "future_supplier"],
+      "natural_language_queries": [
+        "jag förstår inte ett skallkrav vem ska jag fråga",
+        "kan jag ringa upphandlaren om ett krav är oklart",
+        "var ställer jag frågor om upphandlingen innan anbud",
+        "kan jag komplettera anbudet efter sista anbudsdag",
+        "frågor och svar ändrade kravet vad gäller nu",
+        "vi missade en obligatorisk bilaga kan vi skicka in den efteråt"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Current supplier guidance has dedicated material on questions and answers during procurement and on correction, clarification and supplementation after submission. Natural supplier phrasing repeatedly collapses these into a simpler 'who do I ask' or 'can I fix it later' problem. This is qualitative discovery evidence, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The safe route changes sharply depending on timing and status: before submission an unclear requirement should be handled through the official Q&A route in the current procurement; after submission correction, clarification or supplementation is conditional and must not be treated as guaranteed repair of a missing mandatory requirement."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A supplier can submit a non-compliant bid, miss a question deadline, rely on an outdated interpretation after a published answer or addendum, or wrongly assume that missing mandatory evidence can always be cured after the deadline."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Generic supplier guidance explains the principles, while the actual procurement documents, the electronic procurement tool, published questions and answers, addenda and buyer decisions control the concrete route."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as obligatoriskt krav, frågor och svar, rättelse, förtydligande and komplettering are legally and procedurally distinct but are commonly collapsed into everyday phrases such as 'kan jag fråga' or 'kan jag skicka in senare'."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "A useful next action should be immediate and ordered: identify the official Q&A channel and question deadline, monitor published answers/addenda, update the requirement-evidence checklist, and never build the bid strategy on an assumed post-deadline repair."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Unclear requirements, Q&A updates and missing-evidence questions can recur in every supplier sector and procurement method, making this a structural rather than sector-specific friction."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The current company pilot explains discovery, CPV, direct procurement, DIS and a general requirement/evidence checklist, but it jumps from reading the documents to a blunt no-bid statement without an explicit official clarification path and without a warning that post-deadline supplementation is conditional rather than guaranteed."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.foretagarna.se/juridisk-faq/offentlig-upphandling/"
+      ],
+      "primary_sources": [
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/fragor-och-svar-vid-upphandling/",
+        "https://www.upphandlingsmyndigheten.se/inkopsprocessen/genomfor-upphandlingen/rattelse-fortydligande-och-komplettering/",
+        "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/lamna-anbud/"
+      ],
+      "recommended_learning_action": "Extend the existing company-pilot procurement result without adding another question or a parallel engine: tell suppliers to use the official Q&A channel in the current procurement when a requirement is unclear, monitor published answers/addenda, and fail closed on any assumption that a missing mandatory item can always be repaired after the deadline.",
+      "truth_rule": "VERIFY material procurement guidance against current Upphandlingsmyndigheten primary sources and, for a concrete bid, the current procurement documents plus published questions, answers and addenda. Do not infer that a private answer controls the procurement, that ambiguity removes a mandatory requirement, or that post-deadline correction, clarification or supplementation is guaranteed or legally allowed in the specific case."
+    }
+  ]
+}
