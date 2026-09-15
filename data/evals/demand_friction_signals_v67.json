@@ -76,7 +76,7 @@
       ],
       "evaluation_method": "Natural-language route tests + scenario regressions + primary-source cross-check. Community text may only suggest cases; it must never supply material rules.",
       "recommended_learning_action": "Extend the existing student_csn route with topic=sickness, preserving coarse study_context and study_work only when explicit, and keep all material entitlement/amount/deadline/medical rules source-led and fail-closed.",
-      "truth_rule": "Reddit/community material is discovery only. Current CSN and Försäkringskassan primary sources must be checked for material guidance; prior AI output and feedback are never truth sources."
+      "truth_rule": "Reddit/community material is discovery only. Current CSN and Försäkringskassan primary sources must be verified before material guidance is used; prior AI output and feedback are never truth sources."
     }
   ]
 }
