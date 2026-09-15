@@ -4,10 +4,14 @@ on:
   push:
     branches: [main]
     paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
       - 'client/child-assistance-context-extension.js'
       - 'client/child-assistance-context-extension.test.cjs'
+      - 'client/child-assistance-session-contract-v85.test.cjs'
       - 'client/disability-home-support-guidance.js'
       - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_situation_session_contract.py'
       - 'scripts/validate_child_assistance_runtime_v85.py'
       - 'data/evals/scenario_lab_websignals_v85.json'
       - 'data/evals/demand_friction_signals_v85.json'
@@ -17,10 +21,14 @@ on:
       - '.github/workflows/child-assistance-runtime-v85.yml'
   pull_request:
     paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
       - 'client/child-assistance-context-extension.js'
       - 'client/child-assistance-context-extension.test.cjs'
+      - 'client/child-assistance-session-contract-v85.test.cjs'
       - 'client/disability-home-support-guidance.js'
       - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_situation_session_contract.py'
       - 'scripts/validate_child_assistance_runtime_v85.py'
       - 'data/evals/scenario_lab_websignals_v85.json'
       - 'data/evals/demand_friction_signals_v85.json'
