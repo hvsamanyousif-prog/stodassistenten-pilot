@@ -108,7 +108,8 @@ assert out["colloquialEmployerCtx"] == "employee", "plain 'mitt företag' must n
 assert out["genericViaBolagCtx"] == "employee", "generic invoicing via a company must not imply invoicing-company employment"
 assert out["selfDetected"] is True
 assert out["invoiceDetected"] is True
-assert "actor_type=self_employed" in out["selfHref"]
+assert "actor_type=private_person" in out["selfHref"], "self-employed is work context, not a second actor vocabulary"
+assert "actor_type=self_employed" not in out["selfHref"]
 assert "work_context=self_employed" in out["selfHref"]
 assert "actor_type=employee" in out["invoiceHref"]
 assert "work_context=invoiced_worker" in out["invoiceHref"]
@@ -122,4 +123,4 @@ assert "fetch(" not in module and "XMLHttpRequest" not in module
 assert "localStorage" not in module and "sessionStorage" not in module
 assert "sv: {" in module and "ar: {" in module and "fa: {" in module
 
-print("work-injury worker-context v37: OK (same module; bounded context; false-positive guards; FK/Fora truth layers separated)")
+print("work-injury worker-context v37: OK (same module; bounded context; shared actor vocabulary; false-positive guards; FK/Fora truth layers separated)")

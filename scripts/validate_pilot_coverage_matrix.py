@@ -101,7 +101,8 @@ assert "care_context" in relative_runtime and "municipal_support" in relative_ru
 assert "get('q')" not in relative_runtime and 'get("q")' not in relative_runtime
 assert "focus=work_injury_dental" in work_injury_dental_runtime
 assert "actor_type=employee&focus=work_injury_dental&lang=" in work_injury_dental_runtime
-assert "actor_type=self_employed&focus=work_injury_dental&work_context=self_employed" in work_injury_dental_runtime
+assert "actor_type=private_person&focus=work_injury_dental&work_context=self_employed" in work_injury_dental_runtime
+assert "actor_type=self_employed" not in work_injury_dental_runtime
 assert "work_context=invoiced_worker" in work_injury_dental_runtime
 assert "detectWorkContext" in work_injury_dental_runtime
 assert "data-stod-work-injury-dental" in work_injury_dental_runtime

@@ -196,7 +196,7 @@
   }
   function handoffHref(language, context) {
     const lang = safeLang(language);
-    if (context === 'self_employed') return `person-pilot.html?actor_type=self_employed&focus=work_injury_dental&work_context=self_employed&lang=${encodeURIComponent(lang)}`;
+    if (context === 'self_employed') return `person-pilot.html?actor_type=private_person&focus=work_injury_dental&work_context=self_employed&lang=${encodeURIComponent(lang)}`;
     if (context === 'invoiced_worker') return `person-pilot.html?actor_type=employee&focus=work_injury_dental&work_context=invoiced_worker&lang=${encodeURIComponent(lang)}`;
     return `person-pilot.html?actor_type=employee&focus=work_injury_dental&lang=${encodeURIComponent(lang)}`;
   }
