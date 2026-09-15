@@ -10,9 +10,11 @@
   "current_primary_sources": [
     "https://www.fritidskortet.se/",
     "https://www.fritidskortet.se/foralder",
+    "https://www.fritidskortet.se/fragor-och-svar/",
     "https://www.fritidskortet.se/sok",
     "https://www.fritidskortet.se/foreningar/sa-har-fungerar-det/",
-    "https://www.ehalsomyndigheten.se/om-ehalsomyndigheten/aktuellt/nyheter/2026/fler-barn-far-mojlighet-till-en-aktiv-fritid"
+    "https://www.ehalsomyndigheten.se/om-ehalsomyndigheten/aktuellt/nyheter/2026/fler-barn-far-mojlighet-till-en-aktiv-fritid",
+    "https://www.ehalsomyndigheten.se/om-ehalsomyndigheten/remisser/"
   ],
   "guarded_current_facts": {
     "age_boundary": "Current primary sources state that from 10 August 2026 Fritidskortet covers children from the calendar year they turn 6 through the calendar year they turn 16.",
@@ -20,7 +22,7 @@
     "higher_amount_basis": "Current primary sources state 2,500 SEK for certain households where the relevant guardian received bostadsbidrag or bostadstillägg in the previous year.",
     "provider_boundary": "Payment depends on the activity provider being connected to the Fritidskortet register; an activity being organised or costly does not establish registration.",
     "non_eid_path": "Current parent guidance includes a paper-form route for people without e-identification when the current form requirements are met.",
-    "use_by_date": "Current 2026 guidance states that the year's funds must be used by 30 November; this date must be rechecked before future material guidance."
+    "use_by_date": "Current public Fritidskortet FAQ states that the year's funds must be used by 30 November. E-hälsomyndigheten also has a current consultation that proposes 7 December after responsibility for setting the deadline moved from the regulation to the authority. A consultation proposal is not implementation evidence: recheck the responsible authority's current final guidance before material deadline advice and do not present 7 December as active unless a final decision/current service guidance confirms it."
   },
   "must_not_infer": [
     "generic_low_income_implies_higher_amount",
@@ -29,6 +31,7 @@
     "all_sports_or_culture_providers_are_registered",
     "no_eid_means_no_route",
     "association_provider_registration_is_the_parent_payment_flow",
+    "consultation_proposal_is_active_deadline",
     "discovery_or_uptake_statistics_are_eligibility_evidence"
   ],
   "privacy_boundary": "Do not place child identity, exact household income, benefit amount, provider identity, diagnosis or raw family story into public evals, handoff or feedback.",
