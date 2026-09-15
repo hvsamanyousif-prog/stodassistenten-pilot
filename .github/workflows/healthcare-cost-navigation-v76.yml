@@ -1,0 +1,60 @@
+name: Validate healthcare cost navigation learning v76
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'data/evals/scenario_lab_websignals_v76.json'
+      - 'data/evals/demand_friction_signals_v76.json'
+      - 'data/evals/demand_friction_regression_map_v76.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V76_APPENDIX.md'
+      - 'scripts/validate_healthcare_cost_navigation_v76.py'
+      - '.github/workflows/healthcare-cost-navigation-v76.yml'
+  pull_request:
+    paths:
+      - 'data/evals/scenario_lab_websignals_v76.json'
+      - 'data/evals/demand_friction_signals_v76.json'
+      - 'data/evals/demand_friction_regression_map_v76.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V76_APPENDIX.md'
+      - 'scripts/validate_healthcare_cost_navigation_v76.py'
+      - '.github/workflows/healthcare-cost-navigation-v76.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  healthcare-cost-v76:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate permanent learning and truth boundaries
+        id: validate
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_healthcare_cost_navigation_v76.py > v76-validation.log 2>&1
+          code=$?
+          cat v76-validation.log
+          {
+            echo '### v76 validation output'
+            echo '```text'
+            cat v76-validation.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: healthcare-cost-v76-validation
+          path: v76-validation.log
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v76
+      - name: Confirm no parallel healthcare-cost app was introduced
+        run: |
+          test ! -e healthcare-cost.html
+          test ! -e health-cost.html
+          test ! -e client/healthcare-cost-app.js
