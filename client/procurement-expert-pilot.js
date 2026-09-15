@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.0';
+const APP_VERSION='procurement-expert-0.2.1';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -84,7 +84,6 @@ function buildFeedbackPayload(found,useful,clear,ratings){
    if(!allowed.has(key)||!Number.isInteger(value)||value<1||value>5)throw new TypeError('Ogiltigt betyg.');
    safe[key]=value;
  }
- if(!Object.keys(safe).length)throw new TypeError('Lämna minst ett betyg. Övriga kan vara ej bedömda.');
  return {app_version:APP_VERSION,language:'sv',flow:'procurement_expert_review',learned_new:found,useful:useful,next_step_clear:clear,ratings:safe};
 }
 function draftSkeleton(reqs){
@@ -120,15 +119,32 @@ function browserInit(){
    document.querySelectorAll('[data-score]').forEach(el=>el.value='');
    ['foundIssue','useful','clearNext'].forEach(id=>$(id).value='');
    $('feedbackStatus').textContent='';$('feedbackStatus').className='';$('sendFeedback').disabled=false;
+   if($('advancedFeedback'))$('advancedFeedback').open=false;
  }
  function invalidateAnalysis(){
    state.requirements=[];resetFeedback();$('analysisCard').classList.add('hidden');$('feedbackCard').classList.add('hidden');
-   $('summary').textContent='';$('requirements').textContent='';$('draft').textContent='';
+   $('summary').textContent='';$('priorityOverview').textContent='';$('requirements').textContent='';$('draft').textContent='';
+   if($('reviewDetails'))$('reviewDetails').open=false;
  }
  $('sourceText').addEventListener('input',()=>{invalidateAnalysis();sourceError.textContent='';$('sourceText').removeAttribute('aria-invalid');});
  function renderSectors(){
    sectorGrid.innerHTML=SECTORS.map(([v,l])=>`<button class="choice ${state.sector===v?'active':''}" aria-pressed="${state.sector===v}" data-sector="${v}">${l}</button>`).join('');
    sectorGrid.querySelectorAll('[data-sector]').forEach(b=>b.onclick=()=>{state.sector=b.dataset.sector;sectorGrid.querySelectorAll('[data-sector]').forEach(el=>{el.classList.toggle('active',el.dataset.sector===state.sector);el.setAttribute('aria-pressed',String(el.dataset.sector===state.sector));});});
+ }
+ function renderPriorityOverview(s){
+   const priority=state.requirements.filter(r=>r.evidence==='missing'||r.category==='uncertain'||(r.flags||[]).length>0);
+   const top=priority.slice(0,3);
+   let intro='Börja med en kravrad där du kan kontrollera beviset mot originalunderlaget.';
+   if(s.blocking.length)intro='Börja med de rader där underlag saknas innan du går vidare.';
+   else if(priority.length)intro='Börja med de markerade riskerna och kontrollera dem mot originalunderlaget.';
+   const items=top.map(r=>{
+     const reason=r.evidence==='missing'?'Saknat underlag':r.category==='uncertain'?'Oklar kravtyp':(r.flags||[]).map(f=>f.label).join(' ');
+     return `<li><strong>Källa rad ${r.sourceLine??r.id}:</strong> ${esc(reason)}</li>`;
+   }).join('');
+   const more=priority.length>top.length?`<p class="micro">Ytterligare ${priority.length-top.length} riskmarkeringar finns i full granskning.</p>`:'';
+   $('priorityOverview').innerHTML=`<div class="priority-box"><h3>Nästa kontroll</h3><p>${esc(intro)}</p>${items?`<ul>${items}</ul>`:''}${more}</div>`;
+   $('reviewSummary').textContent=`Full kravgranskning (${state.requirements.length} rader)`;
+   $('openReviewBtn').textContent=s.blocking.length?'Granska saknade underlag':priority.length?'Granska risker och krav':'Öppna full kravgranskning';
  }
  function renderRequirements(){
    const active=document.activeElement;
@@ -136,7 +152,8 @@ function browserInit(){
    const focusId=focusAttr?active.getAttribute(focusAttr):null;
    const s=summarize(state.requirements);
    $('summary').innerHTML=`<div class="${s.tone}"><b>${esc(s.decision)}</b><br><span class="muted">${state.requirements.length} rader analyserade • ${s.blocking.length} rader med saknat underlag • ${s.uncertain.length} osäkra/ej bedömda</span></div>`;
-   $('requirements').innerHTML=state.requirements.map(r=>`<article class="req"><div class="reqhead"><span class="tag">${esc(LABELS[r.category])}</span><span class="source">Källa rad ${r.sourceLine??r.id}</span></div><p>${esc(r.text)}</p>${(r.flags||[]).map(f=>`<p class="micro row-alert"><strong>Kontroll:</strong> ${esc(f.label)}</p>`).join('')}<p class="muted"><b>Kontrollfråga:</b> ${esc(r.question)}</p><div class="grid"><label>Kravtyp<select data-cat="${r.id}">${CATEGORIES.map(c=>`<option value="${c}" ${c===r.category?'selected':''}>${esc(LABELS[c])}</option>`).join('')}</select></label><label>Leverantörens evidens<select data-ev="${r.id}"><option value="unknown" ${r.evidence==='unknown'?'selected':''}>Ej bedömd</option><option value="yes" ${r.evidence==='yes'?'selected':''}>Styrkt</option><option value="missing" ${r.evidence==='missing'?'selected':''}>Saknas</option><option value="na" ${r.evidence==='na'?'selected':''}>Ej tillämpligt</option></select></label></div></article>`).join('');
+   renderPriorityOverview(s);
+   $('requirements').innerHTML=state.requirements.map(r=>`<article class="req"><div class="reqhead"><span class="tag">${esc(LABELS[r.category])}</span><span class="source">Källa rad ${r.sourceLine??r.id}</span></div><p>${esc(r.text)}</p>${(r.flags||[]).map(f=>`<p class="micro row-alert"><strong>Kontroll:</strong> ${esc(f.label)}</p>`).join('')}<p class="muted"><b>Kontrollfråga:</b> ${esc(r.question)}</p><div class="grid"><label>Kravtyp<select data-cat="${r.id}">${CATEGORIES.map(c=>`<option value="${c}" ${c===r.category?'selected':''}>${esc(LABELS[c])}</option>`).join('')}</select></label><label>Leverantörens evidens<select data-ev="${r.id}"><option value="unknown" ${r.evidence==='unknown'?'selected':''}>Ej bedömd</option><option value="yes" ${r.evidence==='yes'?'selected':''}>Markerad som styrkt – ej verifierad</option><option value="missing" ${r.evidence==='missing'?'selected':''}>Saknas</option><option value="na" ${r.evidence==='na'?'selected':''}>Ej tillämpligt</option></select></label></div></article>`).join('');
    $('requirements').querySelectorAll('[data-cat]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.cat));r.category=el.value;r.question=evidenceQuestion(r.text,r.category);renderRequirements();});
    $('requirements').querySelectorAll('[data-ev]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.ev));r.evidence=el.value;renderRequirements();});
    $('draft').textContent=draftSkeleton(state.requirements);
@@ -148,6 +165,7 @@ function browserInit(){
      if(!text.trim())throw new Error('Klistra in ett underlag eller välj byggfallet.');
      state.requirements=splitRequirements(text);
      show('analysisCard');show('feedbackCard');renderRequirements();
+     $('reviewDetails').open=false;$('advancedFeedback').open=false;
      const heading=$('analysisCard').querySelector('h2');heading.setAttribute('tabindex','-1');heading.focus();
    }catch(e){sourceError.textContent=e.message;$('sourceText').setAttribute('aria-invalid','true');$('sourceText').focus();}
  }
@@ -156,11 +174,12 @@ function browserInit(){
    $('sourceText').value='';$('sourceUrl').value='';state.sector=null;invalidateAnalysis();renderSectors();
    sourceError.textContent='';$('sourceText').removeAttribute('aria-invalid');show('profileCard');show('sourceCard');$('sourceText').focus();
  }
- $('startBtn').onclick=()=>{show('profileCard');show('sourceCard');state.sector=null;renderSectors();$('sourceText').focus();};
+ $('startBtn').onclick=resetCase;
  $('sampleBtn').onclick=loadSample;$('analyzeBtn').onclick=analyze;
  $('clearBtn').onclick=resetCase;
  $('editSourceBtn').onclick=()=>{$('sourceText').focus();};
  $('restartBtn').onclick=resetCase;
+ $('openReviewBtn').onclick=()=>{$('reviewDetails').open=true;$('reviewSummary').focus();};
  $('scoreRows').innerHTML=SCORE_DIMS.map(([k,l])=>`<div class="score"><label for="score-${k}">${l}</label><select class="field" id="score-${k}" data-score="${k}">${scoreOptions()}</select></div>`).join('');
  $('scoreRows').querySelectorAll('[data-score]').forEach(el=>el.onchange=()=>{const v=Number(el.value);if(Number.isInteger(v)&&v>=1&&v<=5)state.scores[el.dataset.score]=v;else delete state.scores[el.dataset.score];});
  async function sendFeedback(){
@@ -181,7 +200,7 @@ function browserInit(){
      status.className='status ok';status.textContent='Tack. Strukturerad expertfeedback skickad utan underlagstext eller företagsuppgifter.';
    }catch(e){
      if(epoch!==state.feedbackEpoch)return;
-     status.className='status err';status.textContent='Feedback kunde inte skickas just nu. Betygen ligger kvar på sidan så du kan försöka igen.';
+     status.className='status err';status.textContent='Feedback kunde inte skickas just nu. Dina svar ligger kvar på sidan så du kan försöka igen.';
    }finally{
      clearTimeout(timeout);
      if(epoch===state.feedbackEpoch){state.sending=false;state.controller=null;$('sendFeedback').disabled=false;}
