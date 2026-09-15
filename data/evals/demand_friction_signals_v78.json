@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signals for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence. Material unemployment-insurance guidance must be verified against current IAF, Arbetsförmedlingen and relevant a-kassa primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize recurring natural-language demand where users face high information friction, meaningful consequence and weak or stale product coverage. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-unemployment-two-rule-regime-v01",
+      "actor_types": ["private_person", "employee", "student"],
+      "natural_language_queries": [
+        "jag blev arbetslös vad gör jag först",
+        "måste jag uppfylla arbetsvillkoret för a-kassa",
+        "jag är inte med i a-kassan vad kan jag få",
+        "gäller nya a-kasseregler om jag har gamla dagar kvar",
+        "mitt jobb tar slut vad ska jag göra",
+        "jag blev arbetslös och har inte råd med hyran",
+        "أنا عاطل عن العمل ماذا أفعل أولاً",
+        "قوانین جدید بیمه بیکاری شامل من می‌شود یا قدیمی"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Unemployment creates immediate questions about first action, entitlement, membership and how the 2025 rule change affects an individual. Current authoritative guidance is structured around these first-step and rule-regime questions. This is qualitative prioritization, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Two unemployment-insurance rule systems coexist. New decisions use the income-based system from 1 October 2025, while an ongoing benefit period that started before that date can remain under the previous rules. Generic legacy wording about 'arbetsvillkor' can therefore mislead new applicants, while blanket income-rule wording can mislead users with an older ongoing period."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A user can miss first-day registration, misunderstand which rules apply, delay an application or fail to keep acute rent/food support visible. The consequence is financial and time-sensitive even when eligibility itself remains unverified."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Arbetsförmedlingen owns the first-step registration journey, IAF explains the coexistence of ALF24 and the previous rules, and the relevant a-kassa makes the individual compensation assessment. Municipal economic assistance can be a parallel route when basic needs are at risk."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as ersättningsperiod, inkomstvillkor, arbetsvillkor and rule-transition dates are system vocabulary. Natural-language users often ask only what to do after losing a job, and the dual-regime distinction becomes harder across Swedish, Arabic and Persian."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "For a newly unemployed person the safe first action can be shown without a generic questionnaire: register with Arbetsförmedlingen the first unemployed day. A rule-regime follow-up is only needed when material a-kassa guidance depends on whether an older benefit period is ongoing."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "The product already contains dedicated a-kassa benchmarks, an unemployment support contract and public unemployment copy, which demonstrates recurring product demand. Fresh authoritative pages continue to foreground first-day registration and the old/new rule boundary."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The truth/support contract already models the income condition and parallel rule systems, but the public person-pilot result still summarizes unemployment rules as depending on 'medlemskap, arbetsvillkor och historik'. Existing synthetic a-kassa benchmarks also still ask generically for work history. The truth layer and user-facing/learning layers have drifted apart."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.iaf.se/pressrum/aktuellt-och-pressmeddelanden/regelsamlingen-pa-iaf.se-ar-uppdaterad-for-den-nya-arbetsloshetsforsakringen/",
+        "https://www.iaf.se/pressrum/aktuellt-och-pressmeddelanden/nya-regler-for-arbetsloshetsforsakringen-fran-den-1-oktober/",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu/ersattning-fran-a-kassa"
+      ],
+      "product_miss": "Stödassistentens current support contract knows that ALF24 is income-based for new decisions and that an older ongoing benefit period can remain under prior rules, but the public unemployment result and older synthetic benchmarks still use legacy generic 'arbetsvillkor/work history' language. This creates truth drift inside the SAME product.",
+      "future_guardrail": "Keep one unemployment capability in the existing person product. Do not create an a-kassa app. Show first-day Arbetsförmedlingen registration as a safe first action when newly unemployed; ask about an older ongoing pre-2025-10-01 benefit period only when it can change material rule guidance; use income-history questions only for the new regime when needed; preserve existing unemployed+sick and economic-assistance overlap routes; fail closed on eligibility, amount, sanctions and exact individual deadlines.",
+      "regression_case": [
+        "lab-akassa-newly-unemployed-v78-01",
+        "lab-akassa-old-ongoing-period-v78-02",
+        "lab-akassa-new-period-income-regime-v78-03",
+        "lab-akassa-unemployed-sick-overlap-v78-04",
+        "lab-akassa-basic-needs-overlap-v78-05",
+        "lab-akassa-professional-false-positive-v78-06",
+        "lab-akassa-language-ar-v78-07",
+        "lab-akassa-language-fa-v78-08"
+      ],
+      "evaluation_method": "Natural-language scenario regressions + dual-regime falsification + overlap/fail-closed cases + multilingual cases + current IAF/Arbetsförmedlingen primary-source cross-check.",
+      "recommended_learning_action": "Align the existing a-kassa benchmarks and public unemployment explanation with the already-normalized support truth: first-day registration first, explicit old/new rule-regime boundary, income-based wording for new decisions, and no blanket legacy arbetsvillkor claim.",
+      "truth_rule": "Discovery language and product feedback are never truth. Verify material unemployment-insurance eligibility, rule regime, income condition, membership effect, benefit amount, sanction, deadline and application claims against current responsible primary sources before use. Do not infer the applicable rule regime solely from today's date: an ongoing benefit period started before 1 October 2025 can remain under previous rules, while new decisions use the income-based system."
+    }
+  ]
+}

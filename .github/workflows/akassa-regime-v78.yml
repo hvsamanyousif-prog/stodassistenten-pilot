@@ -1,0 +1,65 @@
+name: Validate a-kassa rule-regime learning v78
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'data/evals/cases/akassa.json'
+      - 'data/evals/expansion/akassa_v02.json'
+      - 'data/evals/scenario_lab_websignals_v78.json'
+      - 'data/evals/demand_friction_signals_v78.json'
+      - 'data/evals/demand_friction_regression_map_v78.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V78_APPENDIX.md'
+      - 'scripts/validate_akassa_regime_v78.py'
+      - '.github/workflows/akassa-regime-v78.yml'
+  pull_request:
+    paths:
+      - 'data/evals/cases/akassa.json'
+      - 'data/evals/expansion/akassa_v02.json'
+      - 'data/evals/scenario_lab_websignals_v78.json'
+      - 'data/evals/demand_friction_signals_v78.json'
+      - 'data/evals/demand_friction_regression_map_v78.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V78_APPENDIX.md'
+      - 'scripts/validate_akassa_regime_v78.py'
+      - '.github/workflows/akassa-regime-v78.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  akassa-regime-v78:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate rule-regime learning and truth boundaries
+        id: validate
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_akassa_regime_v78.py > v78-validation.log 2>&1
+          code=$?
+          cat v78-validation.log
+          {
+            echo '### v78 validation output'
+            echo '```text'
+            cat v78-validation.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: akassa-regime-v78-validation
+          path: v78-validation.log
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v78
+      - name: Confirm no parallel a-kassa app was introduced
+        run: |
+          test ! -e akassa.html
+          test ! -e a-kassa.html
+          test ! -e client/akassa-app.js
+          test ! -e client/unemployment-app.js
