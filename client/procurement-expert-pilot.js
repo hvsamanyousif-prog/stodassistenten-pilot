@@ -147,7 +147,8 @@ function browserInit(){
    if(s.blocking.length)intro='Börja med de rader där underlag saknas innan du går vidare.';
    else if(priority.length)intro='Börja med de markerade riskerna och kontrollera dem mot originalunderlaget.';
    const items=top.map(r=>{
-     const reason=r.evidence==='missing'?'Saknat underlag':r.category==='uncertain'?'Oklar kravtyp':(r.flags||[]).map(f=>f.label).join(' ');
+     const explicitRisk=(r.flags||[]).map(f=>f.label).join(' ');
+     const reason=r.evidence==='missing'?'Saknat underlag':explicitRisk||(r.category==='uncertain'?'Oklar kravtyp':'Kontrollera raden');
      return `<li><strong>Källa rad ${r.sourceLine??r.id}:</strong> ${esc(reason)}</li>`;
    }).join('');
    const more=priority.length>top.length?`<p class="micro">Ytterligare ${priority.length-top.length} riskmarkeringar finns i full granskning.</p>`:'';
