@@ -14,105 +14,242 @@
   "families": [
     {
       "family_id": "se-foundation-registry-discovery",
-      "source_registry_refs": ["se-lansstyrelserna-foundation-search"],
+      "source_registry_refs": [
+        "se-lansstyrelserna-foundation-search"
+      ],
       "domain": "foundations",
       "discovery_role": "registry_discovery",
       "opportunity_state_authority": "not_authoritative",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["foundation_name", "purpose_summary", "geography", "official_organization_identifier", "verified_foundation_contact_or_application_url"],
-      "blocked_fields": ["board_member_names", "auditor_names", "signatory_names", "personal_addresses", "personal_contact_details", "raw_registry_payload"],
+      "public_safe_fields": [
+        "foundation_name",
+        "purpose_summary",
+        "geography",
+        "official_organization_identifier",
+        "verified_foundation_contact_or_application_url"
+      ],
+      "blocked_fields": [
+        "board_member_names",
+        "auditor_names",
+        "signatory_names",
+        "personal_addresses",
+        "personal_contact_details",
+        "raw_registry_payload"
+      ],
       "required_verification_before_action": [
         "Verify with the foundation itself whether an application route exists now, including current application documents, deadline or application period, target group and where the application must be sent.",
         "Keep Länsstyrelsernas registry role as discovery only: a registered active foundation does not by itself prove that money is currently open for application or that a user is eligible.",
         "Do not republish people listed in the registry merely because the registry exposes board members, auditors or signatories; the public product needs organization-level facts only."
       ],
-      "prohibited_promotions": ["registered_foundation_equals_open_opportunity", "purpose_text_equals_user_eligibility", "registry_listing_equals_verified_application_deadline", "registry_contact_person_equals_public_product_contact", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "registered_foundation_equals_open_opportunity",
+        "purpose_text_equals_user_eligibility",
+        "registry_listing_equals_verified_application_deadline",
+        "registry_contact_person_equals_public_product_contact",
+        "community_advice_equals_truth"
+      ]
     },
     {
       "family_id": "se-national-benefit-catalog-discovery",
-      "source_registry_refs": ["se-forsakringskassan-benefits-a-z", "se-pensionsmyndigheten-pensioner-support", "se-arbetsformedlingen-support-a-z", "se-csn-grants-loans"],
+      "source_registry_refs": [
+        "se-forsakringskassan-benefits-a-z",
+        "se-pensionsmyndigheten-pensioner-support",
+        "se-arbetsformedlingen-support-a-z",
+        "se-csn-grants-loans"
+      ],
       "domain": "national_benefits",
       "discovery_role": "catalog_discovery",
       "opportunity_state_authority": "not_authoritative",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["benefit_or_program_name", "responsible_authority", "purpose_summary", "applicant_group_summary", "official_detail_url"],
-      "blocked_fields": ["raw_case_data", "medical_details", "income_details", "personal_identifiers", "inferred_eligibility", "inferred_amount", "inferred_deadline"],
+      "public_safe_fields": [
+        "benefit_or_program_name",
+        "responsible_authority",
+        "purpose_summary",
+        "applicant_group_summary",
+        "official_detail_url"
+      ],
+      "blocked_fields": [
+        "raw_case_data",
+        "medical_details",
+        "income_details",
+        "personal_identifiers",
+        "inferred_eligibility",
+        "inferred_amount",
+        "inferred_deadline"
+      ],
       "required_verification_before_action": [
         "Use the catalog to discover candidate benefits or programs, then verify the exact benefit or program page and any controlling primary guidance before creating or changing a truth-bearing support record.",
         "Catalog presence proves discoverability only; it does not prove that a specific person is eligible, what amount they would receive, or that a time-sensitive rule is still current.",
         "Keep individual calculations and authority decisions outside the discovery layer; ask only route-changing facts and preserve uncertainty when the primary source does not settle the user's case."
       ],
-      "prohibited_promotions": ["catalog_presence_equals_user_eligibility", "catalog_text_equals_personal_decision", "catalog_order_equals_product_ranking", "generic_catalog_equals_current_amount", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "catalog_presence_equals_user_eligibility",
+        "catalog_text_equals_personal_decision",
+        "catalog_order_equals_product_ranking",
+        "generic_catalog_equals_current_amount",
+        "community_advice_equals_truth"
+      ]
     },
     {
       "family_id": "se-business-financing-aggregator-discovery",
-      "source_registry_refs": ["se-verksamt-financing-advice"],
+      "source_registry_refs": [
+        "se-verksamt-financing-advice"
+      ],
       "domain": "business_financing",
       "discovery_role": "aggregator_discovery",
       "opportunity_state_authority": "not_authoritative",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["opportunity_name", "provider_name", "purpose_summary", "geography", "target_group_summary", "official_provider_url"],
-      "blocked_fields": ["raw_aggregator_payload", "user_profile", "personal_contacts", "unverified_deadline", "unverified_amount", "unverified_eligibility"],
+      "public_safe_fields": [
+        "opportunity_name",
+        "provider_name",
+        "purpose_summary",
+        "geography",
+        "target_group_summary",
+        "official_provider_url"
+      ],
+      "blocked_fields": [
+        "raw_aggregator_payload",
+        "user_profile",
+        "personal_contacts",
+        "unverified_deadline",
+        "unverified_amount",
+        "unverified_eligibility"
+      ],
       "required_verification_before_action": [
         "Use verksamt.se to discover candidate financing, advice and related offers, then verify material eligibility, current application state, deadline, amount and application path against the named provider's primary source.",
         "Treat an aggregator listing as a discovery signal even when it displays an application period; the provider source must settle active, planned or expired state before a truth-bearing opportunity record is promoted.",
         "Do not convert aggregator search order, wording or filters into product ranking or a claim that the user is a fit."
       ],
-      "prohibited_promotions": ["aggregator_listing_equals_open_opportunity", "aggregator_summary_equals_verified_eligibility", "search_order_equals_product_ranking", "aggregator_deadline_equals_verified_deadline", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "aggregator_listing_equals_open_opportunity",
+        "aggregator_summary_equals_verified_eligibility",
+        "search_order_equals_product_ranking",
+        "aggregator_deadline_equals_verified_deadline",
+        "community_advice_equals_truth"
+      ]
     },
     {
       "family_id": "se-civil-society-grant-catalog-discovery",
-      "source_registry_refs": ["se-arvsfonden-services", "se-kulturradet-grants", "se-rf-grants-support"],
+      "source_registry_refs": [
+        "se-arvsfonden-services",
+        "se-kulturradet-grants",
+        "se-rf-grants-support"
+      ],
       "domain": "civil_society_funding",
       "discovery_role": "catalog_discovery",
       "opportunity_state_authority": "source_specific",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["opportunity_name", "provider_name", "purpose_summary", "geography", "target_group_summary", "official_application_url"],
-      "blocked_fields": ["raw_page_payload", "applicant_person_data", "inferred_eligibility", "inferred_award_probability", "internal_selection_notes", "stale_deadline"],
+      "public_safe_fields": [
+        "opportunity_name",
+        "provider_name",
+        "purpose_summary",
+        "geography",
+        "target_group_summary",
+        "official_application_url"
+      ],
+      "blocked_fields": [
+        "raw_page_payload",
+        "applicant_person_data",
+        "inferred_eligibility",
+        "inferred_award_probability",
+        "internal_selection_notes",
+        "stale_deadline"
+      ],
       "required_verification_before_action": [
         "Use provider catalogs to discover candidate grant types, but verify the exact current opportunity or application page before asserting application state, deadline, documents, target group or application route.",
         "A provider catalog may be authoritative for its own programs, but catalog membership alone does not prove that a particular call is open now or that an applicant is eligible.",
         "Do not infer award probability from previous grants, general purpose similarity or public examples; keep fit and eligibility distinct until verified against the current primary-source conditions."
       ],
-      "prohibited_promotions": ["catalog_membership_equals_open_call", "catalog_summary_equals_user_eligibility", "stale_deadline_equals_current_deadline", "grant_history_equals_award_probability", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "catalog_membership_equals_open_call",
+        "catalog_summary_equals_user_eligibility",
+        "stale_deadline_equals_current_deadline",
+        "grant_history_equals_award_probability",
+        "community_advice_equals_truth"
+      ]
     },
     {
       "family_id": "se-local-government-directory-discovery",
-      "source_registry_refs": ["se-skr-municipality-directory", "se-skr-region-directory"],
+      "source_registry_refs": [
+        "se-skr-municipality-directory",
+        "se-skr-region-directory"
+      ],
       "domain": "local_government",
       "discovery_role": "registry_discovery",
       "opportunity_state_authority": "not_authoritative",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["authority_name", "authority_level", "geography", "official_authority_url", "discovery_topic"],
-      "blocked_fields": ["raw_directory_payload", "personal_contacts", "inferred_local_service", "inferred_eligibility", "unverified_deadline", "unverified_application_route"],
+      "public_safe_fields": [
+        "authority_name",
+        "authority_level",
+        "geography",
+        "official_authority_url",
+        "discovery_topic"
+      ],
+      "blocked_fields": [
+        "raw_directory_payload",
+        "personal_contacts",
+        "inferred_local_service",
+        "inferred_eligibility",
+        "unverified_deadline",
+        "unverified_application_route"
+      ],
       "required_verification_before_action": [
         "Use the SKR directories only to discover the relevant municipality or region and its official website; then verify the exact local service, grant, right or application page on that authority's current primary source.",
         "Directory presence proves the authority exists and provides a navigation path only; it does not prove that a local support exists, is open, has a given deadline or applies to the user.",
         "Treat municipal and regional rules as geography-specific truth: never copy another authority's conditions merely because service names look similar."
       ],
-      "prohibited_promotions": ["directory_presence_equals_local_support", "directory_link_equals_verified_local_eligibility", "directory_link_equals_current_application_path", "another_authority_rule_equals_local_rule", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "directory_presence_equals_local_support",
+        "directory_link_equals_verified_local_eligibility",
+        "directory_link_equals_current_application_path",
+        "another_authority_rule_equals_local_rule",
+        "community_advice_equals_truth"
+      ]
     },
     {
       "family_id": "se-collective-insurance-catalog-discovery",
-      "source_registry_refs": ["se-afa-collective-insurance"],
+      "source_registry_refs": [
+        "se-afa-collective-insurance"
+      ],
       "domain": "collective_insurance",
       "discovery_role": "catalog_discovery",
       "opportunity_state_authority": "source_specific",
       "private_adapter_required": true,
       "review_required": true,
-      "public_safe_fields": ["insurance_name", "covered_event_summary", "provider_name", "official_detail_url", "applicant_group_summary"],
-      "blocked_fields": ["raw_case_data", "employer_identity", "income_details", "medical_details", "personal_identifiers", "inferred_coverage", "inferred_entitlement", "inferred_amount"],
+      "public_safe_fields": [
+        "insurance_name",
+        "covered_event_summary",
+        "provider_name",
+        "official_detail_url",
+        "applicant_group_summary"
+      ],
+      "blocked_fields": [
+        "raw_case_data",
+        "employer_identity",
+        "income_details",
+        "medical_details",
+        "personal_identifiers",
+        "inferred_coverage",
+        "inferred_entitlement",
+        "inferred_amount"
+      ],
       "required_verification_before_action": [
         "Use Afa Försäkring's catalog to discover relevant collectively agreed insurance, then verify the exact insurance conditions and the user's applicable employment or collective-agreement context before asserting coverage or entitlement.",
         "A provider catalog may be authoritative for its own insurance conditions, but catalog presence alone does not prove that a specific employer, job or person is covered by that agreement.",
         "Keep benefit calculations and individual claims decisions outside the discovery layer; surface uncertainty and the concrete official verification step instead of promising payment."
       ],
-      "prohibited_promotions": ["catalog_presence_equals_collective_coverage", "employment_equals_collective_agreement_coverage", "insurance_name_equals_user_entitlement", "catalog_summary_equals_verified_amount", "community_advice_equals_truth"]
+      "prohibited_promotions": [
+        "catalog_presence_equals_collective_coverage",
+        "employment_equals_collective_agreement_coverage",
+        "insurance_name_equals_user_entitlement",
+        "catalog_summary_equals_verified_amount",
+        "community_advice_equals_truth"
+      ]
     }
   ]
 }
