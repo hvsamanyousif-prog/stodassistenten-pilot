@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lock v70 personal-assistance learning into the existing disability_home_support product."""
+"""Lock v70 public-route learning into the existing personal-assistance signal and disability_home_support product."""
 from __future__ import annotations
 
 import json
@@ -14,8 +14,8 @@ APPENDIX = ROOT / "docs" / "PILOT_COVERAGE_MATRIX_V70_APPENDIX.md"
 FEEDBACK_VALIDATOR = ROOT / "scripts" / "validate_feedback_coverage.py"
 
 scenario = json.loads((EVAL / "scenario_lab_websignals_v70.json").read_text(encoding="utf-8"))
-signal_doc = json.loads((EVAL / "demand_friction_signals_v70.json").read_text(encoding="utf-8"))
-map_doc = json.loads((EVAL / "demand_friction_regression_map_v70.json").read_text(encoding="utf-8"))
+signal_doc = json.loads((EVAL / "demand_friction_signals_v01.json").read_text(encoding="utf-8"))
+map_doc = json.loads((EVAL / "demand_friction_regression_map_v01.json").read_text(encoding="utf-8"))
 support = json.loads(SUPPORT.read_text(encoding="utf-8"))
 client = CLIENT.read_text(encoding="utf-8")
 test = TEST.read_text(encoding="utf-8")
@@ -23,8 +23,6 @@ appendix = APPENDIX.read_text(encoding="utf-8")
 feedback_validator = FEEDBACK_VALIDATOR.read_text(encoding="utf-8")
 
 expected_ids = {
-    "lab-disability-personal-assistance-explicit-v70-01",
-    "lab-disability-personal-assistance-no-diagnosis-inference-v70-02",
     "lab-disability-personal-assistance-vs-healthcare-v70-03",
     "lab-disability-personal-assistance-older-boundary-v70-04",
     "lab-disability-personal-assistance-professional-false-positive-v70-05",
@@ -35,27 +33,27 @@ expected_ids = {
 cases = {case["case_id"]: case for case in scenario.get("cases", [])}
 assert set(cases) == expected_ids, f"v70 scenario ids drifted: {sorted(cases)}"
 assert all(case.get("source_requirements") for case in cases.values()), "every v70 scenario needs source requirements"
+assert "lab-personal-assistance-authority-v12-01" in (EVAL / "scenario_lab_websignals_v12.json").read_text(encoding="utf-8")
+assert "deliberately does not duplicate" in scenario["purpose"]
 
-assert len(signal_doc.get("signals", [])) == 1
-signal = signal_doc["signals"][0]
-assert signal["signal_id"] == "df-personal-assistance-state-vs-municipality-v01"
+signals = {s["signal_id"]: s for s in signal_doc.get("signals", [])}
+signal = signals["df-personal-assistance-authority-split-v01"]
 assert signal["priority_band"] == "HIGH"
+assert signal["demand_signal"]["score"] >= 4
+assert signal["friction_signal"]["score"] >= 4
+assert signal["miss_consequence"]["score"] >= 4
+assert "forsakringskassan.se" in " ".join(signal["primary_sources"])
 assert "not measured search volumes" in signal_doc["purpose"]
-assert "not measured search volumes" in signal_doc["scoring"]["priority_rule"]
-assert set(signal["regression_case"]) == expected_ids
-primary = " ".join(signal["primary_sources"])
-assert "forsakringskassan.se" in primary and "socialstyrelsen.se" in primary
-assert "verify material personal-assistance guidance" in signal["truth_rule"]
 
-assert len(map_doc.get("mappings", [])) == 1
-mapping = map_doc["mappings"][0]
-assert mapping["signal_id"] == signal["signal_id"]
-assert set(mapping["regression_case_ids"]) == expected_ids
-assert mapping["coverage_status"] == "GUARDED_PUBLIC_ROUTE_READY"
+mappings = {m["signal_id"]: m for m in map_doc.get("mappings", [])}
+mapping = mappings[signal["signal_id"]]
+refs = set(mapping["regression_case_ids"])
+assert "lab-personal-assistance-authority-v12-01" in refs
+assert expected_ids <= refs, "v70 boundary cases must extend the canonical assistance signal mapping"
 assert "focus=disability_home_support" in mapping["fix_or_guardrail"]
-assert "support_need=personal_assistance" in mapping["fix_or_guardrail"]
+assert "diagnosis" in mapping["fix_or_guardrail"] and "rough hours" in mapping["fix_or_guardrail"]
 
-# Preserve conservative truth status: this run may operationalize navigation, not promote material fields.
+# Preserve conservative truth status: this run operationalizes navigation, not material eligibility fields.
 assert support["verification"]["status"] == "NEEDS_REVIEW"
 assert support["verification"]["human_review_required"] is True
 assert support["verification"]["material_fields_verified"] == []
@@ -103,4 +101,4 @@ assert "Feedback is a learning signal, never a truth source" in appendix
 assert "NEEDS_REVIEW" in appendix
 assert "property_actor" in appendix
 
-print("personal assistance v70: OK (same disability_home_support product; source-led; truth status unchanged; feedback coverage hardened)")
+print("personal assistance v70: OK (canonical demand signal reused; same disability_home_support product; truth status unchanged; feedback coverage hardened)")
