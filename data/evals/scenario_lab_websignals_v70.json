@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v70 regressions for the existing disability_home_support route. Personal assistance must be discoverable without creating a separate app or deciding LSS personkreis, assessed hours, entitlement, amount or local responsibility from free text.",
+  "cases": [
+    {
+      "case_id": "lab-disability-personal-assistance-explicit-v70-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har en funktionsnedsättning och behöver personlig assistans med hygien, måltider och kläder. Vem ska jag börja hos?",
+      "expected_support_areas": ["disability_home_support", "personal_assistance_boundary"],
+      "must_not_claim": ["automatic_lss_personkreis", "automatic_assistance_entitlement", "user_estimated_hours_equal_authority_assessed_hours", "guaranteed_state_or_municipal_route"],
+      "expected_questions": ["q_none_reuse_explicit_personal_assistance_need"],
+      "expected_next_actions": ["keep_same_disability_home_support_route", "show_current_forsakringskassan_primary_source_and_local_municipal_path_without_deciding_entitlement"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation", "current_municipal_primary_source_before_local_process_claim"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-no-diagnosis-inference-v70-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag behöver mycket hjälp varje dag med dusch, toalett, att äta och klä på mig. Jag undrar om personlig assistans kan vara en väg.",
+      "expected_support_areas": ["disability_home_support", "personal_assistance_boundary"],
+      "must_not_claim": ["invented_diagnosis", "automatic_lss_personkreis", "automatic_entitlement", "exact_assessed_basic_needs_hours_from_story"],
+      "expected_questions": ["q_none_if_user_explicitly_asks_about_personal_assistance"],
+      "expected_next_actions": ["explain_that_authority_assessment_cannot_be_replaced_by_story", "verify_current_state_and_municipal_paths"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-vs-healthcare-v70-03",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har en funktionsnedsättning, behöver personlig assistans i vardagen och sjuksköterska hemma för omläggning.",
+      "expected_support_areas": ["personal_assistance_boundary", "home_healthcare_boundary"],
+      "must_not_claim": ["healthcare_is_personal_assistance", "personal_assistance_covers_all_medical_tasks", "single_authority_handles_every_need"],
+      "expected_questions": ["q_separate_social_support_from_healthcare_before_material_guidance"],
+      "expected_next_actions": ["keep_personal_assistance_and_healthcare_as_separate_verified_paths"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation", "current_1177_or_local_healthcare_primary_source"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-older-boundary-v70-04",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min pappa är 78 år och behöver hjälp med hygien, mat och påklädning hemma. Är personlig assistans rätt väg?",
+      "expected_support_areas": ["older_home_support_boundary"],
+      "must_not_claim": ["older_person_automatically_qualifies_for_assistance_compensation", "disability_home_support_route_should_override_explicit_older_context", "guaranteed_specific_service"],
+      "expected_questions": ["q_none_in_disability_personal_assistance_detector_for_explicit_older_context"],
+      "expected_next_actions": ["preserve_existing_older_home_support_route", "verify_current_age_and_existing_assistance_rules_before_any_exception_claim"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation", "current_local_older_support_source"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-professional-false-positive-v70-05",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar med personlig assistans och vill förstå yrket bättre.",
+      "expected_support_areas": ["no_personal_support_route_without_personal_need_signal"],
+      "must_not_claim": ["the_user_needs_personal_assistance", "the_user_has_a_disability", "the_user_has_an_assistance_case"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_from_personal_assistance_detector"],
+      "source_requirements": ["current_primary_source_required_before_any_material_personal_assistance_claim"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-research-false-positive-v70-06",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag skriver uppsats om personlig assistans och vill hitta statistik om systemet.",
+      "expected_support_areas": ["no_personal_support_route_without_personal_need_signal"],
+      "must_not_claim": ["the_user_needs_personal_assistance", "the_user_has_a_disability", "the_user_should_apply"],
+      "expected_questions": ["q_none_fail_closed_research_context"],
+      "expected_next_actions": ["fail_closed_from_personal_assistance_detector"],
+      "source_requirements": ["current_primary_source_required_before_any_material_personal_assistance_claim"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-language-ar-v70-07",
+      "actor_type": "private_person",
+      "language": "ar",
+      "story": "لدي إعاقة وأحتاج مساعدة شخصية يومية ولا أعرف هل أبدأ مع البلدية أم Försäkringskassan.",
+      "expected_support_areas": ["disability_home_support", "personal_assistance_boundary"],
+      "must_not_claim": ["automatic_entitlement", "automatic_lss_personkreis", "guaranteed_state_or_municipal_route"],
+      "expected_questions": ["q_none_reuse_explicit_personal_assistance_need"],
+      "expected_next_actions": ["preserve_same_disability_home_support_focus_in_arabic_ui", "verify_current_primary_sources"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation"]
+    },
+    {
+      "case_id": "lab-disability-personal-assistance-language-fa-v70-08",
+      "actor_type": "private_person",
+      "language": "fa",
+      "story": "معلولیت دارم و هر روز به کمک شخصی نیاز دارم و نمی‌دانم از شهرداری شروع کنم یا Försäkringskassan.",
+      "expected_support_areas": ["disability_home_support", "personal_assistance_boundary"],
+      "must_not_claim": ["automatic_entitlement", "automatic_lss_personkreis", "guaranteed_state_or_municipal_route"],
+      "expected_questions": ["q_none_reuse_explicit_personal_assistance_need"],
+      "expected_next_actions": ["preserve_same_disability_home_support_focus_in_persian_ui", "verify_current_primary_sources"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_adult_assistance_compensation"]
+    }
+  ]
+}
