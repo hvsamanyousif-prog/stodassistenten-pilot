@@ -17,7 +17,8 @@
 
   const STUDY = /studer|student|pluggar|universitet|högskol|komvux|gymnasi|csn|studiemedel|omställningsstudiestöd|دراس|طالب|جامعة|الثانوي|CSN|تحصیل|دانشجو|دانشگاه|دبیرستان/i;
   const SELF_SICK = /(?:أنا|عندي|لدي).{0,45}(?:مريض|مرض|لا أستطيع الدراسة)|(?:مريض|مرض).{0,45}(?:أنا|عندي|لدي)|(?:من|خودم).{0,45}(?:بیمار|مریض|نمی.?توانم درس)|(?:بیمار|مریض).{0,45}(?:من|خودم)/i;
-  const SELF_SICK_SV = /\bjag\b(?:(?!\b(?:mitt barn|min dotter|min son|barnet)\b)[^.!?]){0,120}\b(?:har\s+blivit|har\s+varit|är|blev|blivit|varit)\s+(?:sjuk|sjukskriven)\b|\b(?:sjuk|sjukskriven)\b.{0,40}\b(?:mig|själv)\b/i;
+  // Do not use JS \b immediately before Swedish "är": JS word boundaries are ASCII-oriented.
+  const SELF_SICK_SV = /\bjag\b(?:(?!\b(?:mitt barn|min dotter|min son|barnet)\b)[^.!?]){0,120}(?:har\s+blivit|har\s+varit|är|blev|blivit|varit)\s+(?:sjuk|sjukskriven)\b|\b(?:sjuk|sjukskriven)\b.{0,40}\b(?:mig|själv)\b/i;
   const SICK_GENERIC = /sjuk|sjukskriv|sjukanmäl|kan inte studera|مرض|مريض|بیمار|مریض/i;
   const CHILD_SICK = /(?:barn|mitt barn|min dotter|min son|vab|vabba|طفل|ابني|ابنتي|کودک|فرزند|دخترم|پسرم).{0,35}(?:sjuk|مرض|مريض|بیمار|مریض)|(?:vab|vabba)/i;
   const PROFESSIONAL = /(?:jobbar|arbetar|anställd).{0,35}(?:csn|försäkringskassan|studenthälsa|studievägled)|(?:csn|försäkringskassan).{0,35}(?:handläggare|kundtjänst|mitt jobb)|أعمل.{0,35}(?:CSN|التأمين)|کار.{0,35}(?:CSN|بیمه)/i;
