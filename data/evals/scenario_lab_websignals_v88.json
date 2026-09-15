@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v88 regressions for the SAME Stödassistenten intelligence. Standard VAB for children under 12 must use the current 2026 application-window boundary, distinguish serious-illness exceptions and the existing 12-15 route, ask age/date only when route-changing, fail closed on professional wording and preserve sv/ar/fa semantics without creating a parallel VAB engine.",
+  "cases": [
+    {
+      "case_id": "lab-vab-under12-standard-sv-v88-01",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn är 6 år och sjukt och jag stannade hemma från jobbet. Hur söker jag vab?",
+      "expected_support_areas": ["vab_under_12_candidate", "family_child_support", "current_application_route"],
+      "must_not_claim": ["child_illness_alone_guarantees_vab", "guaranteed_amount", "old_90_day_rule_is_current_for_new_days"],
+      "expected_questions": ["q_none_if_child_age_and_personal_work_absence_are_already_clear"],
+      "expected_next_actions": ["show_current_forsakringskassan_vab_under12_source", "apply_promptly_using_current_application_window"],
+      "source_requirements": ["Forsakringskassan_current_vab_under12_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-under12-deadline-v88-02",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag vabbade första gången den 10 september 2026 för min 4-åring och har inte ansökt än. Hur länge kan jag vänta?",
+      "expected_support_areas": ["vab_under_12_candidate", "current_30_day_application_window", "next_action"],
+      "must_not_claim": ["90_days_for_post_april_2026_ordinary_vab", "guaranteed_eligibility", "automatic_deadline_exception"],
+      "expected_questions": ["q_serious_illness_or_other_exception_only_if_needed_to_change_deadline"],
+      "expected_next_actions": ["surface_30_day_rule_for_ordinary_days_from_2026_04_01", "apply_without_unnecessary_delay", "verify_exception_if_user_indicates_one"],
+      "source_requirements": ["Forsakringskassan_current_vab_application_deadline", "Forsakringskassan_current_vab_under12_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-serious-illness-exception-v88-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn är allvarligt sjukt och jag har varit hemma länge. Gäller 30 dagar för min vab-ansökan också?",
+      "expected_support_areas": ["vab_special_case", "serious_illness_deadline_exception", "primary_source_verification"],
+      "must_not_claim": ["ordinary_30_day_rule_applies_without_exception_check", "serious_illness_is_established_by_user_wording", "guaranteed_eligibility"],
+      "expected_questions": ["q_verify_serious_illness_route_only_if_needed_for_material_guidance"],
+      "expected_next_actions": ["verify_current_forsakringskassan_serious_illness_exception", "do_not_apply_ordinary_deadline_blindly"],
+      "source_requirements": ["Forsakringskassan_current_vab_application_deadline"]
+    },
+    {
+      "case_id": "lab-vab-pre-april-transition-v88-04",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag vabbade i mars 2026 för mitt barn och undrar om den nya 30-dagarsregeln gäller den dagen.",
+      "expected_support_areas": ["vab_transition_2026", "date_sensitive_rule", "current_primary_source"],
+      "must_not_claim": ["30_day_rule_applies_to_all_pre_april_2026_days", "single_rule_without_date_boundary", "guaranteed_eligibility"],
+      "expected_questions": ["q_exact_first_vab_day_only_if_needed_to_resolve_transition"],
+      "expected_next_actions": ["separate_days_before_2026_04_01_from_days_on_or_after_2026_04_01", "verify_current_transition_rule"],
+      "source_requirements": ["Forsakringskassan_current_vab_application_deadline"]
+    },
+    {
+      "case_id": "lab-vab-age-13-route-v88-05",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Min 13-åring är sjuk och jag behöver vara hemma. Hur fungerar vab?",
+      "expected_support_areas": ["vab_age_12_15_candidate", "age_changes_route", "medical_documentation_boundary"],
+      "must_not_claim": ["use_under12_truth_for_age_13", "age_13_alone_guarantees_vab", "same_document_rules_as_under12"],
+      "expected_questions": ["q_reason_and_prior_decision_only_if_needed_to_change_12_15_path"],
+      "expected_next_actions": ["reuse_existing_vab_12_15_truth", "show_current_forsakringskassan_vab_12_15_source"],
+      "source_requirements": ["Forsakringskassan_current_vab_12_15_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-missing-age-v88-06",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn är sjukt och jag måste vara hemma från jobbet. Vad behöver jag göra för vab?",
+      "expected_support_areas": ["vab_candidate", "missing_fact_information_gain", "age_route_boundary"],
+      "must_not_claim": ["assume_child_under_12", "assume_12_15_route", "guaranteed_eligibility"],
+      "expected_questions": ["q_child_age_because_it_can_change_route_and_documents"],
+      "expected_next_actions": ["ask_minimum_route_changing_age_question", "then_use_existing_age_specific_truth"],
+      "source_requirements": ["Forsakringskassan_current_vab_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-professional-false-positive-v88-07",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar på HR och ska skriva information till personalen om de nya vab-reglerna.",
+      "expected_support_areas": ["professional_false_positive_guard", "no_personal_vab_case_without_personal_need"],
+      "must_not_claim": ["user_is_vabbing", "user_should_apply_personally", "professional_topic_means_personal_eligibility"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["do_not_open_personal_vab_flow_from_professional_wording", "require_primary_source_before_material_rule_claim"],
+      "source_requirements": ["Forsakringskassan_current_vab_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-under12-language-ar-v88-08",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "طفلي عمره 6 سنوات ومريض وبقيت في المنزل بدل الذهاب إلى العمل. كيف أقدم طلب رعاية طفل مريض؟",
+      "expected_support_areas": ["vab_under_12_candidate", "language_parity", "current_application_route"],
+      "must_not_claim": ["arabic_language_changes_truth_boundary", "child_illness_alone_guarantees_vab", "guaranteed_amount"],
+      "expected_questions": ["q_none_if_child_age_and_personal_work_absence_are_already_clear"],
+      "expected_next_actions": ["show_current_forsakringskassan_vab_under12_source", "same_semantics_as_swedish"],
+      "source_requirements": ["Forsakringskassan_current_vab_under12_primary_source"]
+    },
+    {
+      "case_id": "lab-vab-under12-language-fa-v88-09",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزندم ۶ ساله و بیمار است و برای مراقبت از او سر کار نرفتم. چگونه برای VAB درخواست بدهم؟",
+      "expected_support_areas": ["vab_under_12_candidate", "language_parity", "current_application_route"],
+      "must_not_claim": ["persian_language_changes_truth_boundary", "child_illness_alone_guarantees_vab", "guaranteed_amount"],
+      "expected_questions": ["q_none_if_child_age_and_personal_work_absence_are_already_clear"],
+      "expected_next_actions": ["show_current_forsakringskassan_vab_under12_source", "same_semantics_as_swedish"],
+      "source_requirements": ["Forsakringskassan_current_vab_under12_primary_source"]
+    }
+  ]
+}
