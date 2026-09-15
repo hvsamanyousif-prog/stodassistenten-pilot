@@ -16,8 +16,14 @@
   const SOL_URL = 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/';
   const FEEDBACK_URL = 'https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 
+  // Hemtjänst, trygghetslarm and hemsjukvård are not older-only concepts.
+  // Keep the older-person route fail-closed unless the story carries an older/
+  // parent context or explicitly asks for äldreomsorg. This prevents the module
+  // from stealing younger disability/home-healthcare situations.
   const DIRECT_PATTERNS = [
-    /hemtjänst|äldreomsorg|trygghetslarm|hjälp\s+hemma|stöd\s+hemma|bo\s+kvar\s+hemma|hemsjukvård/i,
+    /äldreomsorg/i,
+    /(?:mamma|pappa|mor|far|äldre|gammal|pensionär|senior|jag\s+är\s+(?:6[5-9]|[7-9]\d|1[01]\d)(?:\s+år)?).*(?:hemtjänst|trygghetslarm|hjälp\s+hemma|stöd\s+hemma|bo\s+kvar\s+hemma|hemsjukvård)/i,
+    /(?:hemtjänst|trygghetslarm|hjälp\s+hemma|stöd\s+hemma|bo\s+kvar\s+hemma|hemsjukvård).*(?:mamma|pappa|mor|far|äldre|gammal|pensionär|senior|jag\s+är\s+(?:6[5-9]|[7-9]\d|1[01]\d)(?:\s+år)?)/i,
     /(?:mamma|pappa|mor|far|äldre|gammal|pensionär).*(?:städa|tvätta|handla|duscha|klä\s+på|äta|laga\s+mat|klarar\s+inte.*hemma|hjälp.*hemma)/i,
     /(?:städa|tvätta|handla|duscha|klä\s+på|äta|laga\s+mat|hjälp.*hemma).*(?:mamma|pappa|mor|far|äldre|gammal|pensionär)/i,
     /(?:والدتي|والدي|أمي|أبي|مسن|كبير\s*السن).*(?:مساعدة\s*في\s*المنزل|تنظيف|طبخ|استحمام|تسوق|رعاية\s*منزلية)/i,
