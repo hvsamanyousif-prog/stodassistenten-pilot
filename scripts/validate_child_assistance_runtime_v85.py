@@ -34,7 +34,10 @@ def main() -> int:
     require("child-assistance-context-extension.js" in build, "shared public build must include the v85 extension")
     require("support_for" in js and "CHILD_URL" in js and "ADULT_URL" in js, "runtime must preserve coarse child/adult context and distinct primary sources")
     require("jobbar|arbetar" in js and "barn|unga" in js, "professional false-positive guard missing")
-    require("raw story" in js or "coarse child/adult" in js, "privacy intent must be explicit")
+    require(
+        "raw story" in js or "coarse child/adult" in js or "coarse route-changing context" in js,
+        "privacy intent must explicitly state that only coarse routing context is preserved",
+    )
     require("focus=child" not in js and "child-pilot" not in js and "child_assistance_app" not in js, "must not create a parallel child app/engine")
     require(
         contract.get("public_handoff", {}).get("capability_fact_allowlists", {}).get("disability_home_support") == ["support_need", "support_for"],
