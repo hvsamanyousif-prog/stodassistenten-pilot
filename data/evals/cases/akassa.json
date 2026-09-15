@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
-  "generated_at": "2026-09-06",
-  "purpose": "Synthetic benchmark cases for unemployment and a-kassa matching.",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic benchmark cases for unemployment and a-kassa matching, aligned with the income-based rules for new decisions from 1 October 2025 while preserving the previous rules for older ongoing benefit periods.",
   "cases": [
     {
       "case_id": "akassa-001",
@@ -9,13 +9,13 @@
       "language": "sv",
       "story": "Jag blev arbetslös förra veckan efter en tillsvidareanställning och vet inte var jag ska börja.",
       "known_facts": {"employment_status": "unemployed", "previous_job": "permanent"},
-      "unknown_facts": ["membership_unemployment_fund", "work_history", "registration_status"],
+      "unknown_facts": ["registration_status", "existing_pre_2025_10_01_benefit_period", "membership_unemployment_fund", "income_history"],
       "expected_support_areas": ["unemployment_insurance", "employment_service_support", "municipal_economic_assistance"],
-      "must_not_claim": ["guaranteed_unemployment_benefit", "guaranteed_amount"],
-      "expected_questions": ["q_fund_membership", "q_work_history", "q_registered_employment_service"],
-      "expected_next_actions": ["register_employment_service", "check_unemployment_fund_rules"],
-      "risk_flags": ["income_loss"],
-      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "kommun"]
+      "must_not_claim": ["guaranteed_unemployment_benefit", "guaranteed_amount", "legacy_work_condition_is_universal", "new_income_regime_applies_without_period_check"],
+      "expected_questions": ["q_registered_employment_service_if_not_known", "q_existing_pre_2025_10_01_benefit_period_if_rule_guidance_needed", "q_fund_membership_if_level_or_provider_path_needed", "q_income_history_if_new_regime_and_needed"],
+      "expected_next_actions": ["register_employment_service_first_unemployed_day", "check_unemployment_fund_rules_for_applicable_regime"],
+      "risk_flags": ["income_loss", "rule_regime_transition"],
+      "source_requirements": ["Arbetsförmedlingen", "IAF", "a-kassa", "kommun"]
     },
     {
       "case_id": "akassa-002",
@@ -23,13 +23,13 @@
       "language": "sv",
       "story": "Jag jobbar några timmar i veckan men får inte ihop ekonomin och undrar om a-kassa kan kombineras med deltidsjobb.",
       "known_facts": {"employment_status": "part_time"},
-      "unknown_facts": ["hours_worked", "unemployment_fund_status", "benefit_history"],
+      "unknown_facts": ["benefit_history", "existing_pre_2025_10_01_benefit_period", "income_history", "unemployment_fund_status"],
       "expected_support_areas": ["unemployment_insurance", "employment_service_support", "municipal_economic_assistance"],
-      "must_not_claim": ["guaranteed_combination", "guaranteed_amount"],
-      "expected_questions": ["q_hours_worked", "q_fund_status", "q_benefit_history"],
-      "expected_next_actions": ["check_part_time_unemployment_rules", "check_employment_service_options"],
-      "risk_flags": ["mixed_income"],
-      "source_requirements": ["a-kassa", "Arbetsförmedlingen"]
+      "must_not_claim": ["guaranteed_combination", "guaranteed_amount", "same_part_time_rule_for_both_regimes"],
+      "expected_questions": ["q_existing_pre_2025_10_01_benefit_period_if_rule_guidance_needed", "q_fund_status_if_needed", "q_income_or_current_work_context_only_if_it_changes_assessment"],
+      "expected_next_actions": ["check_part_time_unemployment_rules_for_applicable_regime", "check_employment_service_options", "keep_economic_assistance_visible_if_basic_needs_are_at_risk"],
+      "risk_flags": ["mixed_income", "rule_regime_transition"],
+      "source_requirements": ["a-kassa", "Arbetsförmedlingen", "IAF"]
     },
     {
       "case_id": "akassa-003",
@@ -37,13 +37,13 @@
       "language": "sv",
       "story": "Jag har sagt upp mig själv och är nu utan jobb.",
       "known_facts": {"employment_status": "unemployed", "separation": "self_resigned"},
-      "unknown_facts": ["reason_for_resignation", "fund_membership", "work_history"],
+      "unknown_facts": ["reason_for_resignation", "registration_status", "existing_pre_2025_10_01_benefit_period", "fund_membership"],
       "expected_support_areas": ["unemployment_insurance", "employment_service_support"],
-      "must_not_claim": ["no_waiting_period_claim", "guaranteed_eligibility"],
-      "expected_questions": ["q_resignation_reason", "q_fund_membership", "q_work_history"],
-      "expected_next_actions": ["check_unemployment_fund_sanction_rules", "register_employment_service"],
-      "risk_flags": ["sanction_risk"],
-      "source_requirements": ["a-kassa", "Arbetsförmedlingen"]
+      "must_not_claim": ["no_waiting_or_sanction_claim", "guaranteed_eligibility", "same_consequence_for_every_resignation"],
+      "expected_questions": ["q_registered_employment_service_if_not_known", "q_resignation_reason_if_it_changes_individual_assessment", "q_existing_pre_2025_10_01_benefit_period_if_rule_guidance_needed"],
+      "expected_next_actions": ["register_employment_service_first_unemployed_day", "contact_a_kassa_for_individual_resignation_assessment"],
+      "risk_flags": ["sanction_risk", "income_loss"],
+      "source_requirements": ["a-kassa", "Arbetsförmedlingen", "IAF"]
     },
     {
       "case_id": "akassa-004",
@@ -51,13 +51,13 @@
       "language": "sv",
       "story": "Mitt visstidsjobb tar slut om två veckor. Jag vill veta vad jag behöver ordna innan dess.",
       "known_facts": {"employment_status": "employed_ending", "contract": "fixed_term"},
-      "unknown_facts": ["end_date", "fund_membership", "work_history"],
+      "unknown_facts": ["end_date", "fund_membership", "existing_pre_2025_10_01_benefit_period", "transition_agreement"],
       "expected_support_areas": ["unemployment_insurance", "employment_service_support", "transition_support"],
-      "must_not_claim": ["guaranteed_eligibility", "guaranteed_transition_support"],
-      "expected_questions": ["q_end_date", "q_fund_membership", "q_work_history"],
-      "expected_next_actions": ["prepare_employment_documents", "check_registration_timing", "check_transition_support"],
+      "must_not_claim": ["guaranteed_eligibility", "guaranteed_transition_support", "register_as_unemployed_before_first_unemployed_day"],
+      "expected_questions": ["q_end_date_if_needed_for_timing", "q_existing_pre_2025_10_01_benefit_period_if_rule_guidance_needed", "q_transition_agreement_if_relevant"],
+      "expected_next_actions": ["prepare_employment_documents", "prepare_registration_but_submit_on_first_unemployed_day", "check_transition_support"],
       "risk_flags": ["upcoming_income_loss"],
-      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "omställningsorganisation"]
+      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "IAF", "omställningsorganisation"]
     },
     {
       "case_id": "akassa-005",
@@ -65,13 +65,13 @@
       "language": "sv",
       "story": "Jag har varit arbetslös länge och min ersättningsperiod verkar snart ta slut.",
       "known_facts": {"employment_status": "long_term_unemployed"},
-      "unknown_facts": ["remaining_benefit_days", "program_participation", "household_finances"],
-      "expected_support_areas": ["employment_service_support", "activity_support", "municipal_economic_assistance"],
-      "must_not_claim": ["guaranteed_activity_support", "guaranteed_social_assistance"],
-      "expected_questions": ["q_remaining_days", "q_program_participation", "q_household_finances"],
-      "expected_next_actions": ["contact_employment_service", "check_activity_support_rules", "check_municipal_assistance_if_needed"],
-      "risk_flags": ["benefit_exhaustion"],
-      "source_requirements": ["Arbetsförmedlingen", "Försäkringskassan", "kommun"]
+      "unknown_facts": ["benefit_period_start", "remaining_benefit_days", "program_participation", "household_finances"],
+      "expected_support_areas": ["employment_service_support", "unemployment_insurance", "activity_support", "municipal_economic_assistance"],
+      "must_not_claim": ["guaranteed_activity_support", "guaranteed_social_assistance", "automatic_switch_to_new_rule_regime"],
+      "expected_questions": ["q_benefit_period_start_if_it_changes_rule_regime", "q_remaining_days_if_needed", "q_program_participation_if_needed", "q_household_finances_if_basic_needs_may_be_at_risk"],
+      "expected_next_actions": ["contact_employment_service", "verify_current_benefit_period_with_a_kassa", "check_activity_support_rules_if_relevant", "check_municipal_assistance_if_needed"],
+      "risk_flags": ["benefit_exhaustion", "rule_regime_transition"],
+      "source_requirements": ["Arbetsförmedlingen", "a-kassa", "IAF", "Försäkringskassan", "kommun"]
     }
   ]
 }
