@@ -11,7 +11,9 @@
   const SOL_URL='https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/';
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 
-  const OLD_CONTEXT=/\bäldre\b|\bgammal\b|\bpensionär\b|\bsenior\b|jag\s+är\s+(?:6[5-9]|[7-9]\d|1[01]\d)(?:\s+år)?|مسن|كبير(?:ة)?\s+(?:في\s+)?السن|سالمند/i;
+  // JavaScript \b is ASCII-centric around Swedish letters, so do not use it
+  // around "äldre". The plain token remains bounded enough for this intent gate.
+  const OLD_CONTEXT=/äldre|\bgammal\b|\bpensionär\b|\bsenior\b|jag\s+är\s+(?:6[5-9]|[7-9]\d|1[01]\d)(?:\s+år)?|مسن|كبير(?:ة)?\s+(?:في\s+)?السن|سالمند/i;
   const HOME_CONTEXT=/hemtjänst|trygghetslarm|hjälp\s+hemma|stöd\s+hemma|bo\s+kvar\s+hemma|hemsjukvård|städa|städning|tvätta|handla|inköp|duscha|dusch|mat|måltid|personlig\s+hygien|مساعدة\s*في\s*المنزل|تنظيف|طبخ|استحمام|تسوق|رعاية\s*منزلية|کمک\s*در\s*خانه|نظافت|آشپزی|حمام|خرید|مراقبت\s*در\s*منزل/i;
   const SOCIAL_PATTERNS=[/hemtjänst|äldreomsorg|trygghetslarm|städa|städning|tvätta|tvätt|handla|inköp|duscha|dusch|klä\s+på|påklädning|måltid|mat|laga\s+mat|personlig\s+hygien|hjälp\s+hemma/i,/تنظيف|طبخ|استحمام|تسوق|مساعدة\s*في\s*المنزل|رعاية\s*منزلية/i,/نظافت|آشپزی|حمام|خرید|کمک\s*در\s*خانه|مراقبت\s*روزمره/i];
   const HEALTH_PATTERNS=[/hemsjukvård|sjukskötersk.*hemma|vård\s+hemma|omläggning|sårvård|injektion|medicinsk.*hemma/i,/رعاية\s*صحية\s*في\s*المنزل|تمريض\s*منزلي|ممرضة.*المنزل|حقن|تضميد/i,/مراقبت\s*پزشکی\s*در\s*منزل|پرستار.*خانه|تزریق|پانسمان|درمان.*خانه/i];
