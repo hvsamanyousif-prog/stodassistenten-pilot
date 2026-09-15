@@ -50,17 +50,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Validate same-product representation boundary
+      - name: Syntax check relative-care runtime
+        run: node --check client/relative-care.js
+      - name: Run relative-care runtime regressions
+        run: node client/relative-care.test.cjs
+      - name: Run established relative-care gate
+        run: python scripts/validate_relative_care.py
+      - name: Run established v44 caregiver gate
+        run: python scripts/validate_relative_care_v44.py
+      - name: Run v72 representation gate
+        run: python scripts/validate_relative_representation_v72.py
+      - name: Run shared situation engine regressions
+        run: python scripts/test_situation_engine.py
+      - name: Run full scenario lab
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate data contracts
+        run: python scripts/validate_data.py
+      - name: Build public pilot
+        run: python scripts/build_public_pilot.py --source . --output /tmp/stod-v72-site
+      - name: Verify relative-care runtime in public build
         run: |
-          node --check client/relative-care.js
-          node client/relative-care.test.cjs
-          python scripts/validate_relative_care.py
-          python scripts/validate_relative_care_v44.py
-          python scripts/validate_relative_representation_v72.py
-          python scripts/test_situation_engine.py
-          python scripts/validate_scenario_lab_all.py
-          python scripts/validate_data.py
-          python scripts/build_public_pilot.py --source . --output /tmp/stod-v72-site
           test -f /tmp/stod-v72-site/client/relative-care.js
           grep -q 'client/relative-care.js' /tmp/stod-v72-site/index.html
           grep -q 'client/relative-care.js' /tmp/stod-v72-site/person-pilot.html
