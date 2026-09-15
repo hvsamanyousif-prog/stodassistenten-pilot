@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1.0",
-  "generated_at": "2026-09-14",
+  "generated_at": "2026-09-15",
   "purpose": "Source-universe overlay for the single Stödassistenten discovery and truth pipeline. It references the canonical source registry instead of duplicating source metadata, and it defines what a discovery source may and may not prove before verified support or opportunity records are created.",
   "invariants": {
     "references_canonical_source_registry": true,
@@ -47,6 +47,128 @@
         "purpose_text_equals_user_eligibility",
         "registry_listing_equals_verified_application_deadline",
         "registry_contact_person_equals_public_product_contact",
+        "community_advice_equals_truth"
+      ]
+    },
+    {
+      "family_id": "se-national-benefit-catalog-discovery",
+      "source_registry_refs": [
+        "se-forsakringskassan-benefits-a-z",
+        "se-pensionsmyndigheten-pensioner-support",
+        "se-arbetsformedlingen-support-a-z",
+        "se-csn-grants-loans"
+      ],
+      "domain": "national_benefits",
+      "discovery_role": "catalog_discovery",
+      "opportunity_state_authority": "not_authoritative",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "benefit_or_program_name",
+        "responsible_authority",
+        "purpose_summary",
+        "applicant_group_summary",
+        "official_detail_url"
+      ],
+      "blocked_fields": [
+        "raw_case_data",
+        "medical_details",
+        "income_details",
+        "personal_identifiers",
+        "inferred_eligibility",
+        "inferred_amount",
+        "inferred_deadline"
+      ],
+      "required_verification_before_action": [
+        "Use the catalog to discover candidate benefits or programs, then verify the exact benefit or program page and any controlling primary guidance before creating or changing a truth-bearing support record.",
+        "Catalog presence proves discoverability only; it does not prove that a specific person is eligible, what amount they would receive, or that a time-sensitive rule is still current.",
+        "Keep individual calculations and authority decisions outside the discovery layer; ask only route-changing facts and preserve uncertainty when the primary source does not settle the user's case."
+      ],
+      "prohibited_promotions": [
+        "catalog_presence_equals_user_eligibility",
+        "catalog_text_equals_personal_decision",
+        "catalog_order_equals_product_ranking",
+        "generic_catalog_equals_current_amount",
+        "community_advice_equals_truth"
+      ]
+    },
+    {
+      "family_id": "se-business-financing-aggregator-discovery",
+      "source_registry_refs": [
+        "se-verksamt-financing-advice"
+      ],
+      "domain": "business_financing",
+      "discovery_role": "aggregator_discovery",
+      "opportunity_state_authority": "not_authoritative",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "opportunity_name",
+        "provider_name",
+        "purpose_summary",
+        "geography",
+        "target_group_summary",
+        "official_provider_url"
+      ],
+      "blocked_fields": [
+        "raw_aggregator_payload",
+        "user_profile",
+        "personal_contacts",
+        "unverified_deadline",
+        "unverified_amount",
+        "unverified_eligibility"
+      ],
+      "required_verification_before_action": [
+        "Use verksamt.se to discover candidate financing, advice and related offers, then verify material eligibility, current application state, deadline, amount and application path against the named provider's primary source.",
+        "Treat an aggregator listing as a discovery signal even when it displays an application period; the provider source must settle active, planned or expired state before a truth-bearing opportunity record is promoted.",
+        "Do not convert aggregator search order, wording or filters into product ranking or a claim that the user is a fit."
+      ],
+      "prohibited_promotions": [
+        "aggregator_listing_equals_open_opportunity",
+        "aggregator_summary_equals_verified_eligibility",
+        "search_order_equals_product_ranking",
+        "aggregator_deadline_equals_verified_deadline",
+        "community_advice_equals_truth"
+      ]
+    },
+    {
+      "family_id": "se-civil-society-grant-catalog-discovery",
+      "source_registry_refs": [
+        "se-arvsfonden-services",
+        "se-kulturradet-grants",
+        "se-rf-grants-support"
+      ],
+      "domain": "civil_society_funding",
+      "discovery_role": "catalog_discovery",
+      "opportunity_state_authority": "source_specific",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "opportunity_name",
+        "provider_name",
+        "purpose_summary",
+        "geography",
+        "target_group_summary",
+        "official_application_url"
+      ],
+      "blocked_fields": [
+        "raw_page_payload",
+        "applicant_person_data",
+        "inferred_eligibility",
+        "inferred_award_probability",
+        "internal_selection_notes",
+        "stale_deadline"
+      ],
+      "required_verification_before_action": [
+        "Use provider catalogs to discover candidate grant types, but verify the exact current opportunity or application page before asserting application state, deadline, documents, target group or application route.",
+        "A provider catalog may be authoritative for its own programs, but catalog membership alone does not prove that a particular call is open now or that an applicant is eligible.",
+        "Do not infer award probability from previous grants, general purpose similarity or public examples; keep fit and eligibility distinct until verified against the current primary-source conditions."
+      ],
+      "prohibited_promotions": [
+        "catalog_membership_equals_open_call",
+        "catalog_summary_equals_user_eligibility",
+        "stale_deadline_equals_current_deadline",
+        "grant_history_equals_award_probability",
         "community_advice_equals_truth"
       ]
     }
