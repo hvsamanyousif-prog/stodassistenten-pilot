@@ -47,6 +47,11 @@
   const NON_DEBT_WORK_PATTERNS = [
     /\b(?:jobbar|arbetar)\s+(?:på|hos)\s+kronofogden\b/i,
   ];
+  const RECEIVED_NOTICE_PATTERNS = [
+    /\b(?:fått|fick|mottagit)\b.{0,80}\b(?:betalningsföreläggande|föreläggande|brev|kravbrev|krav|kronofogden)\b/i,
+    /(?:وصلتني|استلمت|تلقيت).{0,80}(?:كرونوفوغدن|Kronofogden|خطاب|رسالة|إشعار|مطالبة)/i,
+    /(?:دریافت|گرفته).{0,80}(?:کرونوفوگدن|Kronofogden|نامه|اخطار|ابلاغ|مطالبه)/i,
+  ];
   const DEBT_WITHOUT_KFM_PATTERNS = [
     /\b(?:skuld|skulden|skulder|skulderna|skuldsatt|skuldsatta|inkasso|skuldsanering|betalningspåminnelse|betalningskrav|obetalda?\s+räkningar|räkningarna\s+är\s+(?:helt\s+)?i\s+kaos)\b/i,
     /ديون|دين|مديون|تحصيل\s+الديون|إنكاسو|تسوية\s+الديون|فواتير\s+غير\s+مدفوعة/i,
@@ -192,7 +197,10 @@
   }
 
   function demandNoticeIntent(text) {
-    return matches(DEMAND_NOTICE_PATTERNS, String(text || ''));
+    const value = String(text || '');
+    if (!matches(DEMAND_NOTICE_PATTERNS, value)) return false;
+    if (matches(NON_DEBT_WORK_PATTERNS, value) && !matches(RECEIVED_NOTICE_PATTERNS, value)) return false;
+    return true;
   }
 
   function debtIntent(text) {
