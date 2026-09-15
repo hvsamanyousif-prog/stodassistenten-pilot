@@ -1,0 +1,51 @@
+name: Validate employee sickness session contract v83
+
+on:
+  pull_request:
+    paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
+      - 'client/situation-session-contract.test.cjs'
+      - 'client/employee-sick-work-context-extension.js'
+      - 'client/employee-sick-work-context-extension.test.cjs'
+      - 'client/employee-sick-session-contract-v83.test.cjs'
+      - 'scripts/validate_situation_session_contract.py'
+      - 'scripts/validate_self_employed_sick_v64.py'
+      - '.github/workflows/employee-sick-session-contract-v83.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
+      - 'client/situation-session-contract.test.cjs'
+      - 'client/employee-sick-work-context-extension.js'
+      - 'client/employee-sick-work-context-extension.test.cjs'
+      - 'client/employee-sick-session-contract-v83.test.cjs'
+      - 'scripts/validate_situation_session_contract.py'
+      - 'scripts/validate_self_employed_sick_v64.py'
+      - '.github/workflows/employee-sick-session-contract-v83.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate shared session contract
+        run: |
+          node client/situation-session-contract.test.cjs
+          python scripts/validate_situation_session_contract.py
+      - name: Validate employee sickness work context and cross-surface facts
+        run: |
+          node client/employee-sick-work-context-extension.test.cjs
+          node client/employee-sick-session-contract-v83.test.cjs
+          python scripts/validate_self_employed_sick_v64.py
