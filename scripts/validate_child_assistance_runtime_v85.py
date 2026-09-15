@@ -11,6 +11,7 @@ BUILD = ROOT / "scripts/build_public_pilot.py"
 SCENARIOS = ROOT / "data/evals/scenario_lab_websignals_v85.json"
 SIGNALS = ROOT / "data/evals/demand_friction_signals_v85.json"
 MAPPING = ROOT / "data/evals/demand_friction_regression_map_v85.json"
+CONTRACT = ROOT / "config/situation_session_contract.json"
 
 
 def require(condition: bool, message: str) -> None:
@@ -28,12 +29,17 @@ def main() -> int:
     scenarios = json.loads(SCENARIOS.read_text(encoding="utf-8"))
     signals = json.loads(SIGNALS.read_text(encoding="utf-8"))
     mapping = json.loads(MAPPING.read_text(encoding="utf-8"))
+    contract = json.loads(CONTRACT.read_text(encoding="utf-8"))
 
     require("child-assistance-context-extension.js" in build, "shared public build must include the v85 extension")
     require("support_for" in js and "CHILD_URL" in js and "ADULT_URL" in js, "runtime must preserve coarse child/adult context and distinct primary sources")
     require("jobbar|arbetar" in js and "barn|unga" in js, "professional false-positive guard missing")
     require("raw story" in js or "coarse child/adult" in js, "privacy intent must be explicit")
     require("focus=child" not in js and "child-pilot" not in js and "child_assistance_app" not in js, "must not create a parallel child app/engine")
+    require(
+        contract.get("public_handoff", {}).get("capability_fact_allowlists", {}).get("disability_home_support") == ["support_need", "support_for"],
+        "disability/home-support route facts must be owned by the shared session contract",
+    )
     require(len(scenarios.get("cases", [])) >= 8, "expected at least eight v85 synthetic cases")
     case_ids = {c.get("case_id") for c in scenarios["cases"]}
     require("lab-child-assistance-runtime-professional-v85-05" in case_ids, "professional false-positive regression missing")
@@ -51,7 +57,9 @@ def main() -> int:
     require("support_for is routing context only" in mapped.get("truth_boundary", ""), "routing fact must not become eligibility truth")
 
     run("node", "--test", "client/child-assistance-context-extension.test.cjs")
+    run("node", "client/child-assistance-session-contract-v85.test.cjs")
     run("node", "--test", "client/disability-home-support-guidance.test.cjs")
+    run("python", "scripts/validate_situation_session_contract.py")
     run("python", "scripts/validate_child_assistance_v84.py")
     run("python", "scripts/validate_disability_home_support_v55.py")
     run("python", "scripts/validate_scenario_lab_all.py")
