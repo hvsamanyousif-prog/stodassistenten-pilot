@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for people who receive a payment-order demand from Kronofogden and do not know what to do first. Scores are not measured search volumes and do not prove that a claim is correct, that a debt is final, that a payment plan will be accepted, or that economic assistance applies. Search phrasing and prior AI output are discovery-only; current Kronofogden, Konsumentverket and Socialstyrelsen primary sources carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-kronofogden-payment-order-first-action-v01",
+      "actor_types": ["private_person", "employee", "older_person", "student"],
+      "natural_language_queries": [
+        "jag fick brev från kronofogden vad gör jag först",
+        "jag har fått betalningsföreläggande måste jag godkänna kravet",
+        "kravet från kronofogden är fel hur gör jag",
+        "kravet stämmer men jag kan inte betala allt nu",
+        "hur många dagar har jag på mig efter kronofogdens brev",
+        "jag fick kronofogdenbrev och kan inte betala hyran"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Kronofogden reported on 8 September 2026 that more than 540,000 applications for payment orders against individuals arrived during January-June 2026 and affected about 253,000 people. This shows reach, not measured search volume for the phrases in this pack."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A recipient must distinguish three different actions: acknowledge receipt, decide whether the claim is correct, and then act within the explanation period stated in the actual letter. Acknowledging receipt is not acceptance, which is an easy and consequential misunderstanding."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Kronofogden states that if the recipient does not act within the explanation period in the letter, the authority can decide that the person is liable to pay. Guessing a universal number of days or treating acknowledgement as acceptance can therefore materially harm the user."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "The time-sensitive payment-order step belongs to Kronofogden, broader debt support belongs to municipal budget/debt counselling via Konsumentverket, and acute inability to cover rent, electricity, food or medicine can also require the existing municipal economic-assistance path."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as föreläggande, delgivningskvitto, invända and förklaringstid are institution-heavy. Arabic and Persian users need the same semantics: acknowledge receipt first, then accept or contest the claim, without language changing the route."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "For a clear current payment-order letter, the first safe action is available immediately and does not require case number, exact claim amount, creditor identity or a detailed debt inventory in the public pilot."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Kronofogden published fresh recipient guidance on 24 August 2026 and fresh payment-order statistics on 8 September 2026, showing that the question is both recurring and currently operationally important."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "Before v63, the shared economy capability recognised debt, inkasso and chaotic bills but flattened an actual Kronofogden payment-order letter into generic debt counselling. It therefore did not surface the time-sensitive acknowledge-decide-act sequence or the letter-specific deadline boundary."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.kronofogden.se/om-kronofogden/nyheter-och-press/nyheter/2026-08-24-har-du-fatt-ett-brev-fran-oss",
+        "https://www.kronofogden.se/nagon-har-krav-mot-dig/du-har-fatt-ett-krav-forelaggande/du-har-fatt-ett-krav-om-att-betala",
+        "https://www.kronofogden.se/om-kronofogden/nyheter-och-press/pressmeddelande/2026-09-08-farre-krav-skickas-till-kronofogden---aldre-sticker-ut",
+        "https://www.konsumentverket.se/ekonomi/kommunal-budget-och-skuldradgivning/",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/"
+      ],
+      "product_miss": "The shared economy route could detect Kronofogden as a debt signal but did not distinguish a current payment-order letter from general accumulated debt. The user could therefore be sent to counselling without first being told to acknowledge receipt, decide whether the claim is correct and follow the explanation period in the actual letter.",
+      "future_guardrail": "Keep one shared economy capability. Add only a coarse kfm_notice context for a clear current Kronofogden payment-order letter, give the acknowledge-decide-act sequence immediately, never infer that acknowledgement accepts the claim, never invent a universal response-day count, and keep acute housing/basic-needs help visible when those risks coexist.",
+      "regression_case": [
+        "lab-private-kfm-demand-notice-v63-01",
+        "lab-private-kfm-demand-wrong-v63-02",
+        "lab-private-kfm-demand-cannot-pay-v63-03",
+        "lab-private-kfm-demand-plus-rent-v63-04",
+        "lab-private-kfm-demand-language-ar-v63-05",
+        "lab-private-kfm-demand-language-fa-v63-06"
+      ],
+      "evaluation_method": "Run the shared economic-assistance product test plus the canonical scenario and demand/friction learning-loop gates. Require sv/ar/fa parity, kfm_notice handoff, no case number/claim amount/deadline/raw story in URL, and no claim-correctness, fixed-deadline or payment-plan guarantee.",
+      "recommended_learning_action": "Extend the existing economic-assistance capability rather than creating a Kronofogden app: detect a current payment-order letter, preserve only context=kfm_notice in the shared handoff, show current Kronofogden first actions, and encode the miss as permanent synthetic regressions.",
+      "truth_rule": "VERIFY current Kronofogden primary sources before material claims. Do not infer that the claim is correct, that the debt is final, that acknowledgement accepts the claim, that a fixed number of response days applies, that a payment plan will be accepted, or that economic assistance is available from the story or prior AI output."
+    }
+  ]
+}
