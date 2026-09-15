@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signals for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence; open-web question material is discovery-only and material guidance must be verified against current primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize recurring natural-language demand where users face high information friction, meaningful consequence and weak current product coverage. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-bereavement-euphemism-relation-breadth-v01",
+      "actor_types": ["relative"],
+      "natural_language_queries": [
+        "min pappa har gått bort vad gör jag",
+        "min bror har gått bort var börjar jag",
+        "min syster har avlidit bouppteckning",
+        "min vän har gått bort vad behöver jag göra",
+        "någon nära har gått bort vem ska jag kontakta",
+        "توفي أخي من أين أبدأ",
+        "خواهرم فوت کرده از کجا شروع کنم"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Open-web question pages and ordinary Swedish wording repeatedly use relation-first phrases such as a parent or sibling having 'gått bort'. Official Efterlevandeguiden itself uses 'närstående har gått bort'. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A user may describe the same life event with euphemisms rather than formal death terminology and may be a sibling, friend or other close person rather than the narrower spouse/parent relations originally recognized. Missing the phrase prevents the user from reaching any of the already-safe first-action guidance."
+      },
+      "miss_consequence": {
+        "score": 4,
+        "basis": "A missed route can leave a newly bereaved user in generic guidance and delay access to the official checklist. The product must still avoid turning a broader relationship into survivor-benefit entitlement, inheritance or estate authority."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Practical first actions are consolidated in Efterlevandeguiden and Skatteverket, while economic survivor support remains a separate Pensionsmyndigheten route with narrower conditions than the broad everyday concept of a close person."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Euphemisms and kinship terms vary substantially between Swedish, Arabic and Persian. A literal or narrow detector can therefore create unequal entry into the same public journey even when the downstream guidance is multilingual."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The safest first action for an unclear close-person loss is to reach the same bereavement overview and ask at most one route-changing question, then open current official sources rather than ask the user to translate their relation into authority terminology."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Question pages recur around a parent or sibling having recently died and uncertainty about estate administration or where to begin. These pages are discovery signals only and do not establish legal or benefit rules."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "v74 had a safe bereavement route but its detector omitted the common Swedish euphemism 'gått bort' and common close relations such as sibling and friend, so the route could fail before its verified first-action safeguards were reached."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://lawline.se/answers/okontaktbar-dodsbodelagare",
+        "https://lawline.se/answers/nar-har-man-som-syskon-ratt-att-fa-ut-sitt-efterarv"
+      ],
+      "primary_sources": [
+        "https://www.efterlevandeguiden.se/",
+        "https://www.efterlevandeguiden.se/om-efterlevandeguiden/om-oss.html",
+        "https://www.skatteverket.se/privat/folkbokforing/dodsfall.4.18e1b10334ebe8bc80002760.html",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/Ekonomiskt_stod/ekonomiskt-stod-nar-anhorig-dor"
+      ],
+      "product_miss": "The existing bereavement intelligence was safe after routing, but could miss ordinary phrases such as 'min bror har gått bort' or 'min vän har gått bort' because the natural-language boundary recognized formal death terms and a narrow relation set. Arabic and Persian sibling phrasing had the same relation-gap risk.",
+      "future_guardrail": "Keep actor_type=relative and focus=bereavement in the SAME person product. Broaden only natural-language recognition and fail closed on ambiguous motion uses such as 'gick bort till affären'. A sibling, friend or other close relation must never be promoted into survivor-benefit eligibility, inheritance share or authority to act for an estate.",
+      "regression_case": [
+        "lab-bereavement-sibling-euphemism-v75-01",
+        "lab-bereavement-sister-practical-v75-02",
+        "lab-bereavement-friend-overview-v75-03",
+        "lab-bereavement-motion-false-positive-v75-04",
+        "lab-bereavement-sibling-language-ar-v75-05",
+        "lab-bereavement-sibling-language-fa-v75-06"
+      ],
+      "evaluation_method": "Natural-language routing tests + false-positive test + multilingual scenario regressions + current primary-source cross-check. Open-web question material may only suggest cases and must never supply material rules.",
+      "recommended_learning_action": "Improve the existing bereavement detector and shell keywords, not the truth rules or actor model; reuse the same overview, source links, structured feedback and one-question information-gain behavior.",
+      "truth_rule": "Question pages and community/open-web wording are discovery only. We must verify material survivor-benefit, estate-process, inheritance, representation, eligibility, amount, deadline and authority guidance against current Efterlevandeguiden, Skatteverket, Pensionsmyndigheten or other responsible primary sources before use; prior AI output and feedback are never truth sources."
+    }
+  ]
+}

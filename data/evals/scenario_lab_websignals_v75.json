@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v75 regressions for the SAME Stödassistenten relative/bereavement intelligence. Common euphemisms and close-relation wording must reach the existing bereavement route without inferring benefit entitlement, inheritance or estate authority.",
+  "cases": [
+    {
+      "case_id": "lab-bereavement-sibling-euphemism-v75-01",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min bror har gått bort och jag vet inte vad jag ska göra först.",
+      "expected_support_areas": ["bereavement", "information_gain", "official_checklist"],
+      "must_not_claim": ["sibling_relationship_proves_survivor_benefit_entitlement", "user_is_automatically_authorized_to_act_for_estate", "inheritance_share_is_inferred"],
+      "expected_questions": ["q_what_do_you_need_help_with_first_partner_child_practical_work_or_overview"],
+      "expected_next_actions": ["route_to_existing_bereavement_focus", "offer_afterlevandeguiden_overview", "ask_at_most_one_route_changing_question"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-sister-practical-v75-02",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min syster har gått bort och jag behöver hjälp med bouppteckningen.",
+      "expected_support_areas": ["bereavement", "practical_after_death", "estate_navigation"],
+      "must_not_claim": ["sibling_is_automatically_dodsbodelagare", "inheritance_share_is_decided_by_product", "generic_ai_answer_replaces_current_estate_process"],
+      "expected_questions": ["q_none_reuse_explicit_practical_context"],
+      "expected_next_actions": ["open_afterlevandeguiden_checklist", "open_current_skatteverket_death_and_estate_guidance"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-friend-overview-v75-03",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min vän har gått bort. Var börjar jag?",
+      "expected_support_areas": ["bereavement", "official_checklist", "relation_breadth"],
+      "must_not_claim": ["friend_relationship_proves_survivor_benefit_entitlement", "friend_is_automatically_dodsbodelagare", "friend_has_automatic_representation_authority"],
+      "expected_questions": ["q_what_do_you_need_help_with_first_or_overview"],
+      "expected_next_actions": ["route_to_existing_bereavement_focus", "offer_afterlevandeguiden_overview_without_forcing_benefit_route"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-motion-false-positive-v75-04",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min bror gick bort till affären och kom tillbaka.",
+      "expected_support_areas": ["no_bereavement_route_without_death_signal"],
+      "must_not_claim": ["a_death_occurred", "user_needs_survivor_support", "user_has_an_estate_case"],
+      "expected_questions": ["q_none_fail_closed_non_death_motion_phrase"],
+      "expected_next_actions": ["fail_closed_for_non_death_use_of_gick_bort"],
+      "source_requirements": ["current_primary_source_required_before_any_material_bereavement_claim"]
+    },
+    {
+      "case_id": "lab-bereavement-sibling-language-ar-v75-05",
+      "actor_type": "relative",
+      "language": "ar",
+      "story": "توفي أخي ولا أعرف من أين أبدأ.",
+      "expected_support_areas": ["bereavement", "official_checklist", "language_parity"],
+      "must_not_claim": ["sibling_relationship_proves_survivor_benefit_entitlement", "automatic_inheritance_share", "automatic_estate_authority"],
+      "expected_questions": ["q_what_do_you_need_help_with_first_or_overview"],
+      "expected_next_actions": ["preserve_same_bereavement_focus_in_arabic_ui", "offer_official_checklist"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-sibling-language-fa-v75-06",
+      "actor_type": "relative",
+      "language": "fa",
+      "story": "خواهرم فوت کرده است و نمی‌دانم از کجا شروع کنم.",
+      "expected_support_areas": ["bereavement", "official_checklist", "language_parity"],
+      "must_not_claim": ["sibling_relationship_proves_survivor_benefit_entitlement", "automatic_inheritance_share", "automatic_estate_authority"],
+      "expected_questions": ["q_what_do_you_need_help_with_first_or_overview"],
+      "expected_next_actions": ["preserve_same_bereavement_focus_in_persian_ui", "offer_official_checklist"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-har-gatt-bort-motion-false-positive-v75-07",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min bror har gått bort till affären och kommer snart tillbaka.",
+      "expected_support_areas": ["no_bereavement_route_without_death_signal"],
+      "must_not_claim": ["a_death_occurred", "user_needs_survivor_support", "user_has_an_estate_case"],
+      "expected_questions": ["q_none_fail_closed_non_death_motion_phrase"],
+      "expected_next_actions": ["fail_closed_for_non_death_use_of_har_gatt_bort"],
+      "source_requirements": ["current_primary_source_required_before_any_material_bereavement_claim"]
+    }
+  ]
+}
