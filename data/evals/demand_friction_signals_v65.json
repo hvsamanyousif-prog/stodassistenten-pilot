@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for people who cannot use ordinary transport and do not know whether their problem belongs to sickness travel, färdtjänst or riksfärdtjänst. Scores are not measured search volumes and do not prove eligibility, fare, deadline, booking method, certificate requirement or approval. Community material is discovery-only; current 1177, Riksdagen and responsible local authority sources carry material claims.",
+  "scoring": {"scale":"1-5","meaning":"1=low, 5=very high","priority_rule":"Prioritize high demand + high friction + high consequence + weak current product coverage; scores are qualitative, not measured search volumes."},
+  "signals": [
+    {
+      "signal_id": "df-mobility-sicktravel-fardtjanst-riks-v01",
+      "actor_types": ["private_person", "relative"],
+      "natural_language_queries": ["jag kan inte åka buss till vårdcentralen vem ska jag ringa","färdtjänst eller sjukresa till sjukhuset","jag ser dåligt och kan inte resa kollektivt","kan jag få färdtjänst till jobbet","riksfärdtjänst eller färdtjänst till familj i annan stad","min pappa behöver hjälp med resor vad ska vi söka"],
+      "demand_signal": {"score":5,"basis":"1177 maintains a dedicated sickness-travel/färdtjänst navigation family across regions, while public discussion repeatedly mixes sickness travel, taxi and färdtjänst. This indicates recurring navigation demand, not measured search volume."},
+      "friction_signal": {"score":5,"basis":"The same surface problem — ordinary public transport does not work — can belong to different systems depending first on trip purpose: healthcare, ordinary daily mobility or a longer private trip."},
+      "miss_consequence": {"score":5,"basis":"Choosing the wrong category can send a user to the wrong authority or process, delay a healthcare trip or application, and create false expectations about permits, reimbursement or transport mode."},
+      "source_fragmentation": {"score":5,"basis":"National law distinguishes färdtjänst, riksfärdtjänst and sickness-travel reimbursement, while booking, fees, detailed eligibility processes and operational responsibility vary locally by municipality/region or delegated regional authority."},
+      "language_accessibility_friction": {"score":5,"basis":"Institutional Swedish labels such as sjukresa, färdtjänst, riksfärdtjänst, tillståndsgivare and regional kollektivtrafikmyndighet are difficult to map from everyday Swedish, Arabic and Persian problem descriptions."},
+      "steps_to_action": {"score":5,"basis":"Trip purpose is the highest-information first fact. When healthcare, daily travel or long private travel is already explicit, the product should reuse it and avoid a redundant generic questionnaire."},
+      "recurrence_signal": {"score":5,"basis":"The three systems are longstanding and current, and 1177 continuously publishes region-specific operational pages, so the navigation boundary is persistent rather than a one-off policy event."},
+      "current_product_coverage_gap": {"score":5,"basis":"Fresh repository audit found no färdtjänst or riksfärdtjänst coverage on main. Existing disability/older home-support routes help inside the home but do not resolve transport purpose or authority."},
+      "priority_band": "HIGH",
+      "discovery_sources": ["https://www.reddit.com/r/sweden/comments/1rsw3kt/"],
+      "primary_sources": ["https://www.1177.se/sa-fungerar-varden/sjukresor-och-fardtjanst/","https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1997736-om-fardtjanst_sfs-1997-736/","https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1997735-om-riksfardtjanst_sfs-1997-735/","https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1991419-om-resekostnadsersattning-vid_sfs-1991-419/"],
+      "product_miss": "The shared person intelligence could understand disability and home-support needs but had no public route for a person who cannot use ordinary transport. It therefore could not distinguish healthcare travel from ordinary daily färdtjänst or longer private riksfärdtjänst travel.",
+      "future_guardrail": "Keep one shared person product and one mobility_transport focus. Older age, disability and relative context remain situation facts inside canonical actor types; never create a new older/disability/relative transport engine. Reuse an explicit purpose; otherwise ask one high-information purpose question. Keep local process, fees, certificates, deadlines and individual eligibility source-led.",
+      "regression_case": ["lab-mobility-healthcare-trip-v65-01","lab-mobility-daily-fardtjanst-v65-02","lab-mobility-riksfardtjanst-long-private-v65-03","lab-mobility-mixed-purpose-v65-04","lab-mobility-work-context-false-positive-v65-05","lab-mobility-language-ar-v65-06","lab-mobility-language-fa-v65-07"],
+      "evaluation_method": "Run mobility route unit tests plus canonical Scenario Lab and demand/friction learning-loop gates. Require purpose information gain, sv/ar/fa parity, professional-context false-positive protection and privacy-safe coarse handoff only.",
+      "recommended_learning_action": "Add one guarded mobility_transport route to the existing person product. Split by healthcare, daily and long-private purpose before showing current primary/local verification actions, and make each confusion boundary permanent as synthetic regression.",
+      "truth_rule": "VERIFY current 1177, Riksdagen and responsible local authority primary information before material claims. Do not infer eligibility, fare, deadline, certificate requirement, booking channel, permitted vehicle, trip quota or approval from free text, diagnosis, age, prior AI output, forum posts or qualitative demand signals."
+    }
+  ]
+}
