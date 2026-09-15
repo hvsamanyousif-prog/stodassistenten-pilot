@@ -61,7 +61,7 @@
         "https://www.upphandlingsmyndigheten.se/gora-affarer-med-offentlig-sektor/lamna-anbud/"
       ],
       "recommended_learning_action": "Extend the existing company-pilot procurement result without adding another question or a parallel engine: tell suppliers to use the official Q&A channel in the current procurement when a requirement is unclear, monitor published answers/addenda, and fail closed on any assumption that a missing mandatory item can always be repaired after the deadline.",
-      "truth_rule": "VERIFY material procurement guidance against current Upphandlingsmyndigheten primary sources and, for a concrete bid, the current procurement documents plus published questions, answers and addenda. Do not infer that a private answer controls the procurement, that ambiguity removes a mandatory requirement, or that post-deadline correction, clarification or supplementation is guaranteed or legally allowed in the specific case."
+      "truth_rule": "VERIFY material procurement guidance against current Upphandlingsmyndigheten primary sources and, for a concrete bid, the current procurement documents plus published questions, answers and addenda. Do not infer that a private answer controls the procurement, that ambiguity removes a mandatory requirement, or that post-deadline correction, clarification or supplementation is guaranteed or legally allowed in the specific procurement case."
     }
   ]
 }
