@@ -3,16 +3,16 @@
 const assert = require('node:assert/strict');
 const guidance = require('./older-home-support-guidance.js');
 
-assert.equal(guidance.detect('Min mamma klarar inte att duscha och städa hemma längre, vem ringer jag?'), true);
+assert.equal(guidance.detect('Min äldre mamma klarar inte att duscha och städa hemma längre, vem ringer jag?'), true);
 assert.equal(guidance.detect('Jag är 82 och behöver hemtjänst för att kunna bo kvar hemma'), true);
 assert.equal(guidance.detect('Jag behöver äldreomsorg hemma och vet inte vart jag ska vända mig'), true);
 assert.equal(guidance.detect('والدتي كبيرة في السن وتحتاج مساعدة في المنزل للتنظيف والاستحمام'), true);
 assert.equal(guidance.detect('مادرم سالمند است و برای نظافت و حمام در خانه کمک می‌خواهد'), true);
 assert.equal(guidance.detect('Min mamma är svårt sjuk och jag behöver avstå från jobbet för att vara med henne'), false, 'caregiver cash-benefit stories must not be stolen by the older-home route');
 
-// Hemtjänst, trygghetslarm and hemsjukvård are not older-only services.
-// A generic or explicitly younger disability/home-healthcare story must not be
-// relabeled as eldercare merely because one of those service words is present.
+// Parent relation is not evidence of older age. Hemtjänst, trygghetslarm and
+// hemsjukvård are not older-only services.
+assert.equal(guidance.detect('Min mamma är 48, har en funktionsnedsättning och behöver hemtjänst hemma'), false, 'parent relation must not be converted into old age');
 assert.equal(guidance.detect('Jag är 34 och har en funktionsnedsättning och behöver hemtjänst hemma'), false, 'younger disability home-help story must not be stolen by eldercare');
 assert.equal(guidance.detect('Jag behöver hemsjukvård hemma efter en operation'), false, 'generic home-healthcare story must not be assumed to concern an older person');
 assert.equal(guidance.detect('Jag behöver trygghetslarm på grund av min funktionsnedsättning'), false, 'generic disability safety-alarm story must not be assumed to concern an older person');
