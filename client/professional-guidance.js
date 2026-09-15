@@ -113,7 +113,7 @@
       /کارم\s+را\s+از\s+دست\s+دادم/i,
       /شغلم\s+را\s+از\s+دست\s+دادم/i,
     ];
-    const future=/(riskerar\s+att\s+bli\s+arbetslös|kommer\s+att\s+bli\s+arbetslös|blir\s+arbetslös\s+om\s+\d+|varslad|varsel|سأصبح\s+عاطل|سوف\s+أصبح\s+عاطل|بیکار\s+خواهم\s+شد)/i.test(value);
+    const future=/(riskerar\s+att\s+bli\s+arbetslös|kommer\s+att\s+bli\s+arbetslös|blir\s+arbetslös\s+om\s+\d+|سأصبح\s+عاطل|سوف\s+أصبح\s+عاطل|بیکار\s+خواهم\s+شد)/i.test(value);
     const isCurrent=current.some(pattern=>pattern.test(value));
     return isCurrent&&!future;
   }
