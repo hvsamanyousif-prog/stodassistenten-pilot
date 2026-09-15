@@ -107,6 +107,45 @@ assert.deepEqual(
   `live actor_type token is outside shared session contract: ${JSON.stringify(invalidActorLiterals)}`,
 );
 
+// Regression v68: the v67 student-sickness route may carry only the coarse facts
+// declared by the single cross-surface contract. Web/iOS/Android must therefore
+// serialize the same semantic state instead of inventing client-specific keys.
+assert.deepEqual(contract.allowedFactKeysForFocus('student_csn'), ['topic','study_context','study_work']);
+const studentSnapshots={};
+for (const surface of ['web','ios','android']) {
+  const p=contract.makeSessionProfile({
+    surface,
+    language:'sv',
+    actorType:'student',
+    focus:'student_csn',
+    coarseFacts:{topic:'sickness',study_context:'study_support_sweden',study_work:'yes'},
+    rawSituation:'Jag studerar med CSN och har blivit sjuk men jobbar också.'
+  });
+  const allowedFactKeys=contract.allowedFactKeysForFocus(p.focus);
+  const u=new URLSearchParams(contract.buildPublicHandoff(p,{allowedFactKeys}));
+  assert.equal(u.get('actor_type'),'student');
+  assert.equal(u.get('focus'),'student_csn');
+  assert.equal(u.get('topic'),'sickness');
+  assert.equal(u.get('study_context'),'study_support_sweden');
+  assert.equal(u.get('study_work'),'yes');
+  assert.equal(u.get('lang'),'sv');
+  assert.equal(u.has('situation'),false);
+  assert.equal(u.has('raw_situation'),false);
+  studentSnapshots[surface]=contract.toSafeSessionSnapshot(p,{allowedFactKeys});
+}
+assert.deepEqual(studentSnapshots.web.coarse_facts,studentSnapshots.ios.coarse_facts);
+assert.deepEqual(studentSnapshots.ios.coarse_facts,studentSnapshots.android.coarse_facts);
+assert.equal(studentSnapshots.web.focus,'student_csn');
+assert.equal(studentSnapshots.ios.focus,'student_csn');
+assert.equal(studentSnapshots.android.focus,'student_csn');
+assert.throws(
+  ()=>contract.buildPublicHandoff(
+    contract.makeSessionProfile({actorType:'student',focus:'student_csn',coarseFacts:{study_level:'masters'}}),
+    {allowedFactKeys:contract.allowedFactKeysForFocus('student_csn')}
+  ),
+  /not allowlisted/
+);
+
 // Fail closed: sensitive/arbitrary keys or prose-like values never become coarse transport facts.
 assert.throws(()=>contract.makeSessionProfile({coarseFacts:{diagnosis:'adhd'}}),/forbidden coarse fact key/);
 assert.throws(()=>contract.makeSessionProfile({coarseFacts:{rawSituation:'secret'}}),/forbidden coarse fact key/);

@@ -71,6 +71,13 @@
       "lang"
     ],
     "coarse_fact_policy": "explicit_allowlist_per_capability",
+    "capability_fact_allowlists": {
+      "student_csn": [
+        "topic",
+        "study_context",
+        "study_work"
+      ]
+    },
     "max_value_length": 64,
     "forbidden_keys": [
       "q",
