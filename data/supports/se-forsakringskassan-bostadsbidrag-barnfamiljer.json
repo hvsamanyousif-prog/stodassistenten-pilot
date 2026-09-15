@@ -1,0 +1,172 @@
+{
+  "support_id": "se-forsakringskassan-bostadsbidrag-barnfamiljer",
+  "name": "Bostadsbidrag till barnfamiljer",
+  "category": "housing_energy",
+  "subtype": "housing_benefit_families_with_children",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "parent_guardian",
+      "family_with_children",
+      "low_income_household"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "bhfamily.child_residence",
+        "field": "child_residence_pattern",
+        "operator": "text_condition",
+        "value": "Försäkringskassan anger att barnet ska bo hos den sökande. Barnet behöver inte bo där hela tiden, men minst 30 dagar per år. Om barnet bor där mindre än ungefär halva tiden gäller dessutom ett särskilt krav på bostadens storlek.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Hur mycket barnet bor i bostaden är route-ändrande information. Naturlig text får inte ensam avgöra behörighet."
+      },
+      {
+        "rule_id": "bhfamily.part_time_child_housing_size",
+        "field": "housing_size_when_child_lives_less_than_about_half_time",
+        "operator": "text_condition",
+        "value": "När barnet bor hos den sökande mindre än ungefär halva tiden anger den aktuella sidan att bostaden ska ha minst två rum och kök och vara minst 40 kvadratmeter.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Fråga om bostadsstorlek först när barnets boendemönster gör uppgiften materiell."
+      },
+      {
+        "rule_id": "bhfamily.registration_and_home",
+        "field": "registered_and_living_in_home",
+        "operator": "text_condition",
+        "value": "Den sökande ska normalt bo och vara folkbokförd i bostaden som bidrag söks för. Försäkringskassan beskriver undantag, bland annat vid skyddad folkbokföring och vissa tillfälliga boendesituationer.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Fail closed vid undantagsfall; avgör inte folkbokförings- eller boendeundantag lokalt."
+      },
+      {
+        "rule_id": "bhfamily.sweden_and_cross_border",
+        "field": "residence_country_and_cross_border_context",
+        "operator": "text_condition",
+        "value": "Huvudregeln på den aktuella sidan är att den sökande ska bo i Sverige. EU- eller EES-anknytning kan påverka bedömningen och behöver verifieras av Försäkringskassan i gränsöverskridande fall.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Fråga om gränsöverskridande situation endast när sådan signal redan finns eller behövs för att ändra vägen."
+      },
+      {
+        "rule_id": "bhfamily.calculation_factors",
+        "field": "household_income_children_housing_cost",
+        "operator": "text_condition",
+        "value": "Försäkringskassan anger att bostadsbidragets storlek bland annat beror på hushållets inkomster, hur många barn som bor i bostaden, hur mycket barnen bor där, bostadens storlek och bostadskostnaden.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Produkten ska inte gissa ett individuellt belopp; använd aktuell beräkning eller beslut hos Försäkringskassan."
+      },
+      {
+        "rule_id": "bhfamily.annual_income_basis_2026",
+        "field": "income_period_for_current_rules",
+        "operator": "text_condition",
+        "value": "För en ansökan enligt de nuvarande 2026-reglerna uppskattas årets inkomster före skatt. Försäkringskassan räknar med flera inkomstslag och även vissa kapital- och tillgångsuppgifter kan påverka bedömningen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Begär inte känsliga detaljuppgifter i publik handoff. En enskild månads inkomst får inte behandlas som säker årsinkomst för 2026-spåret."
+      },
+      {
+        "rule_id": "bhfamily.joint_application",
+        "field": "cohabiting_or_married_household",
+        "operator": "text_condition",
+        "value": "Gifta eller sambor som bor tillsammans ansöker gemensamt enligt Försäkringskassans aktuella vägledning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Hushållsformen kan därför ändra ansökningsvägen."
+      },
+      {
+        "rule_id": "bhfamily.monthly_income_transition_2027",
+        "field": "decision_period",
+        "operator": "text_condition",
+        "value": "Försäkringskassan beskriver en regeländring från 1 januari 2027 där månadsvis inkomstkontroll ska användas för de flesta som omfattas av bostadsbidrag och den nuvarande årliga slutliga avstämningen förändras. Kontrollera den aktuella 2027-vägledningen innan den modellen används för ett individuellt ärende.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "notes": "Change-intelligence only. Använd inte 2027-regeln i förtid för en 2026-ansökan."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "bhfamily.child_residence",
+        "prompt": "Bor barnet hos dig hela eller ungefär halva tiden, eller mer sällan?",
+        "reason": "Barnets boendemönster kan ändra både kandidatbedömningen och om bostadens storlek behöver kontrolleras."
+      },
+      {
+        "question_id": "bhfamily.household",
+        "prompt": "Bor du ensam med barnet eller tillsammans med make eller sambo?",
+        "reason": "Gifta och sambor som bor tillsammans ansöker gemensamt och hushållets inkomster är relevanta."
+      },
+      {
+        "question_id": "bhfamily.housing",
+        "prompt": "Vilken boendeform har du och är du normalt folkbokförd i bostaden?",
+        "reason": "Boendeform och folkbokföring påverkar bedömningen och vilka bostadsunderlag som behöver lämnas."
+      },
+      {
+        "question_id": "bhfamily.housing_size_if_needed",
+        "prompt": "Om barnet bor hos dig mindre än ungefär halva tiden: har bostaden minst två rum och kök och är den minst 40 kvadratmeter?",
+        "reason": "Den uppgiften är bara materiell när barnets boendemönster utlöser den särskilda storleksgränsen."
+      },
+      {
+        "question_id": "bhfamily.annual_income_2026",
+        "prompt": "Om ansökan gäller 2026: vad uppskattar ni att hushållets relevanta inkomster blir under hela kalenderåret?",
+        "reason": "Nuvarande 2026-regler utgår från uppskattad årsinkomst; fråga inte efter mer detalj än vad som behövs för nästa säkra steg."
+      },
+      {
+        "question_id": "bhfamily.decision_period",
+        "prompt": "Gäller frågan en ansökan under 2026 eller ett ärende från 2027?",
+        "reason": "Inkomstmodellen förändras från 2027 och får inte tillämpas i förtid."
+      },
+      {
+        "question_id": "bhfamily.cross_border_if_relevant",
+        "prompt": "Finns det en koppling till arbete eller boende i ett annat EU- eller EES-land?",
+        "reason": "Ställ bara frågan när gränsöverskridande kontext finns, eftersom sådan anknytning kan ändra bedömningen."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan beräknar bostadsbidraget utifrån bland annat hushållets inkomster, antal barn och hur mycket de bor i bostaden, bostadens storlek och bostadskostnaden. Stödassistenten ska inte gissa ett individuellt belopp utan hänvisa till aktuell beräkning och ansökan hos Försäkringskassan.",
+    "recurrence": "monthly"
+  },
+  "documents": [
+    "Aktuella bostadsunderlag som Försäkringskassan efterfrågar för den aktuella boendeformen",
+    "Underlag om boendekostnad och bostadens storlek när det behövs för bedömningen",
+    "Inkomst- och hushållsuppgifter som den aktuella ansökan efterfrågar; samla inte mer än vad Försäkringskassan behöver"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+    "deadline_text": "Försäkringskassan anger att bostadsbidrag inte lämnas retroaktivt för månader före ansökningsmånaden. Kontrollera alltid aktuell vägledning för den egna ansökan.",
+    "next_step": "Kontrollera först barnets boendemönster och hushållsform. Om barnet bor mindre än ungefär halva tiden, kontrollera därefter bostadens storlek. För ett 2026-ärende används den aktuella årsinkomstvägen; för ett ärende från 2027 ska den då gällande månadsregeln och eventuella undantag verifieras innan materiell vägledning ges. Använd Försäkringskassans aktuella beräkning och ansökan för individuell bedömning."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-07-01T00:00:00+02:00",
+    "retrieved_at": "2026-09-15T14:25:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkälla 2026-09-15. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt barnets boendefrekvens, bostadsstorleksregeln vid mindre än ungefär halvtidsboende, hushålls-/gemensam ansökan, vilka inkomst- och tillgångsslag som räknas, dokumentkrav, EU/EES-undantag och 2027-övergången. Exakta belopp har medvetet inte normaliserats. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T14:25:00Z",
+    "last_seen_at": "2026-09-15T14:25:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
