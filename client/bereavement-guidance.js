@@ -13,7 +13,7 @@
   const PM_WORK_URL='https://www.pensionsmyndigheten.se/for-pensionarer/Ekonomiskt_stod/ersattning-vid-arbetsrelaterat-dodsfall';
   const SKV_DEATH_URL='https://www.skatteverket.se/privat/folkbokforing/dodsfall.4.18e1b10334ebe8bc80002760.html';
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
-  const CONTEXTS=new Set(['partner_support','child_support','practical','work_related','unsure']);
+  const CONTEXTS=new Set(['partner_support','child_support','practical','work_related','overview','unsure']);
 
   const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|فوت\s+کرد|فوت\s+شده|بازمانده)/i;
   const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|قريب|همسرم|شریکم|پدرم|مادرم|نزدیکم)/i;
@@ -130,6 +130,7 @@
         child_support:[x.childTitle,x.childBody,[[x.sourcePension,PM_SURVIVOR_URL],[x.sourceGuide,AFTER_GUIDE_URL]]],
         practical:[x.practicalTitle,x.practicalBody,[[x.sourceGuide,AFTER_GUIDE_URL],[x.sourceSkv,SKV_DEATH_URL]]],
         work_related:[x.workTitle,x.workBody,[[x.sourceWork,PM_WORK_URL],[x.sourceGuide,AFTER_GUIDE_URL]]],
+        overview:[x.unsureTitle,x.unsureBody,[[x.sourceGuide,AFTER_GUIDE_URL],[x.sourcePension,PM_SURVIVOR_URL],[x.sourceSkv,SKV_DEATH_URL]]],
         unsure:[x.unsureTitle,x.unsureBody,[[x.sourceGuide,AFTER_GUIDE_URL],[x.sourcePension,PM_SURVIVOR_URL],[x.sourceSkv,SKV_DEATH_URL]]]
       };
       return map[context]||map.unsure;
@@ -166,7 +167,7 @@
       const languages=`<div class="langs">${[['sv','Svenska'],['ar','العربية'],['fa','فارسی']].map(([code,label])=>`<button class="lang ${currentLang===code?'active':''}" type="button" data-lang="${code}" aria-pressed="${currentLang===code}">${label}</button>`).join('')}</div>`;
       let body='';
       if(context==='unsure'){
-        body=`<section class="card"><h2>${x.title}</h2>${[['partner_support',x.partner],['child_support',x.child],['practical',x.practical],['work_related',x.work],['unsure',x.unsure]].map(([v,l])=>`<button class="choice" type="button" data-context="${v}">${l}</button>`).join('')}</section>`;
+        body=`<section class="card"><h2>${x.title}</h2>${[['partner_support',x.partner],['child_support',x.child],['practical',x.practical],['work_related',x.work],['overview',x.unsure]].map(([v,l])=>`<button class="choice" type="button" data-context="${v}">${l}</button>`).join('')}</section>`;
       }else{
         const [title,desc,sources]=result();
         body=`<section class="card"><h2>${title}</h2><p>${desc}</p><div class="privacy">${x.privacy}</div>${sources.map(([label,url])=>`<p><a class="source" href="${url}" target="_blank" rel="noopener noreferrer">${label}</a></p>`).join('')}<button class="back" type="button" data-context="unsure">${x.title}</button></section>${feedbackHtml()}`;
