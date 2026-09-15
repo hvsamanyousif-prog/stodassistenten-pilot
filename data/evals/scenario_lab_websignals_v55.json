@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Permanent synthetic regressions for non-older people with disability-related support needs at home, created after v54 correctly stopped the eldercare route from stealing these stories. The cases keep boendestod, practical/personal home support, safety alarms and healthcare at home distinct without creating a parallel product or inferring entitlement. Stories are synthetic and contain no reused community text or personal data.",
+  "verified_signal_patterns": [
+    {
+      "pattern_id": "disability-home-support-after-eldercare-false-positive-fix",
+      "observation": "Socialstyrelsen's current 2025 statistics, published 3 June 2026, show that among people with disabilities receiving SoL interventions, boendestod is the most common intervention followed by home help in ordinary housing and safety alarms. This confirms that terms such as hemtjanst and trygghetslarm are not older-only and that suppressing the eldercare route must not leave a younger disability-support dead end.",
+      "primary_sources": [
+        "https://www.socialstyrelsen.se/statistik-och-data/statistik/alla-statistikamnen/socialtjanstinsatser-till-personer-med-funktionsnedsattning/",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/funktionshinder/",
+        "https://www.1177.se/"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "lab-disability-home-help-not-eldercare-v55-01",
+      "actor_type": "private_person",
+      "story": "Jag är 34, har en funktionsnedsättning och behöver hemtjänst hemma. Vart vänder jag mig?",
+      "expected_support_areas": ["disability_home_support", "social_care", "current_municipal_route_verification"],
+      "must_not_claim": ["home_help_is_only_for_older_people", "the_story_proves_entitlement_to_home_help", "disability_or_diagnosis_alone_proves_eligibility", "one_national_municipal_process_applies_everywhere", "the_product_can_decide_hours_or_fees"],
+      "expected_questions": ["ask_at_most_which_broad_home_support_need_dominates_when_that_changes_the_route", "do_not_request_diagnosis_exact_address_income_personal_identity_or_raw_story"],
+      "expected_next_actions": ["route_to_current_official_municipal_disability_or_social_support_information_without_promising_eligibility_or_process"],
+      "source_requirements": ["Socialstyrelsen_current_disability_social_services_information", "current_official_municipal_process_before_specific_contact_claim"]
+    },
+    {
+      "case_id": "lab-disability-boendestod-structure-v55-02",
+      "actor_type": "private_person",
+      "story": "Jag har svårt att planera vardagen och hålla rutiner hemma och undrar om boendestöd kan vara rätt väg.",
+      "expected_support_areas": ["disability_home_support", "boendestod_discovery", "local_process_verification"],
+      "must_not_claim": ["boendestod_is_guaranteed", "the_product_can_diagnose_a_cognitive_or_psychiatric_condition", "a_specific_diagnosis_is_always_required", "boendestod_and_personal_assistance_are_the_same_service", "the_product_can_choose_legal_basis_for_the_user"],
+      "expected_questions": ["do_not_add_a_generic_diagnosis_question", "ask_only_if_a_broad_need_split_can_change_the_next_route"],
+      "expected_next_actions": ["show_boendestod_as_a_candidate_to_check_with_current_municipal_information_and_preserve_uncertainty"],
+      "source_requirements": ["Socialstyrelsen_current_disability_area_information", "Socialstyrelsen_current_SoL_intervention_statistics"]
+    },
+    {
+      "case_id": "lab-disability-safety-alarm-local-v55-03",
+      "actor_type": "private_person",
+      "story": "Jag har en funktionsnedsättning och känner mig otrygg hemma. Kan trygghetslarm vara något för mig?",
+      "expected_support_areas": ["disability_home_support", "safety_support", "municipal_verification"],
+      "must_not_claim": ["safety_alarm_is_only_an_eldercare_service", "the_story_proves_entitlement_to_a_safety_alarm", "every_municipality_has_the_same_alarm_criteria_or_fee", "a_diagnosis_alone_decides_the_route"],
+      "expected_questions": ["avoid_collecting_sensitive_health_details_when_the_service_family_is_already_clear"],
+      "expected_next_actions": ["verify_current_municipal_safety_alarm_or_disability_support_information_before_specific_process_claims"],
+      "source_requirements": ["Socialstyrelsen_current_disability_SoL_statistics", "current_official_municipal_information"]
+    },
+    {
+      "case_id": "lab-relative-middle-aged-parent-disability-not-older-v55-04",
+      "actor_type": "relative",
+      "story": "Min mamma är 48, har en funktionsnedsättning och behöver stöd hemma med vardagen och ibland sjuksköterska för omläggning.",
+      "expected_support_areas": ["disability_home_support", "social_home_support", "home_healthcare", "relative_as_helper_not_automatic_caregiver_claim"],
+      "must_not_claim": ["parent_word_alone_proves_older_person_context", "the_story_should_be_labeled_eldercare", "social_home_support_and_home_healthcare_are_the_same_service", "the_relative_automatically_needs_caregiver_benefit", "municipality_or_region_is_always_the_healthcare_actor_nationally"],
+      "expected_questions": ["preserve_both_social_support_and_healthcare_tracks", "do_not_collect_medical_details_when_the_route_boundary_is_already_clear"],
+      "expected_next_actions": ["use_current_municipal_disability_social_support_information_for_daily_support_and_1177_or_current_local_healthcare_information_for_medical_homecare"],
+      "source_requirements": ["Socialstyrelsen_current_disability_information", "1177_current_local_healthcare_route_before_specific_responsibility_claim"]
+    }
+  ]
+}

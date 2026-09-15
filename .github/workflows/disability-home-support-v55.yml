@@ -1,0 +1,40 @@
+name: Disability home support v55
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-disability-home-support-v55:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check shared home-support syntax
+        run: |
+          node --check client/disability-home-support-guidance.js
+          node --check client/older-home-support-guidance.js
+      - name: Run disability home-support behavior regressions
+        run: node client/disability-home-support-guidance.test.cjs
+      - name: Run older-home cross-actor regressions
+        run: node client/older-home-support-guidance.test.cjs
+      - name: Validate v55 safety semantics
+        run: python scripts/validate_disability_home_support_v55.py
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with shared route
+        run: |
+          python scripts/build_public_pilot.py --output _site-v55
+          grep -q 'client/disability-home-support-guidance.js' _site-v55/index.html
+          grep -q 'client/disability-home-support-guidance.js' _site-v55/person-pilot.html
