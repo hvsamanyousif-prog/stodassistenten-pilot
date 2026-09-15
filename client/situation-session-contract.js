@@ -11,7 +11,7 @@
   const SURFACES=Object.freeze(['web','ios','android']);
   const LANGUAGES=Object.freeze(['sv','ar','fa']);
   const ACTOR_TYPES=Object.freeze([
-    'private_person','relative','student_young_adult','employee',
+    'private_person','relative','student','employee',
     'company','association','property_actor','other'
   ]);
   const FORBIDDEN_KEYS=Object.freeze([
