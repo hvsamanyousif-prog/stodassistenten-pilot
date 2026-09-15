@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f3ea">
+<title>Stödassistenten – Expertpilot offentlig upphandling</title>
+<style>
+:root{--bg:#f7f3ea;--paper:#fffdf8;--ink:#24312d;--muted:#67736e;--line:#e6ddce;--sage:#315f55;--soft:#e8f0ec;--warm:#fff2d7;--rose:#fff0ea;--danger:#8c3a30;--ok:#e8f3eb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.app{max-width:900px;margin:auto;padding:16px 14px 100px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:4px 0 14px}.logo{font-weight:900}.badge{font-size:12px;background:var(--warm);padding:7px 10px;border-radius:999px}.card{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:20px;margin:12px 0;box-shadow:0 8px 24px #40372a10}.hero h1{font-size:34px;line-height:1.05;margin:8px 0 10px}h2{font-size:24px;margin:0 0 10px}h3{margin:8px 0}.eyebrow{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--sage)}p,li{line-height:1.5}.muted{color:var(--muted)}.privacy,.notice,.warn,.okbox{padding:12px;border-radius:14px;margin:10px 0}.privacy,.okbox{background:var(--soft)}.notice{background:var(--warm)}.warn{background:var(--rose)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice,.btn,select,input,textarea{font:inherit}.choice,.btn{border:1px solid var(--line);background:white;border-radius:14px;padding:12px;cursor:pointer;font-weight:760;color:var(--ink)}.choice.active{background:var(--soft);border-color:#82aa9e}.primary{background:var(--sage);color:white;border:0}.secondary{background:white}.field{display:block;width:100%;border:1px solid var(--line);background:white;border-radius:14px;padding:12px;margin:7px 0}.textarea{min-height:190px;resize:vertical}.row{display:flex;gap:8px;flex-wrap:wrap}.step{font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.req{border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0;background:white}.reqhead{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tag{display:inline-block;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:900;background:var(--soft);color:#24574b}.source{font-size:12px;color:var(--muted)}.req select{margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:9px;background:white}.score{display:grid;grid-template-columns:minmax(180px,1fr) minmax(180px,260px);gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.score:last-child{border-bottom:0}.status{padding:12px;border-radius:14px;margin-top:10px;font-weight:750}.status.ok{background:var(--ok)}.status.err{background:var(--rose);color:var(--danger)}pre{white-space:pre-wrap;background:#f6f3ed;border:1px solid var(--line);border-radius:14px;padding:12px;overflow:auto}.platform-home{color:var(--sage);font-weight:800;text-decoration:none}.hidden{display:none!important}@media(max-width:680px){.grid,.score{grid-template-columns:1fr}.hero h1{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+<a class="platform-home" href="index.html">← Stödassistenten</a>
+<div class="top"><div class="logo">🧭 Stödassistenten</div><div class="badge">Expertpilot • offentlig upphandling</div></div>
+<main id="app">
+<section class="card hero">
+<div class="eyebrow">Supplier simulation + buyer-side Red Team</div>
+<h1>Testa om Stödassistenten håller för verklig upphandlingsgranskning.</h1>
+<p>Den här versionen är byggd för en erfaren upphandlare som först agerar leverantör och sedan granskar resultatet från köparsidan. Den är sektorsoberoende: bygg är djupaste testområdet, men samma logik ska fungera för städ/facility, konsult, fastighetsdrift och andra SME-kategorier.</p>
+<div class="privacy"><b>Integritet:</b> företagsprofil, käll-URL och inklistrat upphandlingsunderlag behandlas bara lokalt i webbläsaren. När du skickar feedback skickas endast strukturerade produktbetyg — aldrig underlagstext, företagsuppgifter eller käll-URL.</div>
+<div class="warn"><b>Använd endast</b> offentlig, historisk eller fullt syntetisk upphandling. Använd inte en liveupphandling där du själv medverkar och klistra inte in interna bedömningar, konkurrerande anbud, opublicerade krav eller konfidentiell information.</div>
+<div class="row"><button class="btn primary" id="startBtn">Starta expertgranskning</button><button class="btn secondary" id="sampleBtn">Ladda syntetiskt byggfall</button></div>
+</section>
+<section class="card hidden" id="profileCard">
+<div class="step">1. Leverantörssimulering</div><h2>Vilket företag låtsas du vara?</h2>
+<div class="grid" id="sectorGrid"></div>
+<label>Geografi<select class="field" id="geography"><option value="local">Lokal/kommun</option><option value="regional">Regional</option><option value="national">Hela Sverige</option></select></label>
+<label>Kapacitet<select class="field" id="capacity"><option value="yes">Tydlig och styrkbar</option><option value="partial">Delvis tydlig</option><option value="no">Otillräcklig/osäker</option></select></label>
+<label>Referenser<select class="field" id="references"><option value="yes">Relevanta och dokumenterade</option><option value="partial">Finns men behöver struktureras</option><option value="no">Saknas/osäkra</option></select></label>
+<label>Dokumentberedskap<select class="field" id="documents"><option value="yes">God</option><option value="partial">Delvis</option><option value="no">Svag</option></select></label>
+<label>Underleverantörer<select class="field" id="subcontractors"><option value="no">Nej</option><option value="yes">Ja</option><option value="unknown">Osäkert</option></select></label>
+</section>
+<section class="card hidden" id="sourceCard">
+<div class="step">2. Publicerat underlag</div><h2>Klistra in det som ska granskas</h2>
+<p class="muted">För bäst source trace: lägg ett krav eller avsnitt per rad och behåll gärna avsnittsnummer/rubrik. Första expertversionen analyserar text lokalt; PDF/DOCX-ingestion är nästa separata motorsteg.</p>
+<label>Publik källänk (valfri — skickas inte i feedback)<input class="field" id="sourceUrl" inputmode="url" placeholder="https://..."></label>
+<label>Publicerat/historiskt/syntetiskt underlag<textarea class="field textarea" id="sourceText" placeholder="3.2 Leverantören ska ...&#10;4.1 Anbudsgivaren ska visa ...&#10;6.2 Utvärdering sker ..."></textarea></label>
+<div class="row"><button class="btn primary" id="analyzeBtn">Analysera krav</button><button class="btn secondary" id="clearBtn">Rensa lokalt</button></div>
+</section>
+<section class="card hidden" id="analysisCard">
+<div class="step">3. Första extraktion</div><h2>Kravbild och evidens</h2>
+<div class="notice">Det här är en transparent första extraktion, inte ett besked om att anbudet är komplett. Kontrollera varje materiellt krav mot hela styrande underlaget, bilagor, rättelser och publicerade frågor/svar.</div>
+<div id="summary"></div><div id="requirements"></div>
+<h3>Strukturerat anbudsunderlag</h3><pre id="draft"></pre>
+</section>
+<section class="card hidden" id="feedbackCard">
+<div class="step">4. Buyer-side verifiering</div><h2>Skicka strukturerad expertfeedback</h2>
+<p class="muted">Betygsätt produkten mot originalunderlaget. Vi skickar bara siffrorna nedan och tre ja/nej-svar.</p>
+<div id="scoreRows"></div>
+<div class="grid">
+<label>Hittade du ett verkligt produktfel?<select class="field" id="foundIssue"><option value="">Välj</option><option value="yes">Ja</option><option value="no">Nej</option></select></label>
+<label>Är stödet användbart för ett seriöst anbud?<select class="field" id="useful"><option value="">Välj</option><option value="yes">Ja</option><option value="no">Nej</option></select></label>
+<label>Är nästa säkra handling tydlig?<select class="field" id="clearNext"><option value="">Välj</option><option value="yes">Ja</option><option value="no">Nej</option></select></label>
+</div>
+<div class="row"><button class="btn primary" id="sendFeedback">Skicka anonym feedback</button><button class="btn secondary" id="copyReport">Kopiera lokalt testprotokoll</button></div>
+<div id="feedbackStatus" aria-live="polite"></div>
+</section>
+</main>
+</div>
+<script src="client/procurement-expert-pilot.js"></script>
+</body>
+</html>
