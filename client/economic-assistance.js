@@ -10,6 +10,8 @@
 
   const SOCIALSTYRELSEN_URL = 'https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/';
   const CALC_URL = 'https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/provberakning-ekonomiskt-bistand/';
+  const DEBT_COUNSELLING_URL = 'https://www.konsumentverket.se/ekonomi/kommunal-budget-och-skuldradgivning/';
+  const KRONOFOGDEN_BILLS_URL = 'https://kronofogden.se/kontakta-oss/fragor-och-svar/rad-och-stod/2025-04-08-mina-rakningar-ar-helt-i-kaos.-vad-ska-jag-gora';
 
   const DIRECT_PATTERNS = [
     /\b(?:försörjningsstöd|ekonomiskt\s+bistånd|socialbidrag|socialtjänst(?:en)?)\b/i,
@@ -17,7 +19,7 @@
     /کمک(?:‌|\s)+(?:اجتماعی|مالی)|خدمات(?:‌|\s)+اجتماعی/i,
   ];
   const MONEY_PRESSURE_PATTERNS = [
-    /\b(?:pengarna\s+räcker\s+inte|har\s+inte\s+råd|saknar\s+pengar|ingen\s+inkomst|utan\s+inkomst|ekonomisk\s+kris)\b/i,
+    /\b(?:pengarna\s+räcker\s+inte|har\s+inte\s+råd|saknar\s+pengar|ingen\s+inkomst|utan\s+inkomst|ekonomisk\s+kris|kan\s+inte\s+betala)\b/i,
     /(?:المال|النقود).*(?:لا\s+تكفي|نفدت)|لا\s+أستطيع\s+الدفع|بدون\s+دخل/i,
     /پول.*(?:کافی\s+نیست|ندارم)|نمی(?:‌|\s)*توانم.*پرداخت|بدون\s+درآمد/i,
   ];
@@ -31,14 +33,42 @@
     /طعام|غذاء|دواء|نظافة|ملابس/i,
     /غذا|دارو|بهداشت|لباس/i,
   ];
+  const DEBT_PATTERNS = [
+    /\b(?:skuld|skulden|skulder|skulderna|skuldsatt|skuldsatta|inkasso|kronofogden|skuldsanering|betalningspåminnelse|betalningskrav|obetalda?\s+räkningar|räkningarna\s+är\s+(?:helt\s+)?i\s+kaos)\b/i,
+    /ديون|دين|مديون|تحصيل\s+الديون|إنكاسو|كرونوفوغدن|تسوية\s+الديون|فواتير\s+غير\s+مدفوعة/i,
+    /بدهی|بدهکار|وصول\s+مطالبات|اینکاسو|کرونوفوگدن|تسویه\s+بدهی|قبض(?:‌|\s)*های\s+پرداخت(?:‌|\s)*نشده/i,
+  ];
+  const NON_DEBT_WORK_PATTERNS = [
+    /\b(?:jobbar|arbetar)\s+(?:på|hos)\s+kronofogden\b/i,
+  ];
+  const DEBT_WITHOUT_KFM_PATTERNS = [
+    /\b(?:skuld|skulden|skulder|skulderna|skuldsatt|skuldsatta|inkasso|skuldsanering|betalningspåminnelse|betalningskrav|obetalda?\s+räkningar|räkningarna\s+är\s+(?:helt\s+)?i\s+kaos)\b/i,
+    /ديون|دين|مديون|تحصيل\s+الديون|إنكاسو|تسوية\s+الديون|فواتير\s+غير\s+مدفوعة/i,
+    /بدهی|بدهکار|وصول\s+مطالبات|اینکاسو|تسویه\s+بدهی|قبض(?:‌|\s)*های\s+پرداخت(?:‌|\s)*نشده/i,
+  ];
+  const ACUTE_HOUSING_PATTERNS = [
+    /(?:kan\s+inte|klarar\s+inte).{0,30}(?:betala|täcka).{0,30}(?:hyr|el)|(?:hyr|el).{0,30}(?:förfaller|stängs\s+av|vräk)/i,
+    /لا\s+أستطيع.{0,30}(?:دفع).{0,30}(?:الإيجار|الكهرباء)|طرد\s+من\s+السكن/i,
+    /نمی(?:‌|\s)*توانم.{0,30}(?:اجاره|برق).{0,30}(?:پرداخت)|اخراج\s+از\s+خانه/i,
+  ];
+  const ACUTE_BASIC_PATTERNS = [
+    /(?:har\s+inte\s+råd|saknar\s+pengar|pengarna\s+räcker\s+inte|kan\s+inte\s+betala).{0,30}(?:mat|livsmedel|medicin)/i,
+    /(?:لا\s+أستطيع\s+الدفع|المال.*لا\s+يكفي).{0,30}(?:طعام|غذاء|دواء)/i,
+    /(?:پول.*کافی\s+نیست|نمی(?:‌|\s)*توانم.*پرداخت).{0,30}(?:غذا|دارو)/i,
+  ];
 
   const COPY = {
     sv: {
       shellTitle: 'När pengarna inte räcker till det nödvändiga',
       shellSub: 'Kontrollera kommunalt ekonomiskt bistånd utan att lova rätt eller belopp',
+      debtShellTitle: 'När räkningar och skulder har byggts upp',
+      debtShellSub: 'Hitta kommunal budget- och skuldrådgivning utan att lova skuldsanering eller avskrivning',
       eyebrow: 'Ekonomi + grundbehov',
+      debtEyebrow: 'Ekonomi + skulder',
       title: 'Du kan få din situation prövad av socialtjänsten i din kommun',
+      debtPageTitle: 'Skulder och akut brist på pengar är två olika vägar',
       intro: 'Stödassistenten avgör inte om du har rätt till bistånd. Vi hjälper dig skilja mellan möjliga vägar och nästa säkra handling utan att samla in exakta ekonomiska eller medicinska uppgifter.',
+      debtIntro: 'Om problemet främst är skulder eller obetalda räkningar kan kommunens budget- och skuldrådgivning hjälpa dig att få överblick och planera nästa steg. Om du samtidigt saknar pengar till hyra, el, mat eller medicin just nu behöver den akuta biståndsvägen fortfarande vara synlig.',
       qNeed: 'Vad behöver du främst hjälp med just nu?',
       recurring: 'Löpande kostnader som mat, hyra eller hushållsel',
       occasional: 'En särskild nödvändig kostnad som uppstår mer sällan',
@@ -49,17 +79,27 @@
       occasionalBody: 'Socialstyrelsen beskriver att annat ekonomiskt bistånd kan omfatta vissa behov som uppstår mer sällan, till exempel tandvård, glasögon, sjukvård, medicin eller flytt. Kommunen gör en individuell bedömning av vad som är skäligt i den enskilda situationen.',
       unsureTitle: 'Du behöver inte veta exakt vilken kategori som gäller innan du kontaktar kommunen',
       unsureBody: 'Du har rätt att ansöka om bistånd och få ett beslut. Kontakta socialtjänsten i din kommun och be om den aktuella ansökningsvägen och vilka underlag som behövs. Piloten ska inte stoppa en ansökan bara för att situationen är oklar.',
+      debtTitle: 'Börja med kommunens budget- och skuldrådgivning när skulderna är huvudproblemet',
+      debtBody: 'Konsumentverket beskriver att kommunal budget- och skuldrådgivning kan hjälpa dig att planera ekonomin, hantera och prioritera skulder, kontakta dem du är skyldig pengar och ge stöd inför och under en eventuell skuldsanering. Det betyder inte att kommunen betalar skulderna eller att skuldsanering kommer att beviljas.',
+      debtNext: 'Nästa steg: hitta budget- och skuldrådgivningen i din kommun. Om du riskerar att inte klara hyra, el, mat eller medicin nu, använd också vägen för ekonomiskt bistånd; skuldrådgivning ersätter inte en individuell prövning av akut stöd.',
       documents: 'Nästa steg: fråga kommunen vilka underlag som behövs för hushåll, boende, inkomster, tillgångar och nödvändiga utgifter. Lägg inte in kontoutdrag, personnummer eller detaljerad hälsodata i den här publika piloten.',
       calc: 'Socialstyrelsens provberäkning är bara orienterande och kan ge ett annat resultat än kommunens individuella beslut.',
       source: 'Socialstyrelsen: ekonomiskt bistånd för privatpersoner',
       calcSource: 'Socialstyrelsen: provberäkning ekonomiskt bistånd',
+      debtSource: 'Konsumentverket: kommunal budget- och skuldrådgivning',
+      billsSource: 'Kronofogden: när räkningarna är i kaos',
     },
     ar: {
       shellTitle: 'عندما لا يكفي المال للاحتياجات الأساسية',
       shellSub: 'تحقق من المساعدة المالية البلدية من دون وعد بالاستحقاق أو المبلغ',
+      debtShellTitle: 'عندما تتراكم الفواتير والديون',
+      debtShellSub: 'اعثر على استشارة البلدية للميزانية والديون من دون وعد بتسوية الديون',
       eyebrow: 'الاقتصاد + الاحتياجات الأساسية',
+      debtEyebrow: 'الاقتصاد + الديون',
       title: 'يمكن للخدمات الاجتماعية في بلديتك فحص وضعك',
+      debtPageTitle: 'الديون ونقص المال للحاجات الأساسية مساران مختلفان',
       intro: 'لا يقرر مساعد الدعم الاستحقاق. نساعدك على فهم المسار والخطوة الآمنة التالية من دون جمع تفاصيل مالية أو طبية دقيقة.',
+      debtIntro: 'إذا كانت المشكلة الأساسية ديوناً أو فواتير غير مدفوعة، يمكن لاستشارة البلدية للميزانية والديون أن تساعدك على ترتيب الوضع والخطوة التالية. وإذا كنت لا تستطيع الآن دفع الإيجار أو الكهرباء أو الطعام أو الدواء، فيجب أن يبقى مسار المساعدة المالية العاجلة واضحاً أيضاً.',
       qNeed: 'ما نوع المساعدة التي تحتاجها الآن بشكل أساسي؟',
       recurring: 'تكاليف مستمرة مثل الطعام أو الإيجار أو كهرباء المنزل',
       occasional: 'تكلفة ضرورية محددة تظهر من وقت لآخر',
@@ -70,17 +110,27 @@
       occasionalBody: 'توضح Socialstyrelsen أن المساعدة المالية الأخرى قد تشمل احتياجات تظهر أحياناً، مثل علاج الأسنان أو النظارات أو الرعاية الصحية أو الدواء أو الانتقال. تقوم البلدية بتقييم فردي لما هو معقول في الحالة المحددة.',
       unsureTitle: 'لا تحتاج إلى معرفة الفئة الدقيقة قبل التواصل مع البلدية',
       unsureBody: 'لديك الحق في تقديم طلب والحصول على قرار. تواصل مع الخدمات الاجتماعية في بلديتك واسأل عن طريقة التقديم الحالية والمستندات المطلوبة. لا ينبغي للنسخة التجريبية أن تمنع الطلب لأن الوضع غير واضح.',
+      debtTitle: 'ابدأ باستشارة البلدية للميزانية والديون عندما تكون الديون هي المشكلة الأساسية',
+      debtBody: 'توضح هيئة حماية المستهلك أن مستشاري الميزانية والديون في البلدية يمكنهم المساعدة في التخطيط للاقتصاد وترتيب الديون والتواصل مع الدائنين وتقديم الدعم إذا أصبحت تسوية الديون ذات صلة. هذا لا يعني أن البلدية تدفع ديونك أو أن تسوية الديون ستُقبل.',
+      debtNext: 'الخطوة التالية: اعثر على مستشار الميزانية والديون في بلديتك. إذا كنت لا تستطيع حالياً تغطية الإيجار أو الكهرباء أو الطعام أو الدواء، استخدم أيضاً مسار المساعدة المالية؛ الاستشارة لا تستبدل التقييم الفردي للمساعدة العاجلة.',
       documents: 'الخطوة التالية: اسأل البلدية عن المستندات المطلوبة بخصوص الأسرة والسكن والدخل والأصول والنفقات الضرورية. لا تضع كشوف الحساب أو الرقم الشخصي أو تفاصيل صحية حساسة في هذه النسخة العامة.',
       calc: 'الحساب التجريبي لدى Socialstyrelsen إرشادي فقط وقد يختلف عن قرار البلدية الفردي.',
       source: 'Socialstyrelsen: المساعدة المالية للأفراد',
       calcSource: 'Socialstyrelsen: الحساب التجريبي للمساعدة المالية',
+      debtSource: 'Konsumentverket: استشارة البلدية للميزانية والديون',
+      billsSource: 'Kronofogden: عندما تصبح الفواتير في فوضى',
     },
     fa: {
       shellTitle: 'وقتی پول برای نیازهای ضروری کافی نیست',
       shellSub: 'کمک مالی شهرداری را بدون وعده استحقاق یا مبلغ بررسی کن',
+      debtShellTitle: 'وقتی قبض‌ها و بدهی‌ها روی هم جمع شده‌اند',
+      debtShellSub: 'مشاوره بودجه و بدهی شهرداری را بدون وعده بخشودگی یا تسویه بدهی پیدا کن',
       eyebrow: 'اقتصاد + نیازهای پایه',
+      debtEyebrow: 'اقتصاد + بدهی',
       title: 'خدمات اجتماعی شهرداری می‌تواند وضعیتت را بررسی کند',
+      debtPageTitle: 'بدهی و کمبود فوری پول دو مسیر متفاوت‌اند',
       intro: 'دستیار حمایت درباره استحقاق تصمیم نمی‌گیرد. فقط مسیر و قدم امن بعدی را روشن می‌کند، بدون جمع‌آوری جزئیات دقیق مالی یا پزشکی.',
+      debtIntro: 'اگر مشکل اصلی بدهی یا قبض‌های پرداخت‌نشده است، مشاوره بودجه و بدهی شهرداری می‌تواند برای نظم‌دادن به وضعیت و قدم بعدی کمک کند. اگر هم‌زمان پول اجاره، برق، غذا یا دارو را نداری، مسیر کمک مالی فوری هم باید روشن بماند.',
       qNeed: 'الان بیشتر برای چه چیزی کمک لازم داری؟',
       recurring: 'هزینه‌های جاری مثل غذا، اجاره یا برق خانه',
       occasional: 'یک هزینه ضروری خاص که هر از گاهی پیش می‌آید',
@@ -91,10 +141,15 @@
       occasionalBody: 'Socialstyrelsen توضیح می‌دهد که کمک مالی دیگر می‌تواند بعضی نیازهای گاه‌به‌گاه مانند دندانپزشکی، عینک، درمان، دارو یا اسباب‌کشی را پوشش دهد. شهرداری در هر مورد جداگانه بررسی می‌کند چه چیزی معقول است.',
       unsureTitle: 'لازم نیست قبل از تماس با شهرداری دقیقاً بدانی کدام دسته درست است',
       unsureBody: 'حق داری درخواست بدهی و تصمیم دریافت کنی. با خدمات اجتماعی شهرداری تماس بگیر و مسیر فعلی درخواست و مدارک لازم را بپرس. پایلوت نباید فقط به‌خاطر نامشخص بودن وضعیت جلوی درخواست را بگیرد.',
+      debtTitle: 'وقتی مشکل اصلی بدهی است، با مشاوره بودجه و بدهی شهرداری شروع کن',
+      debtBody: 'Konsumentverket توضیح می‌دهد که مشاور بودجه و بدهی شهرداری می‌تواند برای برنامه‌ریزی اقتصاد، اولویت‌بندی بدهی‌ها، تماس با طلبکاران و حمایت در صورت مطرح شدن تسویه بدهی کمک کند. این به معنی پرداخت بدهی‌ها توسط شهرداری یا تضمین تسویه بدهی نیست.',
+      debtNext: 'قدم بعدی: مشاوره بودجه و بدهی شهرداری خودت را پیدا کن. اگر الان پول اجاره، برق، غذا یا دارو را نداری، مسیر کمک مالی را هم بررسی کن؛ مشاوره جای ارزیابی فردی کمک فوری را نمی‌گیرد.',
       documents: 'قدم بعدی: از شهرداری بپرس برای خانوار، مسکن، درآمد، دارایی و هزینه‌های ضروری چه مدارکی لازم است. صورت‌حساب بانکی، شماره شناسایی یا جزئیات حساس پزشکی را در این پایلوت عمومی وارد نکن.',
       calc: 'محاسبه آزمایشی Socialstyrelsen فقط برای راهنمایی است و ممکن است با تصمیم فردی شهرداری فرق داشته باشد.',
       source: 'Socialstyrelsen: کمک مالی برای افراد',
       calcSource: 'Socialstyrelsen: محاسبه آزمایشی کمک مالی',
+      debtSource: 'Konsumentverket: مشاوره بودجه و بدهی شهرداری',
+      billsSource: 'Kronofogden: وقتی قبض‌ها به‌هم‌ریخته‌اند',
     },
   };
 
@@ -103,9 +158,17 @@
     return patterns.some((pattern) => pattern.test(value));
   }
 
+  function debtIntent(text) {
+    const value = String(text || '');
+    if (!matches(DEBT_PATTERNS, value)) return false;
+    if (matches(NON_DEBT_WORK_PATTERNS, value) && !matches(DEBT_WITHOUT_KFM_PATTERNS, value)) return false;
+    return true;
+  }
+
   function detect(text) {
     const value = String(text || '');
     if (!value.trim()) return false;
+    if (debtIntent(value)) return true;
     if (matches(DIRECT_PATTERNS, value)) return true;
     return matches(MONEY_PRESSURE_PATTERNS, value) &&
       (matches(HOUSING_NEED_PATTERNS, value) || matches(BASIC_NEED_PATTERNS, value));
@@ -113,6 +176,10 @@
 
   function coarseContext(text) {
     const value = String(text || '');
+    const hasDebt = debtIntent(value);
+    if (hasDebt && matches(ACUTE_HOUSING_PATTERNS, value)) return 'housing';
+    if (hasDebt && matches(ACUTE_BASIC_PATTERNS, value)) return 'basic_needs';
+    if (hasDebt) return 'debt';
     if (matches(HOUSING_NEED_PATTERNS, value)) return 'housing';
     if (matches(BASIC_NEED_PATTERNS, value)) return 'basic_needs';
     return 'general';
@@ -123,7 +190,7 @@
   }
 
   function safeContext(value) {
-    return value === 'housing' || value === 'basic_needs' ? value : 'general';
+    return value === 'housing' || value === 'basic_needs' || value === 'debt' ? value : 'general';
   }
 
   function handoffHref(language, context) {
@@ -144,15 +211,16 @@
       if (box.querySelector('[data-economic-assistance-route="true"]')) return;
       const lang = safeLang(doc.documentElement.lang);
       const copy = COPY[lang];
+      const context = coarseContext(input.value);
       const link = doc.createElement('a');
       link.className = 'route';
       link.dataset.economicAssistanceRoute = 'true';
-      link.href = handoffHref(lang, coarseContext(input.value));
+      link.href = handoffHref(lang, context);
       const text = doc.createElement('span');
       const title = doc.createElement('strong');
       const sub = doc.createElement('small');
-      title.textContent = copy.shellTitle;
-      sub.textContent = copy.shellSub;
+      title.textContent = context === 'debt' ? copy.debtShellTitle : copy.shellTitle;
+      sub.textContent = context === 'debt' ? copy.debtShellSub : copy.shellSub;
       text.append(title, sub);
       const arrow = doc.createElement('span');
       arrow.className = 'arrow';
@@ -197,7 +265,7 @@
     main.parentNode.insertBefore(section, main);
 
     const state = {
-      need: context === 'housing' || context === 'basic_needs' ? 'recurring' : null,
+      need: context === 'housing' || context === 'basic_needs' ? 'recurring' : (context === 'debt' ? 'debt' : null),
     };
 
     function choice(label, value) {
@@ -233,17 +301,34 @@
       return box;
     }
 
+    function debtResult() {
+      const box = doc.createElement('div');
+      box.className = 'notice';
+      box.setAttribute('role', 'status');
+      const title = doc.createElement('strong');
+      title.textContent = copy.debtTitle;
+      const body = doc.createElement('p');
+      body.textContent = copy.debtBody;
+      const next = doc.createElement('p');
+      next.textContent = copy.debtNext;
+      box.append(title, body, next);
+      appendSource(doc, box, DEBT_COUNSELLING_URL, copy.debtSource);
+      box.appendChild(doc.createTextNode(' · '));
+      appendSource(doc, box, KRONOFOGDEN_BILLS_URL, copy.billsSource);
+      return box;
+    }
+
     function render() {
       section.replaceChildren();
       const eyebrow = doc.createElement('div');
       eyebrow.className = 'eyebrow';
-      eyebrow.textContent = copy.eyebrow;
+      eyebrow.textContent = context === 'debt' ? copy.debtEyebrow : copy.eyebrow;
       const title = doc.createElement('h2');
       title.id = 'economicAssistanceTitle';
-      title.textContent = copy.title;
+      title.textContent = context === 'debt' ? copy.debtPageTitle : copy.title;
       const intro = doc.createElement('p');
       intro.className = 'muted';
-      intro.textContent = copy.intro;
+      intro.textContent = context === 'debt' ? copy.debtIntro : copy.intro;
       section.append(eyebrow, title, intro);
 
       if (context === 'general') {
@@ -263,6 +348,7 @@
       if (state.need === 'recurring') section.append(result(copy.recurringTitle, copy.recurringBody));
       if (state.need === 'occasional') section.append(result(copy.occasionalTitle, copy.occasionalBody));
       if (state.need === 'unsure') section.append(result(copy.unsureTitle, copy.unsureBody));
+      if (state.need === 'debt') section.append(debtResult());
     }
 
     render();
