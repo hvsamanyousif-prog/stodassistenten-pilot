@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v81 public family-housing demand/friction miss into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-family-housing-public-dead-end-v81",
+      "product_miss": "The public general person flow collects children and housing-pressure answers but does not use them in getRows, even though v80 added canonical family housing-benefit truth and learning coverage.",
+      "regression_case_ids": [
+        "lab-family-housing-public-main-v81-01",
+        "lab-family-housing-no-child-false-positive-v81-02",
+        "lab-family-housing-housing-not-pressure-v81-03",
+        "lab-family-housing-unemployed-priority-v81-04",
+        "lab-family-housing-2027-change-collision-v81-05",
+        "lab-family-housing-professional-false-positive-v81-06",
+        "lab-family-housing-language-ar-v81-07",
+        "lab-family-housing-language-fa-v81-08"
+      ],
+      "coverage_status": "PUBLIC_ROUTE_AND_REGRESSION_GUARDED_V81",
+      "fix_or_guardrail": "Reuse the already-collected general-flow facts in the existing person result pipeline. Surface the same canonical family housing-benefit candidate only when children=yes, housing=yes and money is pressured; preserve first-day unemployment or existing a-kassa regime actions ahead of it; keep sv/ar/fa parity and fail closed for 2027 material claims.",
+      "truth_boundary": "The public candidate is navigation, not an eligibility decision. Canonical family housing truth stays NEEDS_REVIEW with no AI-verified material fields. Current Försäkringskassan primary sources are required for eligibility, amount, application, child-residence, income-period and future-rule claims.",
+      "runtime_evidence": [
+        "client/family-housing-guidance.js",
+        "client/family-housing-guidance.test.cjs",
+        "data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json",
+        "data/evals/scenario_lab_websignals_v81.json",
+        "scripts/validate_family_housing_public_v81.py"
+      ]
+    }
+  ]
+}

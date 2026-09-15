@@ -1,0 +1,80 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Community wording is discovery-only; material housing-benefit guidance must come from current Försäkringskassan primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize recurring natural-language demand where consequence and information friction are high and the current public product fails to use facts it already collected."
+  },
+  "signals": [
+    {
+      "signal_id": "df-family-housing-public-dead-end-v81",
+      "actor_types": ["private_person", "parent_guardian"],
+      "natural_language_queries": [
+        "jag har barn låg inkomst och hög hyra vad kan jag få",
+        "pengarna räcker inte efter hyran och jag har barn",
+        "vilket bostadsstöd finns när barn bor hemma",
+        "jag blev arbetslös idag och har barn och hög hyra",
+        "gäller samma bostadsbidragsregler 2027 som 2026",
+        "لدي أطفال وإيجار مرتفع ودخل منخفض ما الدعم المتاح",
+        "فرزند دارم و اجاره زیاد است چه حمایتی هست"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Försäkringskassans aktuella statistik visar att 137 200 hushåll fick bostadsbidrag under 2025 och att 83 procent var barnfamiljer. Det är en räckviddssignal för produktprioritering, inte uppmätt webbsökvolym eller individuell behörighet."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Den publika general-flowen frågar redan om barn och om boendekostnaden pressar ekonomin men den befintliga getRows-rankingen använder inte dessa svar. Användaren kan alltså lämna två route-changing fakta utan att de påverkar resultatet."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Ett känt barn- och boendekontextgap kan göra att en relevant nationell kandidat aldrig visas eller visas först efter onödiga generiska vägar. Fördröjning är särskilt viktig när ekonomin redan är pressad."
+      },
+      "source_fragmentation": {
+        "score": 3,
+        "basis": "Kärnvägen finns hos Försäkringskassan men kräver att användaren kopplar ihop barnets boendemönster, hushåll, bostad och inkomstperiod. Från 2027 finns dessutom fler regeländringar som gör förenklad framtidslogik riskabel."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Den publika produkten har svenska, arabiska och persiska ingångar. Samma strukturerade fakta måste ge samma kandidat och samma osäkerhetsgräns oavsett språk."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "Barn och boendepress är redan insamlade. Rätt förbättring är därför färre bortkastade steg: återanvänd svaren och visa kandidaten utan ytterligare generisk fråga, men bevara högre prioriterade handlingar som första arbetslösa dagen."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Barnfamiljer utgjorde 83 procent av hushållen med utbetalt bostadsbidrag 2025 enligt Försäkringskassan. Samma typ av fråga återkommer naturligt när hyra, barn och låg inkomst kombineras. Detta är kvalitativ produktrelevans, inte sökvolym."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "v80 stängde sannings- och regressionsgapet men lämnade publik runtime-wiring öppen. Färsk självgranskning av main visar att general-flowen samlar children och housing men getRows använder bara work och money."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/statistik-och-analys/barn-och-familj/statistik-inom-omradet-barn-och-familj---bostadsbidrag/hur-manga-far-bostadsbidrag",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-bostadsbidraget-har-inte-foljt-inkomstutvecklingen"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-05-21-beslut-om-forandringar-i-ratten-till-vissa-ersattningar"
+      ],
+      "product_miss": "The public general person flow already asks whether children are in the household and whether housing cost is a major pressure, but its result ranking ignores both answers. v80 added canonical family-housing truth and regressions, so leaving the public route unwired turns understood context into a dead end.",
+      "future_guardrail": "Keep one person matcher and one canonical housing truth. Reuse children and housing-pressure answers already collected; do not add a second family app. Preserve higher-priority actions, never infer eligibility or amount, and fail closed on future-period rule changes until the current primary source is checked.",
+      "regression_case": [
+        "lab-family-housing-public-main-v81-01",
+        "lab-family-housing-no-child-false-positive-v81-02",
+        "lab-family-housing-housing-not-pressure-v81-03",
+        "lab-family-housing-unemployed-priority-v81-04",
+        "lab-family-housing-2027-change-collision-v81-05",
+        "lab-family-housing-professional-false-positive-v81-06",
+        "lab-family-housing-language-ar-v81-07",
+        "lab-family-housing-language-fa-v81-08"
+      ],
+      "evaluation_method": "Public-result rewriter regression + fail-closed negatives + unemployment priority preservation + sv/ar/fa parity + 2027 future-period falsification + current Försäkringskassan primary-source cross-check.",
+      "recommended_learning_action": "Wire the existing canonical family-housing candidate into the existing general person result pipeline using already-collected children, money and housing facts. Do not collect more data unless a later verified step needs it.",
+      "truth_rule": "Discovery wording and usage statistics are never eligibility truth. Verify material family housing-benefit eligibility, amount, child-residence, household, housing, income-period, application and future-rule claims against current Försäkringskassan primary sources before use. Do not infer eligibility from children, low income or high housing cost alone, and do not treat any single known 2027 transition as the complete 2027 rule set."
+    }
+  ]
+}

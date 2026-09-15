@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v81 regressions for the SAME Stödassistenten intelligence. Close the public family-housing dead end without creating a parallel matcher, while preserving higher-priority unemployment actions, fail-closed behavior, sv/ar/fa parity and conservative 2027 change handling.",
+  "cases": [
+    {
+      "case_id": "lab-family-housing-public-main-v81-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har barn hemma, ekonomin är pressad och hyran tar en stor del av pengarna. Vad kan jag kolla?",
+      "expected_support_areas": ["family_housing_benefit", "economic_assistance_overlap"],
+      "must_not_claim": ["guaranteed_housing_benefit", "guaranteed_amount", "eligibility_from_low_income_and_parenthood_alone"],
+      "expected_questions": ["q_reuse_children_already_known", "q_reuse_housing_pressure_already_known", "q_child_residence_only_if_needed_for_next_step"],
+      "expected_next_actions": ["surface_family_housing_benefit_candidate", "use_current_forsakringskassan_assessment_or_application"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-no-child-false-positive-v81-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har låg inkomst och hög hyra men inga barn i hushållet.",
+      "expected_support_areas": ["housing_support_other_routes", "economic_assistance_overlap"],
+      "must_not_claim": ["family_housing_benefit_is_the_right_route"],
+      "expected_questions": ["q_do_not_repeat_children_fact"],
+      "expected_next_actions": ["do_not_surface_family_housing_candidate_from_general_flow"],
+      "source_requirements": ["current_forsakringskassan_housing_support_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-housing-not-pressure-v81-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag har barn men boendet är inte det som pressar ekonomin just nu.",
+      "expected_support_areas": ["broader_family_economy"],
+      "must_not_claim": ["family_housing_benefit_is_top_priority_without_housing_signal"],
+      "expected_questions": ["q_do_not_repeat_housing_fact"],
+      "expected_next_actions": ["keep_broader_support_ranking"],
+      "source_requirements": ["current_primary_source_for_any_material_candidate"]
+    },
+    {
+      "case_id": "lab-family-housing-unemployed-priority-v81-04",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag blev arbetslös idag, har barn hemma och hög hyra. Ekonomin är pressad.",
+      "expected_support_areas": ["unemployment_first_day_action", "family_housing_benefit", "economic_assistance_overlap"],
+      "must_not_claim": ["family_housing_step_should_replace_first_day_unemployment_action", "guaranteed_housing_benefit"],
+      "expected_questions": ["q_reuse_known_family_and_housing_facts"],
+      "expected_next_actions": ["preserve_first_day_unemployment_action_first", "surface_family_housing_candidate_after_higher_priority_action"],
+      "source_requirements": ["current_arbetsformedlingen_first_day_primary_source", "current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-2027-change-collision-v81-05",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag planerar att söka bostadsbidrag 2027 och har hört att reglerna ändras. Kan jag räkna med samma regler som 2026?",
+      "expected_support_areas": ["family_housing_benefit", "future_rule_verification"],
+      "must_not_claim": ["2026_rules_guarantee_2027_eligibility", "monthly_income_transition_is_the_only_2027_change", "future_eligibility_without_current_primary_source"],
+      "expected_questions": ["q_decision_period_if_it_changes_the_route"],
+      "expected_next_actions": ["verify_2027_rules_with_current_forsakringskassan_source_when_the_period_is_current"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source", "current_forsakringskassan_2027_change_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-professional-false-positive-v81-06",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag arbetar med frågor om bostadsbidrag för barnfamiljer och vill förstå processen.",
+      "expected_support_areas": ["professional_or_information_context"],
+      "must_not_claim": ["speaker_personally_needs_family_housing_benefit"],
+      "expected_questions": ["q_none_about_private_household_without_personal_need_signal"],
+      "expected_next_actions": ["do_not_infer_private_eligibility_context"],
+      "source_requirements": ["current_forsakringskassan_primary_source_for_process_facts"]
+    },
+    {
+      "case_id": "lab-family-housing-language-ar-v81-07",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "لدي أطفال في المنزل والدخل منخفض والإيجار يضغط على ميزانيتي. ما الذي يمكنني التحقق منه؟",
+      "expected_support_areas": ["family_housing_benefit", "economic_assistance_overlap"],
+      "must_not_claim": ["guaranteed_housing_benefit", "guaranteed_amount"],
+      "expected_questions": ["q_reuse_known_family_and_housing_facts"],
+      "expected_next_actions": ["surface_same_family_housing_route_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-language-fa-v81-08",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزند در خانه دارم، درآمد کم است و اجاره فشار زیادی به بودجه وارد می‌کند. چه چیزی را بررسی کنم؟",
+      "expected_support_areas": ["family_housing_benefit", "economic_assistance_overlap"],
+      "must_not_claim": ["guaranteed_housing_benefit", "guaranteed_amount"],
+      "expected_questions": ["q_reuse_known_family_and_housing_facts"],
+      "expected_next_actions": ["surface_same_family_housing_route_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    }
+  ]
+}

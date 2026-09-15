@@ -1,0 +1,70 @@
+name: Validate public family housing v81
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'client/family-housing-guidance.js'
+      - 'client/family-housing-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_family_housing_public_v81.py'
+      - 'data/evals/scenario_lab_websignals_v81.json'
+      - 'data/evals/demand_friction_signals_v81.json'
+      - 'data/evals/demand_friction_regression_map_v81.json'
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V81_APPENDIX.md'
+      - '.github/workflows/family-housing-public-v81.yml'
+  pull_request:
+    paths:
+      - 'client/family-housing-guidance.js'
+      - 'client/family-housing-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_family_housing_public_v81.py'
+      - 'data/evals/scenario_lab_websignals_v81.json'
+      - 'data/evals/demand_friction_signals_v81.json'
+      - 'data/evals/demand_friction_regression_map_v81.json'
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V81_APPENDIX.md'
+      - '.github/workflows/family-housing-public-v81.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-family-housing-v81:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check runtime JavaScript syntax
+        run: node --check client/family-housing-guidance.js
+      - name: Run family housing ranking regressions
+        run: node client/family-housing-guidance.test.cjs
+      - name: Validate canonical support records
+        run: python scripts/validate_support_records.py --self-test
+      - name: Re-run the shared scenario factory
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate v80 canonical family housing truth
+        run: python scripts/validate_family_housing_v80.py
+      - name: Validate v81 public truth and architecture boundaries
+        run: python scripts/validate_family_housing_public_v81.py
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v81
+      - name: Verify the person surface ships the governed runtime
+        run: |
+          grep -F '<script src="client/family-housing-guidance.js"></script>' _site-v81/person-pilot.html
+          test -f _site-v81/client/family-housing-guidance.js
+      - name: Confirm no parallel family housing product exists
+        run: |
+          test ! -e family-housing.html
+          test ! -e bostadsbidrag-barnfamilj.html
+          test ! -e client/family-housing-app.js
+          test ! -e client/family-housing-matcher.js
+      - name: Scan public repository boundary
+        run: python scripts/validate_public_repo_boundary.py .
