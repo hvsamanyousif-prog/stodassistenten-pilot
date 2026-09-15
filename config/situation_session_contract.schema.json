@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.local/schemas/situation_session_contract.schema.json",
+  "title": "Stödassistenten situation/session contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "purpose",
+    "surfaces",
+    "languages",
+    "actor_types",
+    "lifecycle",
+    "fields",
+    "public_handoff",
+    "feedback",
+    "private_core",
+    "compatibility"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "contract_id": {"const": "stodassistenten-situation-session-v1"},
+    "purpose": {"type": "string", "minLength": 20},
+    "surfaces": {
+      "type": "array",
+      "items": {"enum": ["web", "ios", "android"]},
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true
+    },
+    "languages": {
+      "type": "array",
+      "items": {"enum": ["sv", "ar", "fa"]},
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true
+    },
+    "actor_types": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9_-]+$"},
+      "minItems": 8,
+      "uniqueItems": true
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default", "public_persistence", "raw_situation_logging", "raw_situation_in_url", "raw_situation_in_feedback"],
+      "properties": {
+        "default": {"const": "ephemeral"},
+        "public_persistence": {"const": "forbidden"},
+        "raw_situation_logging": {"const": "forbidden"},
+        "raw_situation_in_url": {"const": "forbidden"},
+        "raw_situation_in_feedback": {"const": "forbidden"}
+      }
+    },
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surface", "language", "actor_type", "focus", "coarse_facts", "missing_facts", "raw_situation"],
+      "properties": {
+        "surface": {"$ref": "#/$defs/sessionField"},
+        "language": {"$ref": "#/$defs/queryField"},
+        "actor_type": {"$ref": "#/$defs/queryField"},
+        "focus": {"$ref": "#/$defs/queryField"},
+        "coarse_facts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "public_handoff"],
+          "properties": {
+            "scope": {"const": "session"},
+            "public_handoff": {"const": "capability_allowlist_only"}
+          }
+        },
+        "missing_facts": {"$ref": "#/$defs/sessionField"},
+        "raw_situation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "public_handoff", "log", "persist"],
+          "properties": {
+            "scope": {"const": "ephemeral_private_input"},
+            "public_handoff": {"const": false},
+            "log": {"const": false},
+            "persist": {"const": false}
+          }
+        }
+      }
+    },
+    "public_handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allowed_top_level_query_keys", "coarse_fact_policy", "max_value_length", "forbidden_keys"],
+      "properties": {
+        "allowed_top_level_query_keys": {
+          "type": "array",
+          "items": {"enum": ["actor_type", "focus", "lang"]},
+          "minItems": 3,
+          "maxItems": 3,
+          "uniqueItems": true
+        },
+        "coarse_fact_policy": {"const": "explicit_allowlist_per_capability"},
+        "max_value_length": {"type": "integer", "minimum": 1, "maximum": 64},
+        "forbidden_keys": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 10,
+          "uniqueItems": true
+        }
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_situation", "identifiers", "free_text", "coarse_structured_only"],
+      "properties": {
+        "raw_situation": {"const": false},
+        "identifiers": {"const": false},
+        "free_text": {"const": false},
+        "coarse_structured_only": {"const": true}
+      }
+    },
+    "private_core": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["matcher_logic", "ranking_logic", "prompts", "secrets", "raw_situation"],
+      "properties": {
+        "matcher_logic": {"const": "private_only"},
+        "ranking_logic": {"const": "private_only"},
+        "prompts": {"const": "private_only"},
+        "secrets": {"const": "private_only"},
+        "raw_situation": {"const": "ephemeral_by_default"}
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["web", "ios", "android"],
+      "properties": {
+        "web": {"const": "v1"},
+        "ios": {"const": "v1"},
+        "android": {"const": "v1"}
+      }
+    }
+  },
+  "$defs": {
+    "sessionField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "public_handoff"],
+      "properties": {
+        "scope": {"const": "session"},
+        "public_handoff": {"const": false}
+      }
+    },
+    "queryField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "public_handoff", "query_key"],
+      "properties": {
+        "scope": {"const": "session"},
+        "public_handoff": {"const": true},
+        "query_key": {"enum": ["lang", "actor_type", "focus"]}
+      }
+    }
+  }
+}

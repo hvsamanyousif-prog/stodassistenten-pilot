@@ -1,0 +1,29 @@
+name: Situation session contract v56
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-situation-session-contract-v56:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check public adapter syntax
+        run: node --check client/situation-session-contract.js
+      - name: Run cross-surface privacy regressions
+        run: node client/situation-session-contract.test.cjs
+      - name: Validate situation/session semantics
+        run: python scripts/validate_situation_session_contract.py
+      - name: Revalidate public/private API boundary
+        run: python scripts/validate_api_boundary.py
