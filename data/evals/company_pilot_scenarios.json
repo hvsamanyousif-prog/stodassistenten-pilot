@@ -70,6 +70,13 @@
       "expected_gaps": ["strukturera relevanta referenser och tidigare leveranser"],
       "must_include": ["En enda databas","Direktupphandlingar behöver inte annonseras","CPV","registrerade annonsdatabaser"],
       "must_exclude": ["alla offentliga affärer annonseras","garanterar att ni får en förfrågan"]
+    },
+    {
+      "id": "procurement-clarify-before-deadline-not-after",
+      "input": {"goal":"procurement","sector":"construction","geography":"local","capacity":"yes","references":"yes","docs":"yes"},
+      "expected_gaps": [],
+      "must_include": ["Frågor och svar","upphandlingsverktyget","förutsätt inte att en missad obligatorisk uppgift kan kompletteras efter sista anbudsdag","Rättelse, förtydligande och komplettering"],
+      "must_exclude": ["det går alltid att komplettera efter sista anbudsdag","ring upphandlaren privat","ett oklart krav behöver inte uppfyllas"]
     }
   ]
 }
