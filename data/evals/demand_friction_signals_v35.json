@@ -13,7 +13,7 @@
       "actor_types": ["older_person", "relative", "private_person"],
       "natural_language_queries": [
         "jag klarar inte duscha och städa hemma längre vad kan jag få hjälp med",
-        "min mamma klarar inte vardagen hemma vem ska jag ringa",
+        "min äldre mamma klarar inte vardagen hemma vem ska jag ringa",
         "vad är skillnaden mellan hemtjänst och hemsjukvård",
         "måste man alltid ha biståndsbedömning för hemtjänst",
         "vem ansvarar för sjuksköterska hemma kommunen eller regionen",
@@ -61,15 +61,15 @@
         "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/socialtjanstlag-2025400_sfs-2025-400/"
       ],
       "product_miss": "The shared product could interpret pension, economy and a relative's own caregiver-support situation, but it did not turn natural older-person home-support problems into a focused route or separate social home support from healthcare at home.",
-      "future_guardrail": "Keep one shared person product. Route only when the situation expresses help-at-home/eldercare needs. Ask at most which broad need dominates: daily-living support, healthcare at home, both or unsure. Do not steal serious-illness caregiver-benefit stories that lack an older-person daily-support signal. Never infer a universal municipal process or local home-healthcare responsibility.",
+      "future_guardrail": "Keep one shared person product. Route only when the situation expresses older-person help-at-home/eldercare needs; a family relation such as mother/father alone is not evidence of older age. Ask at most which broad need dominates: daily-living support, healthcare at home, both or unsure. Do not steal serious-illness caregiver-benefit stories or younger disability/home-support stories. Never infer a universal municipal process or local home-healthcare responsibility.",
       "regression_case": [
         "lab-older-home-support-daily-living-v53-01",
         "lab-older-home-support-vs-home-healthcare-v53-02",
         "lab-relative-older-needs-support-not-caregiver-benefit-v53-03",
         "lab-older-local-process-no-universal-bistandsprovning-v53-04"
       ],
-      "evaluation_method": "Run the four v53 older-home-support scenarios; require sv/ar/fa route detection, one high-information need split, privacy-safe handoff, structured anonymous feedback, separate social-care and healthcare sources, preservation of the existing caregiver route and fail-closed local process/responsibility claims.",
-      "recommended_learning_action": "Add a guarded older_home_support capability to the same public shell/person pilot and wire it through the existing build. Keep local municipal/region details outside the URL and outside truth-bearing claims until current official local information is verified.",
+      "evaluation_method": "Run the four v53 older-home-support scenarios; require sv/ar/fa route detection, explicit older context when age is not known, one high-information need split, privacy-safe handoff, structured anonymous feedback, separate social-care and healthcare sources, preservation of the existing caregiver route and fail-closed local process/responsibility claims.",
+      "recommended_learning_action": "Keep the guarded older_home_support capability in the same public shell/person pilot. Require explicit older context for ambiguous home-support terms and keep local municipal/region details outside the URL and outside truth-bearing claims until current official local information is verified.",
       "truth_rule": "VERIFY current local municipal process and the responsible local healthcare actor before giving a concrete contact/process claim. Current Socialtjänstlag allows many personal-needs services without individual needs assessment but does not prove that a specific municipality offers this specific service that way. Do not infer eligibility, hours, fees or medical need."
     }
   ]
