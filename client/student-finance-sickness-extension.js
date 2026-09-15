@@ -15,11 +15,13 @@
   const FK_STUDENT_SICK_URL = 'https://www.forsakringskassan.se/privatperson/studerande/om-du-blir-sjuk-nar-du-studerar';
   const FEEDBACK_URL = 'https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 
-  const STUDY = /studer|student|pluggar|universitet|högskol|komvux|csn|studiemedel|omställningsstudiestöd|دراس|طالب|جامعة|CSN|تحصیل|دانشجو|دانشگاه/i;
-  const SELF_SICK = /(?:jag|mig|själv).{0,30}(?:sjuk|sjukskriv|kan inte studera)|(?:sjuk|sjukskriv|kan inte studera).{0,30}(?:jag|mig|själv)|(?:أنا|عندي|لدي).{0,30}(?:مريض|مرض|لا أستطيع الدراسة)|(?:مريض|مرض).{0,30}(?:أنا|عندي|لدي)|(?:من|خودم).{0,30}(?:بیمار|مریض|نمی.?توانم درس)|(?:بیمار|مریض).{0,30}(?:من|خودم)/i;
+  const STUDY = /studer|student|pluggar|universitet|högskol|komvux|gymnasi|csn|studiemedel|omställningsstudiestöd|دراس|طالب|جامعة|الثانوي|CSN|تحصیل|دانشجو|دانشگاه|دبیرستان/i;
+  const SELF_SICK = /(?:أنا|عندي|لدي).{0,45}(?:مريض|مرض|لا أستطيع الدراسة)|(?:مريض|مرض).{0,45}(?:أنا|عندي|لدي)|(?:من|خودم).{0,45}(?:بیمار|مریض|نمی.?توانم درس)|(?:بیمار|مریض).{0,45}(?:من|خودم)/i;
+  const SELF_SICK_SV = /\bjag\b(?:(?!\b(?:mitt barn|min dotter|min son|barnet)\b)[^.!?]){0,120}\b(?:har\s+blivit|har\s+varit|är|blev|blivit|varit)\s+(?:sjuk|sjukskriven)\b|\b(?:sjuk|sjukskriven)\b.{0,40}\b(?:mig|själv)\b/i;
   const SICK_GENERIC = /sjuk|sjukskriv|sjukanmäl|kan inte studera|مرض|مريض|بیمار|مریض/i;
   const CHILD_SICK = /(?:barn|mitt barn|min dotter|min son|vab|vabba|طفل|ابني|ابنتي|کودک|فرزند|دخترم|پسرم).{0,35}(?:sjuk|مرض|مريض|بیمار|مریض)|(?:vab|vabba)/i;
   const PROFESSIONAL = /(?:jobbar|arbetar|anställd).{0,35}(?:csn|försäkringskassan|studenthälsa|studievägled)|(?:csn|försäkringskassan).{0,35}(?:handläggare|kundtjänst|mitt jobb)|أعمل.{0,35}(?:CSN|التأمين)|کار.{0,35}(?:CSN|بیمه)/i;
+  const SICK_DURING_STUDY = /sjuk(?:dom|skriv|anmäld)?\s+(?:under|när).{0,30}(?:stud|plugg)|مرض.{0,30}دراس|بیمار.{0,30}(?:تحصیل|درس)/i;
 
   function safeLang(value) {
     return ['sv', 'ar', 'fa'].includes(value) ? value : 'sv';
@@ -32,8 +34,9 @@
   function detectSickness(text) {
     const value = normalize(text);
     if (!value || PROFESSIONAL.test(value) || !STUDY.test(value) || !SICK_GENERIC.test(value)) return false;
-    if (CHILD_SICK.test(value) && !SELF_SICK.test(value)) return false;
-    return SELF_SICK.test(value) || /sjuk(?:dom|skriv|anmäld)?\s+(?:under|när).{0,30}(?:stud|plugg)|مرض.{0,30}دراس|بیمار.{0,30}(?:تحصیل|درس)/i.test(value);
+    const personalSickness = SELF_SICK_SV.test(value) || SELF_SICK.test(value) || SICK_DURING_STUDY.test(value);
+    if (CHILD_SICK.test(value) && !personalSickness) return false;
+    return personalSickness;
   }
 
   function inferStudyContext(text) {
