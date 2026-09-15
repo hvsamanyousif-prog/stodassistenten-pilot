@@ -41,8 +41,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Temporary benchmark fingerprint diagnostic
-        run: python -c "from scripts.evaluate_matching import load_cases,semantic_fingerprint; print('BENCHMARK_SHA256='+semantic_fingerprint(load_cases()))"
       - name: Check runtime JavaScript syntax
         run: node --check client/unemployment-regime-guidance.js
       - name: Run sv/ar/fa and browser-wiring regression
