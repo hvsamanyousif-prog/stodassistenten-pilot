@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-self-employed-sickness-company-form-v01",
+      "product_miss": "The shared work+sickness path understood employees but did not expose the company/work-form boundary for a person who is sick while running an own business, combining employment and self-employment, or using an invoicing company. This could flatten materially different first reporting paths into generic employee guidance or no focused route.",
+      "regression_case_ids": [
+        "lab-self-employed-sick-sole-trader-v64-01",
+        "lab-self-employed-sick-own-limited-company-v64-02",
+        "lab-self-employed-sick-unknown-form-v64-03",
+        "lab-combined-worker-sick-v64-04",
+        "lab-invoiced-worker-sick-v64-05",
+        "lab-company-employer-sick-employee-false-positive-v64-06",
+        "lab-self-employed-sick-language-ar-v64-07",
+        "lab-self-employed-sick-language-fa-v64-08"
+      ],
+      "fix_or_guardrail": "Keep the same focus=employee_sick work+sickness capability and add only coarse work_context=self_employed|combined_employment|invoiced_worker plus business_form=limited_company|sole_partnership when known. Reuse an explicit form instead of asking again; otherwise ask one high-information company-form question. Do not steal employer questions into the owner's personal route.",
+      "truth_guardrail": "Försäkringskassan is the primary source for the sickness route by work/company form. The public product must not decide benefit eligibility, SGI, amount, medical work-capacity percentage, exact waiting period or reporting deadline from free text. Current source pages must be checked before material rules are relied upon.",
+      "privacy_guardrail": "The public handoff may contain only actor_type=private_person, focus=employee_sick, language, coarse work_context and optional coarse business_form. Never place diagnosis, salary, income, SGI, company name, organisation number, client, invoice, exact work schedule or raw story in URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
