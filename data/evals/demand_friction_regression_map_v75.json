@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v75 bereavement natural-language signal into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-bereavement-euphemism-relation-breadth-v01",
+      "product_miss": "The v74 bereavement route was safe after routing but could fail before routing on common euphemisms such as 'gått bort' and on close relations such as siblings and friends, including Arabic/Persian sibling phrasing.",
+      "regression_case_ids": [
+        "lab-bereavement-sibling-euphemism-v75-01",
+        "lab-bereavement-sister-practical-v75-02",
+        "lab-bereavement-friend-overview-v75-03",
+        "lab-bereavement-motion-false-positive-v75-04",
+        "lab-bereavement-sibling-language-ar-v75-05",
+        "lab-bereavement-sibling-language-fa-v75-06"
+      ],
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY",
+      "fix_or_guardrail": "Keep actor_type=relative and focus=bereavement in the same person product. Recognize common death euphemisms and wider close-relation wording, but fail closed on non-death motion uses of 'gick bort'. Preserve the existing overview/information-gain flow and do not infer survivor-benefit eligibility, inheritance or estate authority from relationship wording.",
+      "truth_boundary": "Discovery wording is a learning signal only. Material survivor-benefit, estate, inheritance, representation, amount, deadline and authority claims must be verified against current responsible primary sources before use."
+    }
+  ]
+}
