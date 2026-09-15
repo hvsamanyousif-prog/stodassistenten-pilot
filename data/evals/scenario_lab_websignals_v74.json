@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v74 regression cases for the same Stödassistenten person/relative intelligence. A death in the family must be split into practical steps, partner survivor support, child survivor support or work-related death without inferring entitlement, inheritance, authority over an estate or work-injury status from free text.",
+  "cases": [
+    {
+      "case_id": "lab-bereavement-partner-first-action-v74-01",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min man har dött och jag vet inte vilket ekonomiskt stöd jag ska kontrollera.",
+      "expected_support_areas": ["bereavement", "survivor_support", "official_checklist"],
+      "must_not_claim": ["relationship_alone_proves_survivor_benefit_entitlement", "application_is_always_required", "application_is_never_required", "amount_or_duration_inferred_from_story"],
+      "expected_questions": ["q_none_reuse_explicit_partner_context"],
+      "expected_next_actions": ["open_current_pensionsmyndigheten_survivor_support_source", "use_afterlevandeguiden_for_practical_sequence"],
+      "source_requirements": ["current_pensionsmyndigheten_survivor_support_primary_source", "current_afterlevandeguiden_interagency_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-child-parent-v74-02",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Mitt barns pappa har avlidit. Vad ska jag kontrollera för barnet?",
+      "expected_support_areas": ["bereavement", "child_survivor_support"],
+      "must_not_claim": ["child_is_automatically_entitled", "age_or_study_condition_inferred_without_fact", "residence_condition_inferred_without_fact", "payment_amount_inferred_from_story"],
+      "expected_questions": ["q_none_reuse_explicit_child_context_then_verify_primary_source"],
+      "expected_next_actions": ["open_current_pensionsmyndigheten_child_survivor_support_source", "verify_current_conditions_before_any_material_claim"],
+      "source_requirements": ["current_pensionsmyndigheten_survivor_support_primary_source", "current_pensionsmyndigheten_child_survivor_support_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-practical-estate-v74-03",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min pappa har avlidit och jag vet inte hur jag börjar med dödsbo och bouppteckning.",
+      "expected_support_areas": ["bereavement", "practical_after_death", "estate_navigation"],
+      "must_not_claim": ["adult_child_automatically_gets_survivor_pension", "inheritance_share_is_decided_by_product", "user_is_automatically_authorized_to_act_for_estate", "generic_ai_answer_replaces_current_estate_process"],
+      "expected_questions": ["q_none_reuse_explicit_practical_context"],
+      "expected_next_actions": ["open_afterlevandeguiden_checklist", "open_current_skatteverket_death_and_estate_guidance"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-work-related-v74-04",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min partner dog i en arbetsolycka. Finns det något särskilt ersättningsspår att kontrollera?",
+      "expected_support_areas": ["bereavement", "work_related_death_boundary", "survivor_support"],
+      "must_not_claim": ["death_is_automatically_accepted_as_work_injury", "survivor_annuity_is_guaranteed", "burial_assistance_is_guaranteed", "amount_or_coordination_is_decided_by_product"],
+      "expected_questions": ["q_none_reuse_explicit_work_related_signal_then_verify_responsible_assessment"],
+      "expected_next_actions": ["open_current_pensionsmyndigheten_work_related_death_source", "verify_current_responsible_authority_process_before_claiming_coverage"],
+      "source_requirements": ["current_pensionsmyndigheten_work_related_death_primary_source", "current_responsible_authority_primary_source_for_work_injury_assessment"]
+    },
+    {
+      "case_id": "lab-bereavement-vague-relative-v74-05",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min mamma har dött och jag vet inte vad jag ska göra först.",
+      "expected_support_areas": ["bereavement", "information_gain", "official_checklist"],
+      "must_not_claim": ["adult_or_child_status_inferred", "survivor_benefit_entitlement_inferred", "inheritance_or_estate_authority_inferred"],
+      "expected_questions": ["q_what_do_you_need_help_with_first_partner_child_practical_work_or_overview"],
+      "expected_next_actions": ["offer_afterlevandeguiden_overview_without_forcing_financial_benefit_route", "ask_at_most_one_route_changing_question_before_specific_guidance"],
+      "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_pensionsmyndigheten_survivor_support_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-professional-false-positive-v74-06",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Jag jobbar på begravningsbyrå och skriver utbildningsmaterial om dödsfall och bouppteckning.",
+      "expected_support_areas": ["no_personal_bereavement_route_without_personal_case_signal"],
+      "must_not_claim": ["user_has_personally_lost_a_relative", "user_needs_survivor_support", "user_has_an_estate_case"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_or_training_context"],
+      "source_requirements": ["current_primary_source_required_before_any_material_bereavement_claim"]
+    },
+    {
+      "case_id": "lab-bereavement-language-ar-v74-07",
+      "actor_type": "relative",
+      "language": "ar",
+      "story": "توفي زوجي ولا أعرف ما الدعم الذي يجب أن أتحقق منه أولاً.",
+      "expected_support_areas": ["bereavement", "survivor_support", "language_parity"],
+      "must_not_claim": ["relationship_alone_proves_survivor_benefit_entitlement", "automatic_amount", "automatic_application_rule"],
+      "expected_questions": ["q_none_reuse_explicit_partner_context"],
+      "expected_next_actions": ["preserve_same_bereavement_focus_in_arabic_ui", "verify_current_pensionsmyndigheten_primary_source"],
+      "source_requirements": ["current_pensionsmyndigheten_survivor_support_primary_source", "current_afterlevandeguiden_interagency_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-language-fa-v74-08",
+      "actor_type": "relative",
+      "language": "fa",
+      "story": "پدر فرزندم فوت کرده است و می‌خواهم بدانم برای کودک چه حمایتی را باید بررسی کنم.",
+      "expected_support_areas": ["bereavement", "child_survivor_support", "language_parity"],
+      "must_not_claim": ["child_is_automatically_entitled", "automatic_amount", "conditions_inferred_without_primary_source"],
+      "expected_questions": ["q_none_reuse_explicit_child_context"],
+      "expected_next_actions": ["preserve_same_bereavement_focus_in_persian_ui", "verify_current_pensionsmyndigheten_primary_source"],
+      "source_requirements": ["current_pensionsmyndigheten_survivor_support_primary_source", "current_pensionsmyndigheten_child_survivor_support_primary_source"]
+    }
+  ]
+}
