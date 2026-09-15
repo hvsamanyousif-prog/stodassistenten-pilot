@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v86 child extra-care versus extra-cost demand/friction miss into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-child-extra-care-cost-boundary-v01",
+      "product_miss": "The same product has child school-support, VAB, personal-assistance and disability/home-support routes but no explicit normalized truth/regression boundary for omvårdnadsbidrag versus merkostnadsersättning, legacy vårdbidrag wording or the VAB/assistance overlap. A diagnosis-heavy story can therefore become generic guidance or the wrong next step.",
+      "regression_case_ids": [
+        "lab-child-care-support-adhd-extra-care-v86-01",
+        "lab-child-care-support-extra-costs-v86-02",
+        "lab-child-care-support-legacy-vardbidrag-v86-03",
+        "lab-child-care-support-vab-school-meeting-v86-04",
+        "lab-child-care-support-assistance-overlap-v86-05",
+        "lab-child-care-support-diagnosis-only-v86-06",
+        "lab-child-care-support-professional-v86-07",
+        "lab-child-care-support-language-ar-v86-08",
+        "lab-child-care-support-language-fa-v86-09"
+      ],
+      "coverage_status": "LEARNING_GUARDED_PUBLIC_ROUTE_PENDING_V86",
+      "fix_or_guardrail": "Add source-bound NEEDS_REVIEW records for omvårdnadsbidrag and merkostnadsersättning for children, distinguish extra care/supervision from qualifying extra costs, preserve the existing VAB and child-assistance boundaries, understand legacy vårdbidrag wording and keep diagnosis/professional false positives fail-closed. A future public route must reuse the existing family/child flow and same truth layer.",
+      "truth_boundary": "Neither diagnosis nor a user's care/cost description is eligibility evidence. Eligibility, duration, thresholds, current amounts, VAB overlap/date rules, assistance overlap, deadlines and application details remain source-verified and review-gated. No raw child/family story, diagnosis, identity, exact cost or medical detail may be copied into feedback or public eval data.",
+      "runtime_evidence": [
+        "data/supports/se-forsakringskassan-omvardnadsbidrag.json",
+        "data/supports/se-forsakringskassan-merkostnadsersattning-barn.json",
+        "data/evals/scenario_lab_websignals_v86.json",
+        "data/evals/demand_friction_signals_v86.json",
+        "scripts/validate_child_care_cost_support_v86.py"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v86 regressions for the SAME Stödassistenten intelligence. Child/guardian stories must distinguish extra care/supervision from qualifying extra costs, preserve existing VAB and personal-assistance boundaries, understand legacy vårdbidrag wording, fail closed on diagnosis-only/professional wording and keep sv/ar/fa semantics without creating a parallel child-benefit engine.",
+  "cases": [
+    {
+      "case_id": "lab-child-care-support-adhd-extra-care-v86-01",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn har ADHD och jag måste hjälpa och övervaka mycket mer hemma än andra föräldrar. Finns det stöd?",
+      "expected_support_areas": ["omvardnadsbidrag_candidate", "extra_care_and_supervision", "family_child_support"],
+      "must_not_claim": ["diagnosis_alone_establishes_omvardnadsbidrag", "adhd_automatically_means_entitlement", "guaranteed_level_or_amount"],
+      "expected_questions": ["q_concrete_extra_care_or_supervision_only_if_needed_for_route_or_explanation"],
+      "expected_next_actions": ["show_current_forsakringskassan_omvardnadsbidrag_source", "describe_extra_care_and_supervision_compared_with_same_age_without_deciding_eligibility"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-extra-costs-v86-02",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag betalar många extra kostnader på grund av mitt barns funktionsnedsättning. Finns det någon ersättning?",
+      "expected_support_areas": ["merkostnadsersattning_child_candidate", "qualifying_extra_costs", "care_vs_cost_boundary"],
+      "must_not_claim": ["care_supervision_and_extra_costs_are_the_same_assessment_path", "any_extra_cost_is_automatically_qualifying", "guaranteed_threshold_or_amount"],
+      "expected_questions": ["q_extra_cost_type_and_public_reimbursement_only_if_needed_to_change_route"],
+      "expected_next_actions": ["show_current_forsakringskassan_merkostnadsersattning_child_source", "keep_omvardnadsbidrag_separate_unless_extra_care_is_also_described"],
+      "source_requirements": ["Forsakringskassan_current_merkostnadsersattning_child_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-legacy-vardbidrag-v86-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Kan jag få vårdbidrag för mitt barn?",
+      "expected_support_areas": ["legacy_vardbidrag_disambiguation", "omvardnadsbidrag_candidate", "merkostnadsersattning_child_candidate"],
+      "must_not_claim": ["new_vardbidrag_application_is_available", "legacy_vardbidrag_is_the_same_current_benefit_name", "choose_care_or_cost_path_without_needed_fact"],
+      "expected_questions": ["q_is_need_mainly_extra_care_supervision_extra_costs_or_both"],
+      "expected_next_actions": ["explain_that_current_routes_are_omvardnadsbidrag_and_merkostnadsersattning", "route_by_care_supervision_vs_extra_costs"],
+      "source_requirements": ["Forsakringskassan_current_vardbidrag_history_primary_source", "Forsakringskassan_current_omvardnadsbidrag_primary_source", "Forsakringskassan_current_merkostnadsersattning_child_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-vab-school-meeting-v86-04",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag har omvårdnadsbidrag för mitt barn. Kan jag vabba när jag ska på möte i skolan?",
+      "expected_support_areas": ["omvardnadsbidrag_vab_overlap", "school_meeting_vab_2026", "decision_context"],
+      "must_not_claim": ["blanket_yes_or_no_vab_without_current_overlap_and_decision_context", "omvardnadsbidrag_and_vab_can_always_cover_the_same_need", "old_application_window_is_current_for_new_vab_days"],
+      "expected_questions": ["q_omvardnadsbidrag_decision_timing_or_same_need_only_if_needed_to_change_vab_path"],
+      "expected_next_actions": ["verify_current_forsakringskassan_vab_overlap_rule", "verify_current_vab_application_window_for_the_actual_day"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_vab_primary_source", "Forsakringskassan_current_vab_application_deadline"]
+    },
+    {
+      "case_id": "lab-child-care-support-assistance-overlap-v86-05",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn har personlig assistans men jag gör fortfarande mycket extra omvårdnad. Kan omvårdnadsbidrag också vara relevant?",
+      "expected_support_areas": ["omvardnadsbidrag_candidate", "child_personal_assistance", "coverage_overlap_boundary"],
+      "must_not_claim": ["omvardnadsbidrag_duplicates_needs_already_covered_by_assistance", "personal_assistance_automatically_excludes_all_omvardnadsbidrag", "guaranteed_entitlement"],
+      "expected_questions": ["q_which_extra_care_needs_are_not_covered_by_assistance_only_if_needed"],
+      "expected_next_actions": ["preserve_existing_child_assistance_route", "explain_omvardnadsbidrag_only_for_needs_not_covered_by_assistance", "verify_current_forsakringskassan_overlap_source"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_primary_source", "Forsakringskassan_current_child_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-diagnosis-only-v86-06",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn har autism. Vilket bidrag har vi rätt till?",
+      "expected_support_areas": ["missing_fact_information_gain", "family_child_support", "diagnosis_not_entitlement"],
+      "must_not_claim": ["autism_automatically_means_omvardnadsbidrag", "autism_automatically_means_merkostnadsersattning", "diagnosis_sets_benefit_level"],
+      "expected_questions": ["q_is_main_difference_extra_care_supervision_extra_costs_or_both"],
+      "expected_next_actions": ["collect_only_route_changing_function_or_cost_fact", "avoid_eligibility_conclusion_from_diagnosis"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_primary_source", "Forsakringskassan_current_merkostnadsersattning_child_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-professional-v86-07",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar med barn med ADHD och ska skriva en rapport om omvårdnadsbidrag och merkostnadsersättning.",
+      "expected_support_areas": ["professional_false_positive_guard", "no_personal_child_benefit_route_without_personal_need"],
+      "must_not_claim": ["user_is_parent_or_guardian", "user_should_apply_personally", "professional_topic_means_personal_eligibility"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["do_not_open_personal_family_benefit_flow_from_professional_wording"],
+      "source_requirements": ["current_primary_source_required_before_material_child_benefit_claim"]
+    },
+    {
+      "case_id": "lab-child-care-support-language-ar-v86-08",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "طفلي يحتاج إلى رعاية ومراقبة إضافية في المنزل ولدينا أيضاً تكاليف إضافية. ما الدعم الذي يمكن أن نتحقق منه؟",
+      "expected_support_areas": ["omvardnadsbidrag_candidate", "merkostnadsersattning_child_candidate", "language_parity", "care_vs_cost_boundary"],
+      "must_not_claim": ["arabic_language_changes_truth_boundary", "diagnosis_or_language_establishes_entitlement", "merge_care_and_cost_into_one_eligibility_rule"],
+      "expected_questions": ["q_none_if_both_extra_care_and_extra_costs_are_already_explicit"],
+      "expected_next_actions": ["show_both_current_primary_source_paths_with_same_semantics_as_swedish"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_primary_source", "Forsakringskassan_current_merkostnadsersattning_child_primary_source"]
+    },
+    {
+      "case_id": "lab-child-care-support-language-fa-v86-09",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزندم در خانه به مراقبت و نظارت بیشتری نیاز دارد و هزینه‌های اضافی هم داریم. چه حمایت‌هایی را باید بررسی کنیم؟",
+      "expected_support_areas": ["omvardnadsbidrag_candidate", "merkostnadsersattning_child_candidate", "language_parity", "care_vs_cost_boundary"],
+      "must_not_claim": ["persian_language_changes_truth_boundary", "diagnosis_or_language_establishes_entitlement", "merge_care_and_cost_into_one_eligibility_rule"],
+      "expected_questions": ["q_none_if_both_extra_care_and_extra_costs_are_already_explicit"],
+      "expected_next_actions": ["show_both_current_primary_source_paths_with_same_semantics_as_swedish"],
+      "source_requirements": ["Forsakringskassan_current_omvardnadsbidrag_primary_source", "Forsakringskassan_current_merkostnadsersattning_child_primary_source"]
+    }
+  ]
+}

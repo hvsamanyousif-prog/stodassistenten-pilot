@@ -1,0 +1,50 @@
+name: Validate child extra-care cost learning v86
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'data/evals/demand_friction_signals_v86.json'
+      - 'data/evals/demand_friction_regression_map_v86.json'
+      - 'data/evals/scenario_lab_websignals_v86.json'
+      - 'data/supports/se-forsakringskassan-omvardnadsbidrag.json'
+      - 'data/supports/se-forsakringskassan-merkostnadsersattning-barn.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V86_APPENDIX.md'
+      - 'scripts/validate_child_care_cost_support_v86.py'
+      - '.github/workflows/child-care-cost-support-v86.yml'
+  pull_request:
+    paths:
+      - 'data/evals/demand_friction_signals_v86.json'
+      - 'data/evals/demand_friction_regression_map_v86.json'
+      - 'data/evals/scenario_lab_websignals_v86.json'
+      - 'data/supports/se-forsakringskassan-omvardnadsbidrag.json'
+      - 'data/supports/se-forsakringskassan-merkostnadsersattning-barn.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V86_APPENDIX.md'
+      - 'scripts/validate_child_care_cost_support_v86.py'
+      - '.github/workflows/child-care-cost-support-v86.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate v86 truth and regression package
+        run: python scripts/validate_child_care_cost_support_v86.py
+      - name: Run canonical demand/friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Run canonical Scenario Lab
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Keep public ingestion contracts green
+        run: python scripts/validate_data.py
+      - name: Confirm same-product architecture
+        run: |
+          test ! -e child-benefit.html
+          test ! -e omvardnadsbidrag.html
+          test ! -e client/child-benefit-app.js
+          test ! -e client/omvardnadsbidrag-app.js

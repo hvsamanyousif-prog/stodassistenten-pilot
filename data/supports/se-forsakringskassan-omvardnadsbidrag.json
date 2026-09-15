@@ -1,0 +1,115 @@
+{
+  "support_id": "se-forsakringskassan-omvardnadsbidrag",
+  "name": "Omvårdnadsbidrag för barn med funktionsnedsättning",
+  "category": "family_children",
+  "subtype": "child_extra_care_supervision",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["child", "parent_guardian", "disability", "extra_care", "supervision"],
+    "age_min": 0,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "omvardnadsbidrag.child_disability_duration",
+        "field": "child_disability_expected_duration",
+        "operator": "text_condition",
+        "value": "Försäkringskassans aktuella sida anger att barnet ska ha en funktionsnedsättning som påverkar barnet under minst 6 månader.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+        "notes": "Stödassistenten ska inte själv avgöra om varaktighetsvillkoret är uppfyllt."
+      },
+      {
+        "rule_id": "omvardnadsbidrag.extra_care_supervision",
+        "field": "extra_care_or_supervision_compared_with_same_age",
+        "operator": "text_condition",
+        "value": "Det centrala är om barnet behöver mer omvårdnad och tillsyn än barn i samma ålder utan funktionsnedsättning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+        "notes": "Diagnosen i sig avgör inte rätten. Produkten ska fråga om konkret extra omvårdnad/tillsyn när det behövs för vägvalet."
+      },
+      {
+        "rule_id": "omvardnadsbidrag.vab_overlap",
+        "field": "vab_same_need_and_decision_context",
+        "operator": "text_condition",
+        "value": "VAB och omvårdnadsbidrag kan överlappa på ett sätt som beror på om det är samma behov och i vissa situationer när omvårdnadsbidragsbeslutet fattades.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+        "notes": "Ge aldrig ett generellt ja eller nej om VAB utan att kontrollera aktuell Försäkringskassan-regel för den aktuella situationen och dagen."
+      },
+      {
+        "rule_id": "omvardnadsbidrag.assistance_overlap",
+        "field": "personal_assistance_overlap",
+        "operator": "text_condition",
+        "value": "Omvårdnadsbidrag kan förekomma samtidigt som assistansersättning, men Försäkringskassans aktuella sida anger att omvårdnadsbidraget då avser delar som assistansersättningen inte täcker.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+        "notes": "Produkten får inte dubbelräkna samma behov eller anta att personlig assistans automatiskt utesluter all omvårdnadsbidrag."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "omvardnadsbidrag.extra_care_examples",
+        "prompt": "Vilken extra omvårdnad eller tillsyn behöver barnet jämfört med andra barn i samma ålder?",
+        "reason": "Konkret extra omvårdnad/tillsyn är mer vägledande än diagnosnamnet och kan skilja denna väg från merkostnadsersättning."
+      },
+      {
+        "question_id": "omvardnadsbidrag.costs_parallel",
+        "prompt": "Gäller frågan också extra kostnader som beror på barnets funktionsnedsättning?",
+        "reason": "Extra kostnader har en separat merkostnadsersättningsväg och ska inte blandas ihop med omvårdnad/tillsyn."
+      },
+      {
+        "question_id": "omvardnadsbidrag.vab_context",
+        "prompt": "Om frågan gäller VAB: gäller frånvaron samma behov som redan ligger bakom omvårdnadsbidraget, och när fattades beslutet?",
+        "reason": "Dessa fakta kan ändra den säkra VAB-vägen enligt aktuell Försäkringskassan-information."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan bedömer omfattningen av barnets extra omvårdnad och tillsyn. Aktuella nivåer och belopp är tidskänsliga och ska alltid hämtas från aktuell primärkälla; Stödassistenten ska inte hårdkoda dem.",
+    "recurrence": null
+  },
+  "documents": [
+    "Underlag som beskriver barnets funktionsnedsättning enligt Försäkringskassans aktuella krav",
+    "Beskrivning av den extra omvårdnad och tillsyn barnet behöver i vardagen"
+  ],
+  "application": {
+    "method": "digital_or_form",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+    "deadline_text": null,
+    "next_step": "Beskriv konkret vilken extra omvårdnad och tillsyn barnet behöver och kontrollera Försäkringskassans aktuella sida innan materiella villkor, nivåer eller VAB/assistansöverlapp används."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": "2026-09-07",
+    "retrieved_at": "2026-09-15T17:40:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkälla kontrollerad 2026-09-15. Mänsklig granskning krävs före VERIFIED. Särskilt ska aktuell varaktighet, åldersgräns, nivåbedömning, VAB-interaktion, assistansöverlapp och ansökningskrav kontrolleras. Diagnos får aldrig användas som ensam eligibility-signal.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T17:40:00Z",
+    "last_seen_at": "2026-09-15T17:40:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
