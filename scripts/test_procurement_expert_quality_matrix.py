@@ -193,6 +193,16 @@ def run_journey(page, scenario):
     page.locator("#sourceText").fill(scenario["text"])
     page.locator("#analyzeBtn").click()
     expect(page.locator("#analysisCard")).to_be_visible()
+
+    # The first result state must be calm: priority/risk overview first, full row review optional.
+    check(page.locator("#reviewDetails").get_attribute("open") is None, f'{scenario["id"]}: full review opens by default')
+    check(page.locator("#priorityOverview").is_visible(), f'{scenario["id"]}: priority overview missing')
+    check(page.locator("#openReviewBtn").is_visible(), f'{scenario["id"]}: no explicit next control for full review')
+    sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
+    check(sizes["content"] <= sizes["viewport"] + 1, f'{scenario["id"]}: collapsed overview horizontal overflow {sizes}')
+
+    page.locator("#openReviewBtn").click()
+    check(page.locator("#reviewDetails").get_attribute("open") is not None, f'{scenario["id"]}: full review did not open')
     actual = [el.input_value() for el in page.locator("[data-cat]").all()]
     check(actual == scenario["expected"], f'{scenario["id"]}: expected {scenario["expected"]}, got {actual}')
 
@@ -200,6 +210,7 @@ def run_journey(page, scenario):
         page.locator("[data-ev]").nth(scenario["missing_index"]).select_option("missing")
         check(page.locator("#summary .okbox").count() == 0, f'{scenario["id"]}: missing evidence produced positive summary')
         check("saknas" in page.locator("#summary").inner_text().lower(), f'{scenario["id"]}: missing evidence is not visible in summary')
+        check("saknas" in page.locator("#priorityOverview").inner_text().lower(), f'{scenario["id"]}: missing evidence is not prioritized in overview')
 
     # Source position must remain physical, independent of blank lines or short labels.
     source_lines = [int(el.inner_text().split()[-1]) for el in page.locator(".source").all()]
@@ -209,7 +220,7 @@ def run_journey(page, scenario):
     check(sizes["content"] <= sizes["viewport"] + 1, f'{scenario["id"]}: horizontal overflow {sizes}')
 
     # Main interaction controls should remain comfortably touchable in the CSS-width matrix.
-    for selector in ["#editSourceBtn", "#restartBtn"]:
+    for selector in ["#openReviewBtn", "#editSourceBtn", "#restartBtn"]:
         box = page.locator(selector).bounding_box()
         check(box and box["height"] >= 40 and box["width"] >= 40, f'{scenario["id"]}: small touch target {selector}: {box}')
 
