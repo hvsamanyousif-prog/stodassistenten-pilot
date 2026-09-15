@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signal for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence. Material personal-assistance guidance must be verified against current primary sources; news, statistics and community language are discovery/reach signals only.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize recurring natural-language demand where authority boundaries are easy to confuse, consequences are meaningful, accessibility friction is high and the current public route is weak. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-personal-assistance-state-vs-municipality-v01",
+      "actor_types": ["private_person", "relative"],
+      "natural_language_queries": [
+        "jag behöver personlig assistans vem ska jag fråga",
+        "jag behöver hjälp med dusch toalett mat och kläder varje dag",
+        "ska jag söka personlig assistans hos kommunen eller Försäkringskassan",
+        "vad räknas som personlig assistans",
+        "min anhörig behöver mycket hjälp varje dag vem ska vi kontakta",
+        "jag behöver hjälp hemma på grund av funktionsnedsättning men vet inte vilket stöd"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "The need spans a large established system: Försäkringskassan reports about 13,500 recipients of state assistance compensation in December 2025, while Socialstyrelsen reports 82,800 people with at least one municipally decided LSS intervention in October 2025. These figures indicate reach, not search volume or individual probability."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users must distinguish personal assistance from ordinary home support and healthcare, and must also distinguish the state Försäkringskassan route from municipal support without treating their own hour estimate as the authority's assessment."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A wrong first route can delay contact with the relevant authority, collapse healthcare into social support, or make a user falsely believe that a diagnosis or self-estimated number of hours proves entitlement."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Material rules sit across Försäkringskassan's state-assistance guidance, LSS/municipal information and healthcare sources for medical care; local municipal process details vary and must be verified locally."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "The distinction uses technical concepts such as LSS personkrets, grundläggande behov and authority-assessed time. The public product serves Swedish, Arabic and Persian, while detailed primary-source wording is mainly Swedish."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "A user may have to identify the type of help, separate medical care, understand the state/municipal boundary, document concrete assistance needs and then use the correct current official process."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Current national statistics and recurring public guidance show a durable high-stakes support domain with separate state and municipal responsibilities. This score is qualitative and does not claim measured query frequency."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The truth layer already contained a NEEDS_REVIEW record for adult assistance compensation, but the public disability_home_support route exposed only boendestöd, practical care, safety and healthcare. Explicit personal-assistance language therefore had no focused public branch."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.socialstyrelsen.se/om-socialstyrelsen/pressrum/press/allt-farre-far-personlig-assistans/",
+        "https://www.forsakringskassan.se/statistik-och-analys/funktionsnedsattning/statistik-inom-omradet-funktionsnedsattning---assistansersattning/hur-manga-far-assistansersattning",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2025-05-15-fler-far-personlig-assistans"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna",
+        "https://www.forsakringskassan.se/press/vart-uppdrag-inom-assistansersattning",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/funktionshinder/"
+      ],
+      "product_miss": "The same disability_home_support journey had a verified source candidate in the truth layer but no explicit personal-assistance branch, so users could be left with generic home-help guidance and no safe state-versus-municipality next step.",
+      "future_guardrail": "Keep focus=disability_home_support and add only the coarse support_need=personal_assistance. Never infer LSS personkrets, counted needs, assessed hours, entitlement or a guaranteed responsible authority from free text. Explicit older-person and healthcare contexts must preserve their existing boundaries; professional/research wording must fail closed.",
+      "regression_case": [
+        "lab-disability-personal-assistance-explicit-v70-01",
+        "lab-disability-personal-assistance-no-diagnosis-inference-v70-02",
+        "lab-disability-personal-assistance-vs-healthcare-v70-03",
+        "lab-disability-personal-assistance-older-boundary-v70-04",
+        "lab-disability-personal-assistance-professional-false-positive-v70-05",
+        "lab-disability-personal-assistance-research-false-positive-v70-06",
+        "lab-disability-personal-assistance-language-ar-v70-07",
+        "lab-disability-personal-assistance-language-fa-v70-08"
+      ],
+      "evaluation_method": "Natural-language detector tests + scenario regressions + primary-source cross-check + feedback-coverage guard. Statistical/news pages may prioritize the problem but may not prove eligibility or local process.",
+      "recommended_learning_action": "Extend the existing disability_home_support route with support_need=personal_assistance, show current state and local paths without calculating entitlement, and keep only structured anonymous feedback about route usefulness/clarity.",
+      "truth_rule": "We must verify material personal-assistance guidance against current Försäkringskassan and relevant local/healthcare primary sources before use. The support record remains NEEDS_REVIEW; discovery signals, feedback and prior AI output are never truth sources."
+    }
+  ]
+}
