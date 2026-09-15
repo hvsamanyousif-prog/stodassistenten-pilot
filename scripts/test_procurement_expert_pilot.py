@@ -25,16 +25,20 @@ def main() -> int:
     markup.feed(html)
     assert len(markup.ids) == len(set(markup.ids)), 'Duplicate DOM IDs'
     required = {'startBtn','sampleBtn','profileCard','sectorGrid','sourceCard','sourceText',
-                'sourceUrl','analyzeBtn','clearBtn','analysisCard','summary','requirements',
-                'editSourceBtn','restartBtn','draft','feedbackCard','scoreRows','foundIssue',
+                'sourceUrl','analyzeBtn','clearBtn','analysisCard','summary','priorityOverview',
+                'openReviewBtn','reviewDetails','reviewSummary','requirements','editSourceBtn',
+                'restartBtn','draft','feedbackCard','advancedFeedback','scoreRows','foundIssue',
                 'useful','clearNext','sendFeedback','copyReport','feedbackStatus'}
     assert required <= set(markup.ids), 'Missing interactive DOM contract'
     assert markup.scripts == ['client/procurement-expert-pilot.js'], 'Unexpected script boundary'
     for text in ('sekretessbelagd','lokalt i webbläsaren','inte ett färdigt anbud',
                  'bilagor, rättelser och publicerade frågor/svar','inte ett verifierat bevis',
-                 'Inga underlagstexter eller företagsuppgifter skickas'):
+                 'Inga underlagstexter eller företagsuppgifter skickas',
+                 'öppnas eller verifieras inte i denna version','Detaljbetyg är frivilliga'):
         assert text in html, f'Missing public limitation: {text}'
     assert 'aria-live="polite"' in html, 'Feedback status must be announced'
+    assert '<details id="reviewDetails">' in html, 'Full requirement review must start collapsed'
+    assert '<details id="advancedFeedback">' in html, 'Advanced feedback must start collapsed'
     subprocess.run(['node','--check','client/procurement-expert-pilot.js'], cwd=ROOT, check=True)
     node_test = r'''
 const assert=require('node:assert/strict');
@@ -110,10 +114,14 @@ test('feedback-allowlist',()=>{
  assert.equal(body.learned_new,true);assert.equal(body.useful,false);assert.equal(body.next_step_clear,true);
  assert.deepEqual(body.ratings,{requirement_extraction:4});
 });
+test('feedback-short-path-allows-empty-ratings',()=>{
+ const body=p.buildFeedbackPayload(false,true,true,{});
+ assert.deepEqual(body.ratings,{});
+ assert.equal(body.learned_new,false);assert.equal(body.useful,true);assert.equal(body.next_step_clear,true);
+});
 test('feedback-no-free-text',()=>assert.throws(()=>p.buildFeedbackPayload(true,true,true,{sourceText:'secret'}),TypeError));
 test('feedback-no-source-url',()=>assert.throws(()=>p.buildFeedbackPayload(true,true,true,{sourceUrl:'https://example.invalid'}),TypeError));
 test('feedback-no-profile',()=>assert.throws(()=>p.buildFeedbackPayload(true,true,true,{sector:4}),TypeError));
-test('feedback-no-empty-scores',()=>assert.throws(()=>p.buildFeedbackPayload(true,true,true,{}),TypeError));
 for(const value of [0,6,1.5,'4',null])test('invalid-score-'+String(value),()=>assert.throws(()=>p.buildFeedbackPayload(true,true,true,{requirement_extraction:value}),TypeError));
 test('feedback-boolean-contract',()=>assert.throws(()=>p.buildFeedbackPayload('yes',true,true,{requirement_extraction:4}),TypeError));
 let failed=0;
