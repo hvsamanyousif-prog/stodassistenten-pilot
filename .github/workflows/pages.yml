@@ -32,6 +32,13 @@ jobs:
         run: python scripts/build_public_pilot.py --output _site
       - name: Verify capability wiring before deployment
         run: python scripts/test_public_pilot_build.py --site _site
+      - name: Verify procurement expert pilot
+        run: |
+          python scripts/test_procurement_expert_pilot.py
+          node --check client/procurement-expert-pilot.js
+          cp procurement-expert-pilot.html _site/
+          mkdir -p _site/client
+          cp client/procurement-expert-pilot.js _site/client/
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:

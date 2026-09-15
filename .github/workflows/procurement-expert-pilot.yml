@@ -1,0 +1,35 @@
+name: Validate procurement expert pilot
+
+on:
+  pull_request:
+    paths:
+      - 'procurement-expert-pilot.html'
+      - 'client/procurement-expert-pilot.js'
+      - 'scripts/test_procurement_expert_pilot.py'
+      - '.github/workflows/procurement-expert-pilot.yml'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'procurement-expert-pilot.html'
+      - 'client/procurement-expert-pilot.js'
+      - 'scripts/test_procurement_expert_pilot.py'
+      - '.github/workflows/procurement-expert-pilot.yml'
+      - '.github/workflows/pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run expert-pilot regression
+        run: python scripts/test_procurement_expert_pilot.py
+      - name: JavaScript syntax
+        run: node --check client/procurement-expert-pilot.js
