@@ -75,7 +75,7 @@
     "Sammanställning och underlag för extra kostnader som påstås bero på barnets funktionsnedsättning"
   ],
   "application": {
-    "method": "digital_or_form",
+    "method": "mixed",
     "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
     "deadline_text": null,
     "next_step": "Beskriv de konkreta extra kostnaderna och kontrollera Försäkringskassans aktuella sida för vilka kostnader, gränser och underlag som gäller innan Stödassistenten gör materiella påståenden."

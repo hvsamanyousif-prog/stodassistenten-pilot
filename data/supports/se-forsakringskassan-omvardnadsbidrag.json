@@ -83,7 +83,7 @@
     "Beskrivning av den extra omvårdnad och tillsyn barnet behöver i vardagen"
   ],
   "application": {
-    "method": "digital_or_form",
+    "method": "mixed",
     "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
     "deadline_text": null,
     "next_step": "Beskriv konkret vilken extra omvårdnad och tillsyn barnet behöver och kontrollera Försäkringskassans aktuella sida innan materiella villkor, nivåer eller VAB/assistansöverlapp används."
@@ -93,7 +93,7 @@
     "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
     "source_type": "official_web",
     "published_at": null,
-    "updated_at": "2026-09-07",
+    "updated_at": "2026-09-07T00:00:00Z",
     "retrieved_at": "2026-09-15T17:40:00Z",
     "content_hash": null
   },
