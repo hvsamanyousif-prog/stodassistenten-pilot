@@ -7,6 +7,7 @@ SCENARIOS = ROOT / "data/evals/scenario_lab_websignals_v78.json"
 SIGNALS = ROOT / "data/evals/demand_friction_signals_v78.json"
 REGMAP = ROOT / "data/evals/demand_friction_regression_map_v78.json"
 BENCH = ROOT / "data/evals/cases/akassa.json"
+EXPANSION = ROOT / "data/evals/expansion/akassa_v02.json"
 SUPPORT = ROOT / "data/supports/se-arbetsloshetsersattning-a-kassa.json"
 PERSON = ROOT / "person-pilot.html"
 
@@ -26,6 +27,7 @@ def main():
     signals = load(SIGNALS)
     regmap = load(REGMAP)
     bench = load(BENCH)
+    expansion = load(EXPANSION)
     support = load(SUPPORT)
     person = PERSON.read_text(encoding="utf-8")
 
@@ -71,10 +73,11 @@ def main():
     require(set(mapping.get("regression_case_ids", [])) == case_ids, "v78 regression map must cover every v78 case")
     require(mapping.get("coverage_status") == "LEARNING_GUARDED_PUBLIC_COPY_FIX_PENDING", "v78 must not pretend the stale public unemployment copy is already fixed")
 
-    benchmark_text = json.dumps(bench, ensure_ascii=False)
-    require("work_history" not in benchmark_text and "q_work_history" not in benchmark_text, "canonical a-kassa benchmark still encodes generic legacy work-history semantics")
-    require("existing_pre_2025_10_01_benefit_period" in benchmark_text, "canonical a-kassa benchmark must model the dual-regime boundary")
-    require("register_employment_service_first_unemployed_day" in benchmark_text, "canonical a-kassa benchmark must preserve first-day registration as the safe first action")
+    for label, payload in (("canonical", bench), ("expansion", expansion)):
+        benchmark_text = json.dumps(payload, ensure_ascii=False)
+        require("work_history" not in benchmark_text and "q_work_history" not in benchmark_text, f"{label} a-kassa benchmark still encodes generic legacy work-history semantics")
+        require("existing_pre_2025_10_01_benefit_period" in benchmark_text or "benefit_period_start" in benchmark_text, f"{label} a-kassa benchmark must model the dual-regime boundary")
+        require("register_employment_service_first_unemployed_day" in benchmark_text or "prepare_registration_but_submit_on_first_unemployed_day" in benchmark_text, f"{label} a-kassa benchmark must preserve first-day registration semantics")
 
     rules = {r.get("rule_id"): r for r in support.get("eligibility", {}).get("conditions", [])}
     questions = {q.get("question_id"): q for q in support.get("eligibility", {}).get("missing_information_questions", [])}
