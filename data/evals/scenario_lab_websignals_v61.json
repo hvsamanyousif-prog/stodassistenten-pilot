@@ -8,64 +8,89 @@
       "actor_type": "private_person",
       "language": "sv",
       "story": "Jag blev arbetslös idag och vet inte vad jag ska göra först.",
-      "expected": ["show_first_day_guidance", "register_employment_service_first", "then_unemployment_fund", "handoff_actor_private_person", "focus_unemployment_start"],
-      "must_not": ["ask_income_before_first_action", "guarantee_benefit", "put_story_in_url"]
+      "expected_support_areas": ["first_day_unemployment_sequence", "unemployment_insurance", "sgi_verification"],
+      "must_not_claim": ["registration_guarantees_unemployment_benefit", "guaranteed_unemployment_benefit_amount", "income_or_membership_is_needed_before_first_registration_action"],
+      "expected_questions": ["no_question_before_first_day_action"],
+      "expected_next_actions": ["register_with_arbetsformedlingen_on_first_unemployed_day", "then_apply_to_relevant_unemployment_fund"],
+      "source_requirements": ["Arbetsformedlingen_current_unemployment_journey", "Forsakringskassan_current_SGI_guidance"],
+      "privacy_guardrail": ["handoff_actor_private_person", "focus_unemployment_start", "no_raw_story_in_url"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-02",
       "actor_type": "private_person",
       "language": "sv",
       "story": "Jag är arbetslös nu men redan inskriven hos Arbetsförmedlingen.",
-      "expected": ["show_first_day_guidance", "allow_skip_registration_step", "then_unemployment_fund"],
-      "must_not": ["ask_registration_again_as_blocker", "guarantee_benefit"]
+      "expected_support_areas": ["first_day_unemployment_sequence", "unemployment_insurance"],
+      "must_not_claim": ["user_must_repeat_registration_if_already_registered", "registration_guarantees_unemployment_benefit"],
+      "expected_questions": ["no_registration_question_as_blocker_when_story_already_states_registered"],
+      "expected_next_actions": ["skip_registration_step_if_already_completed", "apply_to_relevant_unemployment_fund"],
+      "source_requirements": ["Arbetsformedlingen_current_unemployment_journey"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-03",
       "actor_type": "employee",
       "language": "sv",
       "story": "Mitt visstidsjobb tar slut om två veckor och jag vill förbereda mig.",
-      "expected": ["do_not_claim_already_unemployed", "keep_transition_preparation_path"],
-      "must_not": ["show_first_day_guidance_as_current", "rewrite_actor_to_private_person"]
+      "expected_support_areas": ["future_job_loss_preparation", "varsel_vs_actual_unemployment"],
+      "must_not_claim": ["future_contract_end_means_already_unemployed", "first_day_registration_should_be_submitted_before_employment_has_ended"],
+      "expected_questions": ["clarify_actual_end_or_current_employment_only_if_it_changes_route"],
+      "expected_next_actions": ["prepare_before_job_end_without_claiming_current_unemployment", "register_on_first_actual_unemployed_day_if_no_new_job"],
+      "source_requirements": ["Arbetsformedlingen_current_varsel_guidance"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-04",
       "actor_type": "employee",
       "language": "sv",
       "story": "Jag är permitterad och undrar om jag ska skriva in mig som arbetslös.",
-      "expected": ["do_not_treat_permittering_as_ended_employment"],
-      "must_not": ["show_first_day_guidance_as_current", "guarantee_unemployment_benefit"]
+      "expected_support_areas": ["permittering_boundary", "employment_status_disambiguation"],
+      "must_not_claim": ["permittering_always_means_employment_has_ended", "permittering_guarantees_unemployment_benefit"],
+      "expected_questions": ["verify_whether_employment_has_actually_ended_before_unemployment_route"],
+      "expected_next_actions": ["keep_current_employee_or_transition_path_until_actual_job_end_is_known"],
+      "source_requirements": ["Arbetsformedlingen_current_varsel_guidance"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-05",
       "actor_type": "private_person",
       "language": "ar",
       "story": "أصبحت عاطلاً عن العمل اليوم ولا أعرف من أين أبدأ.",
-      "expected": ["show_first_day_guidance", "same_route_semantics_as_sv", "rtl_safe_copy"],
-      "must_not": ["change_matching_because_of_language", "put_story_in_url"]
+      "expected_support_areas": ["first_day_unemployment_sequence", "language_parity"],
+      "must_not_claim": ["arabic_language_changes_matching_semantics", "registration_guarantees_unemployment_benefit"],
+      "expected_questions": ["no_question_before_first_day_action"],
+      "expected_next_actions": ["register_with_arbetsformedlingen_on_first_unemployed_day", "then_apply_to_relevant_unemployment_fund"],
+      "source_requirements": ["Arbetsformedlingen_current_unemployment_journey"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-06",
       "actor_type": "private_person",
       "language": "fa",
       "story": "امروز بیکار شدم و نمی‌دانم اول چه کاری انجام بدهم.",
-      "expected": ["show_first_day_guidance", "same_route_semantics_as_sv", "rtl_safe_copy"],
-      "must_not": ["change_matching_because_of_language", "put_story_in_url"]
+      "expected_support_areas": ["first_day_unemployment_sequence", "language_parity"],
+      "must_not_claim": ["persian_language_changes_matching_semantics", "registration_guarantees_unemployment_benefit"],
+      "expected_questions": ["no_question_before_first_day_action"],
+      "expected_next_actions": ["register_with_arbetsformedlingen_on_first_unemployed_day", "then_apply_to_relevant_unemployment_fund"],
+      "source_requirements": ["Arbetsformedlingen_current_unemployment_journey"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-07",
       "actor_type": "private_person",
       "language": "sv",
       "story": "Jag är arbetslös och sjuk och behöver veta vem jag ska sjukanmäla mig till.",
-      "expected": ["preserve_unemployed_sickness_route"],
-      "must_not": ["let_first_day_job_loss_guidance_steal_sickness_intent"]
+      "expected_support_areas": ["unemployed_sickness_route", "programme_status_disambiguation"],
+      "must_not_claim": ["first_day_job_loss_guidance_should_steal_unemployment_sickness_intent", "sickness_benefit_is_guaranteed"],
+      "expected_questions": ["programme_status_only_when_it_changes_sickness_route"],
+      "expected_next_actions": ["preserve_existing_unemployed_sickness_guidance"],
+      "source_requirements": ["Forsakringskassan_current_jobseeker_sickness_guidance", "Arbetsformedlingen_current_program_sickness_guidance"]
     },
     {
       "case_id": "lab-unemployment-first-day-v61-08",
       "actor_type": "private_person",
       "language": "sv",
       "story": "Jag blev varslad förra månaden men nu är jag arbetslös.",
-      "expected": ["show_first_day_guidance", "current_status_overrides_old_warning_context"],
-      "must_not": ["treat_historical_warning_as_future_employment"]
+      "expected_support_areas": ["varsel_vs_actual_unemployment", "first_day_unemployment_sequence"],
+      "must_not_claim": ["historical_varsel_means_user_is_still_employed", "registration_guarantees_unemployment_benefit"],
+      "expected_questions": ["no_future_status_question_when_current_unemployment_is_explicit"],
+      "expected_next_actions": ["current_unemployment_status_overrides_old_warning_context", "register_with_arbetsformedlingen_on_first_unemployed_day"],
+      "source_requirements": ["Arbetsformedlingen_current_varsel_guidance", "Arbetsformedlingen_current_unemployment_journey"]
     }
   ]
 }
