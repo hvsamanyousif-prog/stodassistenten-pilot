@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'client/professional-guidance.js'
+      - 'client/professional-guidance-unemployment.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/validate_professional_guidance.py'
       - '.github/workflows/professional-guidance.yml'
@@ -11,6 +12,7 @@ on:
     branches: [main]
     paths:
       - 'client/professional-guidance.js'
+      - 'client/professional-guidance-unemployment.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/validate_professional_guidance.py'
       - '.github/workflows/professional-guidance.yml'
@@ -31,6 +33,8 @@ jobs:
           python-version: '3.12'
       - name: Check runtime JavaScript syntax
         run: node --check client/professional-guidance.js
+      - name: Run first-day unemployment intent regressions
+        run: node client/professional-guidance-unemployment.test.cjs
       - name: Validate product and privacy invariants
         run: python scripts/validate_professional_guidance.py
       - name: Build exact public artifact

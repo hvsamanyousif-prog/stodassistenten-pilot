@@ -1,0 +1,77 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for people at the first-day unemployment transition. Scores are not measured search volumes and do not prove eligibility, amount, SGI protection, membership status or decision outcome. Community material is discovery-only; current Arbetsförmedlingen and Försäkringskassan sources carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-unemployment-first-day-next-action-v01",
+      "actor_types": ["private_person", "employee"],
+      "natural_language_queries": [
+        "jag blev arbetslös idag vad gör jag först",
+        "mitt jobb tog slut och jag vet inte om jag ska börja med arbetsförmedlingen eller a-kassan",
+        "jag är redan inskriven hos arbetsförmedlingen vad är nästa steg för a-kassa",
+        "jag blev varslad tidigare men nu har anställningen faktiskt upphört",
+        "jag är permitterad räknas jag som arbetslös",
+        "jag är ny arbetslös och vill inte missa SGI eller a-kassa"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Arbetsförmedlingen maintains a dedicated current journey titled 'Arbetslös, vad händer nu?' whose first steps are registration, unemployment-insurance application and job-search setup. Community questions repeatedly ask what must happen on the first unemployed day and in which order. This is a qualitative reach signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "A newly unemployed person can easily encounter multiple agencies and rule versions at once. The time-critical first action is simpler than the full eligibility calculation, but the current public shell routes unemployment into a broad work/person flow with generic follow-up questions before surfacing that action."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Arbetsförmedlingen states that registration should be sent on the first unemployed day and links registration to the date from which the unemployment fund can assess benefit. Registration can also matter for SGI protection. Missing the order can therefore have financial consequences even though Stödassistenten must not decide entitlement."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "The practical first-day sequence is described by Arbetsförmedlingen, while SGI consequences belong to Försäkringskassan and individual unemployment-benefit entitlement belongs to the relevant unemployment fund. The product must explain the sequence without collapsing those decisions into one authority."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as first unemployed day, registration, unemployment fund and SGI are easy to confuse, especially under sudden income loss and for Arabic/Persian users. The route should keep the same semantics across sv/ar/fa and state the immediate action plainly."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "For clear current unemployment, the product can provide the first action directly without asking income, membership, work-history or household questions first. Those facts can become relevant later but do not improve the first registration step."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Job loss, fixed-term contracts ending and uncertainty about registration versus unemployment-fund application are recurring transitions, and the first-day timing is stable enough to justify a permanent regression while still requiring current-source verification."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The repository already contains an a-kassa truth record and benchmark cases, but the public natural-language shell classifies unemployment under the broad work route and the generic person flow asks several unrelated questions. The learned knowledge is not yet expressed as the minimum-action UX for an explicit current job loss."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/1h2piw3/hur_funkar_det_med_akassan_egentligen/"
+      ],
+      "primary_sources": [
+        "https://arbetsformedlingen.se/for-arbetssokande/arbetslos---vad-hander-nu",
+        "https://arbetsformedlingen.se/for-arbetssokande/arbeta-i-sverige/varsel",
+        "https://www.forsakringskassan.se/privatperson/sjukpenninggrundande-inkomst-sgi"
+      ],
+      "product_miss": "Clear current unemployment was treated as a generic work/person journey, so a user could be sent toward a multi-question catalogue flow before seeing the time-critical first-day registration sequence. The same shell also represented the handoff as employee even after the employment had ended.",
+      "future_guardrail": "Keep one shared Stödassistenten shell. When current unemployment is explicit, show the verified first-day sequence immediately, hand off only coarse actor_type=private_person plus focus=unemployment_start, and do not ask income or membership before the first action. Do not steal future-varsel, permittering or unemployment-plus-sickness intents.",
+      "regression_case": [
+        "lab-unemployment-first-day-v61-01",
+        "lab-unemployment-first-day-v61-03",
+        "lab-unemployment-first-day-v61-04",
+        "lab-unemployment-first-day-v61-07",
+        "lab-unemployment-first-day-v61-08"
+      ],
+      "evaluation_method": "Run the dedicated v61 guard plus the global demand/friction learning-loop gate. Require sv/ar/fa parity, current-versus-future separation, permittering and sickness negatives, privacy-safe handoff, primary-source links and no eligibility or amount guarantee.",
+      "recommended_learning_action": "Use the existing shared-shell professional guidance layer to expose the first-day action only after the existing transparent router has identified work relevance. Reuse the common person surface for deeper help and encode the miss as permanent synthetic regressions rather than creating a separate unemployment application.",
+      "truth_rule": "VERIFY the current Arbetsförmedlingen and Försäkringskassan guidance before a material timing or SGI claim. Do not treat a community answer, prior AI output, membership assumption or first-day registration itself as proof of unemployment-benefit eligibility or amount."
+    }
+  ]
+}
