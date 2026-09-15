@@ -28,7 +28,7 @@
     {
       "case_id": "lab-older-home-support-vs-home-healthcare-v53-02",
       "actor_type": "older_person",
-      "story": "Min pappa behöver hjälp med dusch och mat men också sjuksköterska hemma för omläggning. Är allt hemtjänst?",
+      "story": "Min äldre pappa behöver hjälp med dusch och mat men också sjuksköterska hemma för omläggning. Är allt hemtjänst?",
       "expected_support_areas": ["older_home_support", "social_care", "home_healthcare", "local_responsibility_verification"],
       "must_not_claim": ["home_help_and_home_healthcare_are_the_same_service", "home_help_staff_are_always_responsible_for_medical_treatment", "municipality_always_runs_home_healthcare_nationally", "region_always_runs_home_healthcare_nationally", "the_product_can_assess_medical_need"],
       "expected_questions": ["do_not_collect_medical_details_when_the_route_boundary_is_already_clear", "preserve_both_social_and_healthcare_tracks"],
@@ -38,10 +38,10 @@
     {
       "case_id": "lab-relative-older-needs-support-not-caregiver-benefit-v53-03",
       "actor_type": "relative",
-      "story": "Min mamma klarar inte vardagen hemma längre och behöver hjälp med mat och dusch. Vem ska jag ringa?",
+      "story": "Min äldre mamma klarar inte vardagen hemma längre och behöver hjälp med mat och dusch. Vem ska jag ringa?",
       "expected_support_areas": ["older_home_support", "relative_as_helper_not_automatic_caregiver_claim"],
-      "must_not_claim": ["a_relative_asking_for_help_proves_the_relative_needs_carer_support", "the_story_proves_near_relative_cash_benefit", "the_relative_must_become_the_caregiver", "the_product_should_route_away_from_the_older_persons_own_support_need"],
-      "expected_questions": ["prioritize_the_older_persons_daily_support_route", "do_not_ask_about_the_relatives_income_or_work_absence_unless_their_own_caregiver_support_goal_is_explicit"],
+      "must_not_claim": ["parent_relationship_alone_proves_older_age", "a_relative_asking_for_help_proves_the_relative_needs_carer_support", "the_story_proves_near_relative_cash_benefit", "the_relative_must_become_the_caregiver", "the_product_should_route_away_from_the_older_persons_own_support_need"],
+      "expected_questions": ["prioritize_the_older_persons_daily_support_route_when_older_context_is_explicit", "do_not_ask_about_the_relatives_income_or_work_absence_unless_their_own_caregiver_support_goal_is_explicit"],
       "expected_next_actions": ["show_the_older_persons_current_municipal_support_route_first_and_keep_caregiver_support_as_a_separate_goal"],
       "source_requirements": ["Socialstyrelsen_current_older_support_information"]
     },
