@@ -17,10 +17,12 @@ assert.equal(guidance.detect('Min äldre mamma behöver hemtjänst och trygghets
 assert.equal(guidance.detect('Jag behöver hemsjukvård hemma efter en operation'), false);
 assert.equal(guidance.detect('Jag behöver hemtjänst hemma och vet inte vart jag ska vända mig'), false);
 assert.equal(guidance.detect('Jag jobbar med personlig assistans och vill förstå yrket bättre'), false);
+assert.equal(guidance.detect('Jag arbetar med assistansersättning på en myndighet'), false);
 assert.equal(guidance.detect('Jag skriver uppsats om personlig assistans och vill ha statistik'), false);
 
 assert.equal(guidance.detectNeed('Jag behöver personlig assistans med hygien, måltider och kläder'), 'personal_assistance');
 assert.equal(guidance.detectNeed('Jag behöver assistansersättning och vet inte vilken myndighet jag ska fråga'), 'personal_assistance');
+assert.equal(guidance.detectNeed('Jag behöver personlig assistans och sjuksköterska hemma för omläggning'), 'assistance_healthcare');
 assert.equal(guidance.detectNeed('Jag behöver hjälp med rutiner, planering och struktur i vardagen'), 'structure');
 assert.equal(guidance.detectNeed('Jag behöver hemtjänst med städning, mat och dusch'), 'personal_care');
 assert.equal(guidance.detectNeed('Jag vill känna mig trygg hemma och behöver trygghetslarm'), 'safety');
@@ -31,7 +33,11 @@ const href = guidance.handoffHref('sv', 'personal_assistance');
 assert.match(href, /^person-pilot\.html\?/);
 assert.match(href, /focus=disability_home_support/);
 assert.match(href, /support_need=personal_assistance/);
-for (const forbidden of ['q=', 'story=', 'situation=', 'diagnosis=', 'address=', 'municipality=', 'personnummer=', 'hours=', 'assessed_hours=']) assert.equal(href.includes(forbidden), false);
+const combinedHref = guidance.handoffHref('sv', 'assistance_healthcare');
+assert.match(combinedHref, /support_need=assistance_healthcare/);
+for (const candidate of [href, combinedHref]) {
+  for (const forbidden of ['q=', 'story=', 'situation=', 'diagnosis=', 'address=', 'municipality=', 'personnummer=', 'hours=', 'assessed_hours=']) assert.equal(candidate.includes(forbidden), false);
+}
 
 assert.match(guidance.SOCIALSTYRELSEN_URL, /^https:\/\/www\.socialstyrelsen\.se\//);
 assert.match(guidance.FUNCTION_URL, /^https:\/\/www\.socialstyrelsen\.se\//);
