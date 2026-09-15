@@ -1,0 +1,49 @@
+name: Validate VAB current rules v88
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'data/supports/se-forsakringskassan-vab-under-12.json'
+      - 'data/supports/se-forsakringskassan-vab-12-15.json'
+      - 'data/evals/scenario_lab_websignals_v88.json'
+      - 'data/evals/demand_friction_signals_v88.json'
+      - 'data/evals/demand_friction_regression_map_v88.json'
+      - 'scripts/validate_vab_current_rules_v88.py'
+      - '.github/workflows/vab-current-rules-v88.yml'
+  pull_request:
+    paths:
+      - 'data/supports/se-forsakringskassan-vab-under-12.json'
+      - 'data/supports/se-forsakringskassan-vab-12-15.json'
+      - 'data/evals/scenario_lab_websignals_v88.json'
+      - 'data/evals/demand_friction_signals_v88.json'
+      - 'data/evals/demand_friction_regression_map_v88.json'
+      - 'scripts/validate_vab_current_rules_v88.py'
+      - '.github/workflows/vab-current-rules-v88.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate v88 VAB truth and regression package
+        run: python scripts/validate_vab_current_rules_v88.py
+      - name: Run canonical demand/friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Run canonical Scenario Lab
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Keep public ingestion contracts green
+        run: python scripts/validate_data.py
+      - name: Keep public repository boundary green
+        run: python scripts/validate_public_repo_boundary.py
+      - name: Confirm same-product architecture
+        run: |
+          test ! -e vab-app.html
+          test ! -e client/vab-app.js
+          test ! -e data/vab_truth_store.json
