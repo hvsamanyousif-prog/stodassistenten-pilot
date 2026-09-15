@@ -40,7 +40,7 @@
         "operator": "lte",
         "value": 1989,
         "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
-        "notes": "Förordningen kräver värdeår tidigare än 1990 vid ansökningstillfället."
+        "notes": "Förordningen kräver värdeår tidigare än 1990 vid ansökningstillfället. Värdeår är fastighetstaxeringens uppgift och behöver inte vara samma som byggåret."
       },
       {
         "rule_id": "villaeffekten.not_district_heating_connected",
@@ -48,7 +48,7 @@
         "operator": "eq",
         "value": false,
         "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
-        "notes": "Huset får inte vara anslutet till fjärrvärmenät vid ansökningstillfället. Ny anslutning till fjärrvärme kan samtidigt vara en stödberättigande åtgärd enligt 7 §."
+        "notes": "Huset får inte vara anslutet till fjärrvärmenät vid ansökningstillfället. Ny anslutning till fjärrvärme kan samtidigt vara en stödberättigande åtgärd enligt 7 §; befintlig anslutning och planerad ny anslutning får därför aldrig blandas ihop."
       },
       {
         "rule_id": "villaeffekten.eligible_measure",
@@ -73,7 +73,7 @@
         "operator": "gte",
         "value": "2025-10-17",
         "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
-        "notes": "Bidrag får endast lämnas för kostnader för material som beställts tidigast den 17 oktober 2025."
+        "notes": "Bidrag får endast lämnas för kostnader för material som beställts tidigast den 17 oktober 2025. Boverkets aktuella vägledning anger att om ett anlitat företag även tillhandahåller materialet räknas dagen då tjänsten beställs som materialets beställningsdag, oavsett när företaget beställer eller levererar materialet."
       },
       {
         "rule_id": "villaeffekten.funds_available",
@@ -92,6 +92,14 @@
         "value": true,
         "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
         "notes": "Bidrag får inte täcka åtgärder som avser uppvärmning av utrymmen eller tillbyggnader som inte varit uppvärmda tidigare."
+      },
+      {
+        "rule_id": "villaeffekten.insurance_reimbursement",
+        "field": "cost_already_covered_by_insurance",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forordning-2023402-om-bidrag-for_sfs-2023-402/",
+        "notes": "En kostnad är inte bidragsberättigad till den del den redan täcks av utbetalad försäkringsersättning."
       }
     ],
     "missing_information_questions": [
@@ -108,7 +116,7 @@
       {
         "question_id": "villaeffekten.district_heating",
         "prompt": "Är huset redan anslutet till ett fjärrvärmenät?",
-        "reason": "En befintlig fjärrvärmeanslutning ändrar stödvägen enligt grundvillkoret."
+        "reason": "En befintlig fjärrvärmeanslutning ändrar stödvägen, medan en planerad ny anslutning kan vara en av de stödberättigande åtgärder som behöver verifieras."
       },
       {
         "question_id": "villaeffekten.measure",
@@ -118,49 +126,50 @@
       {
         "question_id": "villaeffekten.timing",
         "prompt": "När beställdes materialet och när började själva installations- eller byggarbetet?",
-        "reason": "Materialets beställningsdatum och åtgärdens startdatum kan ändra om och när ansökan måste lämnas in."
+        "reason": "Materialets beställningsdatum och åtgärdens startdatum kan ändra om och när ansökan måste lämnas in. Om entreprenören tillhandahåller materialet behöver beställningsdatumet för tjänsten kontrolleras enligt Boverkets aktuella vägledning."
       }
     ]
   },
   "benefit": {
     "kind": "reimbursement",
     "amount_text": "Högst 30 procent av bidragsberättigande materialkostnader och högst 60 000 kronor sammanlagt per småhus. Bidrag lämnas inte om det beräknade bidraget understiger 10 000 kronor.",
-    "calculation_text": "Endast bidragsberättigande materialkostnader enligt den aktuella förordningen räknas. Arbetskostnad ingår inte. Bidrag får lämnas vid högst två tillfällen och tidigare bidrag inom samma stöd måste beaktas mot maxbeloppet. Tillgång på anslagsmedel och länsstyrelsens prövning styr beslutet.",
+    "calculation_text": "Endast bidragsberättigande materialkostnader enligt den aktuella förordningen räknas. Arbetskostnad och avgifter, exempelvis själva anslutningsavgiften till ett fjärrvärmenät, ingår inte. Kostnader som redan täcks av utbetalad försäkringsersättning får inte räknas en gång till. Bidrag får lämnas vid högst två tillfällen och tidigare bidrag inom samma stöd måste beaktas mot maxbeloppet. Tillgång på anslagsmedel och länsstyrelsens prövning styr beslutet.",
     "recurrence": "one_off"
   },
   "documents": [
     "Teknisk specifikation eller produktinformationsblad för centrala installationer och material",
     "Specificerade fakturor eller kvitton om åtgärden redan är genomförd",
-    "Specificerad offert eller beställningsorder om åtgärden inte är genomförd"
+    "Specificerad offert eller beställningsorder om åtgärden inte är genomförd",
+    "Beställningsorder, beställningsbekräftelse eller inköpskvitto som kan styrka relevant materialbeställningsdatum om länsstyrelsen begär det"
   ],
   "application": {
     "method": "mixed",
     "url": "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
     "deadline_text": "Ansökan ska normalt ha kommit in inom sex månader från att åtgärden påbörjades och senast 1 juni 2030. För åtgärder som påbörjades 17 oktober 2025–31 augusti 2026 gäller övergångsfristen 28 februari 2027.",
-    "next_step": "Kontrollera värdeår, befintlig fjärrvärmeanslutning, den konkreta åtgärden samt materialets beställningsdatum och arbetets startdatum. Öppna därefter Boverkets aktuella stödväg och skicka ansökan via e-tjänst eller aktuell blankett till länsstyrelsen i länet där småhuset ligger; länsstyrelsen prövar rätten till bidrag."
+    "next_step": "Kontrollera värdeår, om huset redan är anslutet till fjärrvärme, den konkreta åtgärden samt materialets beställningsdatum och arbetets startdatum. Håll isär befintlig fjärrvärmeanslutning från en planerad ny anslutning. Öppna därefter Boverkets aktuella stödväg och skicka ansökan via e-tjänst eller aktuell blankett till länsstyrelsen i länet där småhuset ligger; länsstyrelsen prövar rätten till bidrag."
   },
   "source": {
     "source_id": "se-boverket-small-house-energy-grant",
     "url": "https://www.boverket.se/sv/bidrag--garantier/bidrag-for-energieffektivisering-i-smahus/",
     "source_type": "official_web",
     "published_at": "2022-11-08T00:00:00+01:00",
-    "updated_at": "2026-09-10T00:00:00+02:00",
-    "retrieved_at": "2026-09-14T13:30:00Z",
+    "updated_at": "2026-09-14T00:00:00+02:00",
+    "retrieved_at": "2026-09-15T06:30:00Z",
     "content_hash": null
   },
   "verification": {
     "status": "NEEDS_REVIEW",
     "last_verified_at": null,
     "human_review_required": true,
-    "review_notes": "Maskinellt normaliserad 2026-09-14 från Boverkets aktuella primärvägledning och gällande Förordning (2023:402), ändrad t.o.m. SFS 2026:1519. Mänsklig sakgranskning krävs före VERIFIED. Kontrollera särskilt exakt produkt-/energieffektivitetskrav, anslagsläge, hur tidigare bidrag räknas mot maxbeloppet, aktuell ansökningsblankett/e-tjänst och eventuella ändringar efter 2026-09-14. Nyhetsartikeln om Villaeffekten är discovery-signal, inte regelkälla.",
+    "review_notes": "Maskinellt återkontrollerad 2026-09-15 mot Boverkets primärvägledning, senast ändrad 2026-09-14, samt gällande Förordning (2023:402), ändrad t.o.m. SFS 2026:1519. Fortsatt NEEDS_REVIEW: mänsklig sakgranskning krävs före VERIFIED. Färskhetskontrollen låser särskilt skillnaden mellan befintlig fjärrvärmeanslutning och planerad ny anslutning, entreprenadbeställning som materialbeställningsdatum enligt Boverkets vägledning, försäkringsersättningsgränsen, anslutningsavgift kontra material samt aktuella tidsfrister. Kontrollera även exakt produkt-/energieffektivitetskrav, anslagsläge och ansökningskanal vid användningstillfället.",
     "material_fields_verified": []
   },
   "lifecycle": {
     "first_seen_at": "2026-09-14T13:30:00Z",
-    "last_seen_at": "2026-09-14T13:30:00Z",
+    "last_seen_at": "2026-09-15T06:30:00Z",
     "valid_from": "2026-09-01",
     "valid_to": null,
-    "version": 1,
+    "version": 2,
     "change_hash": null
   }
 }
