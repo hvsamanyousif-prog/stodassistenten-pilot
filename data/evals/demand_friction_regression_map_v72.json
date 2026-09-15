@@ -5,6 +5,7 @@
   "mappings": [
     {
       "signal_id": "df-relative-representation-fullmakt-scope-v01",
+      "product_miss": "The existing relative_care route had no focused public boundary for acting as an ombud or using a fullmakt, so kinship or a generic fullmakt could be mistaken for universal authority.",
       "regression_case_ids": [
         "lab-relative-relationship-not-automatic-authority-v72-01",
         "lab-relative-existing-power-scope-v72-02",
