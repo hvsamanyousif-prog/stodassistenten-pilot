@@ -26,11 +26,10 @@ def main() -> int:
     assert len(markup.ids) == len(set(markup.ids)), 'Duplicate DOM IDs'
     required = {'startBtn','sampleBtn','profileCard','sectorGrid','sourceCard','sourceText',
                 'sourceUrl','analyzeBtn','clearBtn','analysisCard','summary','requirements',
-                'draft','feedbackCard','scoreRows','foundIssue','useful','clearNext',
-                'sendFeedback','copyReport','feedbackStatus'}
+                'editSourceBtn','restartBtn','draft','feedbackCard','scoreRows','foundIssue',
+                'useful','clearNext','sendFeedback','copyReport','feedbackStatus'}
     assert required <= set(markup.ids), 'Missing interactive DOM contract'
     assert markup.scripts == ['client/procurement-expert-pilot.js'], 'Unexpected script boundary'
-    # Preserve safety meaning, not obsolete English marketing copy.
     for text in ('sekretessbelagd','lokalt i webbläsaren','inte ett färdigt anbud',
                  'bilagor, rättelser och publicerade frågor/svar','inte ett verifierat bevis',
                  'Inga underlagstexter eller företagsuppgifter skickas'):
@@ -65,8 +64,29 @@ test('81st-requirement-retained',()=>assert.equal(p.splitRequirements(Array.from
 test('line-limit-explicit',()=>assert.throws(()=>p.splitRequirements(Array(401).fill('Intyg ska bifogas.').join('\n')),RangeError));
 test('text-limit-explicit',()=>assert.throws(()=>p.splitRequirements('x'.repeat(100001)),RangeError));
 test('empty-is-not-complete',()=>assert.equal(p.summarize(p.splitRequirements('  \n')).tone,'notice'));
+test('long-paragraph-risk-visible-contract',()=>{
+ const text='Leverantören ska redovisa metod. '+('Fortsatt kravtext och sammanhang. '.repeat(25));
+ const row=p.splitRequirements(text)[0];
+ assert.ok(row.flags.some(f=>f.code==='long_paragraph'));
+ assert.match(row.flags.find(f=>f.code==='long_paragraph').label,/Långt stycke/);
+});
+test('attachment-reference-risk-visible-contract',()=>{
+ const row=p.splitRequirements('Bilaga 7 innehåller obligatoriska tekniska krav.')[0];
+ assert.ok(row.flags.some(f=>f.code==='attachment_reference'));
+ assert.match(row.flags.find(f=>f.code==='attachment_reference').label,/Bilagehänvisning/);
+});
+test('conditional-risk-visible-contract',()=>{
+ const row=p.splitRequirements('Leverantören ska lämna intyg, men kravet gäller inte om beställaren godkänner likvärdigt bevis.')[0];
+ assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'));
+ assert.match(row.flags.find(f=>f.code==='conditional_or_exception').label,/Villkor eller undantag/);
+});
+test('structure-risk-remains-unresolved-after-manual-yes',()=>{
+ const rows=p.splitRequirements('Bilaga 7 innehåller obligatoriska tekniska krav.'); rows[0].evidence='yes';
+ assert.equal(p.summarize(rows).uncertain.length,1);
+ assert.equal(p.summarize(rows).tone,'notice');
+});
 for(const category of p.CATEGORIES) test(`missing-${category}-never-positive`,()=>{
- const r={id:1,sourceLine:3,text:'Exakt syntetiskt krav',category,evidence:'missing'};
+ const r={id:1,sourceLine:3,text:'Exakt syntetiskt krav',category,evidence:'missing',flags:[]};
  const s=p.summarize([r]); assert.equal(s.blocking.length,1);assert.equal(s.tone,'warn');
  assert.match(p.draftSkeleton([r]),/STOPP: saknat styrkbart bevis/);
  assert.match(p.draftSkeleton([r]),/Exakt syntetiskt krav/);
