@@ -1,0 +1,34 @@
+name: Procurement clarification v71
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-procurement-clarification-v71:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run executable company scenarios
+        run: node scripts/run_company_pilot_scenarios.mjs
+      - name: Validate v71 truth, product and learning guardrails
+        run: python scripts/validate_procurement_clarification_v71.py
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand-friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with same company module
+        run: |
+          python scripts/build_public_pilot.py --output _site-v71
+          grep -q 'Frågor och svar i upphandlingsverktyget' _site-v71/company-pilot.html
+          grep -q 'Rättelse, förtydligande och komplettering är villkorat' _site-v71/company-pilot.html
