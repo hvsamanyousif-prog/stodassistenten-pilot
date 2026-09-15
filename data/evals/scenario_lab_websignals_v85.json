@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v85 runtime regressions for the SAME Stödassistenten intelligence. Natural-language child personal-assistance context must survive the existing disability-home-support handoff, select the current child primary source instead of silently falling back to the adult source, preserve sv/ar/fa semantics and fail closed on professional/research wording without creating a parallel child app or matcher.",
+  "cases": [
+    {
+      "case_id": "lab-child-assistance-runtime-child-sv-v85-01",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn behöver personlig assistans hemma. Vart ska vi börja?",
+      "expected_support_areas": ["child_personal_assistance", "disability_home_support", "context_preservation"],
+      "must_not_claim": ["adult_assistance_page_is_the_child_source", "guaranteed_entitlement", "raw_story_may_be_serialized"],
+      "expected_questions": ["q_none_to_repeat_child_subject_already_known"],
+      "expected_next_actions": ["preserve_support_for_child_in_existing_handoff", "show_current_forsakringskassan_child_assistance_source"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-adult-sv-v85-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag behöver personlig assistans hemma. Vart ska jag börja?",
+      "expected_support_areas": ["adult_personal_assistance", "disability_home_support", "context_preservation"],
+      "must_not_claim": ["child_assistance_page_is_the_adult_source", "guaranteed_entitlement"],
+      "expected_questions": ["q_none_to_repeat_adult_subject_already_known"],
+      "expected_next_actions": ["preserve_support_for_adult_in_existing_handoff", "show_current_forsakringskassan_adult_assistance_source"],
+      "source_requirements": ["current_forsakringskassan_adult_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-healthcare-v85-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn behöver personlig assistans och sjuksköterska hemma.",
+      "expected_support_areas": ["child_personal_assistance", "home_healthcare", "parallel_route_boundary", "context_preservation"],
+      "must_not_claim": ["personal_assistance_and_healthcare_are_one_entitlement", "adult_assistance_page_is_the_child_source", "same_authority_decides_both_routes"],
+      "expected_questions": ["q_none_to_repeat_child_subject_already_known"],
+      "expected_next_actions": ["keep_child_subject_on_assistance_healthcare_handoff", "use_child_assistance_source_and_separate_current_healthcare_source"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source", "current_healthcare_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-unknown-subject-v85-04",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag vill förstå personlig assistans och har öppnat stöd hemma-vägen utan att säga vem hjälpen gäller.",
+      "expected_support_areas": ["personal_assistance", "missing_fact_information_gain", "fail_closed_source_selection"],
+      "must_not_claim": ["assume_adult_without_subject_fact", "assume_child_without_subject_fact", "guaranteed_entitlement"],
+      "expected_questions": ["q_subject_only_if_needed_to_choose_one_primary_source"],
+      "expected_next_actions": ["keep_both_current_adult_and_child_primary_sources_visible_until_subject_is_known"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source", "current_forsakringskassan_adult_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-professional-v85-05",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar med barn och personlig assistans i kommunen. Vilka regeländringar gäller?",
+      "expected_support_areas": ["no_personal_assistance_route_without_personal_need_signal", "professional_false_positive_guard"],
+      "must_not_claim": ["user_is_guardian", "user_needs_personal_assistance", "user_should_apply_personally"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["remove_personal_disability_handoff_for_professional_context"],
+      "source_requirements": ["current_primary_source_required_before_material_assistance_claim"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-worker-personal-v85-06",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar deltid och behöver personlig assistans hemma.",
+      "expected_support_areas": ["adult_personal_assistance", "professional_false_positive_guard"],
+      "must_not_claim": ["working_means_professional_assistance_context", "suppress_personal_need_because_user_has_a_job"],
+      "expected_questions": ["q_none_to_repeat_adult_subject_already_known"],
+      "expected_next_actions": ["keep_personal_assistance_route_open"],
+      "source_requirements": ["current_forsakringskassan_adult_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-language-ar-v85-07",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "طفلي يحتاج إلى مساعدة شخصية في المنزل. من أين نبدأ؟",
+      "expected_support_areas": ["child_personal_assistance", "context_preservation", "language_parity"],
+      "must_not_claim": ["adult_route_because_language_is_arabic", "different_truth_boundary_because_language_is_arabic"],
+      "expected_questions": ["q_none_to_repeat_child_subject_already_known"],
+      "expected_next_actions": ["preserve_support_for_child_in_arabic_handoff", "show_same_child_primary_source_semantics_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-runtime-language-fa-v85-08",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزندم در خانه به کمک شخصی نیاز دارد. از کجا شروع کنیم؟",
+      "expected_support_areas": ["child_personal_assistance", "context_preservation", "language_parity"],
+      "must_not_claim": ["adult_route_because_language_is_persian", "different_truth_boundary_because_language_is_persian"],
+      "expected_questions": ["q_none_to_repeat_child_subject_already_known"],
+      "expected_next_actions": ["preserve_support_for_child_in_persian_handoff", "show_same_child_primary_source_semantics_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    }
+  ]
+}
