@@ -55,7 +55,8 @@ def main():
         require(token in module, f"public regime copy missing parity/boundary token: {token}")
     require("AF_FIRST_DAY_URL" in module and "arbetslos---vad-hander-nu" in module, "first-day Arbetsförmedlingen source missing")
     require("IAF_REGIME_URL" in module and "iaf.se" in module, "IAF two-regime source missing")
-    require("work === 'unemployed'" in module and "work === 'akassa'" in module, "newly unemployed and existing recipient paths must be distinct")
+    require("work !== 'unemployed'" in module and "work !== 'akassa'" in module, "newly unemployed and existing recipient paths must be explicitly guarded")
+    require("if (work === 'unemployed')" in module, "newly unemployed must have a distinct first-day ordering")
     require("baseRows.slice(2)" in module, "v79 must preserve existing overlap candidates instead of replacing the matcher")
 
     public_text = module + "\n" + test
