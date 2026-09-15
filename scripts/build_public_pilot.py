@@ -45,6 +45,7 @@ ADULT_EXTRA_COSTS_PATH = "client/adult-extra-costs-guidance.js"
 CHILD_MAINTENANCE_PATH = "client/child-maintenance-guidance.js"
 OLDER_HOME_SUPPORT_PATH = "client/older-home-support-guidance.js"
 DISABILITY_HOME_SUPPORT_PATH = "client/disability-home-support-guidance.js"
+CHILD_ASSISTANCE_CONTEXT_PATH = "client/child-assistance-context-extension.js"
 MOBILITY_TRANSPORT_PATH = "client/mobility-transport-guidance.js"
 BEREAVEMENT_GUIDANCE_PATH = "client/bereavement-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
@@ -82,6 +83,7 @@ SHELL_RUNTIME_PATHS = (
     CHILD_MAINTENANCE_PATH,
     OLDER_HOME_SUPPORT_PATH,
     DISABILITY_HOME_SUPPORT_PATH,
+    CHILD_ASSISTANCE_CONTEXT_PATH,
     MOBILITY_TRANSPORT_PATH,
     BEREAVEMENT_GUIDANCE_PATH,
 )
@@ -118,6 +120,7 @@ SCRIPT_PATHS = (
     CHILD_MAINTENANCE_PATH,
     OLDER_HOME_SUPPORT_PATH,
     DISABILITY_HOME_SUPPORT_PATH,
+    CHILD_ASSISTANCE_CONTEXT_PATH,
     MOBILITY_TRANSPORT_PATH,
     BEREAVEMENT_GUIDANCE_PATH,
 )
