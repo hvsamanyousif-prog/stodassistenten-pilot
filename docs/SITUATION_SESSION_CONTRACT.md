@@ -16,6 +16,8 @@ Följande ytor använder samma v1-kontrakt:
 
 Språk är presentations- och interaktionskontext, inte en alternativ matchningsmotor. `sv`, `ar` och `fa` använder samma `actor_type`, `focus` och tillåtna grova fakta. RTL eller översatt copy får alltså inte ändra vilken semantisk situation som skickas vidare.
 
+Aktörsvokabulären är också gemensam och måste återanvända produktens redan levande tokens: `private_person`, `relative`, `student`, `employee`, `company`, `association`, `property_actor` och `other`. Nya klienter får inte döpa om en befintlig aktör och därmed skapa ett parallellt state-språk. Exempelvis använder den publika CSN-vägen redan `actor_type=student`; samma token ska därför användas på web, iOS och Android.
+
 ## Sessionsprofil
 
 En intern klientprofil kan innehålla:
@@ -89,6 +91,7 @@ Det gör bara kärnsemantiken portabel så att en framtida mobilklient kan spela
 
 - web/ios/android använder samma v1-kontrakt,
 - sv/ar/fa inte ändrar `focus` eller grov faktasemantik,
+- aktörsvokabulären exakt matchar den levande produkten och att studentvägen använder samma `student`-token på alla ytor,
 - rå situation aldrig hamnar i public handoff/snapshot,
 - känsliga nycklar och prose-liknande transportvärden stoppas,
 - grova fakta kräver explicit capability-allowlist,

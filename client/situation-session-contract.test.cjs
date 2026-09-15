@@ -3,6 +3,7 @@ const contract = require('./situation-session-contract.js');
 
 assert.deepEqual([...contract.SURFACES], ['web','ios','android']);
 assert.deepEqual([...contract.LANGUAGES], ['sv','ar','fa']);
+assert.deepEqual([...contract.ACTOR_TYPES], ['private_person','relative','student','employee','company','association','property_actor','other']);
 
 const syntheticStory = 'Jag behöver stöd hemma och vill hitta rätt väg.';
 const web = contract.makeSessionProfile({
@@ -50,6 +51,17 @@ for (const surface of ['web','ios','android']) {
 }
 assert.equal(safeBySurface.web.actor_type,safeBySurface.ios.actor_type);
 assert.equal(safeBySurface.ios.actor_type,safeBySurface.android.actor_type);
+
+// Regression v57: the shared contract must use the exact actor token already
+// emitted and consumed by the live student/CSN web route. A second student
+// vocabulary would split semantic state between web and future mobile clients.
+for (const surface of ['web','ios','android']) {
+  const p=contract.makeSessionProfile({surface,language:'sv',actorType:'student',focus:'student_csn'});
+  const u=new URLSearchParams(contract.buildPublicHandoff(p));
+  assert.equal(u.get('actor_type'),'student');
+  assert.equal(u.get('focus'),'student_csn');
+}
+assert.throws(()=>contract.makeSessionProfile({actorType:'student_young_adult',focus:'student_csn'}),/actorType is not allowed/);
 
 // Fail closed: sensitive/arbitrary keys or prose-like values never become coarse transport facts.
 assert.throws(()=>contract.makeSessionProfile({coarseFacts:{diagnosis:'adhd'}}),/forbidden coarse fact key/);
