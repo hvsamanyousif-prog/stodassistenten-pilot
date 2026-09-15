@@ -23,10 +23,24 @@ assert.equal(care.detect('مادرم بیماری بسیار شدید دارد �
 assert.equal(care.detect('از مادر سالمندم مراقبت می کنم و حمایت می خواهم'), true);
 assert.equal(care.detectContext('از مادر سالمندم مراقبت می کنم و حمایت می خواهم'), 'municipal_support');
 
+// v72: representation/fullmakt is a boundary inside the same relative_care route.
+assert.equal(care.detectContext('Kan jag ansöka åt min mamma bara för att jag är hennes dotter?'), 'representation');
+assert.equal(care.detectContext('Jag har fullmakt för min pappa. Kan jag sköta hans Försäkringskasseärende?'), 'representation');
+assert.equal(care.detectContext('Jag har fullmakt och hjälper min partner med vården. Kan jag fatta beslut åt henne?'), 'representation');
+assert.equal(care.detectContext('Jag jobbar med fullmakter på kommunen och utbildar kollegor om ombud.'), null);
+assert.equal(care.detectContext('لدي توكيل من والدي، هل يمكنني أن أقدم الطلب نيابة عنه؟'), 'representation');
+assert.equal(care.detectContext('برای پدرم وکالت‌نامه دارم، آیا می‌توانم به نمایندگی از او درخواست بدهم؟'), 'representation');
+
 const href = care.handoffHref('sv');
 assert.equal(href, 'person-pilot.html?actor_type=relative&focus=relative_care&lang=sv');
 assert.equal(care.handoffHref('sv', 'municipal_support'), 'person-pilot.html?actor_type=relative&focus=relative_care&lang=sv&care_context=municipal_support');
 assert.equal(care.handoffHref('sv', 'near_relative_benefit'), 'person-pilot.html?actor_type=relative&focus=relative_care&lang=sv&care_context=near_relative_benefit');
+const representationHref = care.handoffHref('sv', 'representation');
+assert.equal(representationHref, 'person-pilot.html?actor_type=relative&focus=relative_care&lang=sv&care_context=representation');
+assert.equal(representationHref.includes('fullmakt'), false);
+assert.equal(representationHref.includes('pappa'), false);
+assert.equal(representationHref.includes('personnummer'), false);
+assert.equal(representationHref.includes('story='), false);
 assert.equal(care.handoffHref('sv', 'raw_story'), href);
 assert.equal(href.includes('q='), false);
 assert.equal(href.includes('mamma'), false);
