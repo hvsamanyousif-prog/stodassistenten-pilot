@@ -1,0 +1,41 @@
+name: Validate student sickness v67
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check student sickness JavaScript syntax
+        run: node --check client/student-finance-sickness-extension.js
+      - name: Run student sickness regressions
+        run: node client/student-finance-sickness-extension.test.cjs
+      - name: Keep existing student finance regressions green
+        run: node client/student-finance-guidance.test.cjs
+      - name: Build public pilot
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify public pilot build
+        run: python scripts/test_public_pilot_build.py --site _site
+      - name: Verify sickness extension is shipped once in both shared surfaces
+        run: |
+          test -f _site/client/student-finance-sickness-extension.js
+          test "$(grep -c 'student-finance-sickness-extension.js' _site/index.html)" -eq 1
+          test "$(grep -c 'student-finance-sickness-extension.js' _site/person-pilot.html)" -eq 1
