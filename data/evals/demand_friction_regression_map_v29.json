@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-older-home-support-care-vs-healthcare-v01",
+      "product_miss": "The shared public product had no route for an older person's own help-at-home need and could not distinguish social home support from healthcare at home or from a relative's separate caregiver-support goal.",
+      "regression_case_ids": [
+        "lab-older-home-support-daily-living-v53-01",
+        "lab-older-home-support-vs-home-healthcare-v53-02",
+        "lab-relative-older-needs-support-not-caregiver-benefit-v53-03",
+        "lab-older-local-process-no-universal-bistandsprovning-v53-04"
+      ],
+      "fix_or_guardrail": "Keep the capability inside the existing public shell and person pilot. Detect natural older-person help-at-home needs, ask only whether the need is daily-living support, healthcare at home, both or unsure, then route to current official municipal eldercare information and/or 1177/local healthcare information. Preserve the existing relative-care route when the user's goal is the caregiver's own support or near-relative benefit rather than the older person's own home support.",
+      "truth_guardrail": "Socialstyrelsen, 1177 and current Socialtjänstlag carry the national boundary. Do not infer eligibility, hours, fees, medical need, a universal biståndshandläggare process, or whether municipality or region runs home healthcare locally. Current law permits many personal-needs services without individual needs assessment but does not prove a particular local service is offered that way.",
+      "privacy_guardrail": "Do not put raw situation text, name, personnummer, exact address, municipality, diagnosis, medication, medical record details or relative identity in URL or structured feedback. The handoff may carry only focus, language and a coarse support_need value; feedback may contain only coarse route/support_need and product ratings.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}

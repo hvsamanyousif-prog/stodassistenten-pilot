@@ -42,6 +42,7 @@ SCHOOL_SUPPORT_PATH = "client/school-support-guidance.js"
 PROPERTY_CHARGING_PATH = "client/property-charging-guidance.js"
 ADULT_EXTRA_COSTS_PATH = "client/adult-extra-costs-guidance.js"
 CHILD_MAINTENANCE_PATH = "client/child-maintenance-guidance.js"
+OLDER_HOME_SUPPORT_PATH = "client/older-home-support-guidance.js"
 QUICK_LEARNING_PATH = "client/quick-help-feedback.js"
 QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"
 HOUSING_GUIDANCE_PATH = "client/housing-adaptation-guidance.js"
@@ -72,6 +73,7 @@ SHELL_RUNTIME_PATHS = (
     PROPERTY_CHARGING_PATH,
     ADULT_EXTRA_COSTS_PATH,
     CHILD_MAINTENANCE_PATH,
+    OLDER_HOME_SUPPORT_PATH,
 )
 QUICK_RUNTIME_PATHS = (QUICK_LEARNING_PATH, QUICK_GUIDANCE_PATH, HOUSING_GUIDANCE_PATH, DENTAL_67_GUIDANCE_PATH)
 SCRIPT_PATHS = (
@@ -101,6 +103,7 @@ SCRIPT_PATHS = (
     PROPERTY_CHARGING_PATH,
     ADULT_EXTRA_COSTS_PATH,
     CHILD_MAINTENANCE_PATH,
+    OLDER_HOME_SUPPORT_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
