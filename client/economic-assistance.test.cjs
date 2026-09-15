@@ -24,7 +24,7 @@ assert.equal(mod.coarseContext('لدي ديون وفواتير غير مدفوع
 assert.equal(mod.detect('بدهی و قبض‌های پرداخت‌نشده دارم و نمی‌دانم از کجا شروع کنم'), true);
 assert.equal(mod.coarseContext('بدهی و قبض‌های پرداخت‌نشده دارم و نمی‌دانم از کجا شروع کنم'), 'debt');
 
-// Acute essential-cost risk must not be hidden behind debt counselling.
+// Acute essential-cost risk must not be hidden behind general debt counselling.
 assert.equal(mod.coarseContext('Jag har inkasso och kan inte betala hyran nu'), 'housing');
 assert.equal(mod.coarseContext('Jag har skulder och har inte råd med mat'), 'basic_needs');
 
@@ -32,6 +32,20 @@ assert.equal(mod.coarseContext('Jag har skulder och har inte råd med mat'), 'ba
 assert.equal(mod.detect('Jag jobbar på Kronofogden som handläggare'), false);
 assert.equal(mod.detect('Jag har en skuld hos Kronofogden'), true);
 assert.equal(mod.coarseContext('Jag har en skuld hos Kronofogden'), 'debt');
+
+// v63: a real Kronofogden demand notice has its own time-sensitive next-action context.
+assert.equal(mod.detect('Jag fick ett betalningsföreläggande från Kronofogden idag'), true);
+assert.equal(mod.coarseContext('Jag fick ett betalningsföreläggande från Kronofogden idag'), 'kfm_notice');
+assert.equal(mod.detect('Jag fick ett brev från Kronofogden med ett krav men vet inte om det stämmer'), true);
+assert.equal(mod.coarseContext('Jag fick ett brev från Kronofogden med ett krav men vet inte om det stämmer'), 'kfm_notice');
+assert.equal(mod.detect('وصلتني رسالة من Kronofogden فيها مطالبة بالدفع'), true);
+assert.equal(mod.coarseContext('وصلتني رسالة من Kronofogden فيها مطالبة بالدفع'), 'kfm_notice');
+assert.equal(mod.detect('از Kronofogden نامه مطالبه دریافت کرده‌ام'), true);
+assert.equal(mod.coarseContext('از Kronofogden نامه مطالبه دریافت کرده‌ام'), 'kfm_notice');
+
+// Do not over-trigger from generic letters or work context.
+assert.equal(mod.detect('Jag fick ett vanligt brev från banken'), false);
+assert.equal(mod.detect('Jag jobbar på Kronofogden och skriver brev hela dagen'), false);
 
 const housingHref = mod.handoffHref('sv', 'housing');
 assert.equal(housingHref, 'person-pilot.html?actor_type=private_person&focus=economic_assistance&context=housing&lang=sv');
@@ -44,6 +58,13 @@ assert.equal(debtHref, 'person-pilot.html?actor_type=private_person&focus=econom
 assert.ok(!debtHref.includes('creditor='));
 assert.ok(!debtHref.includes('skuldbelopp='));
 assert.ok(!debtHref.includes('story='));
+
+const noticeHref = mod.handoffHref('sv', 'kfm_notice');
+assert.equal(noticeHref, 'person-pilot.html?actor_type=private_person&focus=economic_assistance&context=kfm_notice&lang=sv');
+assert.ok(!noticeHref.includes('case_number='));
+assert.ok(!noticeHref.includes('claim_amount='));
+assert.ok(!noticeHref.includes('deadline='));
+assert.ok(!noticeHref.includes('story='));
 
 const arabicHref = mod.handoffHref('ar', 'basic_needs');
 assert.ok(arabicHref.includes('lang=ar'));

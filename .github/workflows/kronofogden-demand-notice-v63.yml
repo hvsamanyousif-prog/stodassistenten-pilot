@@ -1,0 +1,51 @@
+name: Validate Kronofogden demand notice v63
+
+on:
+  pull_request:
+    paths:
+      - 'client/economic-assistance.js'
+      - 'client/economic-assistance.test.cjs'
+      - 'data/evals/scenario_lab_websignals_v63.json'
+      - 'data/evals/demand_friction_signals_v63.json'
+      - 'data/evals/demand_friction_regression_map_v63.json'
+      - 'scripts/validate_demand_friction_learning_loop.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_economic_assistance_product.py'
+      - '.github/workflows/kronofogden-demand-notice-v63.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/economic-assistance.js'
+      - 'client/economic-assistance.test.cjs'
+      - 'data/evals/scenario_lab_websignals_v63.json'
+      - 'data/evals/demand_friction_signals_v63.json'
+      - 'data/evals/demand_friction_regression_map_v63.json'
+      - 'scripts/validate_demand_friction_learning_loop.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_economic_assistance_product.py'
+      - '.github/workflows/kronofogden-demand-notice-v63.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check JavaScript syntax and economy routing regressions
+        run: |
+          node --check client/economic-assistance.js
+          node client/economic-assistance.test.cjs
+      - name: Validate shared learning loop and scenario factory
+        run: |
+          python scripts/validate_demand_friction_learning_loop.py
+          python scripts/validate_scenario_lab_all.py
+      - name: Validate existing economic-assistance product and public build
+        run: python scripts/validate_economic_assistance_product.py
