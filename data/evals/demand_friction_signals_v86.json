@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Natural-language wording and usage statistics are discovery signals only; material child-benefit and VAB guidance must come from current Försäkringskassan primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize child/guardian situations where a diagnosis-heavy story can hide the route-changing difference between extra care/supervision, qualifying extra costs, VAB overlap and personal-assistance coverage."
+  },
+  "signals": [
+    {
+      "signal_id": "df-child-extra-care-cost-boundary-v01",
+      "actor_types": ["parent_guardian", "private_person", "employee", "relative"],
+      "natural_language_queries": [
+        "mitt barn har adhd och jag måste hjälpa och övervaka mycket hemma finns det stöd",
+        "kan jag få vårdbidrag för mitt barn",
+        "omvårdnadsbidrag eller merkostnadsersättning vad är skillnaden",
+        "jag betalar extra för mitt barns funktionsnedsättning finns det stöd",
+        "jag har omvårdnadsbidrag kan jag vabba på skolmöte",
+        "mitt barn har personlig assistans kan vi också få omvårdnadsbidrag",
+        "طفلي يحتاج إلى رعاية ومراقبة إضافية في المنزل هل يوجد دعم",
+        "برای مراقبت بیشتر از فرزندم و هزینه‌های اضافی چه حمایتی هست"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan publicerar löpande månadsstatistik för omvårdnadsbidrag och redovisar en stadig ökning sedan införandet 2019. Första halvåret 2026 använde nästan 2 500 personer de nya VAB-situationerna för bland annat skolmöten, socialtjänstutredning och utbildning av skolpersonal. Detta är kvalitativ räckvidds- och prioriteringssignal, not measured search volumes."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Färsk produktgranskning visar flera starka barnvägar för skola, VAB, personlig assistans och stöd hemma men ingen explicit normaliserad gräns mellan omvårdnadsbidragets extra omvårdnad/tillsyn och merkostnadsersättningens extra kostnader. Det gamla ordet vårdbidrag kan dessutom leda till fel begrepp eller gammal väg."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "En miss kan ge fel stödtyp, diagnosdriven överkonfidens, dubbelräkning mot personlig assistans eller ett för säkert ja/nej om VAB. Det kan öka antalet steg och göra att en förälder missar en relevant aktuell väg."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Omvårdnadsbidrag, merkostnadsersättning, VAB och assistansersättning har separata primärkällor och delvis överlappande behov. VAB-interaktionen beror dessutom på vilket behov som redan täcks och i vissa fall när omvårdnadsbidragsbeslutet fattades."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Skillnaden mellan care/supervision och extra costs är begreppstung även på svenska och måste förstås från vardagliga formuleringar på svenska, arabiska och persiska utan att diagnosord blir en genväg till eligibility."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "När berättelsen redan tydligt säger extra tillsyn eller extra kostnader ska produkten återanvända den faktan. Endast när gränsen faktiskt är oklar behövs en kort route-changing fråga innan rätt Försäkringskassan-källa visas."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Försäkringskassan har separata aktuella sidor för omvårdnadsbidrag och merkostnadsersättning, löpande statistik och särskilda frågor om VAB/assistansöverlapp. Den äldre termen vårdbidrag finns samtidigt kvar i människors begreppsvärld och i historisk myndighetsinformation. Detta är kvalitativ återkomstsignal, not measured search volumes."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "Fresh-main audit found child school-support, VAB, assistance and disability-home-support coverage, but no explicit support record or Scenario-Lab contract for omvårdnadsbidrag versus merkostnadsersättning and no permanent legacy-vårdbidrag or VAB-overlap regression."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/statistik-och-analys/funktionsnedsattning/statistik-inom-omradet-funktionsnedsattning---omvardnadsbidrag/hur-manga-barn-omfattas-av-omvardnadsbidraget",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-06-30-ny-mojlighet-att-vabba-har-nyttjats-mest-for-moten-i-skolan",
+        "https://www.forsakringskassan.se/statistik-och-analys/funktionsnedsattning/statistik-inom-omradet-funktionsnedsattning---vardbidrag"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/omvardnadsbidrag",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-03-30-kortare-tid-for-att-ansoka-om-vab"
+      ],
+      "product_miss": "The same Stödassistenten has child school-support, VAB and personal-assistance routes but lacks an explicit truth/regression boundary for extra care and supervision versus qualifying extra costs, legacy 'vårdbidrag' language, and VAB/personal-assistance overlap. This can turn a diagnosis-heavy child story into generic guidance or the wrong next step.",
+      "future_guardrail": "Keep one family/child intelligence. Treat diagnosis as context, never entitlement. Distinguish extra care/supervision from qualifying extra costs; reuse VAB and personal-assistance routes; ask only the minimum route-changing question when the user's story does not already establish the need type. Never copy raw child/family text into feedback or public eval data.",
+      "regression_case": [
+        "lab-child-care-support-adhd-extra-care-v86-01",
+        "lab-child-care-support-extra-costs-v86-02",
+        "lab-child-care-support-legacy-vardbidrag-v86-03",
+        "lab-child-care-support-vab-school-meeting-v86-04",
+        "lab-child-care-support-assistance-overlap-v86-05",
+        "lab-child-care-support-diagnosis-only-v86-06",
+        "lab-child-care-support-professional-v86-07",
+        "lab-child-care-support-language-ar-v86-08",
+        "lab-child-care-support-language-fa-v86-09"
+      ],
+      "evaluation_method": "Primary-source truth boundary + care-vs-cost synthetic scenarios + legacy-term routing + VAB/assistance overlap falsification + professional false-positive guard + sv/ar/fa parity + no-volatile-amount regression.",
+      "recommended_learning_action": "Add normalized NEEDS_REVIEW records and permanent scenarios in the existing learning/truth system first. A later public route must consume those same records and existing family/VAB/assistance surfaces rather than introducing a child-benefit app or duplicate matcher.",
+      "truth_rule": "Verify all material eligibility, duration, thresholds, current amounts, VAB overlap/date rules, application timing, personal-assistance interaction and application routes against current responsible Försäkringskassan primary sources before use. Do not promote a diagnosis, care story, cost story or discovery signal to VERIFIED eligibility."
+    }
+  ]
+}

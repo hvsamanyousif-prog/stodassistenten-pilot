@@ -1,0 +1,107 @@
+{
+  "support_id": "se-forsakringskassan-merkostnadsersattning-barn",
+  "name": "Merkostnadsersättning för barn",
+  "category": "family_children",
+  "subtype": "child_disability_extra_costs",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": ["child", "parent_guardian", "disability", "extra_costs"],
+    "age_min": 0,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "merkostnad_child.disability_duration",
+        "field": "child_disability_expected_duration",
+        "operator": "text_condition",
+        "value": "Försäkringskassans aktuella sida anger att barnet ska ha en funktionsnedsättning som påverkar barnet under minst 6 månader.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+        "notes": "Produkten ska inte själv avgöra om varaktighetsvillkoret är uppfyllt."
+      },
+      {
+        "rule_id": "merkostnad_child.qualifying_extra_costs",
+        "field": "qualifying_extra_costs_due_to_disability",
+        "operator": "text_condition",
+        "value": "Det centrala är vilka extra kostnader som beror på barnets funktionsnedsättning och om Försäkringskassan kan räkna dem som merkostnader enligt aktuella regler.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+        "notes": "Diagnosen i sig avgör inte rätten. Produkten ska inte anta att varje extra utgift är en godkänd merkostnad."
+      },
+      {
+        "rule_id": "merkostnad_child.public_reimbursement_boundary",
+        "field": "cost_not_already_reimbursed_by_public_actor",
+        "operator": "text_condition",
+        "value": "Försäkringskassan bedömer vilka kostnader som kan räknas som merkostnader; kostnader som täcks på annat sätt ska inte automatiskt räknas in av Stödassistenten.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+        "notes": "Kommunal, regional eller statlig ersättning för samma kostnad måste kontrolleras mot aktuell primärkälla innan produkten gör materiella påståenden."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "merkostnad_child.cost_examples",
+        "prompt": "Vilka extra kostnader har ni på grund av barnets funktionsnedsättning?",
+        "reason": "Kostnadstypen behövs för att kontrollera om den kan vara en merkostnad enligt aktuell Försäkringskassan-väg."
+      },
+      {
+        "question_id": "merkostnad_child.other_reimbursement",
+        "prompt": "Får ni redan ersättning för samma kostnad från kommun, region, stat eller någon annan offentlig aktör?",
+        "reason": "Det kan ändra om kostnaden ska prövas i merkostnadsersättningsspåret."
+      },
+      {
+        "question_id": "merkostnad_child.care_parallel",
+        "prompt": "Gäller frågan också att barnet behöver extra omvårdnad eller tillsyn jämfört med barn i samma ålder?",
+        "reason": "Extra omvårdnad/tillsyn har en separat omvårdnadsbidragsväg och ska inte blandas ihop med kostnadsspåret."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Försäkringskassan bedömer om kostnaderna är merkostnader och om den aktuella kostnadsnivån når gällande gräns. Trösklar och belopp är tidskänsliga och ska hämtas från aktuell primärkälla; Stödassistenten ska inte hårdkoda dem.",
+    "recurrence": null
+  },
+  "documents": [
+    "Underlag som beskriver barnets funktionsnedsättning enligt Försäkringskassans aktuella krav",
+    "Sammanställning och underlag för extra kostnader som påstås bero på barnets funktionsnedsättning"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+    "deadline_text": null,
+    "next_step": "Beskriv de konkreta extra kostnaderna och kontrollera Försäkringskassans aktuella sida för vilka kostnader, gränser och underlag som gäller innan Stödassistenten gör materiella påståenden."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/barn-med-funktionsnedsattning-eller-behov-av-extra-stod/merkostnadsersattning-for-barn",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-15T17:40:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkälla kontrollerad 2026-09-15. Mänsklig granskning krävs före VERIFIED. Särskilt ska aktuell varaktighet, åldersgräns, kostnadstyper, miniminivå, ersättning från andra aktörer, belopp och ansökningskrav kontrolleras. Diagnos får aldrig användas som ensam eligibility-signal.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T17:40:00Z",
+    "last_seen_at": "2026-09-15T17:40:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
