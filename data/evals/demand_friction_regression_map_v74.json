@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v74 bereavement demand/friction signal into permanent regressions in the same Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-bereavement-first-action-v01",
+      "product_miss": "The canonical source/truth layer already knew Pensionsmyndigheten survivor_support, but the public product had no focused first-action route for a death in the family, allowing practical estate steps, partner/child survivor support and work-related-death questions to collapse into generic guidance.",
+      "regression_case_ids": [
+        "lab-bereavement-partner-first-action-v74-01",
+        "lab-bereavement-child-parent-v74-02",
+        "lab-bereavement-practical-estate-v74-03",
+        "lab-bereavement-work-related-v74-04",
+        "lab-bereavement-vague-relative-v74-05",
+        "lab-bereavement-professional-false-positive-v74-06",
+        "lab-bereavement-language-ar-v74-07",
+        "lab-bereavement-language-fa-v74-08"
+      ],
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY",
+      "fix_or_guardrail": "Extend the same actor_type=relative person route with focus=bereavement and one bounded bereavement_context; when context is unknown ask at most one route-changing first-action question, preserve overview as a non-looping choice, and never infer benefit entitlement, inheritance, estate authority or work-injury status from free text.",
+      "truth_boundary": "Community discovery and product feedback are learning signals only. Material survivor-benefit, child-support, work-related-death, estate-process, amount, deadline and authority claims must be verified against current responsible primary sources before use."
+    }
+  ]
+}
