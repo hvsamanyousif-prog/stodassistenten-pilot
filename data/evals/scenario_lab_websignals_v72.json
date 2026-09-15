@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v72 regression cases for the same relative_care product route. Representation, fullmakt and ombud questions must be separated from caregiver benefit and municipal caregiver support without treating kinship, a generic fullmakt or care contact as automatic authority.",
+  "cases": [
+    {
+      "case_id": "lab-relative-relationship-not-automatic-authority-v72-01",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Kan jag ansöka åt min mamma bara för att jag är hennes dotter?",
+      "expected_support_areas": ["relative_care", "representation_boundary"],
+      "must_not_claim": ["kinship_alone_proves_authority", "relative_can_sign_or_submit_everything_for_adult", "eligibility_or_decision_right_inferred_from_relationship"],
+      "expected_questions": ["q_none_verify_responsible_organisation_and_authority_scope_first"],
+      "expected_next_actions": ["identify_responsible_organisation_for_actual_matter", "verify_current_ombud_or_fullmakt_process_and_scope_before_acting"],
+      "source_requirements": ["current_forvaltningslag_14_15_primary_source", "current_authority_specific_primary_source_for_actual_matter"]
+    },
+    {
+      "case_id": "lab-relative-existing-power-scope-v72-02",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Jag har fullmakt för min pappa. Kan jag sköta hans Försäkringskasseärende?",
+      "expected_support_areas": ["relative_care", "representation_boundary", "authority_specific_fullmakt_scope"],
+      "must_not_claim": ["any_fullmakt_covers_all_matters", "ombud_can_make_all_personal_declarations", "forsakringskassan_acceptance_is_proven_without_scope_check"],
+      "expected_questions": ["q_none_reuse_explicit_fullmakt_and_verify_scope"],
+      "expected_next_actions": ["verify_what_the_fullmakt_covers", "use_current_forsakringskassan_ombud_process_for_actual_matter"],
+      "source_requirements": ["current_forvaltningslag_14_15_primary_source", "current_forsakringskassan_fullmakt_5607_primary_source"]
+    },
+    {
+      "case_id": "lab-relative-healthcare-contact-not-consent-v72-03",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Jag har fullmakt och hjälper min partner med vården. Kan jag fatta beslut åt henne?",
+      "expected_support_areas": ["relative_care", "representation_boundary", "healthcare_consent_boundary"],
+      "must_not_claim": ["fullmakt_automatically_gives_treatment_decision_right", "fullmakt_automatically_gives_consent_right", "fullmakt_automatically_gives_digital_health_access", "regional_process_is_universal_national_rule"],
+      "expected_questions": ["q_none_show_safe_consent_boundary_and_current_provider_check"],
+      "expected_next_actions": ["separate_help_with_care_contact_from_treatment_decision_or_consent", "verify_current_care_provider_process_for_actual_contact"],
+      "source_requirements": ["current_1177_primary_source_for_near_relative_information_and_consent", "current_regional_or_provider_primary_source_when_fullmakt_process_is_material"]
+    },
+    {
+      "case_id": "lab-relative-representation-professional-false-positive-v72-04",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Jag jobbar med fullmakter på kommunen och utbildar kollegor om ombud.",
+      "expected_support_areas": ["no_personal_relative_representation_route_without_personal_case_signal"],
+      "must_not_claim": ["the_user_is_representing_a_relative", "the_user_needs_a_personal_fullmakt", "the_user_has_a_relative_care_case"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_or_training_context"],
+      "source_requirements": ["current_primary_source_required_before_any_material_representation_claim"]
+    },
+    {
+      "case_id": "lab-relative-representation-language-ar-v72-05",
+      "actor_type": "relative",
+      "language": "ar",
+      "story": "لدي توكيل من والدي، هل يمكنني أن أقدم الطلب نيابة عنه؟",
+      "expected_support_areas": ["relative_care", "representation_boundary"],
+      "must_not_claim": ["kinship_alone_proves_authority", "any_power_of_attorney_covers_all_matters", "automatic_decision_right"],
+      "expected_questions": ["q_none_reuse_explicit_power_of_attorney_and_verify_scope"],
+      "expected_next_actions": ["preserve_same_relative_care_focus_in_arabic_ui", "verify_current_organisation_process_and_scope_before_acting"],
+      "source_requirements": ["current_forvaltningslag_14_15_primary_source", "current_authority_specific_primary_source_for_actual_matter"]
+    },
+    {
+      "case_id": "lab-relative-representation-language-fa-v72-06",
+      "actor_type": "relative",
+      "language": "fa",
+      "story": "برای پدرم وکالت‌نامه دارم، آیا می‌توانم به نمایندگی از او درخواست بدهم؟",
+      "expected_support_areas": ["relative_care", "representation_boundary"],
+      "must_not_claim": ["kinship_alone_proves_authority", "any_power_of_attorney_covers_all_matters", "automatic_decision_right"],
+      "expected_questions": ["q_none_reuse_explicit_power_of_attorney_and_verify_scope"],
+      "expected_next_actions": ["preserve_same_relative_care_focus_in_persian_ui", "verify_current_organisation_process_and_scope_before_acting"],
+      "source_requirements": ["current_forvaltningslag_14_15_primary_source", "current_authority_specific_primary_source_for_actual_matter"]
+    }
+  ]
+}

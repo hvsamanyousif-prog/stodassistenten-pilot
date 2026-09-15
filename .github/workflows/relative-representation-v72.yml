@@ -1,0 +1,66 @@
+name: Validate relative representation v72
+
+on:
+  pull_request:
+    paths:
+      - 'client/relative-care.js'
+      - 'client/relative-care.test.cjs'
+      - 'scripts/validate_relative_care.py'
+      - 'scripts/validate_relative_care_v44.py'
+      - 'scripts/validate_relative_representation_v72.py'
+      - 'scripts/test_situation_engine.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_data.py'
+      - 'scripts/build_public_pilot.py'
+      - 'data/evals/scenario_lab_websignals_v72.json'
+      - 'data/evals/demand_friction_signals_v72.json'
+      - 'data/evals/demand_friction_regression_map_v72.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V72_APPENDIX.md'
+      - '.github/workflows/relative-representation-v72.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'client/relative-care.js'
+      - 'client/relative-care.test.cjs'
+      - 'scripts/validate_relative_care.py'
+      - 'scripts/validate_relative_care_v44.py'
+      - 'scripts/validate_relative_representation_v72.py'
+      - 'scripts/test_situation_engine.py'
+      - 'scripts/validate_scenario_lab_all.py'
+      - 'scripts/validate_data.py'
+      - 'scripts/build_public_pilot.py'
+      - 'data/evals/scenario_lab_websignals_v72.json'
+      - 'data/evals/demand_friction_signals_v72.json'
+      - 'data/evals/demand_friction_regression_map_v72.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V72_APPENDIX.md'
+      - '.github/workflows/relative-representation-v72.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate same-product representation boundary
+        run: |
+          node --check client/relative-care.js
+          node client/relative-care.test.cjs
+          python scripts/validate_relative_care.py
+          python scripts/validate_relative_care_v44.py
+          python scripts/validate_relative_representation_v72.py
+          python scripts/test_situation_engine.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_data.py
+          python scripts/build_public_pilot.py --source . --output /tmp/stod-v72-site
+          test -f /tmp/stod-v72-site/client/relative-care.js
+          grep -q 'client/relative-care.js' /tmp/stod-v72-site/index.html
+          grep -q 'client/relative-care.js' /tmp/stod-v72-site/person-pilot.html
