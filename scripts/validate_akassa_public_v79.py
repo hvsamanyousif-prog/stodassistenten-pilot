@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 from pathlib import Path
 
@@ -10,6 +11,7 @@ V78_SCENARIOS = ROOT / "data/evals/scenario_lab_websignals_v78.json"
 V78_SIGNALS = ROOT / "data/evals/demand_friction_signals_v78.json"
 REGRESSION_MAP = ROOT / "data/evals/demand_friction_regression_map_v78.json"
 SUPPORT = ROOT / "data/supports/se-arbetsloshetsersattning-a-kassa.json"
+BENCHMARK_CASES_DIR = ROOT / "data/evals/cases"
 
 
 def load(path):
@@ -20,6 +22,19 @@ def load(path):
 def require(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def benchmark_fingerprint():
+    cases = []
+    for path in sorted(BENCHMARK_CASES_DIR.glob("*.json")):
+        cases.extend(load(path).get("cases", []))
+    canonical = json.dumps(
+        sorted(cases, key=lambda item: item["case_id"]),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def main():
@@ -86,6 +101,7 @@ def main():
 
     print("v79 public a-kassa regime guard: OK")
     print(f"cases={len(case_ids)} signal={signal['signal_id']} closure={closure['coverage_status']} truth_status={support['verification']['status']}")
+    print(f"semantic_benchmark_sha256={benchmark_fingerprint()}")
 
 
 if __name__ == "__main__":
