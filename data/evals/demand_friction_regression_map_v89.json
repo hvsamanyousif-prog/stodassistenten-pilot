@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v89 Fritidskortet demand/friction miss into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-fritidskortet-2026-change-action-friction-v01",
+      "product_miss": "Fresh-main audit found no canonical Fritidskortet truth/scenario path despite existing child/family intelligence. Recent 2026 age and higher-amount changes plus provider-register and non-eID steps make stale or generic advice unsafe.",
+      "regression_case_ids": ["lab-fritidskort-cost-friction-v89-01", "lab-fritidskort-age6-august-change-v89-02", "lab-fritidskort-higher-amount-boundary-v89-03", "lab-fritidskort-no-eid-v89-04", "lab-fritidskort-provider-not-registered-v89-05", "lab-fritidskort-association-false-positive-v89-06", "lab-fritidskort-language-ar-v89-07", "lab-fritidskort-language-fa-v89-08"],
+      "coverage_status": "TRUTH_AND_REGRESSION_GUARDED_V89_PUBLIC_ROUTE_PENDING",
+      "fix_or_guardrail": "Add one NEEDS_REVIEW Fritidskortet support record and eight scenarios in the existing family learning system. Preserve actor boundary between parent payment and association registration, current 6-16 age rule, higher-amount basis, provider-register action and non-eID path. Do not create another family app or matcher.",
+      "truth_boundary": "Activity cost pressure, child age, disability or a statement about low income does not itself establish eligibility, amount or provider acceptance. Material program fields remain primary-source and review gated; no child identity, exact income, benefit amount, activity provider identity or raw family story enters public learning data.",
+      "runtime_evidence": ["data/supports/se-fritidskortet-child-activities.json", "data/evals/scenario_lab_websignals_v89.json", "data/evals/demand_friction_signals_v89.json"]
+    }
+  ]
+}
