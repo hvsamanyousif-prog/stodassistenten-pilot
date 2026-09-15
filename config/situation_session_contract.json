@@ -15,7 +15,7 @@
   "actor_types": [
     "private_person",
     "relative",
-    "student_young_adult",
+    "student",
     "employee",
     "company",
     "association",
