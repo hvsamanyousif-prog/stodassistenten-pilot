@@ -5,7 +5,7 @@
 })(typeof window!=='undefined'?window:null,function(){
   'use strict';
 
-  // v74 extends the SAME relative/person intelligence with a life-event boundary.
+  // v75 keeps the SAME v74 relative/person intelligence and broadens natural-language recognition.
   // It never decides survivor-benefit entitlement, inheritance, work-injury status,
   // amount, deadline or who may act for an estate from free text.
   const AFTER_GUIDE_URL='https://www.efterlevandeguiden.se/';
@@ -15,8 +15,11 @@
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const CONTEXTS=new Set(['partner_support','child_support','practical','work_related','overview','unsure']);
 
-  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|فوت(?:\s+کرد(?:ه)?|\s+شده)?|بازمانده)/i;
-  const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|قريب|همسرم|شریکم|پدرم|مادرم|پدر\s+فرزندم|مادر\s+فرزندم|نزدیکم)/i;
+  // Natural language includes the common Swedish euphemism "gått bort". The simple
+  // motion phrase "gick bort" is only treated as bereavement when followed by a death-like
+  // time cue/punctuation/end, so "gick bort till affären" stays fail-closed.
+  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|(?:har\s+)?gått\s+bort(?:\b|[.!?])|gick\s+bort(?=\s*(?:igår|i\s+natt|nyligen|för\s+\d+\s+(?:dagar|veckor|månader|år)\s+sedan|[.!?,]|$))|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|از\s+دنیا\s+رفت(?:ه)?|فوت(?:\s+کرد(?:ه)?|\s+شده)?|بازمانده)/i;
+  const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter|bror|syster|syskon|mormor|morfar|farmor|farfar|morbror|farbror|moster|faster|vän|väninna)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|أخي|أختي|جدي|جدتي|صديقي|صديقتي|قريب|همسرم|شریکم|پدرم|مادرم|برادرم|خواهرم|پدربزرگم|مادربزرگم|دوستم|پدر\s+فرزندم|مادر\s+فرزندم|نزدیکم)/i;
   const DIRECT=/(?:efterlevandepension|omställningspension|barnpension|efterlevandestöd|efterlevandeguiden|دعم\s+الناجين|معاش\s+الناجين|معاش\s+الطفل|حقوق\s+بازماندگان|مستمری\s+بازماندگان)/i;
   const PROFESSIONAL=/(?:jobbar\s+med|arbetar\s+med|handläggare|begravningsbyrå|utbildning\s+om|uppsats\s+om|research|statistik\s+om|أعمل\s+في|بحث\s+عن|دراسة\s+عن|کار\s+می(?:‌|\s)*کنم|پژوهش|تحقیق\s+درباره)/i;
   const CHILD=/(?:mitt\s+barns\s+(?:mamma|pappa|förälder)|barnets\s+(?:mamma|pappa|förälder)|barnpension|efterlevandestöd\s+till\s+barn|والد\s+طفلي|والدة\s+طفلي|معاش\s+الطفل|پدر\s+فرزندم|مادر\s+فرزندم|مستمری\s+کودک)/i;
@@ -84,7 +87,7 @@
   function patchShell(root){
     try{
       if(typeof KEYWORDS==='undefined'||typeof I18N==='undefined')return;
-      KEYWORDS.bereavement=['dött','avlidit','dödsfall','efterlevandepension','omställningspension','barnpension','dödsbo','bouppteckning','وفاة','توفي','معاش الناجين','تركة','فوت','درگذشت','بازماندگان','ترکه'];
+      KEYWORDS.bereavement=['dött','dog','avlidit','dödsfall','gått bort','gick bort','efterlevandepension','omställningspension','barnpension','dödsbo','bouppteckning','وفاة','توفي','معاش الناجين','تركة','فوت','درگذشت','از دنیا رفت','بازماندگان','ترکه'];
       const routeCopy={
         sv:['När någon nära har dött','Praktiska steg, efterlevandestöd och särskilda ersättningsspår','person-pilot.html?actor_type=relative&focus=bereavement'],
         ar:['عندما يتوفى شخص قريب','الخطوات العملية ودعم الناجين والمسارات الخاصة','person-pilot.html?actor_type=relative&focus=bereavement'],
