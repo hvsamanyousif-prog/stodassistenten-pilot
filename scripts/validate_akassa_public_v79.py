@@ -8,7 +8,7 @@ TEST = ROOT / "client/unemployment-regime-guidance.test.cjs"
 BUILD = ROOT / "scripts/build_public_pilot.py"
 V78_SCENARIOS = ROOT / "data/evals/scenario_lab_websignals_v78.json"
 V78_SIGNALS = ROOT / "data/evals/demand_friction_signals_v78.json"
-V79_MAP = ROOT / "data/evals/demand_friction_regression_map_v79.json"
+REGRESSION_MAP = ROOT / "data/evals/demand_friction_regression_map_v78.json"
 SUPPORT = ROOT / "data/supports/se-arbetsloshetsersattning-a-kassa.json"
 
 
@@ -28,7 +28,7 @@ def main():
     build = BUILD.read_text(encoding="utf-8")
     scenarios = load(V78_SCENARIOS)
     signals = load(V78_SIGNALS)
-    mapping = load(V79_MAP)
+    mapping = load(REGRESSION_MAP)
     support = load(SUPPORT)
 
     case_ids = {case.get("case_id") for case in scenarios.get("cases", [])}
@@ -41,11 +41,17 @@ def main():
     require(signal.get("signal_id") == "df-unemployment-two-rule-regime-v01", "unexpected unemployment signal")
 
     mappings = mapping.get("mappings", [])
-    require(len(mappings) == 1, "v79 closure map must contain one mapping")
+    require(len(mappings) == 1, "the existing a-kassa regression map must contain one mapping")
     closure = mappings[0]
-    require(closure.get("signal_id") == signal.get("signal_id"), "v79 must close the same v78 demand/friction signal")
-    require(set(closure.get("regression_case_ids", [])) == case_ids, "v79 closure must keep every permanent v78 scenario")
-    require(closure.get("coverage_status") == "PUBLIC_RUNTIME_GUARDED_V79", "v79 public runtime guard status missing")
+    require(closure.get("signal_id") == signal.get("signal_id"), "v79 must advance the same v78 demand/friction signal")
+    require(set(closure.get("regression_case_ids", [])) == case_ids, "v79 must keep every permanent v78 scenario on the same learning record")
+    require(closure.get("coverage_status") == "PUBLIC_RUNTIME_GUARDED_V79", "v79 public runtime guard status missing from existing learning record")
+    require(set(closure.get("runtime_evidence", [])) >= {
+        "client/unemployment-regime-guidance.js",
+        "client/unemployment-regime-guidance.test.cjs",
+        "scripts/validate_akassa_public_v79.py",
+    }, "existing learning record must point to the v79 runtime evidence")
+    require(not (ROOT / "data/evals/demand_friction_regression_map_v79.json").exists(), "duplicate v79 learning-map pack detected")
 
     require("UNEMPLOYMENT_REGIME_GUIDANCE_PATH = \"client/unemployment-regime-guidance.js\"" in build, "public build does not name the v79 runtime")
     require("UNEMPLOYMENT_REGIME_GUIDANCE_PATH," in build, "v79 runtime is not wired into the existing person-pilot script set")
