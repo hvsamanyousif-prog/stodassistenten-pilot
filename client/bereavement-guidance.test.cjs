@@ -27,6 +27,7 @@ assert.equal(g.detectContext('Min vän har gått bort. Var börjar jag?'),'unsur
 assert.equal(g.detect('Min bror gick bort igår och jag behöver en överblick.'),true);
 // Motion language must not become a death signal merely because a close relation is named.
 assert.equal(g.detect('Min bror gick bort till affären och kom tillbaka.'),false);
+assert.equal(g.detect('Min bror har gått bort till affären och kommer snart tillbaka.'),false);
 assert.equal(g.detect('توفي أخي ولا أعرف من أين أبدأ.'),true);
 assert.equal(g.detectContext('توفي أخي ولا أعرف من أين أبدأ.'),'unsure');
 assert.equal(g.detect('خواهرم فوت کرده است و نمی‌دانم از کجا شروع کنم.'),true);
