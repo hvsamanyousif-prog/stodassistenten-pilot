@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-kronofogden-payment-order-first-action-v01",
+      "product_miss": "The shared public economy path treated a current Kronofogden payment-order letter as generic debt. That could hide the time-sensitive acknowledge-receipt -> decide whether the claim is correct -> act within the explanation period sequence and could incorrectly imply that acknowledging receipt accepts the claim.",
+      "regression_case_ids": [
+        "lab-private-kfm-demand-notice-v63-01",
+        "lab-private-kfm-demand-wrong-v63-02",
+        "lab-private-kfm-demand-cannot-pay-v63-03",
+        "lab-private-kfm-demand-plus-rent-v63-04",
+        "lab-private-kfm-demand-language-ar-v63-05",
+        "lab-private-kfm-demand-language-fa-v63-06"
+      ],
+      "fix_or_guardrail": "Keep focus=economic_assistance in the same person product and add only coarse context=kfm_notice when a current Kronofogden payment-order letter is explicit. Give the acknowledge-decide-act sequence immediately, use the explanation period in the actual letter, and never require case number, exact claim amount or creditor identity before the first safe action. Keep acute housing/basic-needs guidance visible in parallel when needed.",
+      "truth_guardrail": "Kronofogden is the primary source for the payment-order process. Acknowledging receipt is not acceptance of the claim. The public product must not decide that the claim is correct, invent a universal response deadline, promise a payment plan, or describe the debt as final merely because a letter was received.",
+      "privacy_guardrail": "The public handoff may contain only actor_type=private_person, focus=economic_assistance, context=kfm_notice and language. Never place case number, claim amount, creditor identity, letter content, deadline, address, identity or raw story in the URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
