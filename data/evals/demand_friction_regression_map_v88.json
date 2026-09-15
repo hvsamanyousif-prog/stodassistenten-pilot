@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v88 VAB current-rule demand/friction miss into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-vab-current-deadline-boundary-v01",
+      "product_miss": "The same product had VAB runtime guidance and specialized 12-15 truth but no canonical under-12 record that permanently guards the April 2026 deadline transition, serious-illness exception and minimum route-changing age question.",
+      "regression_case_ids": [
+        "lab-vab-under12-standard-sv-v88-01",
+        "lab-vab-under12-deadline-v88-02",
+        "lab-vab-serious-illness-exception-v88-03",
+        "lab-vab-pre-april-transition-v88-04",
+        "lab-vab-age-13-route-v88-05",
+        "lab-vab-missing-age-v88-06",
+        "lab-vab-professional-false-positive-v88-07",
+        "lab-vab-under12-language-ar-v88-08",
+        "lab-vab-under12-language-fa-v88-09"
+      ],
+      "coverage_status": "TRUTH_AND_REGRESSION_GUARDED_V88",
+      "fix_or_guardrail": "Add one source-bound NEEDS_REVIEW record for the existing under-12 VAB path, keep the existing 12-15 record, distinguish ordinary post-April-2026 deadlines from transitional and serious-illness cases, and fail closed on professional wording. Do not create another VAB matcher or app.",
+      "truth_boundary": "A user's statement that a child is sick does not establish eligibility, serious illness, amount or deadline exception. Age and date are collected only when route-changing. Material rules remain primary-source and review gated; no raw family story, identity, diagnosis or exact financial detail enters the public learning package.",
+      "runtime_evidence": [
+        "client/vab-focus.js",
+        "data/supports/se-forsakringskassan-vab-under-12.json",
+        "data/supports/se-forsakringskassan-vab-12-15.json",
+        "data/evals/scenario_lab_websignals_v88.json",
+        "data/evals/demand_friction_signals_v88.json"
+      ]
+    }
+  ]
+}
