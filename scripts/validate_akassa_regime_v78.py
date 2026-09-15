@@ -10,6 +10,9 @@ BENCH = ROOT / "data/evals/cases/akassa.json"
 EXPANSION = ROOT / "data/evals/expansion/akassa_v02.json"
 SUPPORT = ROOT / "data/supports/se-arbetsloshetsersattning-a-kassa.json"
 PERSON = ROOT / "person-pilot.html"
+BUILD = ROOT / "scripts/build_public_pilot.py"
+PUBLIC_RUNTIME = ROOT / "client/unemployment-regime-guidance.js"
+DUPLICATE_V79_MAP = ROOT / "data/evals/demand_friction_regression_map_v79.json"
 
 
 def load(path):
@@ -71,7 +74,13 @@ def main():
     require(mapping.get("signal_id") == signal["signal_id"], "v78 regression map signal mismatch")
     require(mapping.get("product_miss"), "v78 regression map must preserve product_miss")
     require(set(mapping.get("regression_case_ids", [])) == case_ids, "v78 regression map must cover every v78 case")
-    require(mapping.get("coverage_status") == "LEARNING_GUARDED_PUBLIC_COPY_FIX_PENDING", "v78 must not pretend the stale public unemployment copy is already fixed")
+
+    coverage_status = mapping.get("coverage_status")
+    allowed_statuses = {
+        "LEARNING_GUARDED_PUBLIC_COPY_FIX_PENDING",
+        "PUBLIC_RUNTIME_GUARDED_V79",
+    }
+    require(coverage_status in allowed_statuses, f"unexpected a-kassa learning lifecycle status: {coverage_status}")
 
     for label, payload in (("canonical", bench), ("expansion", expansion)):
         benchmark_text = json.dumps(payload, ensure_ascii=False)
@@ -94,15 +103,23 @@ def main():
         ROOT / "client/unemployment-app.js",
     ]
     require(not any(path.exists() for path in forbidden_paths), "parallel a-kassa/unemployment app detected")
+    require(not DUPLICATE_V79_MAP.exists(), "same a-kassa learning signal must not be duplicated in a v79 mapping pack")
 
     stale_public_copy = "Regler beror på medlemskap, arbetsvillkor och historik." in person
-    if stale_public_copy:
-        print("PUBLIC_COPY_DRIFT_PRESENT: person-pilot still uses legacy generic 'arbetsvillkor' wording; public-copy correction remains pending and must not be reported as shipped.")
+    if coverage_status == "LEARNING_GUARDED_PUBLIC_COPY_FIX_PENDING":
+        require(stale_public_copy, "public copy changed while the learning record still says the fix is pending")
+        print("PUBLIC_COPY_DRIFT_PRESENT: static person-pilot still uses legacy generic wording and no governed public runtime has been recorded yet.")
     else:
-        print("PUBLIC_COPY_DRIFT_NOT_DETECTED: update coverage status in a later audited change only after sv/ar/fa public semantics are verified.")
+        require(PUBLIC_RUNTIME.is_file(), "PUBLIC_RUNTIME_GUARDED_V79 requires the governed unemployment runtime")
+        runtime_evidence = set(mapping.get("runtime_evidence", []))
+        require("client/unemployment-regime-guidance.js" in runtime_evidence, "public runtime evidence missing from the single learning record")
+        require("client/unemployment-regime-guidance.test.cjs" in runtime_evidence, "public runtime regression evidence missing from the single learning record")
+        build_text = BUILD.read_text(encoding="utf-8")
+        require("UNEMPLOYMENT_REGIME_GUIDANCE_PATH" in build_text, "governed public runtime is not wired by the shared public build")
+        print("PUBLIC_COPY_RUNTIME_GUARDED: v79 replaces stale unemployment result presentation through the shared person-pilot build; canonical eligibility truth remains review-gated.")
 
     print("v78 a-kassa rule-regime learning guard: OK")
-    print(f"cases={len(cases)} signal={signal['signal_id']} truth_status={support['verification']['status']}")
+    print(f"cases={len(cases)} signal={signal['signal_id']} coverage={coverage_status} truth_status={support['verification']['status']}")
 
 
 if __name__ == "__main__":
