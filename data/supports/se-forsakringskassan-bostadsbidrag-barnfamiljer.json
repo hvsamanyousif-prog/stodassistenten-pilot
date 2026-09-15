@@ -14,11 +14,7 @@
     "free_text": null
   },
   "audience": {
-    "segments": [
-      "parent_guardian",
-      "family_with_children",
-      "low_income_household"
-    ],
+    "segments": ["parent_guardian", "family_with_children", "low_income_household"],
     "age_min": null,
     "age_max": null
   },
@@ -29,7 +25,7 @@
         "field": "child_residence_pattern",
         "operator": "text_condition",
         "value": "Försäkringskassan anger att barnet ska bo hos den sökande. Barnet behöver inte bo där hela tiden, men minst 30 dagar per år. Om barnet bor där mindre än ungefär halva tiden gäller dessutom ett särskilt krav på bostadens storlek.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Hur mycket barnet bor i bostaden är route-ändrande information. Naturlig text får inte ensam avgöra behörighet."
       },
       {
@@ -37,7 +33,7 @@
         "field": "housing_size_when_child_lives_less_than_about_half_time",
         "operator": "text_condition",
         "value": "När barnet bor hos den sökande mindre än ungefär halva tiden anger den aktuella sidan att bostaden ska ha minst två rum och kök och vara minst 40 kvadratmeter.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Fråga om bostadsstorlek först när barnets boendemönster gör uppgiften materiell."
       },
       {
@@ -45,7 +41,7 @@
         "field": "registered_and_living_in_home",
         "operator": "text_condition",
         "value": "Den sökande ska normalt bo och vara folkbokförd i bostaden som bidrag söks för. Försäkringskassan beskriver undantag, bland annat vid skyddad folkbokföring och vissa tillfälliga boendesituationer.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Fail closed vid undantagsfall; avgör inte folkbokförings- eller boendeundantag lokalt."
       },
       {
@@ -53,7 +49,7 @@
         "field": "residence_country_and_cross_border_context",
         "operator": "text_condition",
         "value": "Huvudregeln på den aktuella sidan är att den sökande ska bo i Sverige. EU- eller EES-anknytning kan påverka bedömningen och behöver verifieras av Försäkringskassan i gränsöverskridande fall.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Fråga om gränsöverskridande situation endast när sådan signal redan finns eller behövs för att ändra vägen."
       },
       {
@@ -61,7 +57,7 @@
         "field": "household_income_children_housing_cost",
         "operator": "text_condition",
         "value": "Försäkringskassan anger att bostadsbidragets storlek bland annat beror på hushållets inkomster, hur många barn som bor i bostaden, hur mycket barnen bor där, bostadens storlek och bostadskostnaden.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Produkten ska inte gissa ett individuellt belopp; använd aktuell beräkning eller beslut hos Försäkringskassan."
       },
       {
@@ -69,7 +65,7 @@
         "field": "income_period_for_current_rules",
         "operator": "text_condition",
         "value": "För en ansökan enligt de nuvarande 2026-reglerna uppskattas årets inkomster före skatt. Försäkringskassan räknar med flera inkomstslag och även vissa kapital- och tillgångsuppgifter kan påverka bedömningen.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Begär inte känsliga detaljuppgifter i publik handoff. En enskild månads inkomst får inte behandlas som säker årsinkomst för 2026-spåret."
       },
       {
@@ -77,7 +73,7 @@
         "field": "cohabiting_or_married_household",
         "operator": "text_condition",
         "value": "Gifta eller sambor som bor tillsammans ansöker gemensamt enligt Försäkringskassans aktuella vägledning.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Hushållsformen kan därför ändra ansökningsvägen."
       },
       {
@@ -85,7 +81,7 @@
         "field": "decision_period",
         "operator": "text_condition",
         "value": "Försäkringskassan beskriver en regeländring från 1 januari 2027 där månadsvis inkomstkontroll ska användas för de flesta som omfattas av bostadsbidrag och den nuvarande årliga slutliga avstämningen förändras. Kontrollera den aktuella 2027-vägledningen innan den modellen används för ett individuellt ärende.",
-        "source_url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
         "notes": "Change-intelligence only. Använd inte 2027-regeln i förtid för en 2026-ansökan."
       }
     ],
@@ -141,13 +137,13 @@
   ],
   "application": {
     "method": "mixed",
-    "url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
     "deadline_text": "Försäkringskassan anger att bostadsbidrag inte lämnas retroaktivt för månader före ansökningsmånaden. Kontrollera alltid aktuell vägledning för den egna ansökan.",
     "next_step": "Kontrollera först barnets boendemönster och hushållsform. Om barnet bor mindre än ungefär halva tiden, kontrollera därefter bostadens storlek. För ett 2026-ärende används den aktuella årsinkomstvägen; för ett ärende från 2027 ska den då gällande månadsregeln och eventuella undantag verifieras innan materiell vägledning ges. Använd Försäkringskassans aktuella beräkning och ansökan för individuell bedömning."
   },
   "source": {
     "source_id": "se-forsakringskassan-benefits-a-z",
-    "url": "https://www.forsakringskassan.se/privatperson/foralder/bostadsbidrag-till-barnfamiljer",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/bostadsbidrag-for-barnfamiljer/ansok-om-bostadsbidrag-for-barnfamiljer",
     "source_type": "official_web",
     "published_at": null,
     "updated_at": "2026-07-01T00:00:00+02:00",
