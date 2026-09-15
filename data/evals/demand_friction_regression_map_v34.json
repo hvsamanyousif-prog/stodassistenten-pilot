@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-procurement-clarification-before-submission-v01",
+      "product_miss": "The shared company procurement result already helped suppliers discover opportunities and build a requirement/evidence checklist, but it did not make the official clarification route explicit when a requirement was unclear. Its final no-bid wording was also too blunt before the question deadline, while the product gave no explicit warning that post-deadline correction, clarification or supplementation is conditional rather than a guaranteed way to repair missing mandatory evidence.",
+      "regression_case_ids": [
+        "lab-company-procurement-unclear-mandatory-requirement-v71-01",
+        "lab-company-procurement-postsubmission-missing-evidence-v71-02",
+        "lab-company-procurement-qna-addendum-controls-v71-03"
+      ],
+      "fix_or_guardrail": "Keep the same company pilot, the same procurement result and the existing six-question information-gain contract. Add no new generic question. When a concrete requirement is unclear, point to the official Q&A channel and question deadline in the current procurement, monitor published answers/addenda, update the requirement-evidence checklist, and only then fail closed if a requirement still cannot be met or evidenced. Never present post-deadline repair as guaranteed.",
+      "truth_guardrail": "Generic Upphandlingsmyndigheten guidance can explain the safe process boundary, but the specific procurement documents and published Q&A/addenda control the concrete bid. The product must not decide that a private answer controls, that a mandatory requirement is waived, or that a correction, clarification or supplementation is legally permitted in a specific submitted bid.",
+      "privacy_guardrail": "Do not ask for or store the supplier's confidential draft bid, competitor information, non-public buyer information, personal contact data or commercially sensitive evidence in public eval data or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
