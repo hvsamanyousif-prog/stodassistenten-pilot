@@ -68,6 +68,17 @@
       "expected_questions": ["q_what_do_you_need_help_with_first_or_overview"],
       "expected_next_actions": ["preserve_same_bereavement_focus_in_persian_ui", "offer_official_checklist"],
       "source_requirements": ["current_afterlevandeguiden_interagency_primary_source", "current_skatteverket_death_estate_primary_source"]
+    },
+    {
+      "case_id": "lab-bereavement-har-gatt-bort-motion-false-positive-v75-07",
+      "actor_type": "relative",
+      "language": "sv",
+      "story": "Min bror har gått bort till affären och kommer snart tillbaka.",
+      "expected_support_areas": ["no_bereavement_route_without_death_signal"],
+      "must_not_claim": ["a_death_occurred", "user_needs_survivor_support", "user_has_an_estate_case"],
+      "expected_questions": ["q_none_fail_closed_non_death_motion_phrase"],
+      "expected_next_actions": ["fail_closed_for_non_death_use_of_har_gatt_bort"],
+      "source_requirements": ["current_primary_source_required_before_any_material_bereavement_claim"]
     }
   ]
 }
