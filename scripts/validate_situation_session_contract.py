@@ -11,9 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / "config" / "situation_session_contract.json"
 SCHEMA = ROOT / "config" / "situation_session_contract.schema.json"
 CLIENT = ROOT / "client" / "situation-session-contract.js"
+STUDENT_GUIDANCE = ROOT / "client" / "student-finance-guidance.js"
+PERSON_PILOT = ROOT / "person-pilot.html"
 
 EXPECTED_SURFACES = ["web", "ios", "android"]
 EXPECTED_LANGUAGES = ["sv", "ar", "fa"]
+EXPECTED_ACTORS = ["private_person", "relative", "student", "employee", "company", "association", "property_actor", "other"]
 EXPECTED_TOP_LEVEL = ["actor_type", "focus", "lang"]
 REQUIRED_FORBIDDEN = {
     "q", "query", "story", "situation", "raw_situation", "rawSituation",
@@ -33,10 +36,7 @@ def validate(data: dict) -> None:
     require(data.get("contract_id") == "stodassistenten-situation-session-v1", "unexpected contract_id")
     require(data.get("surfaces") == EXPECTED_SURFACES, "web/ios/android must share one ordered surface contract")
     require(data.get("languages") == EXPECTED_LANGUAGES, "sv/ar/fa parity is mandatory")
-
-    actors = data.get("actor_types") or []
-    for actor in ("private_person", "relative", "student_young_adult", "employee", "company", "association", "property_actor", "other"):
-        require(actor in actors, f"missing actor type: {actor}")
+    require(data.get("actor_types") == EXPECTED_ACTORS, "actor vocabulary must exactly match the live product vocabulary")
 
     lifecycle = data.get("lifecycle") or {}
     require(lifecycle.get("default") == "ephemeral", "session state must be ephemeral by default")
@@ -88,6 +88,10 @@ def negative_self_tests(data: dict) -> None:
     m["private_core"]["matcher_logic"] = "public"
     mutations.append(m)
 
+    m = copy.deepcopy(data)
+    m["actor_types"][2] = "student_young_adult"
+    mutations.append(m)
+
     for index, mutation in enumerate(mutations, start=1):
         try:
             validate(mutation)
@@ -103,6 +107,15 @@ def validate_public_client(source: str) -> None:
         require(export_name in source, f"missing public-safe adapter function: {export_name}")
     require("allowedFactKeys" in source, "public handoff must require explicit per-capability fact allowlisting")
     require("rawSituation" in source, "ephemeral input boundary must be explicit in the adapter")
+    require("'student'" in source, "public adapter must carry the canonical live student actor token")
+    require("student_young_adult" not in source, "parallel student actor vocabulary is forbidden")
+
+
+def validate_live_actor_alignment(student_source: str, person_source: str) -> None:
+    require("actor_type=student&focus=student_csn" in student_source, "live student handoff no longer emits canonical actor_type=student")
+    require("student:'" in person_source, "person pilot no longer consumes the canonical student actor token")
+    require("student_young_adult" not in student_source, "student guidance introduced a second actor vocabulary")
+    require("student_young_adult" not in person_source, "person pilot introduced a second actor vocabulary")
 
 
 def main() -> None:
@@ -113,6 +126,10 @@ def main() -> None:
     validate(data)
     negative_self_tests(data)
     validate_public_client(CLIENT.read_text(encoding="utf-8"))
+    validate_live_actor_alignment(
+        STUDENT_GUIDANCE.read_text(encoding="utf-8"),
+        PERSON_PILOT.read_text(encoding="utf-8"),
+    )
     print("situation/session contract validation: OK")
 
 
