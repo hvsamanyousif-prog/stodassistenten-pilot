@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-student-sickness-study-vs-work-vab-v01",
+      "product_miss": "The same student_csn public journey covered weeks and summer study but had no focused own-sickness route, allowing study-support sickness, gymnasium, studies abroad, parallel work and VAB to be missed or conflated.",
+      "regression_case_ids": [
+        "lab-student-sickness-unknown-study-context-v67-01",
+        "lab-student-sickness-work-combination-v67-02",
+        "lab-student-sickness-gymnasium-v67-03",
+        "lab-student-sickness-abroad-v67-04",
+        "lab-student-vab-not-own-sickness-v67-05",
+        "lab-student-sickness-research-false-positive-v67-06",
+        "lab-student-sickness-language-ar-v67-07",
+        "lab-student-sickness-language-fa-v67-08"
+      ],
+      "fix_or_guardrail": "Keep the same actor_type=student and focus=student_csn route and add topic=sickness. Reuse explicit coarse study_context/study_work when present, otherwise ask only route-changing questions. VAB and non-personal research contexts must not be stolen by the own-sickness route.",
+      "truth_guardrail": "Current CSN and Försäkringskassan primary sources carry material rules. The public product must not decide entitlement, amount, SGI, medical work/study capacity, certificate requirement, exact deadline or employer responsibility from free text.",
+      "privacy_guardrail": "Public handoff may contain only actor_type=student, focus=student_csn, language, topic=sickness and optional coarse study_context/study_work. Never place diagnosis, SGI, medical certificate, employer identity, exact income, identity or raw story in URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
