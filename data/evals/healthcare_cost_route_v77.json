@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "source_signal_id": "df-healthcare-cost-protection-boundary-v01",
+  "coverage_status": "PUBLIC_ROUTE_SHIPPED_V77",
+  "purpose": "Close the v76 public-route gap inside the SAME Stödassistenten product by routing natural healthcare-cost situations to one focused quick-help path while preserving dental and acute economy paths.",
+  "case_outcomes": [
+    {"case_id":"lab-health-cost-primary-care-v76-01","expected_route":"healthcare:care","question_policy":"no_repeat_when_cost_type_is_explicit"},
+    {"case_id":"lab-health-cost-frikort-medicine-boundary-v76-02","expected_route":"healthcare:boundary","question_policy":"no_question_when_both_cost_systems_are_explicit"},
+    {"case_id":"lab-health-cost-prescription-medicine-v76-03","expected_route":"healthcare:medicine","question_policy":"no_repeat_when_cost_type_is_explicit"},
+    {"case_id":"lab-health-cost-dental-overlap-v76-04","expected_route":"existing_dental_cost_route","question_policy":"do_not_create_parallel_healthcare_cost_route"},
+    {"case_id":"lab-health-cost-basic-needs-overlap-v76-05","expected_route":"healthcare:medicine+economy_visible","question_policy":"show_safe_parallel_paths_without_blocking_question"},
+    {"case_id":"lab-health-cost-professional-false-positive-v76-06","expected_route":"no_personal_healthcare_cost_route","question_policy":"fail_closed_without_personal_need_signal"},
+    {"case_id":"lab-health-cost-language-ar-v76-07","expected_route":"healthcare:boundary","question_policy":"same_semantics_ar"},
+    {"case_id":"lab-health-cost-language-fa-v76-08","expected_route":"healthcare:boundary","question_policy":"same_semantics_fa"}
+  ],
+  "privacy_contract": {
+    "handoff_allowlist": ["mode", "need", "lang"],
+    "forbidden_handoff_data": ["raw_situation", "diagnosis", "medicine_name", "patient_fee_amount", "identity", "personal_identifier"],
+    "feedback_role": "learning_signal_only_not_truth"
+  },
+  "truth_boundary": {
+    "outpatient": "Current 1177/region primary source required for exact patient fee, frikort handling and regional detail.",
+    "medicine": "Current E-halsomyndigheten/TLV responsible primary source required for medicine high-cost rules and current personal status must be checked outside Stodassistenten.",
+    "dental": "Reuse the existing dental route and its own responsible sources.",
+    "volatile_numbers": "Do not hard-code current ceilings or infer the user's remaining amount."
+  }
+}

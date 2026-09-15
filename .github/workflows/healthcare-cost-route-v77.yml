@@ -1,0 +1,52 @@
+name: Validate healthcare cost public route v77
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'client/experience-learning.js'
+      - 'client/quick-help-guidance.js'
+      - 'data/evals/healthcare_cost_route_v77.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V77_APPENDIX.md'
+      - 'scripts/validate_healthcare_cost_route_v77.py'
+      - '.github/workflows/healthcare-cost-route-v77.yml'
+  pull_request:
+    paths:
+      - 'client/experience-learning.js'
+      - 'client/quick-help-guidance.js'
+      - 'data/evals/healthcare_cost_route_v77.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V77_APPENDIX.md'
+      - 'scripts/validate_healthcare_cost_route_v77.py'
+      - '.github/workflows/healthcare-cost-route-v77.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  healthcare-cost-route-v77:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check public runtime syntax
+        run: |
+          node --check client/experience-learning.js
+          node --check client/quick-help-guidance.js
+      - name: Keep v76 learning boundary green
+        run: python scripts/validate_healthcare_cost_navigation_v76.py
+      - name: Validate v77 route, privacy and truth boundaries
+        run: python scripts/validate_healthcare_cost_route_v77.py
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v77
+      - name: Run public build regression
+        run: python scripts/test_public_pilot_build.py
+      - name: Confirm no parallel healthcare-cost app was introduced
+        run: |
+          test ! -e healthcare-cost.html
+          test ! -e health-cost.html
+          test ! -e client/healthcare-cost-app.js
