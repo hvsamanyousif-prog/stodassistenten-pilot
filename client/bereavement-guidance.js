@@ -15,8 +15,8 @@
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const CONTEXTS=new Set(['partner_support','child_support','practical','work_related','overview','unsure']);
 
-  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|فوت\s+کرد|فوت\s+شده|بازمانده)/i;
-  const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|قريب|همسرم|شریکم|پدرم|مادرم|نزدیکم)/i;
+  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|فوت(?:\s+کرد(?:ه)?|\s+شده)?|بازمانده)/i;
+  const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|قريب|همسرم|شریکم|پدرم|مادرم|پدر\s+فرزندم|مادر\s+فرزندم|نزدیکم)/i;
   const DIRECT=/(?:efterlevandepension|omställningspension|barnpension|efterlevandestöd|efterlevandeguiden|دعم\s+الناجين|معاش\s+الناجين|معاش\s+الطفل|حقوق\s+بازماندگان|مستمری\s+بازماندگان)/i;
   const PROFESSIONAL=/(?:jobbar\s+med|arbetar\s+med|handläggare|begravningsbyrå|utbildning\s+om|uppsats\s+om|research|statistik\s+om|أعمل\s+في|بحث\s+عن|دراسة\s+عن|کار\s+می(?:‌|\s)*کنم|پژوهش|تحقیق\s+درباره)/i;
   const CHILD=/(?:mitt\s+barns\s+(?:mamma|pappa|förälder)|barnets\s+(?:mamma|pappa|förälder)|barnpension|efterlevandestöd\s+till\s+barn|والد\s+طفلي|والدة\s+طفلي|معاش\s+الطفل|پدر\s+فرزندم|مادر\s+فرزندم|مستمری\s+کودک)/i;
