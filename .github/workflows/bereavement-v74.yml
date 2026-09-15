@@ -44,7 +44,26 @@ jobs:
         with:
           node-version: '22'
       - name: Validate syntax and permanent regressions
-        run: python scripts/validate_bereavement_v74.py
+        id: validate
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_bereavement_v74.py > v74-validation.log 2>&1
+          code=$?
+          cat v74-validation.log
+          {
+            echo '### v74 validation output'
+            echo '```text'
+            cat v74-validation.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$code"
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bereavement-v74-validation
+          path: v74-validation.log
       - name: Build the same public Stödassistenten
         run: python scripts/build_public_pilot.py --output _site-v74
       - name: Confirm v74 runtime ships on both shared surfaces
