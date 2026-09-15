@@ -63,6 +63,7 @@ def main() -> int:
     require("transitionBranch" in runtime, "2027 decision/exception branching is missing")
     require("bostadsbidrag-nya-regler-fran-1-januari-2027" in runtime, "2027 primary-source route is missing")
     require("bara gäller beslut från och med 1 januari 2027" in runtime, "existing-decision no-auto-switch boundary is missing")
+    require("vänta inte på 2027-reglerna" in runtime, "current-rule change reporting must survive the 2027 transition branch")
     require("egenföretagare" in runtime and "inkomst från utlandet" in runtime, "2027 exception boundary is missing")
     require("new_2027" in runtime_test and "verify_exception" in runtime_test, "2027 branch behavior is not regression-tested")
     require("٢٠٢٧" in runtime_test and "۲۰۲۷" in runtime_test, "2027 route detection must remain multilingual")
@@ -101,6 +102,7 @@ def main() -> int:
     require("all_existing_housing_benefit_decisions_switch_automatically_on_2027_01_01" in transition_must_not, "mid-decision auto-switch guard is missing")
     require("monthly_income_reform_applies_to_self_employed_or_foreign_income_cases_without_current_source_check" in transition_must_not, "2027 exception guard is missing")
     transition_actions = set(transition_case.get("expected_next_actions", []))
+    require("report_known_income_housing_or_household_changes_under_current_rules" in transition_actions, "current-rule change reporting action is missing")
     require("do_not_treat_2027_01_01_as_an_automatic_mid_decision_switch_for_existing_housing_benefit" in transition_actions, "existing-decision transition action is missing")
     require("if_a_new_decision_will_start_from_2027_01_01_verify_the_monthly_income_rules_and_current_exceptions_then" in transition_actions, "new-decision verification action is missing")
 
