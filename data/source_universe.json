@@ -171,6 +171,85 @@
         "grant_history_equals_award_probability",
         "community_advice_equals_truth"
       ]
+    },
+    {
+      "family_id": "se-local-government-directory-discovery",
+      "source_registry_refs": [
+        "se-skr-municipality-directory",
+        "se-skr-region-directory"
+      ],
+      "domain": "local_government",
+      "discovery_role": "registry_discovery",
+      "opportunity_state_authority": "not_authoritative",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "authority_name",
+        "authority_level",
+        "geography",
+        "official_authority_url",
+        "discovery_topic"
+      ],
+      "blocked_fields": [
+        "raw_directory_payload",
+        "personal_contacts",
+        "inferred_local_service",
+        "inferred_eligibility",
+        "unverified_deadline",
+        "unverified_application_route"
+      ],
+      "required_verification_before_action": [
+        "Use the SKR directories only to discover the relevant municipality or region and its official website; then verify the exact local service, grant, right or application page on that authority's current primary source.",
+        "Directory presence proves the authority exists and provides a navigation path only; it does not prove that a local support exists, is open, has a given deadline or applies to the user.",
+        "Treat municipal and regional rules as geography-specific truth: never copy another authority's conditions merely because service names look similar."
+      ],
+      "prohibited_promotions": [
+        "directory_presence_equals_local_support",
+        "directory_link_equals_verified_local_eligibility",
+        "directory_link_equals_current_application_path",
+        "another_authority_rule_equals_local_rule",
+        "community_advice_equals_truth"
+      ]
+    },
+    {
+      "family_id": "se-collective-insurance-catalog-discovery",
+      "source_registry_refs": [
+        "se-afa-collective-insurance"
+      ],
+      "domain": "collective_insurance",
+      "discovery_role": "catalog_discovery",
+      "opportunity_state_authority": "source_specific",
+      "private_adapter_required": true,
+      "review_required": true,
+      "public_safe_fields": [
+        "insurance_name",
+        "covered_event_summary",
+        "provider_name",
+        "official_detail_url",
+        "applicant_group_summary"
+      ],
+      "blocked_fields": [
+        "raw_case_data",
+        "employer_identity",
+        "income_details",
+        "medical_details",
+        "personal_identifiers",
+        "inferred_coverage",
+        "inferred_entitlement",
+        "inferred_amount"
+      ],
+      "required_verification_before_action": [
+        "Use Afa Försäkring's catalog to discover relevant collectively agreed insurance, then verify the exact insurance conditions and the user's applicable employment or collective-agreement context before asserting coverage or entitlement.",
+        "A provider catalog may be authoritative for its own insurance conditions, but catalog presence alone does not prove that a specific employer, job or person is covered by that agreement.",
+        "Keep benefit calculations and individual claims decisions outside the discovery layer; surface uncertainty and the concrete official verification step instead of promising payment."
+      ],
+      "prohibited_promotions": [
+        "catalog_presence_equals_collective_coverage",
+        "employment_equals_collective_agreement_coverage",
+        "insurance_name_equals_user_entitlement",
+        "catalog_summary_equals_verified_amount",
+        "community_advice_equals_truth"
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-09-14",
+  "generated_at": "2026-09-15",
   "purpose": "Candidate primary-source registry for the future private Support Ingestion Engine. This file stores source metadata only; it does not assert user eligibility or publish unverified support rules.",
   "automation_guardrails": {
     "robots_and_terms_review_required_before_crawling": true,
@@ -272,6 +272,54 @@
       "source_verification_status": "SOURCE_VERIFIED",
       "last_source_check": "2026-09-05",
       "adapter_state": "CANDIDATE"
+    },
+    {
+      "source_id": "se-skr-municipality-directory",
+      "owner": "Sveriges Kommuner och Regioner (SKR)",
+      "authority_type": "member_organisation_directory",
+      "url": "https://skr.se/kommunerochregioner/kommunerlista.8288.html",
+      "geography": "SE",
+      "coverage": ["municipal_support", "local_services", "local_grants", "local_rights"],
+      "source_type": "official_directory",
+      "ingestion_method": "html_directory",
+      "priority": "P0",
+      "suggested_review_frequency_days": 30,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-15",
+      "adapter_state": "CANDIDATE",
+      "notes": "Discovery directory to municipalities' own official websites. SKR directory presence does not verify a local service, eligibility, deadline or application route; material facts must be checked on the relevant municipality's current primary source."
+    },
+    {
+      "source_id": "se-skr-region-directory",
+      "owner": "Sveriges Kommuner och Regioner (SKR)",
+      "authority_type": "member_organisation_directory",
+      "url": "https://skr.se/kommunerochregioner/regionerlista.8289.html",
+      "geography": "SE",
+      "coverage": ["regional_healthcare", "dental", "patient_support", "regional_grants", "local_services"],
+      "source_type": "official_directory",
+      "ingestion_method": "html_directory",
+      "priority": "P0",
+      "suggested_review_frequency_days": 30,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-15",
+      "adapter_state": "CANDIDATE",
+      "notes": "Discovery directory to regions' own official websites. SKR directory presence does not verify a regional service, eligibility, deadline or application route; material facts must be checked on the relevant region's current primary source."
+    },
+    {
+      "source_id": "se-afa-collective-insurance",
+      "owner": "Afa Försäkring",
+      "authority_type": "collective_insurance_provider",
+      "url": "https://www.afaforsakring.se/",
+      "geography": "SE",
+      "coverage": ["collective_insurance", "sickness", "work_injury", "redundancy", "death", "parental_leave"],
+      "source_type": "official_catalog",
+      "ingestion_method": "html_catalog",
+      "priority": "P0",
+      "suggested_review_frequency_days": 14,
+      "source_verification_status": "SOURCE_VERIFIED",
+      "last_source_check": "2026-09-15",
+      "adapter_state": "CANDIDATE",
+      "notes": "Official provider catalog for collectively agreed insurance administered by Afa Försäkring. Catalog presence does not prove that a specific person is covered or entitled; verify the applicable agreement, employment context and exact insurance conditions before product truth."
     }
   ]
 }
