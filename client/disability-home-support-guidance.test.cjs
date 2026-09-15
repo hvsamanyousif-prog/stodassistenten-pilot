@@ -31,7 +31,7 @@ const href = guidance.handoffHref('sv', 'personal_assistance');
 assert.match(href, /^person-pilot\.html\?/);
 assert.match(href, /focus=disability_home_support/);
 assert.match(href, /support_need=personal_assistance/);
-for (const forbidden of ['q=', 'story=', 'diagnosis=', 'address=', 'municipality=', 'personnummer=', 'hours=', 'assessed_hours=']) assert.equal(href.includes(forbidden), false);
+for (const forbidden of ['q=', 'story=', 'situation=', 'diagnosis=', 'address=', 'municipality=', 'personnummer=', 'hours=', 'assessed_hours=']) assert.equal(href.includes(forbidden), false);
 
 assert.match(guidance.SOCIALSTYRELSEN_URL, /^https:\/\/www\.socialstyrelsen\.se\//);
 assert.match(guidance.FUNCTION_URL, /^https:\/\/www\.socialstyrelsen\.se\//);
