@@ -5,12 +5,25 @@
   "mappings": [
     {
       "signal_id": "df-student-sickness-first-action-v01",
+      "product_miss": "The shared student_csn capability covered CSN weeks and summer study but could not route a student who became sick to the correct first notification path.",
+      "regression_case_ids": [
+        "lab-student-sick-studiemedel-v67-01",
+        "lab-student-sick-unknown-context-v67-02",
+        "lab-student-sick-gymnasium-v67-03",
+        "lab-student-sick-abroad-v67-04",
+        "lab-student-sick-work-study-v67-05",
+        "lab-student-sick-vab-negative-v67-06",
+        "lab-student-sick-language-parity-v67-07"
+      ],
+      "fix_or_guardrail": "Keep the same student_csn focus and add topic=sickness. Reuse explicit study context and otherwise ask only the one study-context question that can change the first route. Keep VAB and professional questions out of the personal student-sickness route.",
+      "truth_guardrail": "Current CSN and Försäkringskassan primary guidance must carry material rules. Do not infer individual eligibility, SGI, benefit amount, diagnosis, certificate outcome or a universal deadline from free text or discovery signals.",
+      "privacy_guardrail": "Public handoff and structured feedback may contain only focus=student_csn, topic=sickness, language and coarse study/work context. Never place raw story, diagnosis, medical note, exact sickness dates, course/results, income, employer identity, name or personnummer in URL or feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY",
       "product_capability": "student_csn",
       "product_topic": "sickness",
       "implementation": ["client/student-finance-sickness-extension.js", "scripts/build_public_pilot.py"],
       "regressions": ["client/student-finance-sickness-extension.test.cjs", "data/evals/scenario_lab_websignals_v67.json"],
-      "release_gate": ".github/workflows/validate-student-sickness-v67.yml",
-      "must_preserve": ["same_student_csn_focus", "sv_ar_fa_semantics", "vab_route_not_stolen", "professional_context_not_stolen", "no_raw_situation_in_handoff_or_feedback", "no_sgi_or_approval_inference"]
+      "release_gate": ".github/workflows/validate-student-sickness-v67.yml"
     }
   ]
 }
