@@ -1,0 +1,37 @@
+name: Validate student sickness v67
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate shared student sickness route
+        run: |
+          node --check client/student-finance-guidance.js
+          node client/student-finance-guidance.test.cjs
+          python scripts/validate_student_sickness_v67.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify public pilot build
+        run: python scripts/test_public_pilot_build.py --site _site

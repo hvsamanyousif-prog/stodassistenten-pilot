@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signals for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence; community material is discovery-only and material guidance must be verified against current primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize the combination of recurring natural-language demand, high information friction, meaningful consequence and weak current product coverage. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-student-sickness-study-vs-work-vab-v01",
+      "actor_types": ["student"],
+      "natural_language_queries": [
+        "jag är sjuk och studerar vad gör jag",
+        "jag pluggar med CSN och är sjuk",
+        "jag studerar och jobbar deltid och är sjuk",
+        "jag går gymnasiet och är sjuk vem ska jag kontakta",
+        "jag studerar utomlands och har blivit sjuk",
+        "jag studerar och mitt barn är sjukt vad gör jag"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Repeated community questions mix studies, sickness, parallel work and SGI, while CSN reported that only 6,900 studiemedel recipients had approved sickness absence days in 2024. This is a reach/awareness signal, not a measured search-volume estimate."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The first action differs between study support in Sweden, gymnasium, studies abroad and VAB; students who also work can have a separate work-income sickness path."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Choosing the wrong branch can delay reporting, confuse study-support protection with sickness benefit, or cause the user to miss the current official instructions for their study context."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Material guidance is split across current CSN sickness/VAB pages and Försäkringskassan's student-sickness path, with additional study-context branches inside those sources."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "The public product serves Swedish, Arabic and Persian, while the route-changing source distinctions are easiest to find in Swedish primary-source pages."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A user first has to identify the study context, then the correct authority/process, and for parallel work may need to separate study-support and work-income questions."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Community discussions repeatedly ask variants of sickness while studying, partial study sickness and study plus work; CSN's own communication highlights low use/awareness of the study-support sickness insurance."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The existing student_csn public route covered remaining weeks and summer study but had no focused own-sickness path, so the learning system could not distinguish study context, work combination or VAB at the public handoff."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/18pqw4f",
+        "https://www.reddit.com/r/Asksweddit/comments/1npe70s",
+        "https://www.reddit.com/r/Asksweddit/comments/1dt0em6",
+        "https://www.csn.se/om-csn/press/pressmeddelanden/2025-04-29-fa-vabbar-under-studierna.html"
+      ],
+      "primary_sources": [
+        "https://www.csn.se/om-nagot-hander-eller-andras/sjuk",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/om-du-blir-sjuk-nar-du-studerar",
+        "https://www.csn.se/om-nagot-hander-eller-andras/vard-av-barn.html"
+      ],
+      "product_miss": "Natural-language student sickness was not reachable as a focused route in the same student_csn product, and adjacent gymnasium/abroad/work/VAB contexts risked being collapsed or missed.",
+      "future_guardrail": "Keep actor_type=student and focus=student_csn. Reuse explicit coarse study/work context when present; otherwise ask only route-changing questions. VAB and non-personal research contexts must fail closed from the own-sickness detector.",
+      "regression_case": [
+        "lab-student-sickness-unknown-study-context-v67-01",
+        "lab-student-sickness-work-combination-v67-02",
+        "lab-student-sickness-gymnasium-v67-03",
+        "lab-student-sickness-abroad-v67-04",
+        "lab-student-vab-not-own-sickness-v67-05",
+        "lab-student-sickness-research-false-positive-v67-06",
+        "lab-student-sickness-language-ar-v67-07",
+        "lab-student-sickness-language-fa-v67-08"
+      ],
+      "evaluation_method": "Natural-language route tests + scenario regressions + primary-source cross-check. Community text may only suggest cases; it must never supply material rules.",
+      "recommended_learning_action": "Extend the existing student_csn route with topic=sickness, preserving coarse study_context and study_work only when explicit, and keep all material entitlement/amount/deadline/medical rules source-led and fail-closed.",
+      "truth_rule": "Reddit/community material is discovery only. We must verify material guidance against current CSN and Försäkringskassan primary sources before it is used; prior AI output and feedback are never truth sources."
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v67 regression cases for the same student_csn product route. Own sickness during studies must be separated from gymnasium, studies abroad, parallel work, VAB and non-personal research contexts without making eligibility, amount, deadline, SGI or medical claims.",
+  "cases": [
+    {
+      "case_id": "lab-student-sickness-unknown-study-context-v67-01",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag studerar och har blivit sjuk och kan inte plugga som planerat. Vad gör jag?",
+      "expected_support_areas": ["student_csn", "student_sickness"],
+      "must_not_claim": ["automatic_right_to_keep_student_finance", "automatic_sickness_benefit", "exact_deadline_without_current_primary_source", "diagnosis_or_medical_capacity_inferred_from_story"],
+      "expected_questions": ["q_which_study_context_applies_before_selecting_sickness_route"],
+      "expected_next_actions": ["verify_current_csn_sickness_route_for_actual_study_context", "use_forsakringskassan_primary_source_when_study_support_sweden_applies"],
+      "source_requirements": ["current_csn_primary_source_for_sickness_during_studies", "current_forsakringskassan_primary_source_when_applicable"]
+    },
+    {
+      "case_id": "lab-student-sickness-work-combination-v67-02",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag studerar med CSN, jobbar deltid vid sidan av och har blivit sjuk.",
+      "expected_support_areas": ["student_csn", "student_sickness", "work_sickness_boundary"],
+      "must_not_claim": ["study_support_and_work_sickness_are_one_entitlement", "sgi_exists", "sickness_benefit_is_guaranteed", "employer_always_pays_sick_pay"],
+      "expected_questions": ["q_none_reuse_explicit_study_support_and_work_context"],
+      "expected_next_actions": ["reuse_explicit_study_support_and_work_context", "show_csn_and_forsakringskassan_primary_routes_without_deciding_entitlement"],
+      "source_requirements": ["current_csn_primary_source_for_sickness_during_studies", "current_forsakringskassan_primary_source_for_student_who_also_works"]
+    },
+    {
+      "case_id": "lab-student-sickness-gymnasium-v67-03",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag går gymnasiet och är sjuk och kan inte komma till skolan.",
+      "expected_support_areas": ["student_csn", "gymnasium_sickness_boundary"],
+      "must_not_claim": ["gymnasium_sickness_uses_the_same_forsakringskassan_route_as_studiemedel", "school_automatically_approves_absence", "study_aid_is_guaranteed"],
+      "expected_questions": ["q_none_reuse_explicit_gymnasium_context"],
+      "expected_next_actions": ["reuse_explicit_gymnasium_context", "show_current_school_and_csn_sickness_route"],
+      "source_requirements": ["current_csn_primary_source_for_gymnasium_sickness"]
+    },
+    {
+      "case_id": "lab-student-sickness-abroad-v67-04",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag studerar utomlands och har blivit sjuk mitt i terminen.",
+      "expected_support_areas": ["student_csn", "study_abroad_sickness_boundary"],
+      "must_not_claim": ["sweden_domestic_sickness_process_always_applies_abroad", "exact_reporting_deadline_without_period_specific_verification", "medical_document_requirements_are_identical_for_all_periods"],
+      "expected_questions": ["q_none_reuse_explicit_abroad_context"],
+      "expected_next_actions": ["reuse_explicit_abroad_context", "verify_current_csn_abroad_sickness_process_for_actual_period"],
+      "source_requirements": ["current_csn_primary_source_for_sickness_during_studies_abroad"]
+    },
+    {
+      "case_id": "lab-student-vab-not-own-sickness-v67-05",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag studerar med CSN och mitt barn är sjukt så jag behöver vabba.",
+      "expected_support_areas": ["student_vab_boundary"],
+      "must_not_claim": ["child_sickness_is_the_students_own_sickness", "student_sickness_route_should_override_vab", "forsakringskassan_own_sickness_process_is_the_first_route_for_student_vab"],
+      "expected_questions": ["q_none_in_own_sickness_route_for_explicit_vab_context"],
+      "expected_next_actions": ["do_not_force_student_own_sickness_route", "preserve_separate_student_vab_path_for_future_or_existing_matching"],
+      "source_requirements": ["current_csn_primary_source_for_vab_during_studies"]
+    },
+    {
+      "case_id": "lab-student-sickness-research-false-positive-v67-06",
+      "actor_type": "student",
+      "language": "sv",
+      "story": "Jag skriver uppsats om sjukskrivna studenter och vill hitta statistik.",
+      "expected_support_areas": ["no_personal_student_sickness_route_without_personal_illness_signal"],
+      "must_not_claim": ["the_user_is_sick", "the_user_needs_to_report_sickness", "the_user_has_a_student_finance_case"],
+      "expected_questions": ["q_none_fail_closed_non_personal_research_context"],
+      "expected_next_actions": ["fail_closed_for_non_personal_research_context"],
+      "source_requirements": ["current_primary_source_required_before_any_material_student_sickness_claim"]
+    },
+    {
+      "case_id": "lab-student-sickness-language-ar-v67-07",
+      "actor_type": "student",
+      "language": "ar",
+      "story": "أنا طالبة ومرضت ولا أستطيع الدراسة الآن. لدي دعم دراسي من CSN.",
+      "expected_support_areas": ["student_csn", "student_sickness"],
+      "must_not_claim": ["automatic_entitlement", "automatic_sickness_benefit", "diagnosis_inferred_from_story"],
+      "expected_questions": ["q_do_you_work_alongside_studies_only_if_not_already_known"],
+      "expected_next_actions": ["preserve_same_student_csn_focus_and_current_primary_sources_in_arabic_ui"],
+      "source_requirements": ["current_csn_primary_source_for_sickness_during_studies", "current_forsakringskassan_primary_source_when_applicable"]
+    },
+    {
+      "case_id": "lab-student-sickness-language-fa-v67-08",
+      "actor_type": "student",
+      "language": "fa",
+      "story": "من دانشجو هستم و بیمار شده‌ام و نمی‌توانم درس بخوانم. از CSN کمک تحصیلی دارم.",
+      "expected_support_areas": ["student_csn", "student_sickness"],
+      "must_not_claim": ["automatic_entitlement", "automatic_sickness_benefit", "diagnosis_inferred_from_story"],
+      "expected_questions": ["q_do_you_work_alongside_studies_only_if_not_already_known"],
+      "expected_next_actions": ["preserve_same_student_csn_focus_and_current_primary_sources_in_persian_ui"],
+      "source_requirements": ["current_csn_primary_source_for_sickness_during_studies", "current_forsakringskassan_primary_source_when_applicable"]
+    }
+  ]
+}
