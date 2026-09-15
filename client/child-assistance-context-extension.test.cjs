@@ -44,6 +44,12 @@ test('handoff serializes only coarse route state, never raw story',()=>{
   assert.doesNotMatch(href,/Alma|autism|Exempelgatan|story|situation/i);
 });
 
+test('manual disability-home-support entry stays guarded even before a need is chosen',()=>{
+  const win={location:{search:'?focus=disability_home_support&lang=sv'},document:{documentElement:{lang:'sv'}}};
+  assert.deepEqual(mod.focusContext(win),{supportFor:null,lang:'sv'});
+  assert.equal(mod.routeContext(win),null);
+});
+
 test('adult and child primary sources remain distinct',()=>{
   assert.notEqual(mod.ADULT_URL,mod.CHILD_URL);
   assert.match(mod.ADULT_URL,/assistansersattning-for-vuxna$/);
