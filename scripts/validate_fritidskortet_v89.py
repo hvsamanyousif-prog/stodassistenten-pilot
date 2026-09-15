@@ -5,8 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EVAL = ROOT / 'data' / 'evals'
-SUPPORT = ROOT / 'data' / 'supports'
-RECORD = SUPPORT / 'se-fritidskortet-child-activities.json'
+TRUTH = EVAL / 'fritidskortet_truth_guard_v89.json'
 SCENARIOS = EVAL / 'scenario_lab_websignals_v89.json'
 SIGNALS = EVAL / 'demand_friction_signals_v89.json'
 MAPPING = EVAL / 'demand_friction_regression_map_v89.json'
@@ -31,26 +30,25 @@ def require(value, message):
     if not value:
         raise AssertionError(message)
 
-def validate_record(record):
-    require(record.get('support_id') == 'se-fritidskortet-child-activities', 'support id drifted')
-    require(record.get('category') == 'family_children', 'Fritidskortet must stay in family_children')
-    require(record.get('provider', {}).get('name') == 'E-hälsomyndigheten', 'provider drifted')
-    verification = record.get('verification', {})
-    require(verification.get('status') == 'NEEDS_REVIEW', 'AI must not self-promote Fritidskortet to VERIFIED')
-    require(verification.get('human_review_required') is True, 'human review must remain required')
-    require(verification.get('material_fields_verified') == [], 'material fields must stay unverified')
-    text = json.dumps(record, ensure_ascii=False).lower()
-    for token in ['10 augusti 2026', 'fyller 6', 'fyller 16', '550', '2 500', 'bostadsbidrag', 'bostadstillägg', '30 november']:
+def validate_truth_guard(truth):
+    require(truth.get('programme') == 'Fritidskortet', 'programme drifted')
+    require(truth.get('responsible_authority') == 'E-hälsomyndigheten', 'authority drifted')
+    require(truth.get('truth_status') == 'NEEDS_REVIEW', 'AI must not self-promote Fritidskortet to VERIFIED')
+    require(truth.get('human_review_required') is True, 'human review must remain required')
+    require(truth.get('material_fields_verified') == [], 'material fields must stay unverified')
+    text = json.dumps(truth, ensure_ascii=False).lower()
+    for token in ['10 august 2026', 'turn 6', 'turn 16', '550', '2,500', 'bostadsbidrag', 'bostadstillägg', '30 november']:
         require(token in text, f'missing current 2026 boundary: {token}')
-    require(PARENT_URL == record.get('application', {}).get('url'), 'parent primary route drifted')
-    require('e-legitimation' in record.get('application', {}).get('next_step', ''), 'non-eID path must not dead-end')
-    require(record.get('benefit', {}).get('kind') == 'payment_credit', 'benefit kind drifted')
+    require(PARENT_URL in truth.get('current_primary_sources', []), 'parent primary source missing')
+    require(REGISTER_URL in truth.get('current_primary_sources', []), 'provider register source missing')
+    require('paper-form route' in truth.get('guarded_current_facts', {}).get('non_eid_path', '').lower(), 'non-eID path must not dead-end')
+    require('data/source_registry.json' in truth.get('promotion_gate', ''), 'canonical source-registry promotion gate missing')
 
-record = load(RECORD)
+truth = load(TRUTH)
 scenarios = load(SCENARIOS)
 signals = load(SIGNALS)
 mapping = load(MAPPING)
-validate_record(record)
+validate_truth_guard(truth)
 
 cases = scenarios.get('cases', [])
 by_id = {case.get('case_id'): case for case in cases}
@@ -80,28 +78,33 @@ require(set(entry.get('regression_case_ids', [])) == EXPECTED, 'mapping must cov
 require(entry.get('coverage_status') == 'TRUTH_AND_REGRESSION_GUARDED_V89_PUBLIC_ROUTE_PENDING', 'coverage status drifted')
 
 # Red team: reject stale age and autonomous truth promotion.
-promoted = copy.deepcopy(record)
-promoted['verification']['status'] = 'VERIFIED'
+promoted = copy.deepcopy(truth)
+promoted['truth_status'] = 'VERIFIED'
 try:
-    validate_record(promoted)
+    validate_truth_guard(promoted)
 except AssertionError:
     pass
 else:
-    raise AssertionError('red-team mutation: self-promoted record was accepted')
+    raise AssertionError('red-team mutation: self-promoted truth guard was accepted')
 
-stale = copy.deepcopy(record)
-for condition in stale['eligibility']['conditions']:
-    if condition['rule_id'] == 'fritidskortet.age_2026':
-        condition['value'] = 'Barn från det år de fyller 7 till och med 16.'
+stale = copy.deepcopy(truth)
+stale['guarded_current_facts']['age_boundary'] = 'Children from the calendar year they turn 7 through 16.'
 try:
-    validate_record(stale)
+    validate_truth_guard(stale)
 except AssertionError:
     pass
 else:
     raise AssertionError('red-team mutation: stale 7-year boundary was accepted')
 
-forbidden = [ROOT / 'fritidskort-app.html', ROOT / 'client' / 'fritidskort-engine.js', ROOT / 'data' / 'fritidskort_truth_store.json']
-require(not any(path.exists() for path in forbidden), 'parallel Fritidskortet app/engine/truth store detected')
+# Fail closed: v89 intentionally does not create a normalized support record until
+# source_registry + schema + human review gates can be satisfied together.
+forbidden = [
+    ROOT / 'fritidskort-app.html',
+    ROOT / 'client' / 'fritidskort-engine.js',
+    ROOT / 'data' / 'fritidskort_truth_store.json',
+    ROOT / 'data' / 'supports' / 'se-fritidskortet-child-activities.json',
+]
+require(not any(path.exists() for path in forbidden), 'parallel or prematurely promoted Fritidskortet artifact detected')
 
-print('v89 Fritidskortet truth + demand/friction + scenario guard: OK')
-print(f'signal={SID} cases={len(cases)} truth=NEEDS_REVIEW public_route=PENDING')
+print('v89 Fritidskortet truth-guard + demand/friction + scenario guard: OK')
+print(f'signal={SID} cases={len(cases)} truth=NEEDS_REVIEW canonical_support=PENDING public_route=PENDING')
