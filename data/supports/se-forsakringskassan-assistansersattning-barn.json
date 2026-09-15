@@ -1,0 +1,131 @@
+{
+  "support_id": "se-forsakringskassan-assistansersattning-barn",
+  "name": "Assistansersättning för barn med omfattande hjälpbehov",
+  "category": "disability",
+  "subtype": "state_personal_assistance_compensation",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "child",
+      "guardian",
+      "disability",
+      "personal_assistance",
+      "extensive_support_needs"
+    ],
+    "age_min": 0,
+    "age_max": 17
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "assistans_child.lss_personkrets",
+        "field": "lss_personkrets",
+        "operator": "text_condition",
+        "value": "Barnets funktionsnedsättning ska omfattas av någon av personkretsarna i LSS enligt Försäkringskassans bedömning.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+        "notes": "En uppgiven diagnos eller funktionsnedsättning är inte i sig ett beslut om rätt till assistansersättning."
+      },
+      {
+        "rule_id": "assistans_child.basic_needs_over_20h",
+        "field": "assessed_basic_needs_hours_per_week",
+        "operator": "text_condition",
+        "value": "Barnets behov av hjälp med grundläggande behov ska av Försäkringskassan bedömas till i genomsnitt mer än 20 timmar per vecka för den statliga assistansersättningen.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+        "notes": "En vårdnadshavares egen timuppskattning får inte behandlas som myndighetens bedömda antal timmar. Vid mindre än 20 timmar anger Försäkringskassan kommunen som stödväg."
+      },
+      {
+        "rule_id": "assistans_child.parental_deduction",
+        "field": "parental_deduction_applies",
+        "operator": "text_condition",
+        "value": "För barn 0–17 år gör Försäkringskassan ett föräldraavdrag från den hjälp som en vårdnadshavare normalt ska tillgodose; avdragets utformning beror på barnets ålder och vilken typ av behov det gäller.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/sa-beraknas-grundlaggande-behov",
+        "notes": "Stödassistenten ska inte räkna fram ett individuellt avdrag eller nettotimmar. Aktuella avdrag och undantag måste verifieras i primärkällan."
+      },
+      {
+        "rule_id": "assistans_child.residence",
+        "field": "child_lives_in_sweden",
+        "operator": "eq",
+        "value": true,
+        "source_url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+        "notes": "Försäkringskassans aktuella sida anger att barnet ska bo i Sverige."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "assistans_child.activities",
+        "prompt": "Vilka konkreta grundläggande aktiviteter behöver barnet personlig hjälp med, till exempel hygien, måltider, av- och påklädning eller kommunikation?",
+        "reason": "Vilken typ av hjälp som behövs påverkar vad Försäkringskassan kan räkna som grundläggande behov."
+      },
+      {
+        "question_id": "assistans_child.age",
+        "prompt": "Hur gammalt är barnet?",
+        "reason": "Barnets ålder påverkar föräldraavdraget och är därför route- och bedömningsrelevant."
+      },
+      {
+        "question_id": "assistans_child.frequency_extent",
+        "prompt": "Hur ofta behövs hjälpen och ungefär hur mycket tid tar den under en vanlig vecka?",
+        "reason": "Omfattningen påverkar vilken myndighetsväg som behöver kontrolleras, men en egen tidsuppskattning är inte samma sak som Försäkringskassans bedömning."
+      },
+      {
+        "question_id": "assistans_child.residence",
+        "prompt": "Bor barnet i Sverige?",
+        "reason": "Bosättning i Sverige anges som ett villkor på Försäkringskassans aktuella barnsida."
+      },
+      {
+        "question_id": "assistans_child.existing_contact",
+        "prompt": "Finns redan kontakt, ansökan eller beslut hos kommunen eller Försäkringskassan om personlig assistans för barnet?",
+        "reason": "Befintlig handläggning kan ändra nästa handling och undvika dubbel eller felriktad kontakt."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Assistansersättning är pengar för att betala barnets personliga assistans. Försäkringskassan bedömer de grundläggande behoven, tillämpar barnspecifika regler som föräldraavdrag och kan därefter bedöma andra personliga behov. Timantal och aktuellt schablonbelopp ska alltid kontrolleras i aktuell primärkälla.",
+    "recurrence": null
+  },
+  "documents": [
+    "Läkarutlåtande som beskriver barnets funktionsnedsättning och hur den påverkar barnet",
+    "Beskrivning av vilken hjälp barnet behöver, på vilket sätt, hur ofta och ungefär hur lång tid hjälpen tar"
+  ],
+  "application": {
+    "method": "mixed",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+    "deadline_text": null,
+    "next_step": "Beskriv barnets konkreta hjälpbehov och ålder, ordna läkarutlåtande och kontrollera Försäkringskassans aktuella barnsida. Om de grundläggande hjälpbehoven inte bedöms överstiga 20 timmar per vecka ska kommunens aktuella väg för personlig assistans kontrolleras i stället."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-15T16:25:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkällor, kontrollerade 2026-09-15. Mänsklig granskning krävs före VERIFIED. Särskilt ska LSS-personkrets, gränsen mer än 20 timmar grundläggande behov, barnets bosättning, aktuell utformning av föräldraavdrag samt kommun/Försäkringskassan-routing kontrolleras. Produkten får inte räkna fram individuellt föräldraavdrag eller likställa vårdnadshavarens timuppskattning med myndighetens bedömning.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T16:25:00Z",
+    "last_seen_at": "2026-09-15T16:25:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}
