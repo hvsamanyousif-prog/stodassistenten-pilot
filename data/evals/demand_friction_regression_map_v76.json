@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v76 healthcare-cost navigation signal into permanent regressions in the SAME Stödassistenten learning system without inventing a separate app or truth layer.",
+  "mappings": [
+    {
+      "signal_id": "df-healthcare-cost-protection-boundary-v01",
+      "product_miss": "The current public product has dedicated dental-cost help and broad economy/health routing, but lacks a focused boundary between outpatient patient fees/frikort and prescription-medicine high-cost protection, including multilingual and basic-needs overlap handling.",
+      "regression_case_ids": [
+        "lab-health-cost-primary-care-v76-01",
+        "lab-health-cost-frikort-medicine-boundary-v76-02",
+        "lab-health-cost-prescription-medicine-v76-03",
+        "lab-health-cost-dental-overlap-v76-04",
+        "lab-health-cost-basic-needs-overlap-v76-05",
+        "lab-health-cost-professional-false-positive-v76-06",
+        "lab-health-cost-language-ar-v76-07",
+        "lab-health-cost-language-fa-v76-08"
+      ],
+      "coverage_status": "LEARNING_GUARDED_PUBLIC_ROUTE_PENDING",
+      "fix_or_guardrail": "Extend the existing quick-help/person intelligence rather than creating a healthcare-cost app. Reuse the existing dental route. For non-dental healthcare costs, distinguish outpatient visit versus prescription medicine with at most one route-changing question, preserve economic-assistance visibility when food/housing are at risk, and fail closed on professional/research contexts. Exact regional fees and medicine ceilings remain primary-source-verified, time/region-sensitive facts.",
+      "truth_boundary": "Discovery language and feedback are never truth. Material patient-fee, frikort, medicine-benefit, high-cost amount, regional rule, deadline, dental-support and eligibility claims require current responsible primary-source verification. Outpatient care and prescription medicines are separate cost-protection paths and must not be collapsed into one universal frikort."
+    }
+  ]
+}
