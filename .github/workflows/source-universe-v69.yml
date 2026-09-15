@@ -1,0 +1,25 @@
+name: Source universe v69
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  source-universe-v69:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate shared source universe and fail-closed authority boundaries
+        run: |
+          python scripts/validate_source_universe_v69.py
+          python scripts/validate_foundation_discovery.py
+          python scripts/validate_data.py
+          python scripts/validate_scenario_lab_all.py
+          python scripts/validate_public_repo_boundary.py
