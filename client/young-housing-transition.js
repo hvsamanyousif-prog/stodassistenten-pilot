@@ -12,7 +12,7 @@
   const FK_HOUSING_2027_URL = 'https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027';
 
   const DIRECT_PATTERNS = [
-    /\bbostadsbidrag\b/i,
+    /\bbostadsbidrag(?:et|ets|en|ens)?\b/i,
     /بدل\s+السكن|إعانة\s+السكن/i,
     /کمک(?:‌|\s)*هزینه\s+مسکن|یارانه\s+مسکن/i,
   ];
