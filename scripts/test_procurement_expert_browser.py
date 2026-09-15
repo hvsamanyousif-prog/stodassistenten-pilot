@@ -28,15 +28,26 @@ def custom(page, text, sector='construction'):
     expect(page.locator('#analysisCard')).to_be_visible()
 
 
+def open_review(page):
+    if page.locator('#reviewDetails').get_attribute('open') is None:
+        page.locator('#openReviewBtn').click()
+    check(page.locator('#reviewDetails').get_attribute('open') is not None, 'Full review did not open')
+
+
+def open_advanced_feedback(page):
+    if page.locator('#advancedFeedback').get_attribute('open') is None:
+        page.locator('#advancedFeedback summary').click()
+    check(page.locator('#advancedFeedback').get_attribute('open') is not None, 'Advanced feedback did not open')
+
+
 def rate(page):
+    open_advanced_feedback(page)
     for el in page.locator('[data-score]').all():
         el.select_option('4')
     for name in ['foundIssue', 'useful', 'clearNext']:
         page.locator('#' + name).select_option('yes')
 
 
-# Independent synthetic procurement scenarios. These expected results are written as
-# procurement-review outcomes, not generated from the implementation regexes.
 sector_scenarios = {
     'construction': {
         'text': '\n'.join([
@@ -81,6 +92,7 @@ def sector_case(sector):
     def run(page, network):
         scenario = sector_scenarios[sector]
         custom(page, scenario['text'], sector)
+        open_review(page)
         actual = [el.input_value() for el in page.locator('[data-cat]').all()]
         check(actual == scenario['expected'], f'{sector}: expected {scenario["expected"]}, got {actual}')
         expect(page.locator('#feedbackCard')).to_be_visible()
@@ -90,7 +102,25 @@ def sector_case(sector):
 def sample(page, network):
     page.locator('#sampleBtn').click()
     expect(page.locator('#requirements .req')).to_have_count(9)
+    check(page.locator('#reviewDetails').get_attribute('open') is None, 'Full row review should start collapsed')
+    check(not page.locator('#requirements .req').first.is_visible(), 'Requirement cards should not dominate the first result state')
+    check(page.locator('#priorityOverview').is_visible(), 'Priority overview is not visible')
+    check(page.locator('#openReviewBtn').is_visible(), 'No clear next control to open full review')
+    check(page.locator('#advancedFeedback').get_attribute('open') is None, 'Advanced scorecard should start collapsed')
     check(not page.locator('#draft').is_visible(), 'Draft should stay collapsed initially')
+
+
+def sample_to_own_input_resets(page, network):
+    page.locator('#sampleBtn').click()
+    expect(page.locator('#analysisCard')).to_be_visible()
+    check('3.1 Kvalificering' in page.locator('#sourceText').input_value(), 'Sample did not load')
+    page.locator('#startBtn').click()
+    check(page.locator('#sourceText').input_value() == '', 'Own-input switch keeps sample text')
+    check(page.locator('#sourceUrl').input_value() == '', 'Own-input switch keeps sample source URL')
+    expect(page.locator('#analysisCard')).to_be_hidden()
+    expect(page.locator('#feedbackCard')).to_be_hidden()
+    check(page.locator('#sectorGrid .choice.active').count() == 0, 'Own-input switch keeps sample sector')
+    check(page.evaluate("document.activeElement && document.activeElement.id") == 'sourceText', 'Own-input switch does not focus clean source field')
 
 
 def own_input_no_default_sector(page, network):
@@ -103,6 +133,7 @@ def own_input_no_default_sector(page, network):
 
 def source_line(page, network):
     custom(page, 'Rubrik\n\nLeverantören ska ha två referensuppdrag.')
+    open_review(page)
     row = page.locator('#requirements .req').filter(has_text='Leverantören ska ha två referensuppdrag.')
     check(row.locator('.source').inner_text().endswith('3'), 'Original line 3 is displayed as ' + row.locator('.source').inner_text())
 
@@ -118,6 +149,8 @@ def all_rows(page, network):
 def long_paragraph(page, network):
     text = 'Leverantören ska redovisa sin metod. ' + ('Detta stycke innehåller fortsatt kravtext och kontext. ' * 18)
     custom(page, text)
+    check('långt stycke' in page.locator('#priorityOverview').inner_text().lower(), 'Long paragraph risk is hidden from collapsed overview')
+    open_review(page)
     expect(page.locator('#requirements .req')).to_have_count(1)
     row_text = page.locator('#requirements .req').first.inner_text().lower()
     check('långt stycke' in row_text, 'Long paragraph is not explicitly flagged for manual split/review')
@@ -127,18 +160,24 @@ def long_paragraph(page, network):
 
 def attachment_reference(page, network):
     custom(page, 'Bilaga 7 innehåller samtliga obligatoriska tekniska krav.')
+    check('bilagehänvisning' in page.locator('#priorityOverview').inner_text().lower(), 'Attachment risk hidden from priority overview')
+    open_review(page)
     row_text = page.locator('#requirements .req').first.inner_text().lower()
     check('bilagehänvisning' in row_text, 'Attachment reference is not visibly flagged as unanalyzed source context')
 
 
 def conditional_requirement(page, network):
     custom(page, 'Leverantören ska lämna intyg, men kravet gäller inte om beställaren godkänner likvärdigt bevis.')
+    check('villkor eller undantag' in page.locator('#priorityOverview').inner_text().lower(), 'Conditional risk hidden from priority overview')
+    open_review(page)
     row_text = page.locator('#requirements .req').first.inner_text().lower()
     check('villkor eller undantag' in row_text, 'Conditional/exception wording is not visibly flagged')
 
 
 def unknown_requirement(page, network):
     custom(page, 'Se vidare i handlingarna för relevant information.')
+    check('oklar kravtyp' in page.locator('#priorityOverview').inner_text().lower(), 'Unknown risk hidden from priority overview')
+    open_review(page)
     check(page.locator('[data-cat]').first.input_value() == 'uncertain', 'Unknown material is not classified uncertain')
     check('osäker' in page.locator('#requirements .req').first.inner_text().lower(), 'Unknown row lacks visible uncertainty label')
 
@@ -151,6 +190,7 @@ def edit_and_reanalyse(page, network):
     expect(page.locator('#analysisCard')).to_be_hidden()
     page.locator('#analyzeBtn').click()
     expect(page.locator('#analysisCard')).to_be_visible()
+    open_review(page)
     check(page.locator('#requirements').inner_text().find('Timpris') >= 0, 'Reanalysis did not use changed source')
     check(page.locator('#requirements').inner_text().find('undertecknat intyg') < 0, 'Old source survives reanalysis')
 
@@ -167,18 +207,21 @@ def restart(page, network):
 
 def price_missing(page, network):
     custom(page, 'Anbudet ska innehålla ifylld prisbilaga.')
+    open_review(page)
     page.locator('[data-ev]').first.select_option('missing')
     check(page.locator('#summary .okbox').count() == 0, 'Missing explicitly required price attachment receives positive summary')
+    check('saknas' in page.locator('#priorityOverview').inner_text().lower(), 'Missing evidence is not prioritized in overview')
 
 
 def not_applicable(page, network):
     custom(page, 'Anbudet ska innehålla ett undertecknat intyg.')
+    open_review(page)
     page.locator('[data-ev]').first.select_option('na')
     check(page.locator('#summary .okbox').count() == 0, 'Unjustified not-applicable bypasses unresolved status')
 
 
 def focus(page, network):
-    page.locator('#sampleBtn').click()
+    page.locator('#sampleBtn').click(); open_review(page)
     page.locator('[data-ev]').first.focus()
     page.locator('[data-ev]').first.select_option('missing')
     check(page.evaluate("document.activeElement && document.activeElement.getAttribute('data-ev')") == '1', 'Focus lost when evidence changes')
@@ -188,6 +231,22 @@ def width(page, network):
     page.locator('#sampleBtn').click()
     sizes = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')
     check(sizes['content'] <= sizes['viewport'] + 1, f'Horizontal overflow: {sizes}')
+
+
+def answer_short(page):
+    for name in ['foundIssue', 'useful', 'clearNext']:
+        page.locator('#' + name).select_option('yes')
+
+
+def feedback_short_success(page, network):
+    page.locator('#sampleBtn').click(); answer_short(page)
+    check(page.locator('#advancedFeedback').get_attribute('open') is None, 'Short feedback should not require opening advanced scorecard')
+    page.locator('#sendFeedback').click()
+    expect(page.locator('#feedbackStatus')).to_have_class('status ok')
+    posts = page.evaluate('window.__auditNetwork.posts')
+    check(len(posts) == 1, 'Expected one mocked short-feedback POST')
+    check(posts[0]['ratings'] == {}, 'Short feedback fabricated detailed ratings')
+    check(set(posts[0]) == {'app_version', 'language', 'flow', 'learned_new', 'useful', 'next_step_clear', 'ratings'}, 'Unexpected short-feedback fields')
 
 
 def feedback_success(page, network):
@@ -233,6 +292,7 @@ def reset(page, network):
     values = [el.input_value() for el in page.locator('[data-score]').all()]
     check(not any(values), 'New test inherits ratings from previous test: ' + str(values))
     check(all(page.locator('#' + n).input_value() == '' for n in ['foundIssue', 'useful', 'clearNext']), 'Old answers remain')
+    check(page.locator('#advancedFeedback').get_attribute('open') is None, 'Advanced feedback remains open between cases')
 
 
 def double_send(page, network):
@@ -244,20 +304,22 @@ def double_send(page, network):
 
 
 def unassessed(page, network):
-    page.locator('#sampleBtn').click()
+    page.locator('#sampleBtn').click(); open_advanced_feedback(page)
     options = page.locator('[data-score]').first.locator('option').all_text_contents()
-    check(any(('ej bedömt' in x.lower() or 'kan inte bedöma' in x.lower()) for x in options), 'No explicit not-assessed option in mandatory scorecard')
+    check(any(('ej bedömt' in x.lower() or 'kan inte bedöma' in x.lower()) for x in options), 'No explicit not-assessed option in optional scorecard')
 
 
 def escaped_input(page, network):
     custom(page, '<img src=x onerror="window.__audit_xss=true"> Produkten ska uppfylla kravspecifikationen.')
+    open_review(page)
     check(page.evaluate('window.__audit_xss === undefined'), 'Raw HTML executed')
     check(page.locator('#requirements img').count() == 0, 'Untrusted HTML inserted')
 
 
 cases = [('sector-' + k, sector_case(k)) for k in sector_scenarios]
 cases += [
-    ('sample', sample),
+    ('sample-progressive-disclosure', sample),
+    ('sample-to-own-input-clean-reset', sample_to_own_input_resets),
     ('own-input-no-default-sector', own_input_no_default_sector),
     ('source-line', source_line),
     ('no-silent-truncation', all_rows),
@@ -271,6 +333,7 @@ cases += [
     ('unjustified-na', not_applicable),
     ('evidence-focus', focus),
     ('no-horizontal-overflow', width),
+    ('feedback-short-mocked-success', feedback_short_success),
     ('feedback-mocked-success', feedback_success),
     ('feedback-mocked-error-retry', feedback_failure_retry),
     ('feedback-timeout-retry', feedback_timeout_retry),
