@@ -174,6 +174,44 @@ def conditional_requirement(page, network):
     check('villkor eller undantag' in row_text, 'Conditional/exception wording is not visibly flagged')
 
 
+def conditional_variants(page, network):
+    texts = [
+        'Leverantören ska bifoga kvalitetsintyg. Kravet gäller inte om leverantören redan finns i myndighetens register.',
+        'Leverantören ska antingen bifoga ISO-certifikat eller beskriva ett likvärdigt kvalitetsledningssystem.',
+    ]
+    for text in texts:
+        custom(page, text)
+        check('villkor eller undantag' in page.locator('#priorityOverview').inner_text().lower(), 'Exception/alternative risk is hidden from collapsed overview')
+        open_review(page)
+        check('villkor eller undantag' in page.locator('#requirements .req').first.inner_text().lower(), 'Exception/alternative risk is hidden from row review')
+
+
+def cross_reference(page, network):
+    custom(page, 'Leverantören ska uppfylla samtliga tekniska krav enligt punkt 7.4.')
+    check('korshänvisning' in page.locator('#priorityOverview').inner_text().lower(), 'Cross-reference risk hidden from collapsed overview')
+    open_review(page)
+    row_text = page.locator('#requirements .req').first.inner_text().lower()
+    check('korshänvisning' in row_text, 'Cross-reference is not visibly marked for original-source review')
+    check('inte hämtad eller verifierad' in row_text, 'Cross-reference wording overclaims referenced content')
+
+
+def structural_heading(page, network):
+    text = 'Obligatoriska krav\n\nSe bilaga 3.\nMåltiderna ska uppfylla de allergenkrav som anges i underlaget.'
+    custom(page, text, 'other')
+    check('bilagehänvisning' in page.locator('#priorityOverview').inner_text().lower(), 'Appendix risk is hidden when a structural heading is present')
+    open_review(page)
+    heading = page.locator('#requirements .structural-context').filter(has_text='Obligatoriska krav')
+    expect(heading).to_have_count(1)
+    check(heading.locator('.source').inner_text().endswith('1'), 'Structural heading lost source line 1')
+    check(heading.locator('[data-cat]').count() == 0 and heading.locator('[data-ev]').count() == 0, 'Structural heading received requirement/evidence controls')
+    appendix = page.locator('#requirements .req').filter(has_text='Se bilaga 3.')
+    check(appendix.locator('.source').inner_text().endswith('3'), 'Appendix row lost physical source line 3')
+    check('bilagehänvisning' in appendix.inner_text().lower(), 'Appendix row lost unresolved attachment signal')
+    allergen = page.locator('#requirements .req').filter(has_text='Måltiderna ska uppfylla')
+    check(allergen.locator('.source').inner_text().endswith('4'), 'Actionable requirement lost physical source line 4')
+    check(allergen.locator('[data-cat]').input_value() == 'mandatory', 'Actionable short requirement was mistaken for structural context')
+
+
 def unknown_requirement(page, network):
     custom(page, 'Se vidare i handlingarna för relevant information.')
     check('oklar kravtyp' in page.locator('#priorityOverview').inner_text().lower(), 'Unknown risk hidden from priority overview')
@@ -326,6 +364,9 @@ cases += [
     ('long-paragraph-visible-risk', long_paragraph),
     ('attachment-reference-visible-risk', attachment_reference),
     ('conditional-visible-risk', conditional_requirement),
+    ('conditional-variants-visible-risk', conditional_variants),
+    ('cross-reference-visible-risk', cross_reference),
+    ('structural-heading-source-trace', structural_heading),
     ('unknown-visible-risk', unknown_requirement),
     ('edit-and-reanalyse', edit_and_reanalyse),
     ('restart-flow', restart),
