@@ -1,0 +1,76 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for debt, unpaid bills and the boundary between municipal budget/debt counselling and acute economic-assistance needs. Scores are not measured search volumes and do not prove debt-restructuring eligibility, economic-assistance eligibility, creditor outcome or payment amount. Community material, search phrasing and prior AI output are discovery-only; current Konsumentverket, Kronofogden and Socialstyrelsen sources carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-debt-counselling-vs-acute-assistance-v01",
+      "actor_types": ["private_person", "employee", "older_person", "student"],
+      "natural_language_queries": [
+        "jag har skulder och vet inte vem jag ska ringa",
+        "mina räkningar är i kaos vad gör jag först",
+        "jag har inkasso men klarar mat och hyra vem hjälper mig",
+        "jag har skulder och kan inte betala hyran nu",
+        "kan jag få skuldsanering",
+        "vad kan kommunen hjälpa till med när jag har skulder"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Kronofogden reported on 26 January 2026 that almost 450,000 people had registered debts and the total debt was SEK 154 billion. On 10 February 2026 it also reported 33,469 applications for debt restructuring during 2025. These are reach/consequence indicators, not measured search volume for the phrases in this pack."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Natural problem statements about unpaid bills can mean accumulated debt, a possible debt-restructuring question or an immediate inability to cover rent, electricity, food or medicine. Those routes involve municipal budget/debt counselling, Kronofogden and sometimes municipal economic assistance, so a generic money-pressure route can send the user to the wrong first action."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Kronofogden warns that if bills must be prioritised, rent should be paid first because non-payment can lead to eviction. Delaying the acute-needs route behind a debt inventory can therefore matter, while treating every debt as acute economic-assistance eligibility is also unsafe."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Konsumentverket describes municipal budget/debt counselling and local counsellor discovery, Kronofogden owns enforcement and debt-restructuring information, and Socialstyrelsen describes economic assistance. The product must preserve the boundaries rather than collapse all financial distress into one authority or benefit."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as inkasso, Kronofogden, budget- och skuldrådgivning and skuldsanering are institution-heavy and easy to confuse. Arabic and Persian users need the same semantic split between accumulated debt and immediate basic-needs shortage without being asked for creditor names or exact amounts."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "For a clear accumulated-debt story without an acute basic-needs shortage, the first safe action can be municipal budget/debt counselling without collecting a detailed debt inventory. When acute rent, electricity, food or medicine risk is explicit, the existing economic-assistance path must stay visible before or alongside counselling."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Kronofogden's current 2026 statistics show debt problems affect a large and persistent population, and its public FAQ separately addresses the recurring natural-language question 'Mina räkningar är helt i kaos. Vad ska jag göra?'."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "Before v62, the public economy capability recognised basic-needs money pressure and municipal economic assistance but had no explicit debt, inkasso, unpaid-bills or debt-counselling context. A person with accumulated debt could therefore miss the municipal counselling route or be treated as a generic assistance case."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.konsumentverket.se/ekonomi/kommunal-budget-och-skuldradgivning/",
+        "https://kronofogden.se/kontakta-oss/fragor-och-svar/rad-och-stod/2025-04-08-mina-rakningar-ar-helt-i-kaos.-vad-ska-jag-gora",
+        "https://kronofogden.se/kontakta-oss/fragor-och-svar/skuldsanering/2025-04-08-jag-kan-inte-betala-mina-rakningar.-kan-jag-fa-skuldsanering",
+        "https://kronofogden.se/om-kronofogden/nyheter-och-press/pressmeddelande/2026-01-26-skulderna-hos-kronofogden-fortsatter-att-oka",
+        "https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/ekonomiskt-bistand-for-privatpersoner/"
+      ],
+      "product_miss": "The shared public economy path had learned economic-assistance boundaries but did not recognise accumulated debt as a distinct context, so users asking about debts, inkasso or chaotic bills could miss municipal budget/debt counselling or be pushed toward a generic assistance explanation.",
+      "future_guardrail": "Keep one shared Stödassistenten economy path. Add debt as a coarse context inside the existing economic_assistance focus, route accumulated debt to current municipal budget/debt counselling, and preserve the acute housing/basic-needs path when immediate rent, electricity, food or medicine risk is explicit. Never put creditor identity, exact debt amount or raw story in the URL or feedback.",
+      "regression_case": [
+        "lab-private-debt-counselling-v62-01",
+        "lab-private-debt-plus-acute-rent-v62-02",
+        "lab-private-debt-skuldsanering-fail-closed-v62-03",
+        "lab-kronofogden-employment-false-positive-v62-06"
+      ],
+      "evaluation_method": "Run the existing economic-assistance product test plus the canonical scenario and demand/friction learning-loop gates. Require sv/ar/fa debt parity, acute-rent precedence, a Kronofogden-as-employer false-positive guard, privacy-safe handoff and no eligibility, debt payment, creditor agreement or debt-restructuring guarantee.",
+      "recommended_learning_action": "Extend the existing economic-assistance capability rather than creating a second financial app: detect debt intent, preserve only context=debt in the shared handoff, show current Konsumentverket/Kronofogden next actions, and encode the miss as permanent synthetic regressions.",
+      "truth_rule": "VERIFY current Konsumentverket, Kronofogden and Socialstyrelsen primary sources before material claims. Do not infer economic-assistance eligibility, debt-restructuring eligibility, creditor acceptance, debt cancellation, legal deadlines or payment amounts from the story, community discussion, prior AI output or the existence of a counselling route."
+    }
+  ]
+}
