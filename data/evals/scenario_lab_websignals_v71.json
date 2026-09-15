@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v71 regressions for the existing company procurement capability. They close the gap between finding a procurement and safely acting when a requirement is unclear, when Q&A/addenda change the controlling information, or when a supplier hopes to repair a missing mandatory item after submission. No separate procurement engine is created and no generic guidance may override the current procurement documents.",
+  "cases": [
+    {
+      "case_id": "lab-company-procurement-unclear-mandatory-requirement-v71-01",
+      "actor_type": "company",
+      "language": "sv",
+      "story": "Vi vill lämna anbud men förstår inte ett obligatoriskt krav. Ska vi chansa, ringa någon privat eller hur gör vi innan sista anbudsdag?",
+      "expected_support_areas": ["official_procurement_qna_before_deadline", "mandatory_requirement_clarification_boundary"],
+      "must_not_claim": ["ambiguity_means_the_mandatory_requirement_can_be_ignored", "a_private_answer_outside_the_official_channel_controls_the_procurement", "post_deadline_correction_is_guaranteed"],
+      "expected_questions": ["q_none_use_the_current_procurement_documents_qna_channel_and_question_deadline"],
+      "expected_next_actions": ["use_the_official_qna_channel_in_the_current_procurement_documents_as_early_as_possible", "monitor_published_answers_and_addenda_before_submission", "if_the_requirement_still_cannot_be_met_or_evidenced_treat_it_as_a_bid_gap_instead_of_overclaiming"],
+      "source_requirements": ["current_upphandlingsmyndigheten_primary_source_for_supplier_questions_and_answers", "the_specific_procurement_documents_and_published_qna_or_addenda"]
+    },
+    {
+      "case_id": "lab-company-procurement-postsubmission-missing-evidence-v71-02",
+      "actor_type": "company",
+      "language": "sv",
+      "story": "Vi skickade in anbudet men glömde en bilaga som verkar vara obligatorisk. Kan vi bara komplettera den efter sista anbudsdag?",
+      "expected_support_areas": ["post_submission_correction_clarification_boundary", "mandatory_requirement_fail_closed"],
+      "must_not_claim": ["a_supplier_can_always_add_missing_mandatory_evidence_after_the_deadline", "the_product_can_decide_that_a_correction_or_supplement_is_legally_allowed_in_this_procurement", "the_buyer_must_request_a_supplement"],
+      "expected_questions": ["q_none_do_not_create_false_confidence_after_submission"],
+      "expected_next_actions": ["check_the_current_procurement_documents_and_buyer_communication_channel", "treat_post_submission_correction_clarification_or_supplementation_as_conditional_and_buyer_assessed", "do_not_rely_on_post_deadline_repair_as_a_bid_strategy"],
+      "source_requirements": ["current_upphandlingsmyndigheten_primary_source_for_correction_clarification_and_supplementation", "the_specific_procurement_documents"]
+    },
+    {
+      "case_id": "lab-company-procurement-qna-addendum-controls-v71-03",
+      "actor_type": "company",
+      "language": "sv",
+      "story": "Vi började skriva anbud efter originalunderlaget men nu kom ett svar i frågor och svar och en rättelse. Vilken version ska vi följa?",
+      "expected_support_areas": ["published_qna_and_addendum_monitoring", "latest_controlling_procurement_information"],
+      "must_not_claim": ["the_original_interpretation_always_controls_after_an_official_change", "published_qna_can_be_ignored", "generic_stodassistenten_guidance_overrides_the_current_procurement_documents"],
+      "expected_questions": ["q_none_use_the_current_published_procurement_material"],
+      "expected_next_actions": ["recheck_the_current_procurement_documents_published_qna_and_addenda_before_submission", "update_the_requirement_evidence_deadline_checklist_to_the_latest_controlling_public_information"],
+      "source_requirements": ["current_upphandlingsmyndigheten_primary_source_for_supplier_questions_and_answers", "the_specific_procurement_documents_and_published_qna_or_addenda"]
+    }
+  ]
+}
