@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v80 family housing-benefit demand/friction signal into permanent regressions in the SAME Stödassistenten learning system without creating a separate housing app, matcher or truth layer.",
+  "mappings": [
+    {
+      "signal_id": "df-family-housing-benefit-v80",
+      "product_miss": "The canonical product already knew the young-under-29 housing-benefit route and explicitly indicated that families with children need a different route, but lacked a canonical family housing-benefit truth record and family-specific regression package.",
+      "regression_case_ids": [
+        "lab-family-housing-main-route-v80-01",
+        "lab-family-housing-part-time-size-v80-02",
+        "lab-family-housing-joint-application-v80-03",
+        "lab-family-housing-2026-income-v80-04",
+        "lab-family-housing-2027-transition-v80-05",
+        "lab-family-housing-professional-false-positive-v80-06",
+        "lab-family-housing-language-ar-v80-07",
+        "lab-family-housing-language-fa-v80-08"
+      ],
+      "coverage_status": "TRUTH_AND_REGRESSION_GUARDED_V80",
+      "fix_or_guardrail": "Add the family housing-benefit record to the existing canonical support layer, preserve NEEDS_REVIEW until human verification, ask housing-size facts only when the child's residence pattern makes them material, preserve 2026 annual-income versus 2027 monthly-transition versioning, and keep sv/ar/fa semantically aligned. Public runtime wiring remains in the same person shell and must reuse this truth rather than create a second matcher.",
+      "truth_boundary": "Usage statistics and natural-language discovery are not truth. Current Försäkringskassan primary guidance is required for material eligibility, child-residence, household, income-period, amount, document, cross-border and application claims. Do not guarantee eligibility or amount. Do not treat the 2027 transition as current 2026 law for an individual application.",
+      "runtime_evidence": [
+        "data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json",
+        "data/evals/scenario_lab_websignals_v80.json",
+        "scripts/validate_family_housing_v80.py"
+      ]
+    }
+  ]
+}
