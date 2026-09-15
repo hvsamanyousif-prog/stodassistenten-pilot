@@ -26,7 +26,7 @@
     /(?:کمک\s*در\s*خانه|نظافت|آشپزی|حمام|خرید|مراقبت\s*در\s*منزل).*(?:مادرم|پدرم|مادر|پدر|سالمند)/i
   ];
   const SOCIAL_PATTERNS = [
-    /hemtjänst|äldreomsorg|trygghetslarm|städa|tvätta|handla|duscha|klä\s+på|måltid|laga\s+mat|personlig\s+hygien|hjälp\s+hemma/i,
+    /hemtjänst|äldreomsorg|trygghetslarm|städa|städning|tvätta|tvätt|handla|inköp|duscha|dusch|klä\s+på|påklädning|måltid|mat|laga\s+mat|personlig\s+hygien|hjälp\s+hemma/i,
     /تنظيف|طبخ|استحمام|تسوق|مساعدة\s*في\s*المنزل|رعاية\s*منزلية/i,
     /نظافت|آشپزی|حمام|خرید|کمک\s*در\s*خانه|مراقبت\s*روزمره/i
   ];
