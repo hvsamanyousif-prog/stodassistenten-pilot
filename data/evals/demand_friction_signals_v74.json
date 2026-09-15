@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signals for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence; community material is discovery-only and material guidance must be verified against current primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize recurring natural-language demand where users face high information friction, meaningful consequence and weak current product coverage. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-bereavement-first-action-v01",
+      "actor_types": ["relative"],
+      "natural_language_queries": [
+        "min man har dött vad kan jag få",
+        "min mamma har dött vad ska jag göra först",
+        "mitt barns pappa har dött vilket stöd finns",
+        "vem ska jag ringa när en anhörig dör",
+        "hur börjar jag med dödsbo och bouppteckning",
+        "partner dog på jobbet finns särskilt stöd"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Open-web question threads repeatedly show relatives unsure where to start after a death, while the official Efterlevandeguiden exists specifically to sequence the first, later and year-after actions. This is qualitative discovery, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "One natural story can mix practical estate administration, survivor benefits, child support, work-related-death compensation and questions about who may act for the estate. These are not the same route."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "A wrong route can delay practical estate tasks or benefit checks, create false expectations of payment, or make the user assume inheritance or representation authority that has not been established."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "The official journey spans the inter-agency Efterlevandeguiden, Pensionsmyndigheten survivor-benefit pages, separate work-related-death guidance and Skatteverket estate/death administration."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "The public product supports Swedish, Arabic and Persian while the authoritative process and benefit terminology is primarily Swedish and contains specialised terms such as efterlevandepension, dödsbo and bouppteckning."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "Users may need to identify whether they first need practical sequencing, partner survivor support, child survivor support or a work-related-death route, then verify the current authority process without exposing sensitive family or estate details."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Community discussions recur around not knowing where to turn, estate bills, bouppteckning, children after a parent's death and practical administration. These discussions are discovery signals only."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The canonical source registry already recognises Pensionsmyndigheten survivor_support, but no public situation route or focused person journey existed for bereavement, so the learning/truth layer knew the domain without a usable first-action path."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/1oq1i35",
+        "https://www.reddit.com/r/Asksweddit/comments/1ixa3zf"
+      ],
+      "primary_sources": [
+        "https://www.efterlevandeguiden.se/",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/Ekonomiskt_stod/ekonomiskt-stod-nar-anhorig-dor",
+        "https://www.pensionsmyndigheten.se/for-pensionarer/Ekonomiskt_stod/ersattning-vid-arbetsrelaterat-dodsfall",
+        "https://www.skatteverket.se/privat/folkbokforing/dodsfall.4.18e1b10334ebe8bc80002760.html"
+      ],
+      "product_miss": "Stödassistenten had no focused public route for the common life event 'someone close has died', so practical estate steps, partner/child survivor support and work-related-death questions could collapse into generic economy/relative guidance despite an existing survivor-support source family.",
+      "future_guardrail": "Keep actor_type=relative and the same person product. Use focus=bereavement plus one coarse bereavement_context. Ask at most one route-changing question when context is unclear. Never infer survivor-benefit entitlement, inheritance shares, estate authority, work-injury status, amount or deadline from free text.",
+      "regression_case": [
+        "lab-bereavement-partner-first-action-v74-01",
+        "lab-bereavement-child-parent-v74-02",
+        "lab-bereavement-practical-estate-v74-03",
+        "lab-bereavement-work-related-v74-04",
+        "lab-bereavement-vague-relative-v74-05",
+        "lab-bereavement-professional-false-positive-v74-06",
+        "lab-bereavement-language-ar-v74-07",
+        "lab-bereavement-language-fa-v74-08"
+      ],
+      "evaluation_method": "Natural-language routing tests + scenario regressions + current primary-source cross-check. Community material may only suggest cases and must never supply material rules.",
+      "recommended_learning_action": "Extend the existing person/relative intelligence with a bereavement first-action boundary and reuse the canonical survivor-support source universe; preserve only coarse context in handoff and structured feedback.",
+      "truth_rule": "Reddit/community questions are discovery only. We must verify material survivor-benefit, child-support, work-related-death, estate-process, eligibility, amount, deadline and authority guidance against current Pensionsmyndigheten, Skatteverket, Efterlevandeguiden and other responsible primary sources before use; prior AI output and feedback are never truth sources."
+    }
+  ]
+}
