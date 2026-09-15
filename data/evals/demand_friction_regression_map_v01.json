@@ -17,9 +17,9 @@
     },
     {
       "signal_id": "df-personal-assistance-authority-split-v01",
-      "product_miss": "A person describing extensive help at home can be sent to the wrong authority or treated as eligible from diagnosis/rough hours alone.",
-      "fix_or_guardrail": "Separate municipal personal-assistance assessment from state assistansersättning, ask about functional basic-needs help and fail closed on entitlement/hour estimates.",
-      "regression_case_ids": ["lab-personal-assistance-authority-v12-01"]
+      "product_miss": "The learning system already knew the municipality-versus-Försäkringskassan authority split, but the public disability_home_support journey did not expose an explicit personal-assistance branch and therefore could strand that knowledge behind generic home-support guidance. Combined healthcare, older-person context and non-personal professional/research wording also needed permanent public-route boundaries.",
+      "fix_or_guardrail": "Keep one focus=disability_home_support route. Add only coarse personal-assistance support context, preserve the canonical v12 authority assessment regression, separate healthcare from social support, preserve explicit older-person routing, fail closed on professional/research wording and never convert diagnosis or rough hours into entitlement or authority-assessed time.",
+      "regression_case_ids": ["lab-personal-assistance-authority-v12-01", "lab-disability-personal-assistance-vs-healthcare-v70-03", "lab-disability-personal-assistance-older-boundary-v70-04", "lab-disability-personal-assistance-professional-false-positive-v70-05", "lab-disability-personal-assistance-research-false-positive-v70-06", "lab-disability-personal-assistance-language-ar-v70-07", "lab-disability-personal-assistance-language-fa-v70-08"]
     },
     {
       "signal_id": "df-company-procurement-too-many-steps-v01",

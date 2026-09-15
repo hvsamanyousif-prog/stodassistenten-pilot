@@ -6,7 +6,7 @@ matrix=json.loads(Path('data/evals/experience_feedback_coverage_v01.json').read_
 for s in matrix['surfaces']:
     assert s['feedback_required'] is True, f"feedback must be required for {s['surface']}"
     assert s['status'].startswith('present'), f"feedback coverage is not implemented for {s['surface']}"
-for actor in ['private_person','relative','student','employee','company','association','other']:
+for actor in ['private_person','relative','student','employee','company','association','property_actor','other']:
     assert actor in matrix['actors'], f'missing actor: {actor}'
 rules=matrix['feedback_rules']
 assert rules['never_send_raw_situation_text'] is True
@@ -20,6 +20,8 @@ person_surface=next(s for s in matrix['surfaces'] if s['surface']=='person_modul
 assert person_surface['status']=='present_actor_segmented', 'person feedback must preserve coarse actor context'
 shell_surface=next(s for s in matrix['surfaces'] if s['surface']=='shared_situation_engine')
 assert shell_surface['status']=='present_segmented_accessible', 'shared situation feedback must expose accessible completion state'
+property_surface=next(s for s in matrix['surfaces'] if s['surface']=='property_actor_housing_adaptation')
+assert property_surface['status']=='present_actor_segmented', 'property actor feedback must preserve coarse actor context'
 
 person=Path('person-pilot.html').read_text(encoding='utf-8')
 company=Path('company-pilot.html').read_text(encoding='utf-8')
@@ -54,7 +56,7 @@ assert 'fetch(' not in routing, 'privacy router must not transmit situation data
 person_context=Path('client/person-context-learning.js').read_text(encoding='utf-8')
 assert "get('actor_type')" in person_context, 'person runtime must preserve actor entry context'
 assert "ALLOWED_PERSON_ACTORS" in person_context, 'person actor context must use a bounded canonical allow-list'
-for actor in ['private_person','relative','student','employee','association','other']:
+for actor in ['private_person','relative','student','employee','association','property_actor','other']:
     assert f"'{actor}'" in person_context, f'person actor allow-list missing: {actor}'
 assert "ALLOWED_PERSON_ACTORS.has(sanitizedActor)?sanitizedActor:'other'" in person_context, 'unknown person actor values must collapse to other'
 assert "data.flow=`${actor}_${flow}`" in person_context, 'person feedback must segment by canonical actor without sensitive answers'
@@ -64,4 +66,4 @@ assert 'answers' not in person_context and 'situationText' not in person_context
 assert "pilot.textContent!==actorLabel" in person_context, 'actor label patch must not self-trigger endlessly'
 assert "actorEyebrow.textContent!==heading" in person_context, 'localized eyebrow patch must be idempotent'
 
-print('feedback coverage + privacy routing + canonical actor context + accessible completion: OK')
+print('feedback coverage + privacy routing + canonical actor context incl property_actor + accessible completion: OK')

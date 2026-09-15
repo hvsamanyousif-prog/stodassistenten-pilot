@@ -1,0 +1,38 @@
+name: Personal assistance v70
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-personal-assistance-v70:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check same-route syntax
+        run: node --check client/disability-home-support-guidance.js
+      - name: Run disability and personal-assistance behavior regressions
+        run: node client/disability-home-support-guidance.test.cjs
+      - name: Validate v70 truth, privacy and learning guardrails
+        run: python scripts/validate_personal_assistance_v70.py
+      - name: Validate feedback coverage including property actor
+        run: python scripts/validate_feedback_coverage.py
+      - name: Validate canonical scenario system
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate demand-friction learning loop
+        run: python scripts/validate_demand_friction_learning_loop.py
+      - name: Build public pilot with same disability route
+        run: |
+          python scripts/build_public_pilot.py --output _site-v70
+          grep -q 'client/disability-home-support-guidance.js' _site-v70/index.html
+          grep -q 'client/disability-home-support-guidance.js' _site-v70/person-pilot.html
