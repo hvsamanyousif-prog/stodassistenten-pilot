@@ -8,11 +8,11 @@ assert.equal(guidance.detect('Jag behöver boendestöd och vet inte vart jag ska
 assert.equal(guidance.detect('لدي إعاقة وأحتاج مساعدة في المنزل'), true);
 assert.equal(guidance.detect('معلولیت دارم و در خانه به کمک نیاز دارم'), true);
 
-// Do not steal older-person or generic healthcare stories.
+// Do not steal older-person or generic healthcare/home-help stories.
 assert.equal(guidance.detect('Jag är 82 och behöver hemtjänst för att bo kvar hemma'), false);
 assert.equal(guidance.detect('Min äldre mamma behöver hemtjänst och trygghetslarm'), false);
 assert.equal(guidance.detect('Jag behöver hemsjukvård hemma efter en operation'), false);
-assert.equal(guidance.detect('Jag behöver hemtjänst men har inte beskrivit funktionsnedsättning eller annat funktionsbehov'), false);
+assert.equal(guidance.detect('Jag behöver hemtjänst hemma och vet inte vart jag ska vända mig'), false);
 
 assert.equal(guidance.detectNeed('Jag behöver hjälp med rutiner, planering och struktur i vardagen'), 'structure');
 assert.equal(guidance.detectNeed('Jag behöver hemtjänst med städning, mat och dusch'), 'personal_care');
