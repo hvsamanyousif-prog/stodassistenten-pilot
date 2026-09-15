@@ -89,7 +89,7 @@
     "public_handoff": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["allowed_top_level_query_keys", "coarse_fact_policy", "max_value_length", "forbidden_keys"],
+      "required": ["allowed_top_level_query_keys", "coarse_fact_policy", "capability_fact_allowlists", "max_value_length", "forbidden_keys"],
       "properties": {
         "allowed_top_level_query_keys": {
           "type": "array",
@@ -99,6 +99,17 @@
           "uniqueItems": true
         },
         "coarse_fact_policy": {"const": "explicit_allowlist_per_capability"},
+        "capability_fact_allowlists": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {"pattern": "^[a-z0-9_-]+$"},
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^[a-z0-9_-]+$"},
+            "maxItems": 12,
+            "uniqueItems": true
+          }
+        },
         "max_value_length": {"type": "integer", "minimum": 1, "maximum": 64},
         "forbidden_keys": {
           "type": "array",

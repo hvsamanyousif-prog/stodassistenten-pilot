@@ -14,6 +14,9 @@
     'private_person','relative','student','employee',
     'company','association','property_actor','other'
   ]);
+  const CAPABILITY_FACT_ALLOWLISTS=Object.freeze({
+    student_csn:Object.freeze(['topic','study_context','study_work'])
+  });
   const FORBIDDEN_KEYS=Object.freeze([
     'q','query','story','situation','raw_situation','rawSituation','diagnosis',
     'medical_note','journal','address','personnummer','name','email','phone',
@@ -89,6 +92,12 @@
     if(!Array.isArray(values))throw new TypeError('allowedFactKeys must be an array');
     return new Set(values.map(v=>factKey(v)));
   }
+  function allowedFactKeysForFocus(focus){
+    const key=token(focus,'focus',{nullable:true});
+    if(!key)return [];
+    const configured=CAPABILITY_FACT_ALLOWLISTS[key];
+    return configured?Array.from(configured):[];
+  }
   function safeFacts(profile,allowedFactKeys){
     const allowed=allowlistSet(allowedFactKeys);
     const out={};
@@ -120,7 +129,7 @@
   }
 
   return Object.freeze({
-    CONTRACT_VERSION,SURFACES,LANGUAGES,ACTOR_TYPES,FORBIDDEN_KEYS,MAX_VALUE_LENGTH,
-    makeSessionProfile,buildPublicHandoff,toSafeSessionSnapshot
+    CONTRACT_VERSION,SURFACES,LANGUAGES,ACTOR_TYPES,CAPABILITY_FACT_ALLOWLISTS,FORBIDDEN_KEYS,MAX_VALUE_LENGTH,
+    makeSessionProfile,allowedFactKeysForFocus,buildPublicHandoff,toSafeSessionSnapshot
   });
 });
