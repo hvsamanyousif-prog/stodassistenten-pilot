@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Official uptake statistics and stale third-party wording are discovery/prioritization signals only; material Fritidskortet guidance must come from current primary sources.",
+  "scoring": {"scale": "1-5", "priority_rule": "Prioritize high-reach family situations where a recent rule change, provider-register step or digital-access barrier can make the user miss a usable next action."},
+  "signals": [
+    {
+      "signal_id": "df-fritidskortet-2026-change-action-friction-v01",
+      "actor_types": ["parent_guardian", "private_person", "association"],
+      "natural_language_queries": ["jag har inte råd med barnets fotboll", "finns stöd till barnets fritidsaktivitet", "är 6 år för ungt för fritidskortet", "jag har ingen e-legitimation fritidskortet", "är föreningen ansluten till fritidskortet", "förening vill ansluta sig till fritidskortet", "لا أستطيع دفع رسوم نشاط طفلي", "هزینه فعالیت ورزشی فرزندم را نمی‌توانم بدهم"],
+      "demand_signal": {"score": 5, "basis": "Fritidskortets officiella statistik uppdaterad 7 september 2026 redovisar 507 078 beviljade fritidskort och 402 819 använda kort under 2026. Detta är räckvidds-/prioriteringssignal, inte measured search volume eller individuell eligibility evidence."},
+      "friction_signal": {"score": 5, "basis": "Reglerna ändrades 10 augusti 2026 så att även barn från året de fyller 6 omfattas och bostadstillägg lades till som grund för det högre beloppet. Samtidigt måste aktiviteten finnas hos ansluten förening/kulturskola och personer utan e-legitimation har en separat blankettväg."},
+      "miss_consequence": {"score": 4, "basis": "Stale 7-årsgräns eller antagandet att digital legitimation är absolut krav kan göra att familjen avstår trots en aktuell väg. Fel antagande om ansluten utförare kan leda till en betalningsdead-end."},
+      "source_fragmentation": {"score": 4, "basis": "Aktuell information är uppdelad mellan föräldrasidan, register-sökningen, ändringsinformation och utförarsidan; äldre kommun-/föreningssidor kan samtidigt bära tidigare ålder/belopp."},
+      "language_accessibility_friction": {"score": 3, "basis": "Fritidskortet erbjuder flera språk och tolkstöd, men Stödassistenten måste fortfarande förstå naturliga kostnadsproblem utan att användaren känner till stödets namn och bevara samma sanningsgräns i sv/ar/fa."},
+      "steps_to_action": {"score": 4, "basis": "Rätt väg är inte bara att nämna stödet: användaren behöver kontrollera ålder, ansluten aktivitet, aktuell beloppsgrund vid behov och betalnings-/blankettväg. Redan kända fakta ska inte efterfrågas igen."},
+      "recurrence_signal": {"score": 5, "basis": "Officiell statistik visar användning i hundratusental och registret uppdateras löpande. Regeln har dessutom ändrats två gånger under 2026, vilket gör stale guidance till ett återkommande riskmönster."},
+      "current_product_coverage_gap": {"score": 5, "basis": "Fresh-main audit found no Fritidskortet support record, scenario family or explicit route guard despite existing child/family intelligence and cost-friction flows."},
+      "priority_band": "HIGH",
+      "discovery_sources": ["https://www.fritidskortet.se/om-fritidskortet/fritidskortet-i-siffror/", "https://www.folkhalsomyndigheten.se/nyheter-och-press/nyhetsarkiv/2026/september/fler-barn-far-ta-del-av-fritidskortet/"],
+      "primary_sources": ["https://www.fritidskortet.se/", "https://www.fritidskortet.se/foralder", "https://www.fritidskortet.se/sok", "https://www.fritidskortet.se/foreningar/sa-har-fungerar-det/", "https://www.ehalsomyndigheten.se/om-ehalsomyndigheten/aktuellt/nyheter/2026/fler-barn-far-mojlighet-till-en-aktiv-fritid"],
+      "product_miss": "The same Stödassistenten understands family cost pressure but had no canonical Fritidskortet truth/regression path, so natural questions about affording a child's activity could miss a high-reach current support or rely on stale 2026 age/amount information.",
+      "future_guardrail": "Keep one family intelligence. Discover Fritidskortet from natural activity-cost friction, distinguish parent payment from association registration, use the official provider register, preserve the non-eID path, and never infer the higher amount from generic low income or diagnosis.",
+      "regression_case": ["lab-fritidskort-cost-friction-v89-01", "lab-fritidskort-age6-august-change-v89-02", "lab-fritidskort-higher-amount-boundary-v89-03", "lab-fritidskort-no-eid-v89-04", "lab-fritidskort-provider-not-registered-v89-05", "lab-fritidskort-association-false-positive-v89-06", "lab-fritidskort-language-ar-v89-07", "lab-fritidskort-language-fa-v89-08"],
+      "evaluation_method": "Current primary-source truth boundary + August-2026 stale-rule falsification + non-eID accessibility + provider-register action + actor false-positive guard + sv/ar/fa parity.",
+      "recommended_learning_action": "Add one review-gated truth record and permanent scenarios in the existing truth/learning system. Public runtime promotion should follow only after a focused route test proves the safest natural-language handoff without duplicating family engines.",
+      "truth_rule": "Verify current age range, annual amounts, higher-amount basis, provider registration, use-by date and application/payment routes against current responsible Fritidskortet/E-hälsomyndigheten primary sources. Do not promote natural-language cost pressure or discovery signals to VERIFIED eligibility."
+    }
+  ]
+}

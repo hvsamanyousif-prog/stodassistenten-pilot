@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v89 regressions for the SAME Stödassistenten intelligence. Natural cost-friction around a child's leisure activity must discover Fritidskortet without turning low income, age, diagnosis or an old rule into automatic eligibility. The August 2026 age/higher-amount change, provider-register step, non-eID path, association false-positive and sv/ar/fa semantics are permanent guards.",
+  "cases": [
+    {
+      "case_id": "lab-fritidskort-cost-friction-v89-01",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag har inte råd med sonens fotboll och terminsavgiften ska betalas. Finns det något stöd? Han är 9 år.",
+      "expected_support_areas": ["fritidskortet_candidate", "child_leisure_cost_support", "registered_provider_check"],
+      "must_not_claim": ["low_income_alone_guarantees_fritidskortet", "every_sports_club_is_registered", "guaranteed_payment"],
+      "expected_questions": ["q_provider_registration_only_if_unknown"],
+      "expected_next_actions": ["surface_current_fritidskortet_parent_source", "check_provider_in_official_register", "explain_payment_next_step"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source", "Fritidskortet_current_provider_register"]
+    },
+    {
+      "case_id": "lab-fritidskort-age6-august-change-v89-02",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn fyller 6 i år och vill börja dans. Är hon för ung för Fritidskortet?",
+      "expected_support_areas": ["fritidskortet_candidate", "current_2026_age_boundary", "source_change_awareness"],
+      "must_not_claim": ["minimum_age_is_still_7_in_september_2026", "stale_2025_age_rule", "age_alone_guarantees_payment"],
+      "expected_questions": ["q_none_when_calendar_year_age_is_clear"],
+      "expected_next_actions": ["use_post_2026_08_10_age_rule", "verify_current_fritidskortet_source"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source", "Ehealth_current_2026_change_source"]
+    },
+    {
+      "case_id": "lab-fritidskort-higher-amount-boundary-v89-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag har aktivitetsersättning och dåligt med pengar. Får mitt barn automatiskt 2 500 kronor på Fritidskortet?",
+      "expected_support_areas": ["fritidskortet_candidate", "higher_amount_basis_check", "no_income_inference"],
+      "must_not_claim": ["activity_compensation_alone_means_2500", "low_income_alone_means_2500", "current_year_housing_support_is_same_as_prior_year_basis"],
+      "expected_questions": ["q_prior_year_bostadsbidrag_or_bostadstillagg_if_it_can_change_amount_path"],
+      "expected_next_actions": ["verify_higher_amount_basis_in_current_primary_source", "do_not_collect_exact_income"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source"]
+    },
+    {
+      "case_id": "lab-fritidskort-no-eid-v89-04",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag har ingen e-legitimation men mitt barn har fått plats på en aktivitet. Kan jag använda Fritidskortet ändå?",
+      "expected_support_areas": ["fritidskortet_candidate", "accessibility_non_eid_path", "concrete_next_action"],
+      "must_not_claim": ["eid_is_mandatory_without_alternative", "user_is_blocked_from_fritidskortet", "blanket_eligibility"],
+      "expected_questions": ["q_none_if_activity_place_and_non_eid_are_already_clear"],
+      "expected_next_actions": ["surface_current_form_path", "explain_current_requirements_without_requesting_identity_in_feedback"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source"]
+    },
+    {
+      "case_id": "lab-fritidskort-provider-not-registered-v89-05",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Vi har hittat en kurs men jag vet inte om arrangören är med i Fritidskortet. Vad gör jag?",
+      "expected_support_areas": ["fritidskortet_candidate", "provider_register_discovery", "next_action"],
+      "must_not_claim": ["all_activities_can_be_paid", "unregistered_provider_can_receive_fritidskortet", "eligibility_from_course_description"],
+      "expected_questions": ["q_none_before_official_register_lookup"],
+      "expected_next_actions": ["search_official_provider_register", "then_follow_current_payment_flow_if_registered"],
+      "source_requirements": ["Fritidskortet_current_provider_register"]
+    },
+    {
+      "case_id": "lab-fritidskort-association-false-positive-v89-06",
+      "actor_type": "association",
+      "language": "sv",
+      "story": "Vår förening vill ansluta sig till Fritidskortet så att föräldrar kan betala oss. Hur gör vi?",
+      "expected_support_areas": ["association_provider_registration", "actor_boundary", "same_product_different_route"],
+      "must_not_claim": ["association_is_parent_guardian", "association_gets_childs_annual_amount", "parent_payment_flow_is_provider_registration_flow"],
+      "expected_questions": ["q_none_fail_closed_to_provider_registration_source"],
+      "expected_next_actions": ["route_to_current_fritidskortet_provider_registration_guidance", "do_not_open_personal_parent_eligibility_flow"],
+      "source_requirements": ["Fritidskortet_current_provider_primary_source"]
+    },
+    {
+      "case_id": "lab-fritidskort-language-ar-v89-07",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "لا أستطيع دفع رسوم نشاط طفلي الرياضي. هل توجد مساعدة؟ عمره 10 سنوات.",
+      "expected_support_areas": ["fritidskortet_candidate", "language_parity", "child_leisure_cost_support"],
+      "must_not_claim": ["arabic_language_changes_truth_boundary", "low_income_alone_guarantees_support", "guaranteed_amount"],
+      "expected_questions": ["q_provider_registration_only_if_unknown"],
+      "expected_next_actions": ["same_semantics_as_swedish", "surface_current_fritidskortet_source"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source"]
+    },
+    {
+      "case_id": "lab-fritidskort-language-fa-v89-08",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "هزینه فعالیت ورزشی فرزندم را نمی‌توانم بدهم. آیا حمایتی هست؟ او ۱۰ ساله است.",
+      "expected_support_areas": ["fritidskortet_candidate", "language_parity", "child_leisure_cost_support"],
+      "must_not_claim": ["persian_language_changes_truth_boundary", "low_income_alone_guarantees_support", "guaranteed_amount"],
+      "expected_questions": ["q_provider_registration_only_if_unknown"],
+      "expected_next_actions": ["same_semantics_as_swedish", "surface_current_fritidskortet_source"],
+      "source_requirements": ["Fritidskortet_current_parent_primary_source"]
+    }
+  ]
+}
