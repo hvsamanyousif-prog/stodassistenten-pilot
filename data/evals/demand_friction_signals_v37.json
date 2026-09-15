@@ -1,0 +1,73 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for young housing-benefit users who must distinguish a current 2026 decision from the monthly-income reform for decisions from 1 January 2027. Scores are not measured search volumes and do not prove eligibility, amount, decision timing, exception status or repayment outcome. Community material is discovery-only; current Försäkringskassan sources carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-young-housing-2027-decision-transition-v01",
+      "actor_types": ["student", "private_person"],
+      "natural_language_queries": [
+        "jag är student och har bostadsbidrag byter det automatiskt till månadsinkomst 2027",
+        "jag jobbar olika mycket varje månad ska jag ange månadslönen eller årsinkomsten för bostadsbidrag",
+        "mitt bostadsbidrag fortsätter in i 2027 vilka regler gäller",
+        "jag ska söka bostadsbidrag 2027 och är egenföretagare gäller månadsinkomst för mig",
+        "jag får inkomst från utlandet och söker bostadsbidrag 2027 hur räknas inkomsten",
+        "jag tar examen och börjar timjobba hur undviker jag återkrav på bostadsbidrag"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan reports that 137,200 households received housing benefit during 2025, including youth households, while current community questions continue to show confusion when income varies month to month. This is a qualitative reach and discovery signal, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The product must distinguish current annual-income rules from the 2027 monthly-income reform, the start date of the decision rather than only the calendar date, and explicit exceptions for self-employment or foreign income. A user can otherwise apply the right fact to the wrong rule version."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Using a monthly figure for a current 2026 decision, assuming an automatic mid-decision switch, or overgeneralizing the 2027 reform can create a materially wrong next step and increase confusion around reporting and repayment risk."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "The current youth housing-benefit application guidance and the separate 2027 transition page must be read together, while current decision status and exception context determine which rule version is relevant."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as annual-income estimate, monthly-income reform, decision period, existing decision, self-employment and foreign income are easy to collapse into one rule, especially for users with low digital familiarity or Arabic/Persian language needs."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "The safest route first identifies whether the user is dealing with a current/existing decision or a new decision from 1 January 2027, then asks about the two explicit reform exceptions only when the 2027 path is relevant."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "Variable work hours, student-to-work transitions and fear of repayment recur in official analysis and community discovery. The 2027 rule change adds a new recurring versioning question for existing versus new decisions."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The truth record and scenario laboratory already encoded the 2027 decision-period and exception boundaries, but the live young-housing runtime still presented only the 2026 annual-income flow and therefore did not operationalize its own learned regression."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/1s1qaxk/vad_fn_g%C3%B6r_man_%C3%A5t_f%C3%B6rs%C3%A4kringskassans_velande/",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-04-16-allt-farre-far-bostadsbidrag"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/studerande/bostadsbidrag-till-unga-under-29-ar",
+        "https://www.forsakringskassan.se/privatperson/bostadsbidrag-nya-regler-fran-1-januari-2027"
+      ],
+      "product_miss": "The single truth layer and scenario laboratory already knew that the 2027 reform is decision-versioned and has explicit exceptions, but the public young-housing flow still asked only about 2026 income change. The learned safety boundary had not reached the live product.",
+      "future_guardrail": "Keep one young-housing route in the shared person product. Detect explicit 2027/new-rule intent, preserve the 2026 path unchanged for current users, ask the decision-period question only for the transition path, ask the exception question only for a new-2027 decision, and never infer eligibility or amount from the rule version.",
+      "regression_case": [
+        "lab-young-housing-2027-transition-v18-01"
+      ],
+      "evaluation_method": "Run the existing v18 transition regression through the dedicated public-product gate plus sv/ar/fa routing tests. Require no automatic 1 January switch, no 2027-to-2026 backport, explicit self-employment/foreign-income fail-closed handling, a primary-source next step and privacy-safe coarse handoff.",
+      "recommended_learning_action": "Make the existing v18 change-intelligence regression constrain the live young-housing runtime instead of creating a duplicate scenario or a separate 2027 engine. Add a bounded transition_2027 context and decision-period/exception branching to the same person route.",
+      "truth_rule": "VERIFY the current Försäkringskassan rule version before a material calculation or application claim. Do not treat community discussion, a prior AI answer, the calendar date alone, or the existence of the reform as proof of eligibility, amount, repayment outcome or individual exception status."
+    }
+  ]
+}
