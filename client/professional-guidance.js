@@ -103,6 +103,7 @@
     if(sickness||stillEmployed) return false;
     const current=[
       /(?:^|\s)(?:är|blev|har blivit)\s+arbetslös(?:\s|[,.!?]|$)/i,
+      /\bnu\s+är\s+jag\s+arbetslös\b/i,
       /\bblev\s+av\s+med\s+jobbet\b/i,
       /\bförlorade\s+(?:mitt\s+)?jobb(?:et)?\b/i,
       /\bsista\s+arbetsdag(?:en)?\s+var\s+(?:igår|i går)\b/i,
