@@ -64,6 +64,10 @@ test('source-line-preserved',()=>{
 });
 test('windows-line-endings',()=>assert.deepEqual(p.splitRequirements('A\r\n\r\nB').map(r=>r.sourceLine),[1,3]));
 test('short-text-not-discarded',()=>assert.equal(p.splitRequirements('Krav\nCV krävs')[0].text,'Krav'));
+test('short-real-requirement-not-heading',()=>{
+ const row=p.splitRequirements('CV krävs')[0];
+ assert.equal(row.kind,'requirement'); assert.equal(row.category,'mandatory');
+});
 test('81st-requirement-retained',()=>assert.equal(p.splitRequirements(Array.from({length:81},(_,i)=>`${i+1}. Intyg ska bifogas.`).join('\n')).length,81));
 test('line-limit-explicit',()=>assert.throws(()=>p.splitRequirements(Array(401).fill('Intyg ska bifogas.').join('\n')),RangeError));
 test('text-limit-explicit',()=>assert.throws(()=>p.splitRequirements('x'.repeat(100001)),RangeError));
@@ -83,6 +87,30 @@ test('conditional-risk-visible-contract',()=>{
  const row=p.splitRequirements('Leverantören ska lämna intyg, men kravet gäller inte om beställaren godkänner likvärdigt bevis.')[0];
  assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'));
  assert.match(row.flags.find(f=>f.code==='conditional_or_exception').label,/Villkor eller undantag/);
+});
+test('conditional-negative-exception-visible-contract',()=>{
+ const row=p.splitRequirements('Leverantören ska bifoga kvalitetsintyg. Kravet gäller inte om leverantören redan finns i myndighetens register.')[0];
+ assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'));
+ assert.equal(p.summarize([row]).uncertain.length,1);
+});
+test('conditional-either-or-visible-contract',()=>{
+ const row=p.splitRequirements('Leverantören ska antingen bifoga ISO-certifikat eller beskriva ett likvärdigt kvalitetsledningssystem.')[0];
+ assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'));
+ assert.equal(p.summarize([row]).uncertain.length,1);
+});
+test('cross-reference-visible-contract',()=>{
+ const row=p.splitRequirements('Leverantören ska uppfylla samtliga tekniska krav enligt punkt 7.4.')[0];
+ assert.ok(row.flags.some(f=>f.code==='cross_reference'));
+ assert.match(row.flags.find(f=>f.code==='cross_reference').label,/Korshänvisning/);
+ assert.equal(p.summarize([row]).uncertain.length,1);
+});
+test('structural-heading-preserved-not-evidence',()=>{
+ const rows=p.splitRequirements('Obligatoriska krav\n\nSe bilaga 3.\nMåltiderna ska uppfylla de allergenkrav som anges i underlaget.');
+ assert.equal(rows.length,3); assert.equal(rows[0].sourceLine,1); assert.equal(rows[1].sourceLine,3); assert.equal(rows[2].sourceLine,4);
+ assert.equal(rows[0].kind,'structural'); assert.equal(rows[0].evidence,'context');
+ const summary=p.summarize(rows); assert.equal(summary.actionableCount,2); assert.equal(summary.structuralCount,1);
+ assert.ok(!summary.uncertain.some(r=>r.id===rows[0].id));
+ assert.match(p.draftSkeleton([rows[0]]),/Ingen evidensbedömning görs på rubriken/);
 });
 test('structure-risk-remains-unresolved-after-manual-yes',()=>{
  const rows=p.splitRequirements('Bilaga 7 innehåller obligatoriska tekniska krav.'); rows[0].evidence='yes';
