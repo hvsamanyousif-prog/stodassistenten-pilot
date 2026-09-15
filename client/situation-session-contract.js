@@ -15,7 +15,8 @@
     'company','association','property_actor','other'
   ]);
   const CAPABILITY_FACT_ALLOWLISTS=Object.freeze({
-    student_csn:Object.freeze(['topic','study_context','study_work'])
+    student_csn:Object.freeze(['topic','study_context','study_work']),
+    family_housing:Object.freeze(['work','money','children','housing'])
   });
   const FORBIDDEN_KEYS=Object.freeze([
     'q','query','story','situation','raw_situation','rawSituation','diagnosis',

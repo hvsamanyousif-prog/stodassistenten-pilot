@@ -1,0 +1,49 @@
+name: Validate family housing session contract v82
+
+on:
+  pull_request:
+    paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
+      - 'client/family-housing-guidance.js'
+      - 'client/family-housing-guidance.test.cjs'
+      - 'client/family-housing-session-contract-v82.test.cjs'
+      - 'scripts/validate_situation_session_contract.py'
+      - 'scripts/validate_family_housing_public_v81.py'
+      - '.github/workflows/family-housing-session-contract-v82.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/situation_session_contract.json'
+      - 'client/situation-session-contract.js'
+      - 'client/family-housing-guidance.js'
+      - 'client/family-housing-guidance.test.cjs'
+      - 'client/family-housing-session-contract-v82.test.cjs'
+      - 'scripts/validate_situation_session_contract.py'
+      - 'scripts/validate_family_housing_public_v81.py'
+      - '.github/workflows/family-housing-session-contract-v82.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate shared session contract
+        run: |
+          node client/situation-session-contract.test.cjs
+          python scripts/validate_situation_session_contract.py
+      - name: Validate family housing route and cross-surface facts
+        run: |
+          node client/family-housing-guidance.test.cjs
+          node client/family-housing-session-contract-v82.test.cjs
+          python scripts/validate_family_housing_public_v81.py

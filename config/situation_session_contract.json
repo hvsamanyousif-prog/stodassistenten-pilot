@@ -76,6 +76,12 @@
         "topic",
         "study_context",
         "study_work"
+      ],
+      "family_housing": [
+        "work",
+        "money",
+        "children",
+        "housing"
       ]
     },
     "max_value_length": 64,
