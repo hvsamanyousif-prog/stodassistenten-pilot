@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v76 regressions for the SAME Stödassistenten intelligence. Healthcare-cost questions must distinguish outpatient patient fees, prescription-medicine high-cost protection and dental costs without inferring entitlement, hard-coding volatile amounts or hiding an acute basic-needs crisis.",
+  "cases": [
+    {
+      "case_id": "lab-health-cost-primary-care-v76-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har inte råd att gå till vårdcentralen. Vad kan jag göra?",
+      "expected_support_areas": ["healthcare_cost_navigation", "outpatient_patient_fees", "region_specific_verification"],
+      "must_not_claim": ["exact_visit_fee_without_current_region_source", "automatic_exemption_from_patient_fee", "all_healthcare_costs_share_one_high_cost_protection"],
+      "expected_questions": ["q_what_cost_type_visit_medicine_dental_only_if_not_already_clear"],
+      "expected_next_actions": ["verify_current_patient_fee_and_outpatient_high_cost_rules_on_1177_for_the_relevant_region", "keep_economic_assistance_visible_if_basic_needs_are_also_at_risk"],
+      "source_requirements": ["current_1177_patient_fee_primary_source", "current_relevant_region_1177_or_region_primary_source_for_exact_fee"]
+    },
+    {
+      "case_id": "lab-health-cost-frikort-medicine-boundary-v76-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har frikort för vårdbesök. Gäller det automatiskt även mina receptbelagda mediciner?",
+      "expected_support_areas": ["healthcare_cost_navigation", "outpatient_vs_medicine_boundary", "medicine_high_cost_protection"],
+      "must_not_claim": ["outpatient_frikort_automatically_covers_prescription_medicines", "one_shared_high_cost_period_for_visits_and_medicines", "exact_medicine_ceiling_without_current_primary_source_and_period_context"],
+      "expected_questions": ["q_none_cost_type_and_boundary_are_already_explicit"],
+      "expected_next_actions": ["explain_that_outpatient_care_and_medicines_have_separate_high_cost_protections", "verify_current_medicine_high_cost_status_via_ehealth_authority_or_pharmacy_service"],
+      "source_requirements": ["current_1177_patient_fee_primary_source", "current_ehealth_authority_medicine_high_cost_primary_source"]
+    },
+    {
+      "case_id": "lab-health-cost-prescription-medicine-v76-03",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har inte råd med medicinen på apoteket och vill veta vilket högkostnadsskydd som gäller.",
+      "expected_support_areas": ["healthcare_cost_navigation", "prescription_medicine_cost", "medicine_high_cost_protection"],
+      "must_not_claim": ["every_medicine_is_included_in_the_benefit", "exact_current_ceiling_without_period_verification", "user_has_already_reached_frikort"],
+      "expected_questions": ["q_none_medicine_cost_type_is_explicit"],
+      "expected_next_actions": ["open_current_ehealth_authority_high_cost_guidance", "check_persons_current_high_cost_status_through_lakemedelskollen_or_pharmacy_channel_without_collecting_personal_data_in_product"],
+      "source_requirements": ["current_ehealth_authority_medicine_high_cost_primary_source"]
+    },
+    {
+      "case_id": "lab-health-cost-dental-overlap-v76-04",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har ont i en tand men är orolig för kostnaden.",
+      "expected_support_areas": ["dental", "dental_cost", "existing_dental_quick_help"],
+      "must_not_claim": ["dental_cost_uses_outpatient_healthcare_frikort", "dental_high_cost_rules_equal_outpatient_healthcare_rules", "new_parallel_healthcare_cost_route_should_replace_existing_dental_route"],
+      "expected_questions": ["q_none_reuse_explicit_dental_context"],
+      "expected_next_actions": ["reuse_existing_dental_cost_route", "keep_dental_truth_sources_separate_from_outpatient_patient_fee_rules"],
+      "source_requirements": ["current_forsakringskassan_dental_support_primary_source", "current_1177_dental_cost_primary_source"]
+    },
+    {
+      "case_id": "lab-health-cost-basic-needs-overlap-v76-05",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Medicinerna kostar mycket och nu räcker pengarna inte till mat och hyra.",
+      "expected_support_areas": ["healthcare_cost_navigation", "medicine_cost", "economic_assistance_overlap", "basic_needs_priority"],
+      "must_not_claim": ["medicine_high_cost_protection_solves_current_food_or_rent_crisis", "municipality_will_pay_the_medicine_or_debt", "healthcare_cost_route_should_hide_economic_assistance"],
+      "expected_questions": ["q_none_before_showing_safe_parallel_next_steps_when_basic_needs_are_explicit"],
+      "expected_next_actions": ["keep_economic_assistance_or_acute_basic_needs_path_visible", "also_verify_current_medicine_high_cost_path"],
+      "source_requirements": ["current_socialstyrelsen_or_responsible_municipality_economic_assistance_primary_source", "current_ehealth_authority_medicine_high_cost_primary_source"]
+    },
+    {
+      "case_id": "lab-health-cost-professional-false-positive-v76-06",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar med patientavgifter på en vårdcentral och tar fram information till kollegor.",
+      "expected_support_areas": ["no_personal_healthcare_cost_route_without_personal_need_signal"],
+      "must_not_claim": ["user_has_a_patient_fee_problem", "user_needs_frikort_guidance", "user_has_economic_hardship"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_or_research_context_without_personal_need"],
+      "source_requirements": ["current_primary_source_required_before_any_material_healthcare_cost_claim"]
+    },
+    {
+      "case_id": "lab-health-cost-language-ar-v76-07",
+      "actor_type": "private_person",
+      "language": "ar",
+      "story": "لا أستطيع تحمل تكلفة زيارة المركز الصحي، ولا أعرف هل حماية التكاليف للأدوية هي نفسها للزيارات.",
+      "expected_support_areas": ["healthcare_cost_navigation", "outpatient_vs_medicine_boundary", "language_parity"],
+      "must_not_claim": ["one_shared_high_cost_protection_for_visits_and_medicines", "exact_fee_without_current_region_source", "automatic_entitlement"],
+      "expected_questions": ["q_none_core_cost_types_and_confusion_are_explicit"],
+      "expected_next_actions": ["preserve_same_healthcare_cost_boundary_in_arabic_ui", "verify_visit_and_medicine_paths_against_current_primary_sources"],
+      "source_requirements": ["current_1177_patient_fee_primary_source", "current_ehealth_authority_medicine_high_cost_primary_source"]
+    },
+    {
+      "case_id": "lab-health-cost-language-fa-v76-08",
+      "actor_type": "private_person",
+      "language": "fa",
+      "story": "هزینه مراجعه به درمانگاه برایم سنگین است و نمی‌دانم کارت معافیت و حمایت هزینه دارو همان چیز است یا نه.",
+      "expected_support_areas": ["healthcare_cost_navigation", "outpatient_vs_medicine_boundary", "language_parity"],
+      "must_not_claim": ["one_shared_high_cost_protection_for_visits_and_medicines", "exact_fee_without_current_region_source", "automatic_entitlement"],
+      "expected_questions": ["q_none_core_cost_types_and_confusion_are_explicit"],
+      "expected_next_actions": ["preserve_same_healthcare_cost_boundary_in_persian_ui", "verify_visit_and_medicine_paths_against_current_primary_sources"],
+      "source_requirements": ["current_1177_patient_fee_primary_source", "current_ehealth_authority_medicine_high_cost_primary_source"]
+    }
+  ]
+}
