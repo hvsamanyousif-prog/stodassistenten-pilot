@@ -23,7 +23,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,15 +37,26 @@ jobs:
       - name: Install isolated browser test tooling
         run: |
           python -m pip install playwright==1.57.0
-          python -m playwright install --with-deps chromium
-      - name: Offline browser interactions (no live storage claim)
+          python -m playwright install --with-deps chromium webkit
+      - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
         run: python scripts/test_procurement_expert_browser.py . procurement-browser-audit.json
+      - name: Supplier journeys and five-width matrix — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_quality_matrix.py . procurement-quality-chromium.json
+      - name: Supplier journeys and five-width matrix — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_quality_matrix.py . procurement-quality-webkit.json
       - name: Preserve scoped browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: procurement-offline-browser-evidence
-          path: procurement-browser-audit.json
+          path: |
+            procurement-browser-audit.json
+            procurement-quality-chromium.json
+            procurement-quality-webkit.json
           if-no-files-found: warn
