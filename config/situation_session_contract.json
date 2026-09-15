@@ -77,6 +77,10 @@
         "study_context",
         "study_work"
       ],
+      "employee_sick": [
+        "work_context",
+        "business_form"
+      ],
       "family_housing": [
         "work",
         "money",
