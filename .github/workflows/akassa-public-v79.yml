@@ -1,0 +1,63 @@
+name: Validate public a-kassa regime v79
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'client/unemployment-regime-guidance.js'
+      - 'client/unemployment-regime-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_akassa_public_v79.py'
+      - 'data/evals/scenario_lab_websignals_v78.json'
+      - 'data/evals/demand_friction_signals_v78.json'
+      - 'data/evals/demand_friction_regression_map_v79.json'
+      - 'data/supports/se-arbetsloshetsersattning-a-kassa.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V79_APPENDIX.md'
+      - '.github/workflows/akassa-public-v79.yml'
+  pull_request:
+    paths:
+      - 'client/unemployment-regime-guidance.js'
+      - 'client/unemployment-regime-guidance.test.cjs'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/validate_akassa_public_v79.py'
+      - 'data/evals/scenario_lab_websignals_v78.json'
+      - 'data/evals/demand_friction_signals_v78.json'
+      - 'data/evals/demand_friction_regression_map_v79.json'
+      - 'data/supports/se-arbetsloshetsersattning-a-kassa.json'
+      - 'docs/PILOT_COVERAGE_MATRIX_V79_APPENDIX.md'
+      - '.github/workflows/akassa-public-v79.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  public-akassa-regime-v79:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Check runtime JavaScript syntax
+        run: node --check client/unemployment-regime-guidance.js
+      - name: Run sv/ar/fa and browser-wiring regression
+        run: node client/unemployment-regime-guidance.test.cjs
+      - name: Validate v79 truth and architecture boundaries
+        run: python scripts/validate_akassa_public_v79.py
+      - name: Re-run permanent v78 scenario/truth guard
+        run: python scripts/validate_akassa_regime_v78.py
+      - name: Build the same public Stödassistenten
+        run: python scripts/build_public_pilot.py --output _site-v79
+      - name: Verify the person surface ships the governed runtime
+        run: |
+          grep -F '<script src="client/unemployment-regime-guidance.js"></script>' _site-v79/person-pilot.html
+          test -f _site-v79/client/unemployment-regime-guidance.js
+      - name: Confirm no parallel unemployment product exists
+        run: |
+          test ! -e akassa.html
+          test ! -e a-kassa.html
+          test ! -e client/akassa-app.js
+          test ! -e client/unemployment-app.js
