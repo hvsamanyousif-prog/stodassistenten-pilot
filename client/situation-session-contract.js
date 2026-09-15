@@ -17,7 +17,8 @@
   const CAPABILITY_FACT_ALLOWLISTS=Object.freeze({
     student_csn:Object.freeze(['topic','study_context','study_work']),
     employee_sick:Object.freeze(['work_context','business_form']),
-    family_housing:Object.freeze(['work','money','children','housing'])
+    family_housing:Object.freeze(['work','money','children','housing']),
+    disability_home_support:Object.freeze(['support_need','support_for'])
   });
   const FORBIDDEN_KEYS=Object.freeze([
     'q','query','story','situation','raw_situation','rawSituation','diagnosis',
