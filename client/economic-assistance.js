@@ -12,6 +12,7 @@
   const CALC_URL = 'https://www.socialstyrelsen.se/kunskapsstod-och-regler/omraden/ekonomiskt-bistand/provberakning-ekonomiskt-bistand/';
   const DEBT_COUNSELLING_URL = 'https://www.konsumentverket.se/ekonomi/kommunal-budget-och-skuldradgivning/';
   const KRONOFOGDEN_BILLS_URL = 'https://kronofogden.se/kontakta-oss/fragor-och-svar/rad-och-stod/2025-04-08-mina-rakningar-ar-helt-i-kaos.-vad-ska-jag-gora';
+  const KRONOFOGDEN_DEMAND_URL = 'https://www.kronofogden.se/nagon-har-krav-mot-dig/du-har-fatt-ett-krav-forelaggande/du-har-fatt-ett-krav-om-att-betala';
 
   const DIRECT_PATTERNS = [
     /\b(?:försörjningsstöd|ekonomiskt\s+bistånd|socialbidrag|socialtjänst(?:en)?)\b/i,
@@ -38,6 +39,11 @@
     /ديون|دين|مديون|تحصيل\s+الديون|إنكاسو|كرونوفوغدن|تسوية\s+الديون|فواتير\s+غير\s+مدفوعة/i,
     /بدهی|بدهکار|وصول\s+مطالبات|اینکاسو|کرونوفوگدن|تسویه\s+بدهی|قبض(?:‌|\s)*های\s+پرداخت(?:‌|\s)*نشده/i,
   ];
+  const DEMAND_NOTICE_PATTERNS = [
+    /\bbetalningsföreläggande\b|\bföreläggande\s+från\s+kronofogden\b|\b(?:brev|krav|kravbrev)\s+från\s+kronofogden\b|\bkronofogden.{0,30}(?:brev|föreläggande|kravbrev|krav)\b/i,
+    /(?:خطاب|رسالة|إشعار|أمر).{0,40}(?:كرونوفوغدن|Kronofogden)|(?:كرونوفوغدن|Kronofogden).{0,40}(?:خطاب|رسالة|إشعار|مطالبة)/i,
+    /(?:نامه|اخطار|ابلاغ|دستور).{0,40}(?:کرونوفوگدن|Kronofogden)|(?:کرونوفوگدن|Kronofogden).{0,40}(?:نامه|اخطار|ابلاغ|مطالبه)/i,
+  ];
   const NON_DEBT_WORK_PATTERNS = [
     /\b(?:jobbar|arbetar)\s+(?:på|hos)\s+kronofogden\b/i,
   ];
@@ -63,12 +69,17 @@
       shellSub: 'Kontrollera kommunalt ekonomiskt bistånd utan att lova rätt eller belopp',
       debtShellTitle: 'När räkningar och skulder har byggts upp',
       debtShellSub: 'Hitta kommunal budget- och skuldrådgivning utan att lova skuldsanering eller avskrivning',
+      noticeShellTitle: 'Har du fått ett kravbrev från Kronofogden?',
+      noticeShellSub: 'Bekräfta mottagandet, ta ställning till kravet och följ tiden som står i brevet',
       eyebrow: 'Ekonomi + grundbehov',
       debtEyebrow: 'Ekonomi + skulder',
+      noticeEyebrow: 'Ekonomi + krav från Kronofogden',
       title: 'Du kan få din situation prövad av socialtjänsten i din kommun',
       debtPageTitle: 'Skulder och akut brist på pengar är två olika vägar',
+      noticePageTitle: 'Ett föreläggande behöver ett konkret svar – det är inte samma sak som att godkänna kravet',
       intro: 'Stödassistenten avgör inte om du har rätt till bistånd. Vi hjälper dig skilja mellan möjliga vägar och nästa säkra handling utan att samla in exakta ekonomiska eller medicinska uppgifter.',
       debtIntro: 'Om problemet främst är skulder eller obetalda räkningar kan kommunens budget- och skuldrådgivning hjälpa dig att få överblick och planera nästa steg. Om du samtidigt saknar pengar till hyra, el, mat eller medicin just nu behöver den akuta biståndsvägen fortfarande vara synlig.',
+      noticeIntro: 'Om du har fått ett föreläggande från Kronofogden är första uppgiften att hantera just brevet. Bekräftelsen av mottagandet betyder inte att du godkänner kravet, och nästa steg beror på om kravet är rätt eller fel.',
       qNeed: 'Vad behöver du främst hjälp med just nu?',
       recurring: 'Löpande kostnader som mat, hyra eller hushållsel',
       occasional: 'En särskild nödvändig kostnad som uppstår mer sällan',
@@ -82,24 +93,33 @@
       debtTitle: 'Börja med kommunens budget- och skuldrådgivning när skulderna är huvudproblemet',
       debtBody: 'Konsumentverket beskriver att kommunal budget- och skuldrådgivning kan hjälpa dig att planera ekonomin, hantera och prioritera skulder, kontakta dem du är skyldig pengar och ge stöd inför och under en eventuell skuldsanering. Det betyder inte att kommunen betalar skulderna eller att skuldsanering kommer att beviljas.',
       debtNext: 'Nästa steg: hitta budget- och skuldrådgivningen i din kommun. Om du riskerar att inte klara hyra, el, mat eller medicin nu, använd också vägen för ekonomiskt bistånd; skuldrådgivning ersätter inte en individuell prövning av akut stöd.',
+      noticeTitle: 'Gör två saker i rätt ordning',
+      noticeBody: 'Bekräfta först att du har tagit emot brevet. Det betyder inte att du godkänner kravet. Ta sedan ställning: om kravet är rätt följer du kravet och betalar om du kan eller kontaktar den som kräver betalt; om kravet är fel invänder du mot det.',
+      noticeNext: 'Nästa steg: använd Kronofogdens aktuella vägledning eller Mina sidor och följ förklaringstiden som står i ditt eget brev. Stödassistenten gissar inte hur många dagar du har. Om du samtidigt inte klarar hyra, el, mat eller medicin, använd också den akuta biståndsvägen.',
       documents: 'Nästa steg: fråga kommunen vilka underlag som behövs för hushåll, boende, inkomster, tillgångar och nödvändiga utgifter. Lägg inte in kontoutdrag, personnummer eller detaljerad hälsodata i den här publika piloten.',
       calc: 'Socialstyrelsens provberäkning är bara orienterande och kan ge ett annat resultat än kommunens individuella beslut.',
       source: 'Socialstyrelsen: ekonomiskt bistånd för privatpersoner',
       calcSource: 'Socialstyrelsen: provberäkning ekonomiskt bistånd',
       debtSource: 'Konsumentverket: kommunal budget- och skuldrådgivning',
       billsSource: 'Kronofogden: när räkningarna är i kaos',
+      noticeSource: 'Kronofogden: du har fått ett krav om att betala',
     },
     ar: {
       shellTitle: 'عندما لا يكفي المال للاحتياجات الأساسية',
       shellSub: 'تحقق من المساعدة المالية البلدية من دون وعد بالاستحقاق أو المبلغ',
       debtShellTitle: 'عندما تتراكم الفواتير والديون',
       debtShellSub: 'اعثر على استشارة البلدية للميزانية والديون من دون وعد بتسوية الديون',
+      noticeShellTitle: 'هل وصلك خطاب مطالبة من Kronofogden؟',
+      noticeShellSub: 'أكّد استلام الخطاب ثم حدّد موقفك من المطالبة واتبع المهلة المكتوبة فيه',
       eyebrow: 'الاقتصاد + الاحتياجات الأساسية',
       debtEyebrow: 'الاقتصاد + الديون',
+      noticeEyebrow: 'الاقتصاد + مطالبة من Kronofogden',
       title: 'يمكن للخدمات الاجتماعية في بلديتك فحص وضعك',
       debtPageTitle: 'الديون ونقص المال للحاجات الأساسية مساران مختلفان',
+      noticePageTitle: 'خطاب Kronofogden يحتاج إلى رد عملي، وتأكيد الاستلام لا يعني قبول المطالبة',
       intro: 'لا يقرر مساعد الدعم الاستحقاق. نساعدك على فهم المسار والخطوة الآمنة التالية من دون جمع تفاصيل مالية أو طبية دقيقة.',
       debtIntro: 'إذا كانت المشكلة الأساسية ديوناً أو فواتير غير مدفوعة، يمكن لاستشارة البلدية للميزانية والديون أن تساعدك على ترتيب الوضع والخطوة التالية. وإذا كنت لا تستطيع الآن دفع الإيجار أو الكهرباء أو الطعام أو الدواء، فيجب أن يبقى مسار المساعدة المالية العاجلة واضحاً أيضاً.',
+      noticeIntro: 'إذا وصلك föreläggande من Kronofogden فابدأ بالتعامل مع الخطاب نفسه. تأكيد الاستلام لا يعني أنك توافق على المطالبة، والخطوة التالية تعتمد على كون المطالبة صحيحة أو خاطئة.',
       qNeed: 'ما نوع المساعدة التي تحتاجها الآن بشكل أساسي؟',
       recurring: 'تكاليف مستمرة مثل الطعام أو الإيجار أو كهرباء المنزل',
       occasional: 'تكلفة ضرورية محددة تظهر من وقت لآخر',
@@ -113,24 +133,33 @@
       debtTitle: 'ابدأ باستشارة البلدية للميزانية والديون عندما تكون الديون هي المشكلة الأساسية',
       debtBody: 'توضح هيئة حماية المستهلك أن مستشاري الميزانية والديون في البلدية يمكنهم المساعدة في التخطيط للاقتصاد وترتيب الديون والتواصل مع الدائنين وتقديم الدعم إذا أصبحت تسوية الديون ذات صلة. هذا لا يعني أن البلدية تدفع ديونك أو أن تسوية الديون ستُقبل.',
       debtNext: 'الخطوة التالية: اعثر على مستشار الميزانية والديون في بلديتك. إذا كنت لا تستطيع حالياً تغطية الإيجار أو الكهرباء أو الطعام أو الدواء، استخدم أيضاً مسار المساعدة المالية؛ الاستشارة لا تستبدل التقييم الفردي للمساعدة العاجلة.',
+      noticeTitle: 'نفّذ خطوتين بالترتيب الصحيح',
+      noticeBody: 'أكّد أولاً أنك استلمت الخطاب؛ هذا لا يعني قبول المطالبة. ثم حدّد موقفك: إذا كانت المطالبة صحيحة فاتبع التعليمات وادفع إن استطعت أو تواصل مع صاحب المطالبة، وإذا كانت خاطئة فاعترض عليها.',
+      noticeNext: 'الخطوة التالية: استخدم إرشادات Kronofogden الحالية أو Mina sidor واتبع المهلة المكتوبة في خطابك نفسه. لا يخمّن مساعد الدعم عدد الأيام. وإذا كنت لا تستطيع أيضاً تغطية الإيجار أو الكهرباء أو الطعام أو الدواء، فاستخدم مسار المساعدة المالية العاجلة كذلك.',
       documents: 'الخطوة التالية: اسأل البلدية عن المستندات المطلوبة بخصوص الأسرة والسكن والدخل والأصول والنفقات الضرورية. لا تضع كشوف الحساب أو الرقم الشخصي أو تفاصيل صحية حساسة في هذه النسخة العامة.',
       calc: 'الحساب التجريبي لدى Socialstyrelsen إرشادي فقط وقد يختلف عن قرار البلدية الفردي.',
       source: 'Socialstyrelsen: المساعدة المالية للأفراد',
       calcSource: 'Socialstyrelsen: الحساب التجريبي للمساعدة المالية',
       debtSource: 'Konsumentverket: استشارة البلدية للميزانية والديون',
       billsSource: 'Kronofogden: عندما تصبح الفواتير في فوضى',
+      noticeSource: 'Kronofogden: لقد وصلك طلب للدفع',
     },
     fa: {
       shellTitle: 'وقتی پول برای نیازهای ضروری کافی نیست',
       shellSub: 'کمک مالی شهرداری را بدون وعده استحقاق یا مبلغ بررسی کن',
       debtShellTitle: 'وقتی قبض‌ها و بدهی‌ها روی هم جمع شده‌اند',
       debtShellSub: 'مشاوره بودجه و بدهی شهرداری را بدون وعده بخشودگی یا تسویه بدهی پیدا کن',
+      noticeShellTitle: 'از Kronofogden نامه مطالبه دریافت کرده‌ای؟',
+      noticeShellSub: 'دریافت نامه را تأیید کن، درباره مطالبه تصمیم بگیر و مهلت نوشته‌شده در نامه را دنبال کن',
       eyebrow: 'اقتصاد + نیازهای پایه',
       debtEyebrow: 'اقتصاد + بدهی',
+      noticeEyebrow: 'اقتصاد + مطالبه Kronofogden',
       title: 'خدمات اجتماعی شهرداری می‌تواند وضعیتت را بررسی کند',
       debtPageTitle: 'بدهی و کمبود فوری پول دو مسیر متفاوت‌اند',
+      noticePageTitle: 'ابلاغ Kronofogden نیاز به اقدام مشخص دارد و تأیید دریافت به معنی پذیرفتن مطالبه نیست',
       intro: 'دستیار حمایت درباره استحقاق تصمیم نمی‌گیرد. فقط مسیر و قدم امن بعدی را روشن می‌کند، بدون جمع‌آوری جزئیات دقیق مالی یا پزشکی.',
       debtIntro: 'اگر مشکل اصلی بدهی یا قبض‌های پرداخت‌نشده است، مشاوره بودجه و بدهی شهرداری می‌تواند برای نظم‌دادن به وضعیت و قدم بعدی کمک کند. اگر هم‌زمان پول اجاره، برق، غذا یا دارو را نداری، مسیر کمک مالی فوری هم باید روشن بماند.',
+      noticeIntro: 'اگر از Kronofogden ابلاغ یا مطالبه گرفته‌ای، اول همان نامه را مدیریت کن. تأیید دریافت به معنی قبول مطالبه نیست و قدم بعدی بستگی دارد به اینکه مطالبه درست است یا نادرست.',
       qNeed: 'الان بیشتر برای چه چیزی کمک لازم داری؟',
       recurring: 'هزینه‌های جاری مثل غذا، اجاره یا برق خانه',
       occasional: 'یک هزینه ضروری خاص که هر از گاهی پیش می‌آید',
@@ -144,18 +173,26 @@
       debtTitle: 'وقتی مشکل اصلی بدهی است، با مشاوره بودجه و بدهی شهرداری شروع کن',
       debtBody: 'Konsumentverket توضیح می‌دهد که مشاور بودجه و بدهی شهرداری می‌تواند برای برنامه‌ریزی اقتصاد، اولویت‌بندی بدهی‌ها، تماس با طلبکاران و حمایت در صورت مطرح شدن تسویه بدهی کمک کند. این به معنی پرداخت بدهی‌ها توسط شهرداری یا تضمین تسویه بدهی نیست.',
       debtNext: 'قدم بعدی: مشاوره بودجه و بدهی شهرداری خودت را پیدا کن. اگر الان پول اجاره، برق، غذا یا دارو را نداری، مسیر کمک مالی را هم بررسی کن؛ مشاوره جای ارزیابی فردی کمک فوری را نمی‌گیرد.',
+      noticeTitle: 'دو کار را به ترتیب درست انجام بده',
+      noticeBody: 'اول تأیید کن که نامه را دریافت کرده‌ای؛ این به معنی پذیرفتن مطالبه نیست. بعد تصمیم بگیر: اگر مطالبه درست است طبق آن عمل کن و اگر می‌توانی پرداخت کن یا با طلبکار تماس بگیر؛ اگر مطالبه نادرست است به آن اعتراض کن.',
+      noticeNext: 'قدم بعدی: از راهنمای فعلی Kronofogden یا Mina sidor استفاده کن و مهلت نوشته‌شده در نامه خودت را رعایت کن. دستیار حمایت تعداد روزها را حدس نمی‌زند. اگر هم‌زمان پول اجاره، برق، غذا یا دارو را نداری، مسیر کمک مالی فوری را هم استفاده کن.',
       documents: 'قدم بعدی: از شهرداری بپرس برای خانوار، مسکن، درآمد، دارایی و هزینه‌های ضروری چه مدارکی لازم است. صورت‌حساب بانکی، شماره شناسایی یا جزئیات حساس پزشکی را در این پایلوت عمومی وارد نکن.',
       calc: 'محاسبه آزمایشی Socialstyrelsen فقط برای راهنمایی است و ممکن است با تصمیم فردی شهرداری فرق داشته باشد.',
       source: 'Socialstyrelsen: کمک مالی برای افراد',
       calcSource: 'Socialstyrelsen: محاسبه آزمایشی کمک مالی',
       debtSource: 'Konsumentverket: مشاوره بودجه و بدهی شهرداری',
       billsSource: 'Kronofogden: وقتی قبض‌ها به‌هم‌ریخته‌اند',
+      noticeSource: 'Kronofogden: مطالبه پرداخت دریافت کرده‌ای',
     },
   };
 
   function matches(patterns, text) {
     const value = String(text || '');
     return patterns.some((pattern) => pattern.test(value));
+  }
+
+  function demandNoticeIntent(text) {
+    return matches(DEMAND_NOTICE_PATTERNS, String(text || ''));
   }
 
   function debtIntent(text) {
@@ -168,6 +205,7 @@
   function detect(text) {
     const value = String(text || '');
     if (!value.trim()) return false;
+    if (demandNoticeIntent(value)) return true;
     if (debtIntent(value)) return true;
     if (matches(DIRECT_PATTERNS, value)) return true;
     return matches(MONEY_PRESSURE_PATTERNS, value) &&
@@ -176,6 +214,7 @@
 
   function coarseContext(text) {
     const value = String(text || '');
+    if (demandNoticeIntent(value)) return 'kfm_notice';
     const hasDebt = debtIntent(value);
     if (hasDebt && matches(ACUTE_HOUSING_PATTERNS, value)) return 'housing';
     if (hasDebt && matches(ACUTE_BASIC_PATTERNS, value)) return 'basic_needs';
@@ -190,13 +229,25 @@
   }
 
   function safeContext(value) {
-    return value === 'housing' || value === 'basic_needs' || value === 'debt' ? value : 'general';
+    return value === 'housing' || value === 'basic_needs' || value === 'debt' || value === 'kfm_notice' ? value : 'general';
   }
 
   function handoffHref(language, context) {
     const lang = safeLang(language);
     const safe = safeContext(context);
     return `person-pilot.html?actor_type=private_person&focus=economic_assistance&context=${safe}&lang=${encodeURIComponent(lang)}`;
+  }
+
+  function shellTitle(copy, context) {
+    if (context === 'kfm_notice') return copy.noticeShellTitle;
+    if (context === 'debt') return copy.debtShellTitle;
+    return copy.shellTitle;
+  }
+
+  function shellSub(copy, context) {
+    if (context === 'kfm_notice') return copy.noticeShellSub;
+    if (context === 'debt') return copy.debtShellSub;
+    return copy.shellSub;
   }
 
   function addShellHandoff(win) {
@@ -207,28 +258,33 @@
     if (!input || !analyzeButton || !box) return;
 
     const enhance = () => {
-      if (!detect(input.value) || box.hidden) return;
-      if (box.querySelector('[data-economic-assistance-route="true"]')) return;
+      const existing = box.querySelector('[data-economic-assistance-route="true"]');
+      if (!detect(input.value) || box.hidden) {
+        if (existing) existing.remove();
+        return;
+      }
       const lang = safeLang(doc.documentElement.lang);
       const copy = COPY[lang];
       const context = coarseContext(input.value);
-      const link = doc.createElement('a');
+      const link = existing || doc.createElement('a');
       link.className = 'route';
       link.dataset.economicAssistanceRoute = 'true';
       link.href = handoffHref(lang, context);
       const text = doc.createElement('span');
       const title = doc.createElement('strong');
       const sub = doc.createElement('small');
-      title.textContent = context === 'debt' ? copy.debtShellTitle : copy.shellTitle;
-      sub.textContent = context === 'debt' ? copy.debtShellSub : copy.shellSub;
+      title.textContent = shellTitle(copy, context);
+      sub.textContent = shellSub(copy, context);
       text.append(title, sub);
       const arrow = doc.createElement('span');
       arrow.className = 'arrow';
       arrow.setAttribute('aria-hidden', 'true');
       arrow.textContent = '→';
-      link.append(text, arrow);
-      const firstRoute = box.querySelector('a.route');
-      box.insertBefore(link, firstRoute || null);
+      link.replaceChildren(text, arrow);
+      if (!existing) {
+        const firstRoute = box.querySelector('a.route');
+        box.insertBefore(link, firstRoute || null);
+      }
     };
 
     analyzeButton.addEventListener('click', () => win.setTimeout(enhance, 0));
@@ -265,7 +321,7 @@
     main.parentNode.insertBefore(section, main);
 
     const state = {
-      need: context === 'housing' || context === 'basic_needs' ? 'recurring' : (context === 'debt' ? 'debt' : null),
+      need: context === 'housing' || context === 'basic_needs' ? 'recurring' : (context === 'debt' ? 'debt' : (context === 'kfm_notice' ? 'kfm_notice' : null)),
     };
 
     function choice(label, value) {
@@ -318,17 +374,32 @@
       return box;
     }
 
+    function noticeResult() {
+      const box = doc.createElement('div');
+      box.className = 'notice';
+      box.setAttribute('role', 'status');
+      const title = doc.createElement('strong');
+      title.textContent = copy.noticeTitle;
+      const body = doc.createElement('p');
+      body.textContent = copy.noticeBody;
+      const next = doc.createElement('p');
+      next.textContent = copy.noticeNext;
+      box.append(title, body, next);
+      appendSource(doc, box, KRONOFOGDEN_DEMAND_URL, copy.noticeSource);
+      return box;
+    }
+
     function render() {
       section.replaceChildren();
       const eyebrow = doc.createElement('div');
       eyebrow.className = 'eyebrow';
-      eyebrow.textContent = context === 'debt' ? copy.debtEyebrow : copy.eyebrow;
+      eyebrow.textContent = context === 'kfm_notice' ? copy.noticeEyebrow : (context === 'debt' ? copy.debtEyebrow : copy.eyebrow);
       const title = doc.createElement('h2');
       title.id = 'economicAssistanceTitle';
-      title.textContent = context === 'debt' ? copy.debtPageTitle : copy.title;
+      title.textContent = context === 'kfm_notice' ? copy.noticePageTitle : (context === 'debt' ? copy.debtPageTitle : copy.title);
       const intro = doc.createElement('p');
       intro.className = 'muted';
-      intro.textContent = context === 'debt' ? copy.debtIntro : copy.intro;
+      intro.textContent = context === 'kfm_notice' ? copy.noticeIntro : (context === 'debt' ? copy.debtIntro : copy.intro);
       section.append(eyebrow, title, intro);
 
       if (context === 'general') {
@@ -349,6 +420,7 @@
       if (state.need === 'occasional') section.append(result(copy.occasionalTitle, copy.occasionalBody));
       if (state.need === 'unsure') section.append(result(copy.unsureTitle, copy.unsureBody));
       if (state.need === 'debt') section.append(debtResult());
+      if (state.need === 'kfm_notice') section.append(noticeResult());
     }
 
     render();
