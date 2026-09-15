@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Bind the student sickness demand/friction signal to the shared student_csn product capability and permanent synthetic regressions.",
+  "mappings": [
+    {
+      "signal_id": "df-student-sickness-first-action-v01",
+      "product_capability": "student_csn",
+      "product_topic": "sickness",
+      "implementation": ["client/student-finance-sickness-extension.js", "scripts/build_public_pilot.py"],
+      "regressions": ["client/student-finance-sickness-extension.test.cjs", "data/evals/scenario_lab_websignals_v67.json"],
+      "release_gate": ".github/workflows/validate-student-sickness-v67.yml",
+      "must_preserve": ["same_student_csn_focus", "sv_ar_fa_semantics", "vab_route_not_stolen", "professional_context_not_stolen", "no_raw_situation_in_handoff_or_feedback", "no_sgi_or_approval_inference"]
+    }
+  ]
+}
