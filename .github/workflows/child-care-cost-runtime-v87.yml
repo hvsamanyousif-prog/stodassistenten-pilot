@@ -2,12 +2,13 @@ name: Validate child care cost runtime v87
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'automation/v87-child-care-cost-runtime']
     paths:
       - 'config/situation_session_contract.json'
       - 'client/situation-session-contract.js'
       - 'client/child-assistance-context-extension.js'
       - 'client/child-assistance-context-extension.test.cjs'
+      - 'scripts/validate_child_assistance_runtime_v85.py'
       - 'data/evals/scenario_lab_websignals_v86.json'
       - 'data/evals/demand_friction_regression_map_v86.json'
       - 'data/supports/se-forsakringskassan-omvardnadsbidrag.json'
@@ -21,6 +22,7 @@ on:
       - 'client/situation-session-contract.js'
       - 'client/child-assistance-context-extension.js'
       - 'client/child-assistance-context-extension.test.cjs'
+      - 'scripts/validate_child_assistance_runtime_v85.py'
       - 'data/evals/scenario_lab_websignals_v86.json'
       - 'data/evals/demand_friction_regression_map_v86.json'
       - 'data/supports/se-forsakringskassan-omvardnadsbidrag.json'
