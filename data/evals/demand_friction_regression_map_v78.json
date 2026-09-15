@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v78 unemployment rule-regime signal into permanent regressions in the SAME Stödassistenten learning system without creating a separate a-kassa app, target engine or truth layer.",
+  "mappings": [
+    {
+      "signal_id": "df-unemployment-two-rule-regime-v01",
+      "product_miss": "The support truth contract already distinguishes income-based ALF24 from an older ongoing pre-2025-10-01 benefit period, but public unemployment copy and older synthetic benchmarks still contain generic legacy arbetsvillkor/work-history semantics. The product therefore risks disagreeing with its own truth layer.",
+      "regression_case_ids": [
+        "lab-akassa-newly-unemployed-v78-01",
+        "lab-akassa-old-ongoing-period-v78-02",
+        "lab-akassa-new-period-income-regime-v78-03",
+        "lab-akassa-unemployed-sick-overlap-v78-04",
+        "lab-akassa-basic-needs-overlap-v78-05",
+        "lab-akassa-professional-false-positive-v78-06",
+        "lab-akassa-language-ar-v78-07",
+        "lab-akassa-language-fa-v78-08"
+      ],
+      "coverage_status": "LEARNING_GUARDED_PUBLIC_COPY_FIX_PENDING",
+      "fix_or_guardrail": "Use the existing person/unemployment capability only. For a newly unemployed user, prioritize registration with Arbetsförmedlingen on the first unemployed day before generic eligibility questioning. Before material rule guidance, distinguish a new/current decision from an older ongoing benefit period only when that fact can change the rule path. Replace blanket legacy arbetsvillkor/work-history assumptions with regime-aware questions. Preserve the existing unemployed+sick route and keep municipal economic assistance visible when food or housing is at risk.",
+      "truth_boundary": "Feedback and natural-language discovery are never truth. Current IAF and Arbetsförmedlingen sources plus the relevant a-kassa are required for material unemployment-insurance claims. Do not guarantee eligibility, amount, sanction outcome or deadline, and do not infer the applicable rule regime only from the current calendar date."
+    }
+  ]
+}
