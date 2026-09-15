@@ -56,7 +56,7 @@
       "must_not_claim": ["employee_personally_needs_fardtjanst", "employee_personally_needs_sickness_travel", "public_person_route_should_collect_work_case_details"],
       "expected_questions": ["do_not_steal_professional_transport_question_into_personal_mobility_route"],
       "expected_next_actions": ["keep_professional_question_outside_personal_mobility_transport_route"],
-      "source_requirements": []
+      "source_requirements": ["no_material_source_required_for_false_positive_boundary"]
     },
     {
       "case_id": "lab-mobility-language-ar-v65-06",
