@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization signals for the existing Stödassistenten learning system. Scores are not measured search volumes, prevalence estimates or truth evidence; community material is discovery-only and material guidance must be verified against current primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize the combination of recurring natural-language demand, high information friction, meaningful consequence and weak current product coverage. Scores are qualitative, not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-relative-representation-fullmakt-scope-v01",
+      "actor_types": ["relative"],
+      "natural_language_queries": [
+        "kan jag ansöka åt min mamma",
+        "får jag prata med myndigheten åt min pappa",
+        "jag har fullmakt vad får jag göra",
+        "kan jag sköta försäkringskassan åt min förälder",
+        "kan jag hjälpa min partner med vården med fullmakt",
+        "vem kan vara ombud för en anhörig"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Open-web community discussions repeatedly show adult children and relatives taking over practical, financial or administrative tasks for adults and uncertainty about what access or authority follows. This is a discovery signal only, not measured search volume."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Users can conflate being a relative, helping informally, holding a generic fullmakt, being an ombud and having authority to consent or decide. The correct boundary depends on the actual organisation and the scope of authority."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Overstating authority can cause invalid submissions, privacy breaches, delayed cases or inappropriate assumptions about healthcare decision-making; understating it can also block legitimate help."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "General administrative-law rules, authority-specific ombud procedures and healthcare consent/fullmakt boundaries live in different primary sources and are not safely collapsed into one universal rule."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "The public product serves Swedish, Arabic and Persian while authoritative details and organisation-specific processes are primarily published in Swedish and can involve legal vocabulary such as ombud, behörighet, fullmakt and samtycke."
+      },
+      "steps_to_action": {
+        "score": 4,
+        "basis": "A user must identify the actual matter and organisation, distinguish support from representation, inspect the fullmakt scope where relevant and then use the organisation's current process."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Community questions recur around helping ageing or vulnerable relatives with finances, applications and access, including questions that blur family relationship with permission or authority."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "The existing relative_care route covered near-relative benefit and municipal caregiver support but had no focused public boundary for representation/fullmakt despite the canonical coverage matrix already identifying representation as a risk."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.reddit.com/r/Asksweddit/comments/1g8tbt2",
+        "https://www.reddit.com/r/sweden/comments/1veo477"
+      ],
+      "primary_sources": [
+        "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/forvaltningslag-2017900_sfs-2017-900/",
+        "https://www.forsakringskassan.se/download/18.398e2a521762d534987475/1734594657037/5607-fullmakt-for-ombud.pdf",
+        "https://www.1177.se/Vastra-Gotaland/sa-fungerar-varden/anhorig---narstaende/att-vara-narstaende-i-varden/"
+      ],
+      "product_miss": "Natural-language questions about acting for an adult relative could not reach a focused safe representation boundary in the same relative_care route, creating risk that kinship or a generic fullmakt would be treated as universal authority.",
+      "future_guardrail": "Keep actor_type=relative and focus=relative_care. Treat representation as a coarse context only. Never infer authority from kinship, never treat a generic fullmakt as universal, and never equate help in healthcare contact with treatment decision or consent authority. Verify the actual organisation and authority scope against current primary sources.",
+      "regression_case": [
+        "lab-relative-relationship-not-automatic-authority-v72-01",
+        "lab-relative-existing-power-scope-v72-02",
+        "lab-relative-healthcare-contact-not-consent-v72-03",
+        "lab-relative-representation-professional-false-positive-v72-04",
+        "lab-relative-representation-language-ar-v72-05",
+        "lab-relative-representation-language-fa-v72-06"
+      ],
+      "evaluation_method": "Natural-language route tests + scenario regressions + current primary-source cross-check. Community material may only suggest cases; it must never supply material rules.",
+      "recommended_learning_action": "Extend the existing relative_care route with care_context=representation, preserve only coarse context in handoff, fail closed for professional/research contexts, and show authority/scope boundaries before any organisation-specific action.",
+      "truth_rule": "Reddit/community material is discovery only. We must verify material representation, fullmakt, ombud and healthcare-consent guidance against current Riksdagen, responsible-authority and healthcare-provider primary sources before it is used; prior AI output and feedback are never truth sources."
+    }
+  ]
+}
