@@ -11,6 +11,7 @@ dental67_runtime = (root / "client" / "dental-67-guidance.js").read_text(encodin
 relative_runtime = (root / "client" / "relative-care.js").read_text(encoding="utf-8")
 work_injury_dental_runtime = (root / "client" / "work-injury-dental.js").read_text(encoding="utf-8")
 job_premium_runtime = (root / "client" / "job-premium-guidance.js").read_text(encoding="utf-8")
+self_employed_sick_runtime = (root / "client" / "employee-sick-work-context-extension.js").read_text(encoding="utf-8")
 
 required_rows = [
     "| Privatperson |",
@@ -58,6 +59,18 @@ assert "jobbpremie kontra jobbstimulans" in matrix
 assert "v45–v46" in matrix
 assert "NEEDS_REVIEW" in matrix
 
+# v64 closes the prior coverage-matrix gap where self-employed and invoiced workers
+# had public work-injury context but no focused work+sickness route. The matrix must
+# now describe the same employee_sick capability rather than a new actor engine.
+for token in [
+    "v64",
+    "focus=employee_sick",
+    "business_form",
+    "combined_employment",
+    "faktureringsföretag",
+]:
+    assert token in matrix, f"coverage matrix missing v64 sickness token: {token}"
+
 # Runtime/artifact existence backs the updated matrix claims. These checks do not
 # turn the matrix into a truth source; they only prevent documentation drift.
 for rel in [
@@ -69,6 +82,8 @@ for rel in [
     "client/property-charging-guidance.js",
     "client/job-premium-guidance.js",
     "client/job-premium-guidance.test.cjs",
+    "client/employee-sick-work-context-extension.js",
+    "client/employee-sick-work-context-extension.test.cjs",
     "data/evals/scenario_lab_websignals_v16.json",
     "data/evals/scenario_lab_websignals_v17.json",
     "data/evals/scenario_lab_websignals_v19.json",
@@ -82,8 +97,11 @@ for rel in [
     "data/evals/scenario_lab_websignals_v44.json",
     "data/evals/scenario_lab_websignals_v45.json",
     "data/evals/scenario_lab_websignals_v46.json",
+    "data/evals/scenario_lab_websignals_v64.json",
     "data/evals/demand_friction_signals_v23.json",
     "data/evals/demand_friction_regression_map_v23.json",
+    "data/evals/demand_friction_signals_v64.json",
+    "data/evals/demand_friction_regression_map_v64.json",
     "data/supports/se-forsakringskassan-sarskild-tandvardsersattning-67.json",
     "data/supports/se-forsakringskassan-narstaendepenning.json",
     "data/supports/se-forsakringskassan-arbetsskada-tandvard.json",
@@ -115,7 +133,25 @@ assert "actor_type=private_person&focus=job_premium&lang=" in job_premium_runtim
 assert "separate_job_stimulation" in job_premium_runtime
 for forbidden in ["salary=", "employer=", "municipality=", "household=", "story=", "situation="]:
     assert forbidden not in job_premium_runtime, f"job-premium handoff leaked private context: {forbidden}"
+
+# v64 work+sickness context extension: one focus, coarse context only, fail closed.
+for token in [
+    "focus', 'employee_sick'",
+    "work_context",
+    "business_form",
+    "self_employed",
+    "combined_employment",
+    "invoiced_worker",
+    "limited_company",
+    "sole_partnership",
+    "detectWorkContext",
+]:
+    assert token in self_employed_sick_runtime, f"v64 runtime missing {token}"
+assert "actor_type', 'private_person'" in self_employed_sick_runtime
+assert "actor_type=self_employed" not in self_employed_sick_runtime
+for forbidden in ["diagnosis=", "salary=", "income=", "sgi=", "company_name=", "orgnr=", "story=", "situation="]:
+    assert forbidden not in self_employed_sick_runtime.lower(), f"v64 sickness handoff leaked private context: {forbidden}"
 assert "vab" in privacy.lower()
 assert "property" in privacy.lower()
 
-print("pilot coverage matrix: OK (actor rows + current runtime claims guarded through v46 job-premium route)")
+print("pilot coverage matrix: OK (actor rows + runtime claims guarded through v64 self-employed sickness route)")
