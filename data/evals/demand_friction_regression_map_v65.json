@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-mobility-sicktravel-fardtjanst-riks-v01",
+      "product_miss": "The same public person journey had no route for ordinary-transport failure, so healthcare sickness travel, daily färdtjänst and longer private riksfärdtjänst could be missed or collapsed into one generic disability route.",
+      "regression_case_ids": ["lab-mobility-healthcare-trip-v65-01","lab-mobility-daily-fardtjanst-v65-02","lab-mobility-riksfardtjanst-long-private-v65-03","lab-mobility-mixed-purpose-v65-04","lab-mobility-work-context-false-positive-v65-05","lab-mobility-language-ar-v65-06","lab-mobility-language-fa-v65-07"],
+      "fix_or_guardrail": "Keep the same person product and add one focus=mobility_transport route with only coarse trip_purpose=healthcare|daily|long_private|multiple. Reuse explicit purpose and otherwise ask one route-changing purpose question. Do not create separate transport engines by actor.",
+      "truth_guardrail": "Current 1177, Riksdagen and responsible local authority information must carry material rules. The public product must not decide entitlement, fare, deadline, certificate requirement, booking channel, trip quota or approval from free text.",
+      "privacy_guardrail": "Public handoff and structured feedback may contain only focus=mobility_transport, language and coarse trip_purpose. Never place name, personnummer, diagnosis, exact address, exact destination, healthcare appointment, travel date, permit number or raw story in URL or feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}

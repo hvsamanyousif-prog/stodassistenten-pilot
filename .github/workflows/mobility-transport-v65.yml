@@ -1,0 +1,32 @@
+name: Validate mobility transport v65
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate v65 shared mobility route
+        run: python scripts/validate_mobility_transport_v65.py
+      - name: Build public pilot
+        run: python scripts/build_public_pilot.py --output _site
+      - name: Verify public pilot build
+        run: python scripts/test_public_pilot_build.py --site _site
