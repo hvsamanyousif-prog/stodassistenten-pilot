@@ -61,6 +61,7 @@ assert support["verification"]["material_fields_verified"] == []
 for token in [
     "support_need",
     "personal_assistance",
+    "assistance_healthcare",
     "ASSISTANCE_URL",
     "assistansersattning-for-vuxna",
     "NON_PERSONAL_ASSISTANCE",
@@ -84,8 +85,10 @@ for forbidden in [
 
 for token in [
     "Jag jobbar med personlig assistans",
+    "Jag arbetar med assistansersättning",
     "Jag skriver uppsats om personlig assistans",
     "personal_assistance",
+    "assistance_healthcare",
     "أحتاج مساعدة شخصية",
     "کمک شخصی",
 ]:
@@ -100,5 +103,6 @@ assert "does not create a separate personal-assistance app" in appendix
 assert "Feedback is a learning signal, never a truth source" in appendix
 assert "NEEDS_REVIEW" in appendix
 assert "property_actor" in appendix
+assert "assistance_healthcare" in appendix
 
-print("personal assistance v70: OK (canonical demand signal reused; same disability_home_support product; truth status unchanged; feedback coverage hardened)")
+print("personal assistance v70: OK (canonical demand signal reused; same disability_home_support product; combined healthcare preserved; truth status unchanged; feedback coverage hardened)")
