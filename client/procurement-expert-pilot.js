@@ -23,7 +23,7 @@ function classifyRequirement(line){
  const t=normalized(line);
  if(!t)return 'uncertain';
  if(/sista anbudsdag|senast den|deadline|anbud ska vara.*tillhanda|frågor.*senast|giltighetstid för anbud/.test(t))return 'deadline';
- if(/tilldelningskriter|utvärder|mervärde|poäng|bästa förhållandet|lägsta pris/.test(t))return 'award';
+ if(/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t))return 'award';
  if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexregler/.test(t))return 'commercial';
  if(/avtalstid|kontraktsvillkor|särskilda kontraktsvillkor|under avtalstiden|vite|utförandevillkor|leveransvillkor/.test(t))return 'contract';
  if(/uteslutningsgrund|uteslutas|brott enligt|obetalda skatter|socialförsäkringsavgifter/.test(t))return 'exclusion';
