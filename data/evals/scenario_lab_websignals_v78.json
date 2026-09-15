@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v78 regressions for the SAME Stödassistenten intelligence. Unemployment guidance must distinguish the income-based ALF24 path from an older ongoing pre-2025-10-01 benefit period, prioritize registration on the first unemployed day, preserve existing unemployment+sickness and acute basic-needs paths, and never infer eligibility or amounts from natural language.",
+  "cases": [
+    {
+      "case_id": "lab-akassa-newly-unemployed-v78-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag blev arbetslös idag och vet inte vad jag ska göra först eller om jag kan få a-kassa.",
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "rule_regime_verification"],
+      "must_not_claim": ["guaranteed_unemployment_benefit", "guaranteed_amount", "old_work_condition_is_the_current_universal_rule", "new_income_rule_applies_without_regime_check_when_an_old_period_may_exist"],
+      "expected_questions": ["q_none_before_first_safe_action", "q_existing_pre_2025_10_01_benefit_period_only_if_it_changes_rule_regime"],
+      "expected_next_actions": ["register_with_arbetsformedlingen_first_unemployed_day", "contact_relevant_a_kassa_for_individual_assessment", "verify_rule_regime_before_material_rule_explanation"],
+      "source_requirements": ["current_arbetsformedlingen_unemployment_primary_source", "current_iaf_dual_regime_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-old-ongoing-period-v78-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag har dagar kvar i en ersättningsperiod som började sommaren 2025. Gäller de nya inkomstreglerna för mig nu bara för att det är 2026?",
+      "expected_support_areas": ["unemployment_insurance", "legacy_ongoing_period_boundary", "rule_regime_verification"],
+      "must_not_claim": ["calendar_date_automatically_moves_user_to_ALF24", "income_condition_automatically_replaces_old_rules_for_existing_period", "exact_remaining_days_or_amount_without_provider_verification"],
+      "expected_questions": ["q_none_period_start_is_already_explicit"],
+      "expected_next_actions": ["explain_that_pre_2025_10_01_ongoing_periods_can_remain_under_previous_rules", "verify_individual_period_with_the_users_a_kassa"],
+      "source_requirements": ["current_iaf_dual_regime_primary_source", "current_relevant_a_kassa_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-new-period-income-regime-v78-03",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag söker a-kassa för första gången nu efter att jobbet tog slut. Måste jag ha jobbat ett visst antal timmar enligt arbetsvillkoret?",
+      "expected_support_areas": ["unemployment_insurance", "income_based_regime", "misconception_correction"],
+      "must_not_claim": ["legacy_work_condition_is_the_rule_for_new_2026_decisions", "guaranteed_income_condition_met", "guaranteed_benefit_level"],
+      "expected_questions": ["q_existing_pre_2025_10_01_benefit_period_only_if_not_already_ruled_out"],
+      "expected_next_actions": ["correct_legacy_work_condition_misconception_for_new_regime", "use_current_income_based_primary_source", "refer_individual_eligibility_to_a_kassa"],
+      "source_requirements": ["current_iaf_ALF24_primary_source", "current_arbetsformedlingen_a_kassa_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-unemployed-sick-overlap-v78-04",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag är arbetslös och blev sjuk i går. Ska jag bara fortsätta på a-kassespåret?",
+      "expected_support_areas": ["existing_unemployed_sick_route", "unemployment_insurance_boundary", "sickness_reporting"],
+      "must_not_claim": ["a_kassa_is_the_only_relevant_path_when_unemployed_and_sick", "new_parallel_unemployment_sickness_engine", "automatic_sickness_benefit_eligibility"],
+      "expected_questions": ["q_none_reuse_existing_unemployed_sick_context"],
+      "expected_next_actions": ["reuse_existing_unemployed_sick_guidance", "verify_current_reporting_and_benefit_path_with_responsible_primary_sources"],
+      "source_requirements": ["current_arbetsformedlingen_primary_source", "current_forsakringskassan_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-basic-needs-overlap-v78-05",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag blev av med jobbet, har inte hunnit få a-kassa och pengarna räcker inte till mat eller hyran.",
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "economic_assistance_overlap", "basic_needs_priority"],
+      "must_not_claim": ["a_kassa_will_arrive_in_time", "municipality_will_grant_assistance", "unemployment_route_should_hide_acute_basic_needs_support"],
+      "expected_questions": ["q_none_before_showing_safe_parallel_next_steps_when_basic_needs_are_explicit"],
+      "expected_next_actions": ["register_with_arbetsformedlingen_first_unemployed_day_if_not_done", "contact_a_kassa", "keep_municipal_economic_assistance_or_acute_basic_needs_path_visible"],
+      "source_requirements": ["current_arbetsformedlingen_primary_source", "current_responsible_municipality_or_socialstyrelsen_economic_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-professional-false-positive-v78-06",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag arbetar på en a-kassa och tar fram information om de nya reglerna för våra medlemmar.",
+      "expected_support_areas": ["no_personal_unemployment_route_without_personal_need_signal"],
+      "must_not_claim": ["user_is_unemployed", "user_needs_personal_a_kassa_assessment", "user_has_income_loss"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_or_research_context_without_personal_need"],
+      "source_requirements": ["current_primary_source_required_before_any_material_unemployment_rule_claim"]
+    },
+    {
+      "case_id": "lab-akassa-language-ar-v78-07",
+      "actor_type": "private_person",
+      "language": "ar",
+      "story": "فقدت عملي اليوم ولا أعرف ما هي الخطوة الأولى أو هل تنطبق عليّ قواعد التأمين الجديدة أم القديمة.",
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "rule_regime_verification", "language_parity"],
+      "must_not_claim": ["automatic_eligibility", "one_rule_regime_for_everyone", "guaranteed_amount"],
+      "expected_questions": ["q_existing_pre_2025_10_01_benefit_period_only_if_it_changes_rule_regime"],
+      "expected_next_actions": ["preserve_first_unemployed_day_registration_in_arabic_ui", "preserve_dual_regime_boundary_in_arabic_ui", "verify_material_rules_against_current_primary_sources"],
+      "source_requirements": ["current_arbetsformedlingen_primary_source", "current_iaf_dual_regime_primary_source"]
+    },
+    {
+      "case_id": "lab-akassa-language-fa-v78-08",
+      "actor_type": "private_person",
+      "language": "fa",
+      "story": "امروز بیکار شدم و نمی‌دانم اول چه کاری باید انجام دهم یا قوانین جدید بیمه بیکاری شامل من می‌شود یا قوانین قبلی.",
+      "expected_support_areas": ["unemployment_insurance", "employment_service_support", "rule_regime_verification", "language_parity"],
+      "must_not_claim": ["automatic_eligibility", "one_rule_regime_for_everyone", "guaranteed_amount"],
+      "expected_questions": ["q_existing_pre_2025_10_01_benefit_period_only_if_it_changes_rule_regime"],
+      "expected_next_actions": ["preserve_first_unemployed_day_registration_in_persian_ui", "preserve_dual_regime_boundary_in_persian_ui", "verify_material_rules_against_current_primary_sources"],
+      "source_requirements": ["current_arbetsformedlingen_primary_source", "current_iaf_dual_regime_primary_source"]
+    }
+  ]
+}
