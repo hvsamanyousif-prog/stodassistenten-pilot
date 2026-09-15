@@ -1,0 +1,22 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-debt-counselling-vs-acute-assistance-v01",
+      "product_miss": "The shared public economy path could recognise money pressure around basic needs but did not distinguish accumulated debt/inkasso from immediate inability to cover rent, electricity, food or medicine. This could hide municipal budget/debt counselling or over-generalise a debt story into economic assistance.",
+      "regression_case_ids": [
+        "lab-private-debt-counselling-v62-01",
+        "lab-private-debt-plus-acute-rent-v62-02",
+        "lab-private-debt-skuldsanering-fail-closed-v62-03",
+        "lab-private-debt-language-ar-v62-04",
+        "lab-private-debt-language-fa-v62-05",
+        "lab-kronofogden-employment-false-positive-v62-06"
+      ],
+      "fix_or_guardrail": "Keep the existing economic_assistance focus and add only the coarse context=debt. Route clear accumulated-debt stories to current municipal budget/debt counselling; preserve the existing acute housing/basic-needs route when immediate essential-cost risk is explicit. Do not create a debt app, a debt target-group engine or an eligibility calculator.",
+      "truth_guardrail": "Konsumentverket can support the existence and scope of municipal budget/debt counselling, Kronofogden can support debt-enforcement and debt-restructuring information, and Socialstyrelsen can support economic-assistance information. None of those sources or routes proves the individual's eligibility, creditor outcome, debt cancellation, amount or deadline.",
+      "privacy_guardrail": "The public handoff may contain only actor_type=private_person, focus=economic_assistance, context=debt|housing|basic_needs|general and language. Never place creditor names, exact debt amount, account information, address, identity, raw story or sensitive household details in the URL or structured feedback.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
