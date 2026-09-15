@@ -5,6 +5,7 @@ on:
     branches: [main, 'automation/**', 'work/**']
     paths:
       - 'data/evals/cases/akassa.json'
+      - 'data/evals/expansion/akassa_v02.json'
       - 'data/evals/scenario_lab_websignals_v78.json'
       - 'data/evals/demand_friction_signals_v78.json'
       - 'data/evals/demand_friction_regression_map_v78.json'
@@ -14,6 +15,7 @@ on:
   pull_request:
     paths:
       - 'data/evals/cases/akassa.json'
+      - 'data/evals/expansion/akassa_v02.json'
       - 'data/evals/scenario_lab_websignals_v78.json'
       - 'data/evals/demand_friction_signals_v78.json'
       - 'data/evals/demand_friction_regression_map_v78.json'
