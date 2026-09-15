@@ -1,0 +1,41 @@
+name: Validate family housing truth v80
+
+on:
+  push:
+    branches: [main, 'automation/**', 'work/**']
+    paths:
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json'
+      - 'data/evals/scenario_lab_websignals_v80.json'
+      - 'data/evals/demand_friction_signals_v80.json'
+      - 'data/evals/demand_friction_regression_map_v80.json'
+      - 'scripts/validate_family_housing_v80.py'
+      - '.github/workflows/family-housing-v80.yml'
+  pull_request:
+    paths:
+      - 'data/supports/se-forsakringskassan-bostadsbidrag-barnfamiljer.json'
+      - 'data/evals/scenario_lab_websignals_v80.json'
+      - 'data/evals/demand_friction_signals_v80.json'
+      - 'data/evals/demand_friction_regression_map_v80.json'
+      - 'scripts/validate_family_housing_v80.py'
+      - '.github/workflows/family-housing-v80.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  family-housing-v80:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate canonical support records
+        run: python scripts/validate_support_records.py --self-test
+      - name: Re-run the shared scenario factory
+        run: python scripts/validate_scenario_lab_all.py
+      - name: Validate v80 family housing truth and learning boundaries
+        run: python scripts/validate_family_housing_v80.py
+      - name: Scan public repository boundary
+        run: python scripts/validate_public_repo_boundary.py .

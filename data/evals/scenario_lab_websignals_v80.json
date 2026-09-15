@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v80 regressions for the SAME Stödassistenten intelligence. Family housing-benefit guidance must distinguish child residence pattern, conditional housing-size facts, joint household/application context and the 2026-to-2027 income-model transition without inferring eligibility or collecting raw sensitive narratives.",
+  "cases": [
+    {
+      "case_id": "lab-family-housing-main-route-v80-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag är ensam med ett barn som bor hos mig nästan hela tiden. Hyran är hög och inkomsten är låg. Finns det något bostadsstöd för oss?",
+      "expected_support_areas": ["family_housing_benefit", "child_residence_pattern", "current_2026_income_route"],
+      "must_not_claim": ["guaranteed_housing_benefit", "guaranteed_amount", "young_under_29_route_is_the_only_housing_benefit_route"],
+      "expected_questions": ["q_reuse_child_residence_already_known", "q_household_and_housing_facts_only_if_they_change_next_step"],
+      "expected_next_actions": ["surface_family_housing_benefit_candidate", "use_current_forsakringskassan_calculator_or_application_for_individual_assessment"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-part-time-size-v80-02",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn bor hos mig två helger i månaden. Kan bostadsbidrag vara aktuellt?",
+      "expected_support_areas": ["family_housing_benefit", "child_residence_pattern", "conditional_housing_size_rule"],
+      "must_not_claim": ["eligible_without_checking_minimum_child_residence", "housing_size_is_irrelevant_when_child_lives_less_than_about_half_time", "guaranteed_housing_benefit"],
+      "expected_questions": ["q_verify_child_residence_days_if_needed", "q_housing_size_only_because_part_time_residence_can_make_it_material"],
+      "expected_next_actions": ["verify_minimum_child_residence_and_conditional_housing_size_rule", "use_current_forsakringskassan_primary_source_before_material_match"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-joint-application-v80-03",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag bor med min sambo och våra barn och vi undrar om vi kan söka bostadsbidrag.",
+      "expected_support_areas": ["family_housing_benefit", "joint_household_application", "household_income_context"],
+      "must_not_claim": ["one_partner_should_apply_as_if_single", "guaranteed_eligibility", "guaranteed_amount"],
+      "expected_questions": ["q_none_about_single_vs_cohabiting_household_because_context_is_explicit"],
+      "expected_next_actions": ["explain_joint_application_path_for_cohabiting_household", "verify_current_household_and_income_requirements_with_forsakringskassan"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-2026-income-v80-04",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag förlorade mycket inkomst i augusti 2026 och vill söka bostadsbidrag för barnfamilj nu. Ska jag bara skriva augustilönen?",
+      "expected_support_areas": ["family_housing_benefit", "annual_income_estimation_2026", "income_change_context"],
+      "must_not_claim": ["one_month_income_alone_is_the_2026_income_basis", "2027_monthly_income_rule_already_applies_in_2026", "automatic_eligibility_after_income_loss"],
+      "expected_questions": ["q_none_before_correcting_current_income_period_misconception", "q_estimated_relevant_annual_income_only_if_needed_for_next_step"],
+      "expected_next_actions": ["use_current_2026_annual_income_estimation_route", "use_forsakringskassan_current_calculation_or_application"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-2027-transition-v80-05",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag planerar att söka bostadsbidrag för barnfamilj i januari 2027. Ska jag räkna hela årets inkomst på samma sätt som 2026?",
+      "expected_support_areas": ["family_housing_benefit", "decision_period_versioning", "monthly_income_transition_2027"],
+      "must_not_claim": ["2026_annual_income_model_is_universally_unchanged_in_2027", "2027_rules_apply_before_2027", "all_2027_cases_follow_one_rule_without_exception_check"],
+      "expected_questions": ["q_none_decision_period_is_already_explicit"],
+      "expected_next_actions": ["explain_confirmed_2027_monthly_income_transition_at_high_level", "verify_current_2027_rule_and_any_exception_before_individual_guidance"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source", "current_forsakringskassan_2027_change_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-professional-false-positive-v80-06",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag arbetar på en rådgivning och skriver information om bostadsbidrag för barnfamiljer.",
+      "expected_support_areas": ["no_personal_family_housing_route_without_personal_need_signal"],
+      "must_not_claim": ["user_has_children", "user_has_low_income", "user_should_apply_personally"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_or_research_context_without_personal_need"],
+      "source_requirements": ["current_primary_source_required_before_any_material_family_housing_claim"]
+    },
+    {
+      "case_id": "lab-family-housing-language-ar-v80-07",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "طفلي يعيش معي معظم الوقت ودخلي منخفض وإيجاري مرتفع. هل يوجد دعم للسكن للعائلات التي لديها أطفال؟",
+      "expected_support_areas": ["family_housing_benefit", "child_residence_pattern", "language_parity"],
+      "must_not_claim": ["automatic_eligibility", "guaranteed_amount", "different_matching_rules_because_language_is_arabic"],
+      "expected_questions": ["q_reuse_child_residence_already_known", "q_only_route_changing_missing_facts"],
+      "expected_next_actions": ["preserve_family_housing_route_in_arabic_ui", "use_same_semantic_truth_boundary_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    },
+    {
+      "case_id": "lab-family-housing-language-fa-v80-08",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزندم بیشتر اوقات با من زندگی می‌کند، درآمدم کم و اجاره‌ام زیاد است. آیا کمک‌هزینه مسکن برای خانواده‌های دارای فرزند وجود دارد؟",
+      "expected_support_areas": ["family_housing_benefit", "child_residence_pattern", "language_parity"],
+      "must_not_claim": ["automatic_eligibility", "guaranteed_amount", "different_matching_rules_because_language_is_persian"],
+      "expected_questions": ["q_reuse_child_residence_already_known", "q_only_route_changing_missing_facts"],
+      "expected_next_actions": ["preserve_family_housing_route_in_persian_ui", "use_same_semantic_truth_boundary_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_family_housing_benefit_primary_source"]
+    }
+  ]
+}
