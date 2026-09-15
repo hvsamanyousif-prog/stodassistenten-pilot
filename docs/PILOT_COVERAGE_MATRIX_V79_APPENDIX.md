@@ -2,7 +2,7 @@
 
 ## Scope
 
-v79 closes the public-copy part of the existing HIGH demand/friction signal `df-unemployment-two-rule-regime-v01` inside the same Stödassistenten person surface. It does not create a second unemployment app, matcher, truth layer or roadmap.
+v79 closes the public-copy part of the existing HIGH demand/friction signal `df-unemployment-two-rule-regime-v01` inside the same Stödassistenten person surface. It does not create a second unemployment app, matcher, truth layer, learning signal or roadmap.
 
 ## Verified user-value change
 
@@ -26,11 +26,14 @@ The public runtime therefore does **not** infer the applicable regime from today
 
 Permanent v78 Scenario Lab cases remain the semantic regression set, including newly unemployed, older ongoing period, new regime, unemployed+sick overlap, basic-needs overlap, professional false positive and Arabic/Persian parity. v79 adds runtime-level regression for the actual person-pilot row ordering and browser wiring.
 
+Red Team also caught an architecture regression during PR CI: closing the v78 signal through a new v79 mapping pack duplicated the same `signal_id` across the shared learning system and correctly failed unrelated cross-domain workflows. The fix was to **advance the existing v78 mapping record in place** to `PUBLIC_RUNTIME_GUARDED_V79` and remove the duplicate pack. This preserves one signal → one regression record → one product learning loop.
+
 Release evidence is guarded by:
 
 - `client/unemployment-regime-guidance.test.cjs`
 - `scripts/validate_akassa_public_v79.py`
 - `.github/workflows/akassa-public-v79.yml`
+- the existing shared demand/friction uniqueness validator
 - the existing public build and v78 regression/truth guard
 
 ## Privacy and architecture
