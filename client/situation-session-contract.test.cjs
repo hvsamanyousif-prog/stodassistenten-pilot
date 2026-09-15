@@ -1,4 +1,6 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const contract = require('./situation-session-contract.js');
 
 assert.deepEqual([...contract.SURFACES], ['web','ios','android']);
@@ -62,6 +64,48 @@ for (const surface of ['web','ios','android']) {
   assert.equal(u.get('focus'),'student_csn');
 }
 assert.throws(()=>contract.makeSessionProfile({actorType:'student_young_adult',focus:'student_csn'}),/actorType is not allowed/);
+
+// Regression v58: public production routes may not invent a second actor
+// vocabulary outside the shared cross-surface contract. Scan literal actor_type
+// handoffs in the web source so future web work cannot silently diverge from
+// iOS/Android session semantics. Dynamic values remain governed by the contract.
+const repoRoot = path.resolve(__dirname, '..');
+const productionFiles = [];
+function collectProductionFiles(dir) {
+  for (const entry of fs.readdirSync(dir, {withFileTypes:true})) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      collectProductionFiles(full);
+      continue;
+    }
+    if (!entry.isFile() || !entry.name.endsWith('.js') || entry.name.includes('.test.')) continue;
+    productionFiles.push(full);
+  }
+}
+collectProductionFiles(path.join(repoRoot, 'client'));
+for (const entry of fs.readdirSync(repoRoot, {withFileTypes:true})) {
+  if (entry.isFile() && entry.name.endsWith('.html')) productionFiles.push(path.join(repoRoot, entry.name));
+}
+
+const actorLiterals = [];
+const queryLiteral = /actor_type=([a-z0-9_-]+)/gi;
+const setterLiteral = /\.set\(\s*['"]actor_type['"]\s*,\s*['"]([a-z0-9_-]+)['"]\s*\)/gi;
+for (const file of productionFiles) {
+  const source = fs.readFileSync(file, 'utf8');
+  for (const pattern of [queryLiteral, setterLiteral]) {
+    pattern.lastIndex = 0;
+    for (let match = pattern.exec(source); match; match = pattern.exec(source)) {
+      actorLiterals.push({token:match[1].toLowerCase(), file:path.relative(repoRoot, file)});
+    }
+  }
+}
+assert.ok(actorLiterals.length > 0, 'actor vocabulary guard found no live actor_type literals; scanner may have drifted');
+const invalidActorLiterals = actorLiterals.filter(({token})=>!contract.ACTOR_TYPES.includes(token));
+assert.deepEqual(
+  invalidActorLiterals,
+  [],
+  `live actor_type token is outside shared session contract: ${JSON.stringify(invalidActorLiterals)}`,
+);
 
 // Fail closed: sensitive/arbitrary keys or prose-like values never become coarse transport facts.
 assert.throws(()=>contract.makeSessionProfile({coarseFacts:{diagnosis:'adhd'}}),/forbidden coarse fact key/);
