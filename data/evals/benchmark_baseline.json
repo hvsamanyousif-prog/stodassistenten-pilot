@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1.0",
-  "dataset_sha256": "b1db865b134268c41f7e9fb0eab5e43d7ddd6c6aaadf070d2a3a1b71c9db381c",
+  "dataset_sha256": "4907fb220171b8bc4de0fb607fa3f7a1a72a7ee0209c3b9a1388f6c3af798f33",
   "expected_case_count": 45,
   "expected_cases_per_segment": 5,
   "minimum_metrics": {
@@ -10,5 +10,5 @@
     "question_efficiency": 0.75,
     "next_action_recall": 0.80
   },
-  "change_reason": "Initial public synthetic benchmark baseline for issue #13. Any semantic benchmark change must update this fingerprint and explain why."
+  "change_reason": "v78 updated the canonical a-kassa benchmark to the two-rule-regime model from 1 October 2025; v79 synchronizes the locked semantic fingerprint without changing metric thresholds or case counts."
 }

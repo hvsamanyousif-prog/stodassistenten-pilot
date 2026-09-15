@@ -1,6 +1,6 @@
 {
   "schema_version": "0.2.0",
-  "expansion_sha256": "a0f93593496ecf24a8e9bbb494660fac307154857a5eb7671775a741b330bf44",
+  "expansion_sha256": "2ca74b1d5edcd17161611903245c7b9f96a66ff0571eaee4b512d69ad945fd04",
   "expected_expansion_case_count": 63,
   "expected_total_case_count": 108,
   "expected_expansion_cases_per_segment": 7,
@@ -20,5 +20,5 @@
     "question_efficiency": 0.6,
     "next_action_recall": 0.7
   },
-  "change_reason": "Expand the public synthetic benchmark beyond 100 cases while preserving the locked v0.1 baseline and adding explicit cross-language parity guardrails."
+  "change_reason": "v78 aligned the a-kassa expansion cases with the two-rule-regime model from 1 October 2025; v79 synchronizes the locked expansion fingerprint while preserving all case counts, parity requirements and metric thresholds."
 }
