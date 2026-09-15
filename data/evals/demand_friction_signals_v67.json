@@ -1,0 +1,30 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for students who become sick and do not know which notification protects study support. Scores are not measured search volumes and never prove eligibility. CSN and Försäkringskassan are the material primary sources.",
+  "scoring": {"scale":"1-5","meaning":"1=low, 5=very high","priority_rule":"Prioritize high demand + high friction + high consequence + weak current product coverage; scores are qualitative, not measured search volumes."},
+  "signals": [
+    {
+      "signal_id": "df-student-sickness-first-action-v01",
+      "actor_types": ["student"],
+      "natural_language_queries": ["jag pluggar med csn och blev sjuk vad gör jag först","ska student sjukanmäla till csn eller försäkringskassan","jag går gymnasiet och är sjuk vem anmäler jag till","sjuk under utlandsstudier csn","jag jobbar och studerar och blev sjuk"],
+      "demand_signal": {"score":5,"basis":"CSN reported that only about 6,900 studiemedel recipients had approved sickness absence in 2024, 1.3 percent of all studiemedel recipients, and explicitly said many may not know the protection. This is an underuse/discovery signal, not proof of individual eligibility or measured search volume."},
+      "friction_signal": {"score":5,"basis":"The same everyday problem — becoming sick while studying — has different first notification routes for studies in Sweden with studiemedel/omställningsstudiestöd, Swedish gymnasium and studies abroad."},
+      "miss_consequence": {"score":5,"basis":"Late or wrong notification can affect access to the sickness protections around retained study support, study-result assessment and counted study-support weeks; the product must therefore lead with the correct first action without inventing an approval."},
+      "source_fragmentation": {"score":4,"basis":"CSN describes the study-support consequences and route split while Försäkringskassan handles the Sweden studiemedel sickness notification and application flow. Work-plus-study introduces another boundary without changing the core student route."},
+      "language_accessibility_friction": {"score":4,"basis":"Terms such as studiemedel, omställningsstudiestöd, studiehjälp, sjukanmälan, behålla studiestöd and SGI are hard to map from natural Swedish, Arabic and Persian situations."},
+      "steps_to_action": {"score":5,"basis":"Study/support context is the highest-information fact. If already explicit, no generic questionnaire is needed; otherwise one question can change the first authority and action."},
+      "recurrence_signal": {"score":5,"basis":"Student sickness is a persistent study-support event with stable responsible authorities rather than a one-off campaign."},
+      "current_product_coverage_gap": {"score":5,"basis":"The existing shared student_finance capability covered CSN weeks and summer study but not the time-critical sickness notification route."},
+      "priority_band": "HIGH",
+      "discovery_sources": ["https://www.csn.se/om-csn/press/pressmeddelanden/2025-04-29-fa-vabbar-under-studierna.html"],
+      "primary_sources": ["https://www.csn.se/om-nagot-hander-eller-andras/sjuk","https://www.forsakringskassan.se/privatperson/studerande/om-du-blir-sjuk-nar-du-studerar"],
+      "product_miss": "The shared student_csn capability could answer weeks and summer-study questions but could not route a student who says they became sick today to the correct first notification path.",
+      "future_guardrail": "Keep the same student_csn focus and feedback loop. Reuse explicit study context, otherwise ask only which study context changes the route. Do not steal VAB, professional CSN/Försäkringskassan questions or non-student sickness. Never infer diagnosis, SGI, approval or a universal deadline.",
+      "regression_case": ["lab-student-sick-studiemedel-v67-01","lab-student-sick-unknown-context-v67-02","lab-student-sick-gymnasium-v67-03","lab-student-sick-abroad-v67-04","lab-student-sick-work-study-v67-05","lab-student-sick-vab-negative-v67-06","lab-student-sick-language-parity-v67-07"],
+      "evaluation_method": "Run the v67 student-sickness unit tests, existing student-finance tests and the public-pilot build. Require sv/ar/fa detection, VAB/professional false-positive guards and privacy-safe coarse handoff only.",
+      "recommended_learning_action": "Extend the existing student_csn capability with one sickness topic that selects the first safe action from study context and keeps all material claims tied to current CSN/Försäkringskassan sources.",
+      "truth_rule": "VERIFY current CSN and Försäkringskassan primary guidance before material claims. Do not infer individual eligibility, SGI, exact benefit, diagnosis, certificate outcome or deadline from free text, AI output or discovery signals."
+    }
+  ]
+}
