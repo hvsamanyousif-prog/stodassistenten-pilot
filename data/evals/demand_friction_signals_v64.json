@@ -1,0 +1,81 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative demand/friction intelligence for people who become sick while running their own business, combining employment with self-employment, or working through an invoicing company. Scores are not measured search volumes and do not prove eligibility, SGI, sickness-benefit level, waiting period, deadline or reporting outcome. Natural-language phrasing and prior AI output are discovery-only; current Försäkringskassan primary sources carry material claims.",
+  "scoring": {
+    "scale": "1-5",
+    "meaning": "1=low, 5=very high",
+    "priority_rule": "Prioritize combinations of high demand, high friction, high consequence and weak current product coverage; these scores are not measured search volumes."
+  },
+  "signals": [
+    {
+      "signal_id": "df-self-employed-sickness-company-form-v01",
+      "actor_types": ["private_person", "employee", "company"],
+      "natural_language_queries": [
+        "jag driver eget och är sjuk vem ska jag sjukanmäla mig till",
+        "enskild firma sjuk vad gör jag först",
+        "eget aktiebolag sjuk ska jag göra som anställd",
+        "anställd och enskild firma sjuk samtidigt",
+        "egenanställd via faktureringsföretag sjuk",
+        "jag jobbar deltid i eget företag och är sjuk resten"
+      ],
+      "demand_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan maintains separate current sickness routes for own limited companies, sole traders/partnerships, combined employment+self-employment and invoiced workers. Its 25 August 2026 analysis also reports that people running their own limited companies use sickness benefit less often than permanent employees but have longer sickness spells when they do use it. This is a reach/friction signal, not measured search volume or proof of causation."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "The same natural problem — I run my own business and I am sick — changes first reporting path by work/company form. Own limited-company workers are treated as employees in their company, sole traders/partnerships use the self-employed route, combined workers may need both employer and Försäkringskassan handling, and invoiced workers have an invoicing company as employer context."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Sending a sole trader to an employer-sick-pay path or sending an own-limited-company worker to sole-trader waiting-day logic can delay the correct reporting route and create avoidable uncertainty around sickness benefit."
+      },
+      "source_fragmentation": {
+        "score": 5,
+        "basis": "Försäkringskassan splits the operational guidance across a business-type selector plus separate pages for own limited company, sole trader/partnership, FA-tax combined workers and invoiced workers. A user starting from a natural-language problem must first know which branch applies."
+      },
+      "language_accessibility_friction": {
+        "score": 5,
+        "basis": "Terms such as aktiebolag, enskild firma, handelsbolag, kommanditbolag, kombinatör, FA-skatt and egenanställd are institution-heavy and do not map cleanly to everyday Arabic or Persian phrasing. The product must preserve the same company-form distinction across languages without asking for company identity or financial data."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "Company/work form is the highest-value early fact. When it is explicit, the product can skip a redundant question and show the correct current primary-source family immediately; when it is unknown, one coarse company-form question is enough before route selection."
+      },
+      "recurrence_signal": {
+        "score": 4,
+        "basis": "Försäkringskassan keeps dedicated evergreen business-form routes and published fresh 25 August 2026 analysis on sickness-benefit use by employment form, indicating an ongoing operational boundary rather than a one-off news event."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "Before v64, Stödassistenten had an employee sickness route and had learned self-employed/invoiced-worker context for work-injury dental cases, but the public sickness capability still had no focused path for own-business sickness. The coverage matrix explicitly described self-employed coverage as limited to work injury+dental."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukpenning-har-eget-foretag",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukpenning-har-eget-foretag/sjukpenning-nar-du-har-aktiebolag",
+        "https://www.forsakringskassan.se/privatperson/sjuk-eller-skadad/ersattning-nar-du-ar-sjuk-eller-skadad-sjukpenning/sjukpenning-har-eget-foretag/sjukpenning-for-dig-med-enskild-firma",
+        "https://www.forsakringskassan.se/privatperson/foretagare/foretagare-med-fa-skatt-kombinatorer",
+        "https://www.forsakringskassan.se/privatperson/foretagare/egenanstalld",
+        "https://www.forsakringskassan.se/nyhetsarkiv/nyheter-press/2026-08-25-personer-med-osakra-anstallningar-anvander-sjukpenning-mer-sallan"
+      ],
+      "product_miss": "The shared work+sickness capability understood employees but could not turn a natural own-business sickness story into the company-form boundary that changes the first action. A self-employed user could therefore get a generic work route or no focused route despite the repository already knowing self-employed context in another capability.",
+      "future_guardrail": "Keep one shared employee_sick/work+sickness capability. Represent self-employed, combined and invoiced work only as coarse work_context and business_form facts; never create a new actor engine. Ask company form only when it is route-changing and unknown, and never put diagnosis, SGI, salary, company identity or raw story in public handoff or feedback.",
+      "regression_case": [
+        "lab-self-employed-sick-sole-trader-v64-01",
+        "lab-self-employed-sick-own-limited-company-v64-02",
+        "lab-self-employed-sick-unknown-form-v64-03",
+        "lab-combined-worker-sick-v64-04",
+        "lab-invoiced-worker-sick-v64-05",
+        "lab-company-employer-sick-employee-false-positive-v64-06",
+        "lab-self-employed-sick-language-ar-v64-07",
+        "lab-self-employed-sick-language-fa-v64-08"
+      ],
+      "evaluation_method": "Run the shared employee_sick extension tests plus the canonical scenario and demand/friction learning-loop gates. Require company-form information gain, sv/ar/fa parity, employer false-positive protection, one shared focus=employee_sick route and privacy-safe coarse handoff only.",
+      "recommended_learning_action": "Extend the existing work+sickness capability with coarse work_context and business_form routing, reuse explicit company form instead of asking again, and make the miss permanent as synthetic regressions. Keep material sickness-benefit rules source-led and fail closed on eligibility, SGI, level and exact deadlines.",
+      "truth_rule": "VERIFY current Försäkringskassan primary sources before material claims. Do not infer sickness-benefit eligibility, SGI, benefit amount, medical work-capacity percentage, a specific waiting period, exact reporting deadline or employer responsibility from free text, company name, prior AI output or qualitative demand signals."
+    }
+  ]
+}
