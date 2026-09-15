@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "mappings": [
+    {
+      "signal_id": "df-disability-home-support-not-eldercare-v01",
+      "product_miss": "The v54 eldercare detector correctly stopped stealing younger disability home-support stories, but the shared public product still lacked a focused next route for boendestod, home help, safety alarms and the boundary to healthcare at home.",
+      "regression_case_ids": [
+        "lab-disability-home-help-not-eldercare-v55-01",
+        "lab-disability-boendestod-structure-v55-02",
+        "lab-disability-safety-alarm-local-v55-03",
+        "lab-relative-middle-aged-parent-disability-not-older-v55-04"
+      ],
+      "fix_or_guardrail": "Keep the capability in the existing public shell and person pilot. Require functional/disability context for ambiguous home-help/safety-alarm terms, allow explicit boendestod discovery, reject older-person and generic post-operation healthcare contexts, then ask only which broad support family dominates before giving a current-source next step.",
+      "truth_guardrail": "Socialstyrelsen supports the national fact that boendestod, home help and safety alarms are SoL interventions used by people with disabilities. That does not prove individual eligibility, diagnosis requirements, legal basis, hours, fees, availability or one universal municipal process. Healthcare at home must remain a separate current 1177/local-care verification path.",
+      "privacy_guardrail": "Do not put raw situation text, name, personnummer, exact address, municipality, diagnosis, medical record data or relative identity in URL or structured feedback. Handoff may contain only focus, language and a coarse support_need token; feedback may contain only coarse route/support_need and product ratings.",
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY"
+    }
+  ]
+}
