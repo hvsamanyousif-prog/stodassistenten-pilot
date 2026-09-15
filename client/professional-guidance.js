@@ -102,7 +102,7 @@
     const stillEmployed=/(permitter|korttidsarbete|korttidspermitter|ساعات\s*عمل\s*مخفض|تعليق\s*العمل|تعلیق\s*کار)/i.test(value);
     if(sickness||stillEmployed) return false;
     const current=[
-      /\b(?:är|blev|har blivit)\s+arbetslös\b/i,
+      /(?:^|\s)(?:är|blev|har blivit)\s+arbetslös(?:\s|[,.!?]|$)/i,
       /\bblev\s+av\s+med\s+jobbet\b/i,
       /\bförlorade\s+(?:mitt\s+)?jobb(?:et)?\b/i,
       /\bsista\s+arbetsdag(?:en)?\s+var\s+(?:igår|i går)\b/i,
@@ -140,9 +140,20 @@
   function prepareUnemploymentRoute(routes){
     const active=explicitCurrentUnemployment(currentSituation());
     let panel=box.querySelector('[data-unemployment-first-day]');
-    if(!active){if(panel)panel.remove();return false}
+    if(!active){
+      routes.forEach(route=>{
+        if(route.dataset.unemploymentStart==='true'&&route.dataset.originalHref){
+          route.setAttribute('href',route.dataset.originalHref);
+          delete route.dataset.unemploymentStart;
+          delete route.dataset.originalHref;
+        }
+      });
+      if(panel)panel.remove();
+      return false;
+    }
     const workRoute=routes.find(a=>routeKey(a)==='work'||(new URL(a.href,location.href).searchParams.get('focus')||'')==='unemployment_start');
     if(workRoute){
+      if(!workRoute.dataset.originalHref)workRoute.dataset.originalHref=workRoute.getAttribute('href')||workRoute.href;
       const u=new URL(workRoute.href,location.href);
       u.pathname=u.pathname.replace(/[^/]*$/,'person-pilot.html');
       u.search='';
