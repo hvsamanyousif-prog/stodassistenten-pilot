@@ -15,10 +15,10 @@
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const CONTEXTS=new Set(['partner_support','child_support','practical','work_related','overview','unsure']);
 
-  // Natural language includes the common Swedish euphemism "gått bort". The simple
-  // motion phrase "gick bort" is only treated as bereavement when followed by a death-like
-  // time cue/punctuation/end, so "gick bort till affären" stays fail-closed.
-  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|(?:har\s+)?gått\s+bort(?:\b|[.!?])|gick\s+bort(?=\s*(?:igår|i\s+natt|nyligen|för\s+\d+\s+(?:dagar|veckor|månader|år)\s+sedan|[.!?,]|$))|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|از\s+دنیا\s+رفت(?:ه)?|فوت(?:\s+کرد(?:ه)?|\s+شده)?|بازمانده)/i;
+  // Natural language includes the common Swedish euphemism "har gått bort". Both
+  // "har gått bort" and "gick bort" require a death-like cue after the phrase so ordinary
+  // motion such as "gick/har gått bort till affären" stays fail-closed.
+  const DEATH=/(?:dött|död|avlid(?:it|en|na)?|dödsfall|efterlevande|dog\b|har\s+gått\s+bort(?=\s*(?:igår|i\s+natt|nyligen|för\s+\d+\s+(?:dagar|veckor|månader|år)\s+sedan|vad\b|var\b|hur\b|vem\b|och\s+(?:jag|vi)\s+(?:vet|behöver|undrar|försöker)|[.!?,]|$))|gick\s+bort(?=\s*(?:igår|i\s+natt|nyligen|för\s+\d+\s+(?:dagar|veckor|månader|år)\s+sedan|vad\b|var\b|hur\b|vem\b|och\s+(?:jag|vi)\s+(?:vet|behöver|undrar|försöker)|[.!?,]|$))|توف(?:ي|ى)|وفاة|متوف|فقدت|درگذشت|از\s+دنیا\s+رفت(?:ه)?|فوت(?:\s+کرد(?:ه)?|\s+شده)?|بازمانده)/i;
   const PERSONAL=/(?:min\s+(?:man|fru|make|maka|sambo|partner|mamma|pappa|mor|far|förälder|son|dotter|bror|syster|syskon|mormor|morfar|farmor|farfar|morbror|farbror|moster|faster|vän|väninna)|mitt\s+barns\s+(?:mamma|pappa|förälder)|en\s+(?:anhörig|närstående)|زوجي|زوجتي|شريكي|والدي|والدتي|أمي|أبي|أخي|أختي|جدي|جدتي|صديقي|صديقتي|قريب|همسرم|شریکم|پدرم|مادرم|برادرم|خواهرم|پدربزرگم|مادربزرگم|دوستم|پدر\s+فرزندم|مادر\s+فرزندم|نزدیکم)/i;
   const DIRECT=/(?:efterlevandepension|omställningspension|barnpension|efterlevandestöd|efterlevandeguiden|دعم\s+الناجين|معاش\s+الناجين|معاش\s+الطفل|حقوق\s+بازماندگان|مستمری\s+بازماندگان)/i;
   const PROFESSIONAL=/(?:jobbar\s+med|arbetar\s+med|handläggare|begravningsbyrå|utbildning\s+om|uppsats\s+om|research|statistik\s+om|أعمل\s+في|بحث\s+عن|دراسة\s+عن|کار\s+می(?:‌|\s)*کنم|پژوهش|تحقیق\s+درباره)/i;
