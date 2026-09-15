@@ -64,7 +64,7 @@ for token in [
     "FK_POWER_URL",
     "CARE_RELATIVE_URL",
     "Släktskap är inte samma sak som behörighet att företräda",
-    "ger inte rätt att fatta beslut eller samtycka till vårdåtgärder",
+    "inte i sig ger rätt att fatta beslut eller samtycka till vårdåtgärder",
 ]:
     assert token in client, f"v72 public representation guard missing: {token}"
 
