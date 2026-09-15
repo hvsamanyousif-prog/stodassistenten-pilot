@@ -1,22 +1,22 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.1.0';
+const APP_VERSION='procurement-expert-0.2.0';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
-const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Deadline/process',uncertain:'Osäker – kontrollera källa'};
+const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
 const SECTORS=[['construction','Bygg / entreprenad'],['cleaning','Städ / facility'],['consulting','Konsult / professionella tjänster'],['property','Fastighet / drift'],['other','Annan SME-kategori']];
 const SCORE_DIMS=[
- ['category_match','Opportunity/category match'],
- ['requirement_extraction','Kravextraktion'],
+ ['category_match','Relevans för testfallet'],
+ ['requirement_extraction','Hittade rätt krav'],
  ['requirement_classification','Kravklassificering'],
- ['evidence_checklist','Evidens-/dokumentlista'],
- ['followup_questions','Följdfrågor'],
- ['draft_fidelity','Anbudsutkastets trohet'],
- ['deadline_process','Deadline/process'],
- ['source_trace','Källspårning'],
- ['false_confidence','Ingen falsk trygghet']
+ ['evidence_checklist','Tydliga dokument och bevis'],
+ ['followup_questions','Relevanta kontrollfrågor'],
+ ['draft_fidelity','Svarsmallen följer underlaget'],
+ ['deadline_process','Datum och process'],
+ ['source_trace','Hänvisningar till rätt rad'],
+ ['false_confidence','Tydlig osäkerhet']
 ];
-const state={sector:'construction',requirements:[],scores:{}};
+const state={sector:'construction',requirements:[],scores:{},sending:false,feedbackEpoch:0,controller:null};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalized(line){return line.toLowerCase().replace(/\s+/g,' ').trim();}
 function classifyRequirement(line){
@@ -45,26 +45,44 @@ function evidenceQuestion(line,category){
  if(category==='exclusion')return 'Vilken deklaration eller vilket bevis efterfrågas och när ska det lämnas?';
  return 'Vilket konkret dokument, svar eller avsnitt visar att leverantören uppfyller just detta publicerade krav?';
 }
+// This is a bounded, local first-pass sorter, not complete document analysis.
 function splitRequirements(text){
- let lines=String(text||'').split(/\n+/).map(s=>s.trim()).filter(s=>s.length>=8);
- if(lines.length<2 && String(text||'').length>220){lines=String(text).replace(/\.\s+/g,'.\n').split(/\n+/).map(s=>s.trim()).filter(s=>s.length>=8);}
- return lines.slice(0,80).map((text,i)=>({id:i+1,text,category:classifyRequirement(text),evidence:'unknown',question:evidenceQuestion(text,classifyRequirement(text))}));
+ const source=String(text||'');
+ if(source.length>100000)throw new RangeError('Underlaget är för långt. Klistra in högst 100 000 tecken åt gången. Ingen analys har gjorts.');
+ const lines=source.split(/\r\n|\r|\n/).map((text,i)=>({text:text.trim(),sourceLine:i+1})).filter(r=>r.text.length>0);
+ if(lines.length>400)throw new RangeError('Underlaget innehåller för många rader. Gränsen är 400 icke-tomma rader per analys. Ingen text har kapats och ingen analys har gjorts.');
+ return lines.map((r,i)=>({id:i+1,text:r.text,sourceLine:r.sourceLine,category:classifyRequirement(r.text),evidence:'unknown',question:evidenceQuestion(r.text,classifyRequirement(r.text))}));
 }
 function summarize(reqs){
  const counts={};CATEGORIES.forEach(c=>counts[c]=0);reqs.forEach(r=>counts[r.category]=(counts[r.category]||0)+1);
- const blocking=reqs.filter(r=>(r.category==='mandatory'||r.category==='qualification')&&r.evidence==='missing');
- const uncertain=reqs.filter(r=>r.category==='uncertain'||r.evidence==='unknown');
- let decision='Fortsätt kontroll mot hela underlaget';
+ // Missing information can matter in any category, including a required price form.
+ const blocking=reqs.filter(r=>r.evidence==='missing');
+ const uncertain=reqs.filter(r=>r.category==='uncertain'||r.evidence!=='yes');
+ let decision='Kontrollera raderna mot hela upphandlingsunderlaget';
  let tone='notice';
- if(blocking.length){decision='No-bid/lucka: ett eller flera uttryckliga krav saknar styrkbar evidens';tone='warn';}
- else if(reqs.length && !uncertain.length){decision='Ready enough to fortsätta kontrollen – inte ett compliance-besked';tone='okbox';}
+ if(blocking.length){decision='Underlag saknas för en eller flera rader – kontrollera luckorna';tone='warn';}
+ else if(reqs.length && !uncertain.length){decision='Raderna är genomgångna av dig – hela anbudet är inte verifierat';}
+ // No green/compliance decision is inferred from manual checkboxes or "not applicable".
  return {counts,blocking,uncertain,decision,tone};
+}
+function buildFeedbackPayload(found,useful,clear,ratings){
+ if([found,useful,clear].some(v=>typeof v!=='boolean'))throw new TypeError('Tre ja/nej-svar behövs.');
+ const safe={};
+ const allowed=new Set(SCORE_DIMS.map(([key])=>key));
+ if(!ratings||typeof ratings!=='object'||Array.isArray(ratings))throw new TypeError('Betyg saknas.');
+ for(const [key,value] of Object.entries(ratings)){
+   if(!allowed.has(key)||!Number.isInteger(value)||value<1||value>5)throw new TypeError('Ogiltigt betyg.');
+   safe[key]=value;
+ }
+ if(!Object.keys(safe).length)throw new TypeError('Lämna minst ett betyg. Övriga kan vara ej bedömda.');
+ // Keep the existing endpoint contract; never spread source/profile/form data.
+ return {app_version:APP_VERSION,language:'sv',flow:'procurement_expert_review',learned_new:found,useful:useful,next_step_clear:clear,ratings:safe};
 }
 function draftSkeleton(reqs){
  if(!reqs.length)return 'Ingen kravtext analyserad ännu.';
  return reqs.map(r=>{
-   const src=`Källa rad ${r.id}`;
-   if((r.category==='mandatory'||r.category==='qualification')&&r.evidence==='missing')return `${src} • ${LABELS[r.category]}\nSTOPP: saknat styrkbart bevis. Lös luckan eller överväg no-bid.\n`;
+   const src=`Källa rad ${r.sourceLine??r.id}`;
+   if(r.evidence==='missing')return `${src} • ${LABELS[r.category]}\nKravtext: ${r.text}\nSTOPP: saknat styrkbart bevis. Kontrollera vilket svar eller underlag som faktiskt krävs. Ingen slutsats om godkänt anbud kan dras.\n`;
    const ev=r.evidence==='yes'?'[ange exakt dokument/bevis och avsnitt]':r.evidence==='na'?'[ej tillämpligt – motivera mot underlaget]':'[verifiera vilket bevis/svar som krävs]';
    return `${src} • ${LABELS[r.category]}\nKrav: ${r.text}\nSvar: [beskriv endast verifierbart hur kravet hanteras]\nBevis: ${ev}\n`;
  }).join('\n');
@@ -80,40 +98,81 @@ function sampleConstruction(){return [
 '8.1 Samtliga priser ska anges i prisbilaga 6 utan egna alternativa prisformat.',
 '9.1 Sista anbudsdag är 2026-10-30 klockan 23:59.'
 ].join('\n');}
-function scoreOptions(){return '<option value="">Välj</option><option value="5">5 – korrekt/starkt</option><option value="4">4 – mindre brist</option><option value="3">3 – blandat</option><option value="2">2 – tydlig brist</option><option value="1">1 – fel/riskabelt</option>';}
+function scoreOptions(){return '<option value="">Välj</option><option value="na">Ej bedömt</option><option value="5">5 – korrekt/starkt</option><option value="4">4 – mindre brist</option><option value="3">3 – blandat</option><option value="2">2 – tydlig brist</option><option value="1">1 – fel/riskabelt</option>';}
 function browserInit(){
  const $=id=>document.getElementById(id);
  const show=id=>$(id).classList.remove('hidden');
  const sectorGrid=$('sectorGrid');
- function renderSectors(){sectorGrid.innerHTML=SECTORS.map(([v,l])=>`<button class="choice ${state.sector===v?'active':''}" data-sector="${v}">${l}</button>`).join('');sectorGrid.querySelectorAll('[data-sector]').forEach(b=>b.onclick=()=>{state.sector=b.dataset.sector;renderSectors();});}
+ const sourceError=document.createElement('p');sourceError.id='sourceError';sourceError.setAttribute('role','alert');
+ $('sourceText').after(sourceError);$('sourceText').setAttribute('aria-describedby','sourceError');
+ function resetFeedback(){
+   state.feedbackEpoch++;if(state.controller)state.controller.abort();state.controller=null;state.sending=false;state.scores={};
+   document.querySelectorAll('[data-score]').forEach(el=>el.value='');
+   ['foundIssue','useful','clearNext'].forEach(id=>$(id).value='');
+   $('feedbackStatus').textContent='';$('feedbackStatus').className='';$('sendFeedback').disabled=false;
+ }
+ function invalidateAnalysis(){
+   state.requirements=[];resetFeedback();$('analysisCard').classList.add('hidden');$('feedbackCard').classList.add('hidden');
+   $('summary').textContent='';$('requirements').textContent='';$('draft').textContent='';
+ }
+ $('sourceText').addEventListener('input',()=>{invalidateAnalysis();sourceError.textContent='';$('sourceText').removeAttribute('aria-invalid');});
+ function renderSectors(){sectorGrid.innerHTML=SECTORS.map(([v,l])=>`<button class="choice ${state.sector===v?'active':''}" aria-pressed="${state.sector===v}" data-sector="${v}">${l}</button>`).join('');sectorGrid.querySelectorAll('[data-sector]').forEach(b=>b.onclick=()=>{state.sector=b.dataset.sector;sectorGrid.querySelectorAll('[data-sector]').forEach(el=>{el.classList.toggle('active',el.dataset.sector===state.sector);el.setAttribute('aria-pressed',String(el.dataset.sector===state.sector));});});}
  function renderRequirements(){
+   const active=document.activeElement;
+   const focusAttr=active?.hasAttribute('data-ev')?'data-ev':active?.hasAttribute('data-cat')?'data-cat':null;
+   const focusId=focusAttr?active.getAttribute(focusAttr):null;
    const s=summarize(state.requirements);
-   $('summary').innerHTML=`<div class="${s.tone}"><b>${esc(s.decision)}</b><br><span class="muted">${state.requirements.length} rader analyserade • ${s.blocking.length} blockerande evidensluckor • ${s.uncertain.length} osäkra/ej bedömda</span></div>`;
-   $('requirements').innerHTML=state.requirements.map(r=>`<article class="req"><div class="reqhead"><span class="tag">${esc(LABELS[r.category])}</span><span class="source">Källa rad ${r.id}</span></div><p>${esc(r.text)}</p><p class="muted"><b>Kontrollfråga:</b> ${esc(r.question)}</p><div class="grid"><label>Kravtyp<select data-cat="${r.id}">${CATEGORIES.map(c=>`<option value="${c}" ${c===r.category?'selected':''}>${esc(LABELS[c])}</option>`).join('')}</select></label><label>Leverantörens evidens<select data-ev="${r.id}"><option value="unknown" ${r.evidence==='unknown'?'selected':''}>Ej bedömd</option><option value="yes" ${r.evidence==='yes'?'selected':''}>Styrkt</option><option value="missing" ${r.evidence==='missing'?'selected':''}>Saknas</option><option value="na" ${r.evidence==='na'?'selected':''}>Ej tillämpligt</option></select></label></div></article>`).join('');
+   $('summary').innerHTML=`<div class="${s.tone}"><b>${esc(s.decision)}</b><br><span class="muted">${state.requirements.length} rader analyserade • ${s.blocking.length} rader med saknat underlag • ${s.uncertain.length} osäkra/ej bedömda</span></div>`;
+   $('requirements').innerHTML=state.requirements.map(r=>`<article class="req"><div class="reqhead"><span class="tag">${esc(LABELS[r.category])}</span><span class="source">Källa rad ${r.sourceLine??r.id}</span></div><p>${esc(r.text)}</p><p class="muted"><b>Kontrollfråga:</b> ${esc(r.question)}</p><div class="grid"><label>Kravtyp<select data-cat="${r.id}">${CATEGORIES.map(c=>`<option value="${c}" ${c===r.category?'selected':''}>${esc(LABELS[c])}</option>`).join('')}</select></label><label>Leverantörens evidens<select data-ev="${r.id}"><option value="unknown" ${r.evidence==='unknown'?'selected':''}>Ej bedömd</option><option value="yes" ${r.evidence==='yes'?'selected':''}>Styrkt</option><option value="missing" ${r.evidence==='missing'?'selected':''}>Saknas</option><option value="na" ${r.evidence==='na'?'selected':''}>Ej tillämpligt</option></select></label></div></article>`).join('');
    $('requirements').querySelectorAll('[data-cat]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.cat));r.category=el.value;r.question=evidenceQuestion(r.text,r.category);renderRequirements();});
    $('requirements').querySelectorAll('[data-ev]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.ev));r.evidence=el.value;renderRequirements();});
    $('draft').textContent=draftSkeleton(state.requirements);
+   if(focusAttr&&focusId){const target=$('requirements').querySelector('['+focusAttr+'="'+focusId+'"]');if(target)target.focus({preventScroll:true});}
  }
- function analyze(){const text=$('sourceText').value.trim();if(!text){$('sourceText').focus();return;}state.requirements=splitRequirements(text);show('analysisCard');show('feedbackCard');renderRequirements();$('analysisCard').scrollIntoView({behavior:'smooth'});}
+ function analyze(){
+   const text=$('sourceText').value;invalidateAnalysis();sourceError.textContent='';$('sourceText').removeAttribute('aria-invalid');
+   try{
+     if(!text.trim())throw new Error('Klistra in ett underlag eller välj byggfallet.');
+     state.requirements=splitRequirements(text);
+     show('analysisCard');show('feedbackCard');renderRequirements();
+     const heading=$('analysisCard').querySelector('h2');heading.setAttribute('tabindex','-1');heading.focus();
+   }catch(e){sourceError.textContent=e.message;$('sourceText').setAttribute('aria-invalid','true');$('sourceText').focus();}
+ }
  function loadSample(){show('profileCard');show('sourceCard');state.sector='construction';renderSectors();$('sourceText').value=sampleConstruction();$('sourceUrl').value='synthetic://construction-red-team-v1';analyze();}
- $('startBtn').onclick=()=>{show('profileCard');show('sourceCard');renderSectors();$('profileCard').scrollIntoView({behavior:'smooth'});};
+ $('startBtn').onclick=()=>{show('profileCard');show('sourceCard');renderSectors();$('sourceText').focus();};
  $('sampleBtn').onclick=loadSample;$('analyzeBtn').onclick=analyze;
- $('clearBtn').onclick=()=>{$('sourceText').value='';$('sourceUrl').value='';state.requirements=[];$('analysisCard').classList.add('hidden');$('feedbackCard').classList.add('hidden');};
+ $('clearBtn').onclick=()=>{$('sourceText').value='';$('sourceUrl').value='';invalidateAnalysis();sourceError.textContent='';$('sourceText').removeAttribute('aria-invalid');$('sourceText').focus();};
  $('scoreRows').innerHTML=SCORE_DIMS.map(([k,l])=>`<div class="score"><label for="score-${k}">${l}</label><select class="field" id="score-${k}" data-score="${k}">${scoreOptions()}</select></div>`).join('');
- $('scoreRows').querySelectorAll('[data-score]').forEach(el=>el.onchange=()=>{state.scores[el.dataset.score]=Number(el.value)||null;});
+ $('scoreRows').querySelectorAll('[data-score]').forEach(el=>el.onchange=()=>{const v=Number(el.value);if(Number.isInteger(v)&&v>=1&&v<=5)state.scores[el.dataset.score]=v;else delete state.scores[el.dataset.score];});
  async function sendFeedback(){
+   if(state.sending)return;
    const status=$('feedbackStatus');const found=$('foundIssue').value,useful=$('useful').value,clear=$('clearNext').value;
-   const complete=SCORE_DIMS.every(([k])=>Number.isInteger(state.scores[k]))&&found&&useful&&clear;
-   if(!complete){status.className='status err';status.textContent='Fyll i alla expertbetyg och de tre ja/nej-frågorna först.';return;}
-   const payload={app_version:APP_VERSION,language:'sv',flow:'procurement_expert_review',learned_new:found==='yes',useful:useful==='yes',next_step_clear:clear==='yes',ratings:{...state.scores}};
+   let payload;
+   try{
+     if(![found,useful,clear].every(v=>v==='yes'||v==='no'))throw new Error('Svara på de tre ja/nej-frågorna.');
+     payload=buildFeedbackPayload(found==='yes',useful==='yes',clear==='yes',state.scores);
+   }catch(e){status.className='status err';status.textContent=e.message;return;}
+   const epoch=state.feedbackEpoch;const controller=new AbortController();state.controller=controller;state.sending=true;$('sendFeedback').disabled=true;
    status.className='status';status.textContent='Skickar…';
-   try{const res=await fetch(FEEDBACK_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('HTTP '+res.status);status.className='status ok';status.textContent='Tack. Strukturerad expertfeedback skickad utan underlagstext eller företagsuppgifter.';}catch(e){status.className='status err';status.textContent='Feedback kunde inte skickas just nu. Betygen ligger kvar på sidan så du kan försöka igen.';}
+   const timeout=setTimeout(()=>controller.abort(),10000);
+   try{
+     const res=await fetch(FEEDBACK_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
+     if(!res.ok)throw new Error('HTTP '+res.status);
+     if(epoch!==state.feedbackEpoch)return;
+     status.className='status ok';status.textContent='Tack. Strukturerad expertfeedback skickad utan underlagstext eller företagsuppgifter.';
+   }catch(e){
+     if(epoch!==state.feedbackEpoch)return;
+     status.className='status err';status.textContent='Feedback kunde inte skickas just nu. Betygen ligger kvar på sidan så du kan försöka igen.';
+   }finally{
+     clearTimeout(timeout);
+     if(epoch===state.feedbackEpoch){state.sending=false;state.controller=null;$('sendFeedback').disabled=false;}
+   }
  }
  $('sendFeedback').onclick=sendFeedback;
  $('copyReport').onclick=async()=>{const s=summarize(state.requirements);const report=['Stödassistenten – expertpilot offentlig upphandling',`Sektor: ${state.sector}`,`Analyserade rader: ${state.requirements.length}`,`Blockerande evidensluckor: ${s.blocking.length}`,`Osäkra/ej bedömda: ${s.uncertain.length}`,'Expertbetyg:',...SCORE_DIMS.map(([k,l])=>`- ${l}: ${state.scores[k]||'ej satt'}`),`Produktfel hittat: ${$('foundIssue').value||'ej satt'}`,`Användbart stöd: ${$('useful').value||'ej satt'}`,`Nästa steg tydligt: ${$('clearNext').value||'ej satt'}`].join('\n');try{await navigator.clipboard.writeText(report);$('feedbackStatus').className='status ok';$('feedbackStatus').textContent='Lokalt testprotokoll kopierat. Det innehåller inte inklistrad underlagstext.';}catch(e){$('feedbackStatus').className='status err';$('feedbackStatus').textContent='Kunde inte kopiera automatiskt. Använd webbläsarens kopieringsfunktion.';}};
  renderSectors();
 }
-const api={classifyRequirement,evidenceQuestion,splitRequirements,summarize,draftSkeleton,sampleConstruction,LABELS,CATEGORIES};
+const api={classifyRequirement,evidenceQuestion,splitRequirements,summarize,draftSkeleton,sampleConstruction,buildFeedbackPayload,LABELS,CATEGORIES};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.ProcurementExpert=api;
 if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',browserInit);else browserInit();}
