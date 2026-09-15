@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Close the v78 unemployment rule-regime public-copy miss in the SAME Stödassistenten person surface and learning system, without creating a parallel matcher, truth layer or roadmap.",
+  "mappings": [
+    {
+      "signal_id": "df-unemployment-two-rule-regime-v01",
+      "product_miss": "The canonical a-kassa truth and v78 scenarios distinguish the new income-based regime from older ongoing pre-2025-10-01 benefit periods, while the legacy person-pilot unemployment result still presented generic arbetsvillkor wording to both newly unemployed users and existing a-kassa recipients.",
+      "regression_case_ids": [
+        "lab-akassa-newly-unemployed-v78-01",
+        "lab-akassa-old-ongoing-period-v78-02",
+        "lab-akassa-new-period-income-regime-v78-03",
+        "lab-akassa-unemployed-sick-overlap-v78-04",
+        "lab-akassa-basic-needs-overlap-v78-05",
+        "lab-akassa-professional-false-positive-v78-06",
+        "lab-akassa-language-ar-v78-07",
+        "lab-akassa-language-fa-v78-08"
+      ],
+      "coverage_status": "PUBLIC_RUNTIME_GUARDED_V79",
+      "fix_or_guardrail": "Use the existing person-pilot result pipeline. Newly unemployed users see first-day Arbetsförmedlingen registration before a-kassa rule detail; users who already receive a-kassa see the two-regime boundary first instead of being told to re-register. sv/ar/fa use the same route ordering. The runtime replaces only the stale public presentation and reuses the existing economic-overlap tail; it does not create or decide matcher truth.",
+      "truth_boundary": "Current IAF and Arbetsförmedlingen primary guidance govern material unemployment-insurance claims. Do not infer the applicable regime from today's date alone. Do not guarantee eligibility, amount, sanction outcome or deadlines, and do not place raw situation, income, employer or identity in URL or feedback.",
+      "runtime_evidence": [
+        "client/unemployment-regime-guidance.js",
+        "client/unemployment-regime-guidance.test.cjs",
+        "scripts/validate_akassa_public_v79.py"
+      ]
+    }
+  ]
+}
