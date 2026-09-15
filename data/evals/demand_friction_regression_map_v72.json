@@ -1,0 +1,21 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v72 relative-representation demand/friction signal into permanent regressions in the same Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-relative-representation-fullmakt-scope-v01",
+      "regression_case_ids": [
+        "lab-relative-relationship-not-automatic-authority-v72-01",
+        "lab-relative-existing-power-scope-v72-02",
+        "lab-relative-healthcare-contact-not-consent-v72-03",
+        "lab-relative-representation-professional-false-positive-v72-04",
+        "lab-relative-representation-language-ar-v72-05",
+        "lab-relative-representation-language-fa-v72-06"
+      ],
+      "coverage_status": "GUARDED_PUBLIC_ROUTE_READY",
+      "fix_or_guardrail": "Extend the same actor_type=relative and focus=relative_care route with care_context=representation; verify actual organisation and authority scope, fail closed for professional contexts, and never infer authority from kinship or generic fullmakt.",
+      "truth_boundary": "Community discovery and user feedback are learning signals only. Material authority, fullmakt, ombud and healthcare-consent guidance must be verified against current primary sources and the actual organisation before use."
+    }
+  ]
+}
