@@ -21,6 +21,7 @@ const href=g.handoffHref('sv','partner_support');
 assert.match(href,/actor_type=relative/);
 assert.match(href,/focus=bereavement/);
 assert.match(href,/bereavement_context=partner_support/);
+assert.match(g.handoffHref('sv','overview'),/bereavement_context=overview/);
 for(const forbidden of ['name=','personnummer=','cause=','assets=','debts=','will=','certificate=','raw_story=','q='])assert.ok(!href.includes(forbidden));
 for(const url of [g.AFTER_GUIDE_URL,g.PM_SURVIVOR_URL,g.PM_WORK_URL,g.SKV_DEATH_URL])assert.match(url,/^https:\/\//);
 console.log('bereavement-guidance v74: OK');
