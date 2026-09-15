@@ -1,0 +1,118 @@
+{
+  "support_id": "se-forsakringskassan-vab-under-12",
+  "name": "Tillfällig föräldrapenning (vab) för barn under 12 år",
+  "category": "family_children",
+  "subtype": "temporary_parental_benefit_child_under_12",
+  "provider": {
+    "name": "Försäkringskassan",
+    "provider_type": "national_agency",
+    "organisation_identifier": null
+  },
+  "geography": {
+    "level": "national",
+    "country_code": "SE",
+    "free_text": null
+  },
+  "audience": {
+    "segments": [
+      "parent_guardian",
+      "relative",
+      "child_under_12",
+      "employee",
+      "unemployed_parent"
+    ],
+    "age_min": null,
+    "age_max": null
+  },
+  "eligibility": {
+    "conditions": [
+      {
+        "rule_id": "vab_under12.child_age",
+        "field": "child_age",
+        "operator": "between",
+        "value": [0, 11],
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "notes": "Den här posten modellerar den ordinarie vägen för barn under 12 år. Åldern ensam avgör inte rätt till ersättning."
+      },
+      {
+        "rule_id": "vab_under12.qualifying_absence",
+        "field": "reason_for_vab",
+        "operator": "text_condition",
+        "value": "En aktuell vab-situation måste omfattas av Försäkringskassans regler, till exempel sjukdom eller smitta hos barnet eller annan uttryckligen angiven vab-situation.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "notes": "Fri text om att barnet är sjukt får inte ensam tolkas som ett beslut om rätt till ersättning."
+      },
+      {
+        "rule_id": "vab_under12.work_or_akassa_loss",
+        "field": "work_or_akassa_loss",
+        "operator": "text_condition",
+        "value": "Den som ansöker behöver ha en aktuell situation där arbete, a-kassa eller annan relevant aktivitet påverkas på ett sätt som omfattas av Försäkringskassans regler.",
+        "source_url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "notes": "Arbetsstatus styr uppgifter och nästa handling men ska inte användas som ensam eligibility-signal."
+      }
+    ],
+    "exclusions": [],
+    "missing_information_questions": [
+      {
+        "question_id": "vab_under12.child_age",
+        "prompt": "Hur gammalt är barnet?",
+        "reason": "Åldern kan ändra väg och dokumentkrav, särskilt från 12 års ålder. Fråga bara när åldern inte redan framgår och faktiskt kan ändra vägen."
+      },
+      {
+        "question_id": "vab_under12.first_day",
+        "prompt": "Vilken var den första dagen du var hemma i den här vab-perioden?",
+        "reason": "För vab-dagar från 1 april 2026 gäller den nya ordinarie 30-dagarsfristen, medan äldre dagar kan omfattas av den tidigare tidsgränsen."
+      },
+      {
+        "question_id": "vab_under12.serious_illness",
+        "prompt": "Gäller det ett allvarligt sjukt barn eller en vanlig vab-situation?",
+        "reason": "Allvarligt sjukt barn har ett särskilt undantag från den ordinarie 30-dagarsfristen och ska verifieras mot den aktuella specialregeln."
+      },
+      {
+        "question_id": "vab_under12.work_context",
+        "prompt": "Skulle du ha arbetat, fått a-kassa eller deltagit i ett program hos Arbetsförmedlingen under tiden?",
+        "reason": "Situationen kan ändra vilka uppgifter och frånvaroanmälningar som behövs, utan att i sig avgöra rätten till ersättning."
+      }
+    ]
+  },
+  "benefit": {
+    "kind": "cash",
+    "amount_text": null,
+    "calculation_text": "Vab är tillfällig föräldrapenning. Exakt ersättningsnivå och beräkning ska alltid kontrolleras i Försäkringskassans aktuella primärkälla och får inte räknas fram av den publika posten.",
+    "recurrence": "daily"
+  },
+  "documents": [
+    "Vid vab längre än 7 dagar: aktuellt intyg enligt Försäkringskassans vägledning",
+    "Andra eller särskilda vab-situationer kan kräva annat underlag enligt aktuell primärkälla"
+  ],
+  "application": {
+    "method": "online",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+    "deadline_text": "För ordinarie vab-dagar från 1 april 2026 ska ansökan normalt göras senast 30 dagar efter första vab-dagen. Undantag, bland annat allvarligt sjukt barn, måste verifieras separat.",
+    "next_step": "Kontrollera barnets ålder, första vab-dagen och om situationen följer ordinarie vab-regel eller ett undantag. Ansök skyndsamt via Försäkringskassans aktuella kanal utan att anta ersättningsnivå eller eligibility."
+  },
+  "source": {
+    "source_id": "se-forsakringskassan-benefits-a-z",
+    "url": "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+    "source_type": "official_web",
+    "published_at": null,
+    "updated_at": null,
+    "retrieved_at": "2026-09-15T18:23:00Z",
+    "content_hash": null
+  },
+  "verification": {
+    "status": "NEEDS_REVIEW",
+    "last_verified_at": null,
+    "human_review_required": true,
+    "review_notes": "Maskinellt normaliserad från Försäkringskassans aktuella primärkällor 2026-09-15. Mänsklig granskning krävs före VERIFIED. Kontrollera särskilt åldersvägen under 12 år, vilka frånvarosituationer som kvalificerar, 30-dagarsfristen från 1 april 2026, övergången från äldre 90-dagarsregel, undantaget för allvarligt sjukt barn, intyg efter längre vab och arbets-/a-kassekontext. AI har inte verifierat några materialfält.",
+    "material_fields_verified": []
+  },
+  "lifecycle": {
+    "first_seen_at": "2026-09-15T18:23:00Z",
+    "last_seen_at": "2026-09-15T18:23:00Z",
+    "valid_from": null,
+    "valid_to": null,
+    "version": 1,
+    "change_hash": null
+  }
+}

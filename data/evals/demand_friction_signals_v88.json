@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Current VAB statistics and deadline changes are discovery/prioritization signals only; material guidance must come from current Försäkringskassan primary sources.",
+  "scoring": {
+    "scale": "1-5",
+    "priority_rule": "Prioritize common family situations where a date, child age or special-case fact changes the route or deadline and stale guidance can make a person miss the next action."
+  },
+  "signals": [
+    {
+      "signal_id": "df-vab-current-deadline-boundary-v01",
+      "actor_types": ["parent_guardian", "private_person", "employee", "relative"],
+      "natural_language_queries": [
+        "mitt barn är sjukt hur söker jag vab",
+        "hur länge har jag på mig att ansöka om vab",
+        "gäller 30 dagar för vab nu",
+        "mitt barn är 13 kan jag vabba",
+        "mitt barn är allvarligt sjukt gäller vabfristen",
+        "طفلي مريض كيف أقدم طلب رعاية طفل مريض",
+        "فرزندم بیمار است چگونه برای VAB درخواست بدهم"
+      ],
+      "demand_signal": {
+        "score": 5,
+        "basis": "Försäkringskassans officiella statistik anger 6,5 miljoner utbetalda vab-dagar under 2025 och nästan 846 000 personer med vab-ersättning. Detta är räckvidds- och prioriteringssignal, inte measured search volume eller eligibility evidence."
+      },
+      "friction_signal": {
+        "score": 5,
+        "basis": "Ansökningsfönstret ändrades den 1 april 2026 från 90 till 30 dagar för ordinarie nya vab-dagar, samtidigt som allvarligt sjukt barn har ett särskilt undantag och barn 12-15 har en egen dokument-/regelväg."
+      },
+      "miss_consequence": {
+        "score": 5,
+        "basis": "Stale 90-dagarsvägledning eller blind användning av 30-dagarsregeln kan ge fel nästa handling eller missad ansökningstid. Fel åldersväg kan även ge fel dokumentkrav."
+      },
+      "source_fragmentation": {
+        "score": 4,
+        "basis": "Försäkringskassan har separata aktuella sidor för barn under 12, barn 12-15 och den nya ansökningstiden/undantagen. Produkten måste hålla dem i samma intelligens men med tydliga källgränser."
+      },
+      "language_accessibility_friction": {
+        "score": 4,
+        "basis": "Människor uttrycker VAB som vardaglig frånvaro snarare än förmånsnamn; samma ålders- och tidsgräns måste fungera på svenska, arabiska och persiska."
+      },
+      "steps_to_action": {
+        "score": 5,
+        "basis": "När barnets ålder och första vab-dag redan framgår ska produkten inte fråga om dem igen. Om de saknas ska endast route-changing fakta efterfrågas innan nästa handling."
+      },
+      "recurrence_signal": {
+        "score": 5,
+        "basis": "VAB används återkommande i stor skala och Försäkringskassan publicerar både löpande statistik och särskild information om regeländringen 2026."
+      },
+      "current_product_coverage_gap": {
+        "score": 5,
+        "basis": "Fresh-main audit found existing VAB runtime and a canonical 12-15 support record, but no canonical standard under-12 truth record that locks the current 2026 deadline boundary and serious-illness exception."
+      },
+      "priority_band": "HIGH",
+      "discovery_sources": [
+        "https://www.forsakringskassan.se/statistik-och-analys/tema-vard-av-barn-vab",
+        "https://www.forsakringskassan.se/statistik-och-analys/barn-och-familj/statistik-inom-omradet-barn-och-familj---tillfallig-foraldrapenning-bland-annat-vab/nar-vabbas-det-som-mest"
+      ],
+      "primary_sources": [
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-under-12-ar",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/vab-for-barn-som-ar-12-ar-eller-aldre",
+        "https://www.forsakringskassan.se/privatperson/familj-och-barn/kortare-tid-att-ansoka-om-vab-10-dagar-och-kontaktdagar"
+      ],
+      "product_miss": "The same Stödassistenten has a VAB runtime and specialized 12-15 truth but lacked a canonical under-12 record and permanent regressions for the April 2026 deadline transition, serious-illness exception, minimum age question and professional false positives.",
+      "future_guardrail": "Keep one VAB intelligence. Reuse the existing runtime and age-specific truth. Ask child age or first day only when they can change the route. Never turn free text into eligibility, amount or a serious-illness determination, and never copy raw family text into feedback or public eval data.",
+      "regression_case": [
+        "lab-vab-under12-standard-sv-v88-01",
+        "lab-vab-under12-deadline-v88-02",
+        "lab-vab-serious-illness-exception-v88-03",
+        "lab-vab-pre-april-transition-v88-04",
+        "lab-vab-age-13-route-v88-05",
+        "lab-vab-missing-age-v88-06",
+        "lab-vab-professional-false-positive-v88-07",
+        "lab-vab-under12-language-ar-v88-08",
+        "lab-vab-under12-language-fa-v88-09"
+      ],
+      "evaluation_method": "Primary-source truth boundary + date/age synthetic scenarios + serious-illness exception falsification + professional false-positive guard + sv/ar/fa parity + no-volatile-amount regression.",
+      "recommended_learning_action": "Add the missing source-bound NEEDS_REVIEW under-12 record and permanent regressions in the existing truth/learning system. Runtime changes should only follow if scenarios prove a concrete routing miss.",
+      "truth_rule": "Verify eligibility, current deadlines, exceptions, age-specific document rules, amounts and application details against current responsible Försäkringskassan primary sources. Do not promote a user story or discovery signal to VERIFIED eligibility."
+    }
+  ]
+}
