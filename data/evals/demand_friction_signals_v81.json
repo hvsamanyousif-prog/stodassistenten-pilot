@@ -1,7 +1,7 @@
 {
   "schema_version": "0.1.0",
   "generated_at": "2026-09-15",
-  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volume, prevalence or eligibility evidence. Community wording is discovery-only; material housing-benefit guidance must come from current Försäkringskassan primary sources.",
+  "purpose": "Qualitative prioritization for the SAME Stödassistenten. Scores are not measured search volumes, prevalence or eligibility evidence. Community wording is discovery-only; material housing-benefit guidance must come from current Försäkringskassan primary sources.",
   "scoring": {
     "scale": "1-5",
     "priority_rule": "Prioritize recurring natural-language demand where consequence and information friction are high and the current public product fails to use facts it already collected."
