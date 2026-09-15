@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Map the v85 child-assistance context-loss demand/friction miss into permanent regressions in the SAME Stödassistenten learning system.",
+  "mappings": [
+    {
+      "signal_id": "df-child-assistance-context-source-drift-v01",
+      "product_miss": "The existing disability-home-support natural-language route drops child/adult subject context from its handoff and therefore defaults the focused assistance result to the adult Försäkringskassan source; its older professional guard also misses 'jobbar med barn och personlig assistans'.",
+      "regression_case_ids": [
+        "lab-child-assistance-runtime-child-sv-v85-01",
+        "lab-child-assistance-runtime-adult-sv-v85-02",
+        "lab-child-assistance-runtime-healthcare-v85-03",
+        "lab-child-assistance-runtime-unknown-subject-v85-04",
+        "lab-child-assistance-runtime-professional-v85-05",
+        "lab-child-assistance-runtime-worker-personal-v85-06",
+        "lab-child-assistance-runtime-language-ar-v85-07",
+        "lab-child-assistance-runtime-language-fa-v85-08"
+      ],
+      "coverage_status": "PUBLIC_RUNTIME_AND_REGRESSION_GUARDED_V85",
+      "fix_or_guardrail": "Reuse the existing disability_home_support route. Preserve only coarse support_for=child|adult when already established; use the matching current Försäkringskassan primary source; show both child and adult primary-source choices when subject is unknown instead of silently assuming adult; fail closed for professional/research wording; keep sv/ar/fa parity.",
+      "truth_boundary": "support_for is routing context only, never eligibility evidence. Child and adult canonical assistance truth remain separately source-bound and NEEDS_REVIEW where applicable. No raw story, diagnosis, exact age, name, personnummer or address may be serialized in the handoff or feedback.",
+      "runtime_evidence": [
+        "client/disability-home-support-guidance.js",
+        "client/child-assistance-context-extension.js",
+        "client/child-assistance-context-extension.test.cjs",
+        "data/supports/se-forsakringskassan-assistansersattning-barn.json",
+        "data/supports/se-forsakringskassan-assistansersattning-vuxna.json",
+        "data/evals/scenario_lab_websignals_v85.json",
+        "scripts/validate_child_assistance_runtime_v85.py"
+      ]
+    }
+  ]
+}
