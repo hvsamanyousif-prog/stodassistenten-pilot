@@ -16,16 +16,16 @@ def main()->int:
     for token in (
         'Expertpilot • offentlig upphandling',
         'Supplier simulation + buyer-side Red Team',
-        'Bygg / entreprenad',
-        'Städ / facility',
-        'Konsult / professionella tjänster',
-        'Fastighet / drift',
         'Skicka anonym feedback',
         'Använd endast',
         'offentlig, historisk eller fullt syntetisk upphandling',
         'client/procurement-expert-pilot.js',
-    ): require(token in html,f'missing expert-pilot invariant: {token}')
+    ): require(token in html,f'missing expert-pilot HTML invariant: {token}')
     for token in (
+        'Bygg / entreprenad',
+        'Städ / facility',
+        'Konsult / professionella tjänster',
+        'Fastighet / drift',
         "flow:'procurement_expert_review'",
         "app_version:APP_VERSION",
         "language:'sv'",
@@ -33,7 +33,7 @@ def main()->int:
         "useful:useful==='yes'",
         "next_step_clear:clear==='yes'",
         "ratings:{...state.scores}",
-    ): require(token in js,f'missing structured feedback contract: {token}')
+    ): require(token in js,f'missing expert-pilot runtime invariant: {token}')
     require("body:JSON.stringify(payload)" in js,'feedback must submit only structured payload object')
     require('sourceText:' not in js and 'sourceUrl:' not in js,'raw source fields must never be serialized as feedback fields')
     require("module.exports=api" in js,'runtime must expose pure functions for regression tests')
