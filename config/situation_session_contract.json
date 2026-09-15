@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "contract_id": "stodassistenten-situation-session-v1",
+  "purpose": "Client-neutral, privacy-safe situation/session contract shared by the web pilot and future mobile clients. It defines safe state shape only and contains no matcher rules, prompts, secrets, endpoints or eligibility logic.",
+  "surfaces": [
+    "web",
+    "ios",
+    "android"
+  ],
+  "languages": [
+    "sv",
+    "ar",
+    "fa"
+  ],
+  "actor_types": [
+    "private_person",
+    "relative",
+    "student_young_adult",
+    "employee",
+    "company",
+    "association",
+    "property_actor",
+    "other"
+  ],
+  "lifecycle": {
+    "default": "ephemeral",
+    "public_persistence": "forbidden",
+    "raw_situation_logging": "forbidden",
+    "raw_situation_in_url": "forbidden",
+    "raw_situation_in_feedback": "forbidden"
+  },
+  "fields": {
+    "surface": {
+      "scope": "session",
+      "public_handoff": false
+    },
+    "language": {
+      "scope": "session",
+      "public_handoff": true,
+      "query_key": "lang"
+    },
+    "actor_type": {
+      "scope": "session",
+      "public_handoff": true,
+      "query_key": "actor_type"
+    },
+    "focus": {
+      "scope": "session",
+      "public_handoff": true,
+      "query_key": "focus"
+    },
+    "coarse_facts": {
+      "scope": "session",
+      "public_handoff": "capability_allowlist_only"
+    },
+    "missing_facts": {
+      "scope": "session",
+      "public_handoff": false
+    },
+    "raw_situation": {
+      "scope": "ephemeral_private_input",
+      "public_handoff": false,
+      "log": false,
+      "persist": false
+    }
+  },
+  "public_handoff": {
+    "allowed_top_level_query_keys": [
+      "actor_type",
+      "focus",
+      "lang"
+    ],
+    "coarse_fact_policy": "explicit_allowlist_per_capability",
+    "max_value_length": 64,
+    "forbidden_keys": [
+      "q",
+      "query",
+      "story",
+      "situation",
+      "raw_situation",
+      "rawSituation",
+      "diagnosis",
+      "medical_note",
+      "journal",
+      "address",
+      "personnummer",
+      "name",
+      "email",
+      "phone",
+      "income",
+      "salary",
+      "employer",
+      "child_name",
+      "company_name",
+      "bank_account",
+      "password",
+      "token"
+    ]
+  },
+  "feedback": {
+    "raw_situation": false,
+    "identifiers": false,
+    "free_text": false,
+    "coarse_structured_only": true
+  },
+  "private_core": {
+    "matcher_logic": "private_only",
+    "ranking_logic": "private_only",
+    "prompts": "private_only",
+    "secrets": "private_only",
+    "raw_situation": "ephemeral_by_default"
+  },
+  "compatibility": {
+    "web": "v1",
+    "ios": "v1",
+    "android": "v1"
+  }
+}
