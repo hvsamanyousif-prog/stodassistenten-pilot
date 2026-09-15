@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic Red Team cases for the shared-shell first-day unemployment transition. Stories are invented and contain no real user data. The cases protect a minimal next-action path without turning the public shell into an eligibility calculator or a second matcher.",
+  "cases": [
+    {
+      "case_id": "lab-unemployment-first-day-v61-01",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag blev arbetslös idag och vet inte vad jag ska göra först.",
+      "expected": ["show_first_day_guidance", "register_employment_service_first", "then_unemployment_fund", "handoff_actor_private_person", "focus_unemployment_start"],
+      "must_not": ["ask_income_before_first_action", "guarantee_benefit", "put_story_in_url"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-02",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag är arbetslös nu men redan inskriven hos Arbetsförmedlingen.",
+      "expected": ["show_first_day_guidance", "allow_skip_registration_step", "then_unemployment_fund"],
+      "must_not": ["ask_registration_again_as_blocker", "guarantee_benefit"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-03",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Mitt visstidsjobb tar slut om två veckor och jag vill förbereda mig.",
+      "expected": ["do_not_claim_already_unemployed", "keep_transition_preparation_path"],
+      "must_not": ["show_first_day_guidance_as_current", "rewrite_actor_to_private_person"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-04",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag är permitterad och undrar om jag ska skriva in mig som arbetslös.",
+      "expected": ["do_not_treat_permittering_as_ended_employment"],
+      "must_not": ["show_first_day_guidance_as_current", "guarantee_unemployment_benefit"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-05",
+      "actor_type": "private_person",
+      "language": "ar",
+      "story": "أصبحت عاطلاً عن العمل اليوم ولا أعرف من أين أبدأ.",
+      "expected": ["show_first_day_guidance", "same_route_semantics_as_sv", "rtl_safe_copy"],
+      "must_not": ["change_matching_because_of_language", "put_story_in_url"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-06",
+      "actor_type": "private_person",
+      "language": "fa",
+      "story": "امروز بیکار شدم و نمی‌دانم اول چه کاری انجام بدهم.",
+      "expected": ["show_first_day_guidance", "same_route_semantics_as_sv", "rtl_safe_copy"],
+      "must_not": ["change_matching_because_of_language", "put_story_in_url"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-07",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag är arbetslös och sjuk och behöver veta vem jag ska sjukanmäla mig till.",
+      "expected": ["preserve_unemployed_sickness_route"],
+      "must_not": ["let_first_day_job_loss_guidance_steal_sickness_intent"]
+    },
+    {
+      "case_id": "lab-unemployment-first-day-v61-08",
+      "actor_type": "private_person",
+      "language": "sv",
+      "story": "Jag blev varslad förra månaden men nu är jag arbetslös.",
+      "expected": ["show_first_day_guidance", "current_status_overrides_old_warning_context"],
+      "must_not": ["treat_historical_warning_as_future_employment"]
+    }
+  ]
+}
