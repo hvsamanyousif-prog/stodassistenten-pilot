@@ -1,0 +1,95 @@
+{
+  "schema_version": "0.1.0",
+  "generated_at": "2026-09-15",
+  "purpose": "Synthetic v84 regressions for the SAME Stödassistenten intelligence. Child personal-assistance guidance must preserve the child-via-guardian context, separate Försäkringskassan from municipal and healthcare routes, treat parental deduction as a primary-source boundary, and never infer entitlement or authority-assessed hours from a guardian's estimate.",
+  "cases": [
+    {
+      "case_id": "lab-child-assistance-guardian-v84-01",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn har en omfattande funktionsnedsättning och behöver personlig assistans med hygien, måltider och kommunikation. Vart ska vi börja?",
+      "expected_support_areas": ["child_personal_assistance", "guardian_context", "authority_routing"],
+      "must_not_claim": ["adult_assistance_page_is_the_final_child_source", "guaranteed_assistance_entitlement", "guardian_description_equals_authority_assessment"],
+      "expected_questions": ["q_child_age_if_not_already_known", "q_concrete_basic_needs_and_frequency_only_if_route_changing"],
+      "expected_next_actions": ["surface_child_assistance_candidate", "use_current_forsakringskassan_child_primary_source_before_material_match"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-parental-deduction-v84-02",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn behöver mycket hjälp varje dag. Hur många assistanstimmar blir kvar när föräldraavdraget räknats bort?",
+      "expected_support_areas": ["child_personal_assistance", "parental_deduction_boundary", "missing_fact_information_gain"],
+      "must_not_claim": ["calculated_individual_parental_deduction", "calculated_net_assistance_hours", "guaranteed_entitlement"],
+      "expected_questions": ["q_child_age_because_parental_deduction_is_age_sensitive", "q_concrete_need_categories_if_needed_for_next_step"],
+      "expected_next_actions": ["explain_parental_deduction_at_high_level_without_calculation", "verify_current_parental_deduction_rules_in_forsakringskassan_primary_source"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source", "current_forsakringskassan_basic_needs_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-own-hours-v84-03",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Jag uppskattar att mitt barn behöver ungefär 15 timmar hjälp med grundläggande behov i veckan. Betyder det att vi ska söka hos kommunen?",
+      "expected_support_areas": ["child_personal_assistance", "guardian_estimate_not_authority_assessment", "municipal_route_check"],
+      "must_not_claim": ["guardian_15_hours_is_an_official_assessment", "automatic_municipal_entitlement", "automatic_rejection_by_forsakringskassan"],
+      "expected_questions": ["q_none_to_repeat_hours_already_given", "q_existing_authority_contact_only_if_it_changes_next_action"],
+      "expected_next_actions": ["explain_that_authority_assessed_basic_needs_control_the_state_route", "check_current_municipal_personal_assistance_path_without_guaranteeing_outcome"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source", "current_municipal_primary_source_before_local_claim"]
+    },
+    {
+      "case_id": "lab-child-assistance-healthcare-combo-v84-04",
+      "actor_type": "parent_guardian",
+      "language": "sv",
+      "story": "Mitt barn behöver personlig assistans i vardagen och sjuksköterska hemma för medicinsk behandling.",
+      "expected_support_areas": ["child_personal_assistance", "home_healthcare", "parallel_route_boundary"],
+      "must_not_claim": ["personal_assistance_and_healthcare_are_one_entitlement", "same_authority_decides_both_routes", "guaranteed_home_healthcare"],
+      "expected_questions": ["q_none_to_merge_routes", "q_only_route_changing_missing_facts_per_route"],
+      "expected_next_actions": ["keep_child_assistance_and_healthcare_as_separate_parallel_paths", "verify_assistance_with_forsakringskassan_and_healthcare_with_current_healthcare_source"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source", "current_healthcare_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-professional-false-positive-v84-05",
+      "actor_type": "employee",
+      "language": "sv",
+      "story": "Jag jobbar med barn och personlig assistans och vill förstå hur Försäkringskassan bedömer ärenden.",
+      "expected_support_areas": ["no_personal_child_assistance_route_without_personal_need_signal"],
+      "must_not_claim": ["user_is_guardian", "user_has_a_child_with_assistance_needs", "user_should_apply_personally"],
+      "expected_questions": ["q_none_fail_closed_professional_context"],
+      "expected_next_actions": ["fail_closed_for_professional_context_without_personal_need"],
+      "source_requirements": ["current_primary_source_required_before_material_child_assistance_claim"]
+    },
+    {
+      "case_id": "lab-child-assistance-research-false-positive-v84-06",
+      "actor_type": "student_young_adult",
+      "language": "sv",
+      "story": "Jag skriver uppsats om assistansersättning för barn och föräldraavdrag.",
+      "expected_support_areas": ["no_personal_child_assistance_route_without_personal_need_signal"],
+      "must_not_claim": ["user_is_guardian", "user_has_a_child_with_assistance_needs", "user_should_apply_personally"],
+      "expected_questions": ["q_none_fail_closed_research_context"],
+      "expected_next_actions": ["fail_closed_for_research_context_without_personal_need"],
+      "source_requirements": ["current_primary_source_required_before_material_child_assistance_claim"]
+    },
+    {
+      "case_id": "lab-child-assistance-language-ar-v84-07",
+      "actor_type": "parent_guardian",
+      "language": "ar",
+      "story": "طفلي لديه إعاقة ويحتاج إلى مساعدة شخصية واسعة في النظافة والوجبات والتواصل. إلى أين نتوجه؟",
+      "expected_support_areas": ["child_personal_assistance", "guardian_context", "language_parity"],
+      "must_not_claim": ["adult_route_because_language_is_arabic", "automatic_eligibility", "different_matching_rules_because_language_is_arabic"],
+      "expected_questions": ["q_child_age_if_route_changing", "q_only_route_changing_missing_facts"],
+      "expected_next_actions": ["preserve_child_assistance_route_in_arabic_ui", "use_same_semantic_truth_boundary_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    },
+    {
+      "case_id": "lab-child-assistance-language-fa-v84-08",
+      "actor_type": "parent_guardian",
+      "language": "fa",
+      "story": "فرزندم معلولیت دارد و برای بهداشت، غذا و ارتباط به کمک شخصی گسترده نیاز دارد. از کجا باید شروع کنیم؟",
+      "expected_support_areas": ["child_personal_assistance", "guardian_context", "language_parity"],
+      "must_not_claim": ["adult_route_because_language_is_persian", "automatic_eligibility", "different_matching_rules_because_language_is_persian"],
+      "expected_questions": ["q_child_age_if_route_changing", "q_only_route_changing_missing_facts"],
+      "expected_next_actions": ["preserve_child_assistance_route_in_persian_ui", "use_same_semantic_truth_boundary_as_swedish"],
+      "source_requirements": ["current_forsakringskassan_child_assistance_primary_source"]
+    }
+  ]
+}
