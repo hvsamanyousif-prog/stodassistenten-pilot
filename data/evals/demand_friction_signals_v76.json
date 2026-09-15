@@ -77,7 +77,7 @@
       ],
       "evaluation_method": "Natural-language scenario regressions + overlap/fail-closed cases + multilingual cases + current 1177/E-hälsomyndigheten/Försäkringskassan primary-source cross-check. Community material may only suggest cases and must never supply material rules.",
       "recommended_learning_action": "Add a focused healthcare-cost branch inside the existing public intelligence: distinguish healthcare visit, prescription medicine and dental cost; reuse the dental path; preserve economic-assistance overlap; route exact regional/current values to primary sources instead of guessing.",
-      "truth_rule": "Community and search-language material are discovery signals only. Verify material patient-fee, frikort, medicine-benefit, high-cost amount, eligibility, regional fee, deadline and dental-support claims against the current responsible primary source before use. Do not represent outpatient healthcare and prescription medicines as one shared high-cost protection, and fail closed on exact region- or period-dependent values until verified."
+      "truth_rule": "Community and search-language material are discovery signals only. Verify material patient-fee, frikort, medicine-benefit, high-cost amount, eligibility, regional fee, deadline and dental-support claims against the current responsible primary source before use. Keep outpatient healthcare and prescription medicines as separate high-cost-protection paths; do not represent them as one shared protection, and fail closed on exact region- or period-dependent values until verified."
     }
   ]
 }
