@@ -20,7 +20,7 @@
       "language": "sv",
       "story": "Jag läste att sista dagen har flyttats till 7 december, så jag behöver inte stressa före 30 november, eller?",
       "expected_support_areas": ["fritidskortet_candidate", "proposal_vs_implementation_boundary", "deadline_verification"],
-      "must_not_claim": ["news_or_remiss_equals_implementation", "7_december_is_safe_without_final_source", "30_november_can_be_ignored"],
+      "must_not_claim": ["news_or_remiss_equals_implementation", "7_december_is_confirmed_active_deadline", "7_december_is_safe_without_final_source", "30_november_can_be_ignored"],
       "expected_questions": ["q_none_before_source_verification"],
       "expected_next_actions": ["distinguish_consultation_from_active_service_guidance", "verify_final_deadline_on_responsible_authority_source_before_advice"],
       "source_requirements": ["Fritidskortet_current_FAQ", "Ehealth_current_consultation_or_final_deadline_source"]
