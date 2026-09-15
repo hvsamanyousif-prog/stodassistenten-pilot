@@ -26,6 +26,6 @@ assert(!source.includes("u.searchParams.set('situation'"),'raw situation must no
 assert(!source.includes("u.searchParams.set('income'"),'income must not enter first-day handoff URL');
 assert(!source.includes("u.searchParams.set('employer'"),'employer must not enter first-day handoff URL');
 assert(source.includes('arbetslos---vad-hander-nu'),'current Arbetsförmedlingen first-day source must be linked');
-assert(source.includes('sjukpenninggrundande-inkomst-sgi'),'Försäkringskassan SGI source must be linked');
+assert(source.includes('forsakringskassan.se/privatperson/arbetssokande'),'Försäkringskassan jobseeker source must be linked for SGI verification');
 
 console.log(`professional guidance unemployment v61: OK (${cases.length} intent regressions)`);
