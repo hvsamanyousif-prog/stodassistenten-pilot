@@ -50,6 +50,8 @@ jobs:
           node-version: '22'
       - name: Run expert-pilot behavior and privacy contracts
         run: python scripts/test_procurement_expert_pilot.py
+      - name: Source/link ingress boundary
+        run: python scripts/test_procurement_expert_source_ingress.py
       - name: Priority overview regression
         run: python scripts/test_procurement_expert_priority.py
       - name: Check shared funding continuity runtime syntax
