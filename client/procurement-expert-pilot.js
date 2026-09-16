@@ -42,7 +42,11 @@ function semanticDeadlineSlice(line,purpose){
 }
 function deadlineValueSlice(line,purpose){
  const scoped=semanticDeadlineSlice(line,purpose);
- const boundary=scoped.search(/\.\s+(?=(?:rättelse|version)\b[^.\n]{0,120}\bpublicerad\b|publicerad\b)/i);
+ // Cross-row comparison uses only the sentence that carries the identified
+ // process deadline. Keep the full source row elsewhere for traceability.
+ // The boundary deliberately requires a following letter so abbreviations such
+ // as "kl. 23:59" stay inside the deadline expression.
+ const boundary=scoped.search(/\.\s+(?=[A-Za-zÅÄÖåäö])/);
  return boundary>=0?scoped.slice(0,boundary+1):scoped;
 }
 const MONTH_NUMBERS={januari:1,februari:2,mars:3,april:4,maj:5,juni:6,juli:7,augusti:8,september:9,oktober:10,november:11,december:12};
