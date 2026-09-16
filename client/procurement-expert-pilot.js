@@ -126,6 +126,21 @@ function structureFlags(line){
  if(/\bbilaga\b|\bappendix\b|\bannex\b/.test(t))flags.push({code:'attachment_reference',label:'Bilagehänvisning – bilagans innehåll är inte analyserat här.'});
  if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
+ const purpose=deadlinePurpose(raw);
+ if(purpose!=='other'){
+   const deadlineSlice=semanticDeadlineSlice(raw,purpose);
+   const changeText=normalized(deadlineSlice);
+   const explicitChange=/\b(?:ändras?|ändrad|flyttas?|flyttad|förlängs?|förlängd)\b.*\bfrån\b.*\btill\b/.test(changeText);
+   const changedValue=dateTokensConflict(dateTokens(deadlineSlice))||timeTokens(deadlineSlice).length>1;
+   if(explicitChange&&changedValue){
+     const label=purpose==='bid'
+       ?'Ändrad anbudsdeadline på samma källrad – verifiera senaste publicerade rättelse/version innan uppgiften används.'
+       :purpose==='clarification'
+         ?'Ändrad tidsgräns för frågor/förtydliganden på samma källrad – verifiera senaste publicerade rättelse/version.'
+         :'Ändrad deadline på samma källrad – verifiera senaste publicerade underlag/version.';
+     flags.push({code:'deadline_change_same_row',label});
+   }
+ }
  const awardSignal=/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t);
  const minimumSignal=/\bska\b|\bmåste\b|\bskall\b|obligatorisk|krävs|krav på|anbudsgivaren ska ha|leverantören ska ha/.test(t);
  if(awardSignal&&minimumSignal)flags.push({code:'mixed_requirement',label:'Blandat minimi-/utvärderingskrav i samma rad – kontrollera båda betydelserna i originalunderlaget.'});
