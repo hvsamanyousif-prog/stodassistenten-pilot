@@ -64,6 +64,120 @@
   const box=document.getElementById('engineResults');
   if(!box) return;
 
+  const composer=document.getElementById('situation');
+  const analyzeButton=document.getElementById('analyzeBtn');
+
+  // A vague request for "money/funds/scholarship/loan" is an information-gain
+  // problem, not evidence for a particular support. Keep this in the SAME public
+  // contingency router: ask only the actor-changing question when actor context is
+  // absent, and never put raw situation text in the URL.
+  const FUNDING_COPY={
+    sv:{
+      questions:{funding:'För att inte gissa stöd: vem gäller det?',scholarship:'Du söker stipendium. Vem gäller det?',loan:'Du söker lån. Vem gäller det?'},
+      known:'Jag använder rollen som redan framgår och gissar inte ett enskilt stöd här.',
+      actors:{
+        private:['Privat behov','Bidrag, ersättningar och andra vägar för privatperson'],
+        study:['Studier','Stipendier, studiestöd och ekonomi kring studier'],
+        company:['Företag','Finansiering och offentliga affärer för företag'],
+        association:['Förening','Projekt-, aktivitets- och föreningsstöd']
+      }
+    },
+    ar:{
+      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر؟'},
+      known:'أستخدم الفئة التي ظهرت بالفعل ولا أفترض دعماً محدداً.',
+      actors:{
+        private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
+        study:['الدراسة','منح ودعم دراسي واقتصاد مرتبط بالدراسة'],
+        company:['شركة','تمويل وفرص أعمال عامة للشركات'],
+        association:['جمعية','دعم المشاريع والأنشطة والجمعيات']
+      }
+    },
+    fa:{
+      questions:{funding:'برای اینکه نوع حمایت را حدس نزنیم: این درخواست برای چه کسی است؟',scholarship:'شما دنبال بورسیه هستید. این درخواست برای چه کسی است؟',loan:'شما دنبال وام هستید. این درخواست برای چه کسی است؟'},
+      known:'از نقشی که از قبل مشخص است استفاده می‌کنم و یک حمایت مشخص را حدس نمی‌زنم.',
+      actors:{
+        private:['نیاز شخصی','حمایت، جبران هزینه و مسیرهای دیگر برای افراد'],
+        study:['تحصیل','بورسیه، حمایت تحصیلی و اقتصاد مرتبط با تحصیل'],
+        company:['کسب‌وکار','تأمین مالی و فرصت‌های عمومی برای کسب‌وکار'],
+        association:['انجمن','حمایت پروژه، فعالیت و انجمن']
+      }
+    }
+  };
+  const ACTOR_ROUTES={
+    private:'person-pilot.html?actor_type=private_person',
+    study:'person-pilot.html?actor_type=student',
+    company:'company-pilot.html?actor_type=company',
+    association:'person-pilot.html?actor_type=association'
+  };
+  const URL_ACTORS={private_person:'private',student:'study',company:'company',association:'association'};
+
+  function currentLang(){
+    const value=new URLSearchParams(location.search).get('lang');
+    return value==='ar'||value==='fa'?value:'sv';
+  }
+  function lower(value){return String(value||'').toLocaleLowerCase()}
+  function fundingIntent(text){
+    const x=lower(text);
+    if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return null;
+    if(/stipen|منح(?:ة|)|بورسیه/.test(x)) return 'scholarship';
+    if(/\blån(?:e|et|en|a)?\b|قرض|وام/.test(x)) return 'loan';
+    if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|fond(?:er)?(?:\s+att\s+sök)?|bidrag\s+att\s+sök|finansiering\s+att\s+sök|دعم مالي|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
+    return null;
+  }
+  function hasConcreteNeed(text){
+    return /hyra|mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|syn|bostad|sjuk|vård|assistans|funktions|arbetslös|hemma|rent|food|medicine|دواء|دواء|طعام|إيجار|سكن|مرض|أسنان|بصر|دارو|غذا|اجاره|مسکن|بیمار|دندان|بینایی/.test(lower(text));
+  }
+  function actorFromUrl(){
+    return URL_ACTORS[new URLSearchParams(location.search).get('actor_type')]||null;
+  }
+  function actorFromText(text){
+    const x=lower(text);
+    if(/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/.test(x)) return 'company';
+    if(/vår förening|föreningen|ideell förening|جمعية|انجمن/.test(x)) return 'association';
+    if(/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/.test(x)) return 'study';
+    if(/jag är privatperson|privatperson|فرد|شخصی/.test(x)) return 'private';
+    return null;
+  }
+  function actorHref(actor,lang){
+    const url=new URL(ACTOR_ROUTES[actor],location.href);
+    if(lang!=='sv') url.searchParams.set('lang',lang);
+    return url.pathname.split('/').pop()+url.search;
+  }
+  function routeHtmlForActor(actor,copy,lang){
+    const data=copy.actors[actor];
+    return `<a class="route" data-funding-actor="${actor}" href="${actorHref(actor,lang)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
+  }
+  function renderFundingIntent(text){
+    const intent=fundingIntent(text);
+    if(!intent||hasConcreteNeed(text)) return false;
+    const lang=currentLang();
+    const copy=FUNDING_COPY[lang];
+    const actor=actorFromUrl()||actorFromText(text);
+    if(actor){
+      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang)}`;
+    }else{
+      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association'].map(a=>routeHtmlForActor(a,copy,lang)).join('')}`;
+    }
+    box.hidden=false;
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return true;
+  }
+  function interceptFunding(event){
+    const text=composer?composer.value.trim():'';
+    if(!text||!renderFundingIntent(text)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }
+  if(composer&&analyzeButton){
+    // Capture phase is intentional: the source shell registered its button handler
+    // before this runtime loads. We only pre-empt that handler for the narrow vague
+    // funding intents above; all other situations stay on the existing route engine.
+    analyzeButton.addEventListener('click',interceptFunding,true);
+    composer.addEventListener('keydown',event=>{
+      if((event.metaKey||event.ctrlKey)&&event.key==='Enter') interceptFunding(event);
+    },true);
+  }
+
   function safeToken(value){return String(value||'').toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,32)}
   function coarseNeed(mode,text){
     const x=String(text||'').toLowerCase();
