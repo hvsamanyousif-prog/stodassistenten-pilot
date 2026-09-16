@@ -71,6 +71,22 @@ CASES = [
         ]),
         "expect_conflict": False,
     },
+    {
+        "id": "publication-date-does-not-create-false-bid-conflict",
+        "text": "\n".join([
+            "Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Rättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-30 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "publication-date-does-not-hide-real-bid-conflict",
+        "text": "\n".join([
+            "Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Rättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-31 kl 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
 ]
 
 

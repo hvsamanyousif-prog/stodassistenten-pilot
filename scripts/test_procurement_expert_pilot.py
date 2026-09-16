@@ -126,6 +126,16 @@ test('same-bid-date-is-not-conflict',()=>{
  const rows=p.splitRequirements('Sista anbudsdag är 2026-10-30.\nRättelse: Sista anbudsdag är 2026-10-30.');
  assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='deadline_version_conflict')));
 });
+test('publication-date-does-not-create-false-bid-conflict',()=>{
+ const rows=p.splitRequirements('Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.\nRättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-30 kl 23:59.');
+ assert.deepEqual(rows.map(r=>r.processSubtype),['bid','bid']);
+ assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='deadline_version_conflict')));
+});
+test('publication-date-does-not-hide-real-bid-conflict',()=>{
+ const rows=p.splitRequirements('Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.\nRättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-31 kl 23:59.');
+ assert.deepEqual(rows.map(r=>r.processSubtype),['bid','bid']);
+ assert.ok(rows.every(r=>r.flags.some(f=>f.code==='deadline_version_conflict')));
+});
 test('clarification-and-bid-deadlines-keep-separate-purpose',()=>{
  const rows=p.splitRequirements('Frågor om underlaget ska lämnas senast den 20 oktober.\nAnbud ska vara beställaren tillhanda senast den 31 oktober klockan 23:59.');
  assert.deepEqual(rows.map(r=>r.processSubtype),['clarification','bid']);
