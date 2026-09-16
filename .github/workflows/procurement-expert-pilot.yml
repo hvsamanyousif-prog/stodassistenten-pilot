@@ -13,6 +13,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
+      - 'scripts/test_funding_continuity_browser.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
   push:
@@ -28,6 +29,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
+      - 'scripts/test_funding_continuity_browser.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
 
@@ -64,6 +66,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_shared_search_browser.py . shared-search-webkit.json
+      - name: Funding handoff destinations — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_funding_continuity_browser.py . funding-continuity-chromium.json
+      - name: Funding handoff destinations — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_funding_continuity_browser.py . funding-continuity-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -84,6 +94,8 @@ jobs:
           path: |
             shared-search-chromium.json
             shared-search-webkit.json
+            funding-continuity-chromium.json
+            funding-continuity-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
