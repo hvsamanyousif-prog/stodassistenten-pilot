@@ -110,6 +110,7 @@
     association:'person-pilot.html?actor_type=association'
   };
   const URL_ACTORS={private_person:'private',student:'study',company:'company',association:'association'};
+  const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
 
   function currentLang(){
     const value=new URLSearchParams(location.search).get('lang');
@@ -138,14 +139,16 @@
     if(/jag är privatperson|privatperson|فرد|شخصی/.test(x)) return 'private';
     return null;
   }
-  function actorHref(actor,lang){
+  function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
     if(lang!=='sv') url.searchParams.set('lang',lang);
+    if(FUNDING_INTENTS.has(intent)) url.searchParams.set('funding_intent',intent);
     return url.pathname.split('/').pop()+url.search;
   }
-  function routeHtmlForActor(actor,copy,lang){
+  function routeHtmlForActor(actor,copy,lang,intent){
     const data=copy.actors[actor];
-    return `<a class="route" data-funding-actor="${actor}" href="${actorHref(actor,lang)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
+    const safeIntent=FUNDING_INTENTS.has(intent)?intent:'funding';
+    return `<a class="route" data-funding-actor="${actor}" data-funding-intent="${safeIntent}" href="${actorHref(actor,lang,safeIntent)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
   }
   function renderFundingIntent(text){
     const intent=fundingIntent(text);
@@ -154,9 +157,9 @@
     const copy=FUNDING_COPY[lang];
     const actor=actorFromUrl()||actorFromText(text);
     if(actor){
-      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang)}`;
+      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
-      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association'].map(a=>routeHtmlForActor(a,copy,lang)).join('')}`;
+      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
     }
     box.hidden=false;
     box.scrollIntoView({behavior:'smooth',block:'nearest'});
