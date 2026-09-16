@@ -40,6 +40,11 @@ function semanticDeadlineSlice(line,purpose){
  }
  return value;
 }
+function deadlineValueSlice(line,purpose){
+ const scoped=semanticDeadlineSlice(line,purpose);
+ const boundary=scoped.search(/\.\s+(?=(?:rättelse|version)\b[^.\n]{0,120}\bpublicerad\b|publicerad\b)/i);
+ return boundary>=0?scoped.slice(0,boundary+1):scoped;
+}
 const MONTH_NUMBERS={januari:1,februari:2,mars:3,april:4,maj:5,juni:6,juli:7,augusti:8,september:9,oktober:10,november:11,december:12};
 function canonicalDateToken(year,month,day){
  const y=Number(year),m=Number(month),d=Number(day);
@@ -162,7 +167,7 @@ function applyCrossRowFlags(rows){
  });
  for(const [purpose,group] of Object.entries(deadlineGroups)){
    if(purpose==='other'||group.length<2)continue;
-   const scoped=group.map(r=>semanticDeadlineSlice(r.text,purpose));
+   const scoped=group.map(r=>deadlineValueSlice(r.text,purpose));
    const dates=[...new Set(scoped.flatMap(value=>dateTokens(value)))];
    const timedRows=scoped.map(value=>timeTokens(value)).filter(tokens=>tokens.length>0);
    const times=[...new Set(timedRows.flat())];
