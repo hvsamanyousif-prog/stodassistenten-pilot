@@ -104,6 +104,41 @@ test('cross-reference-visible-contract',()=>{
  assert.match(row.flags.find(f=>f.code==='cross_reference').label,/Korshänvisning/);
  assert.equal(p.summarize([row]).uncertain.length,1);
 });
+test('mixed-minimum-award-fails-closed',()=>{
+ const row=p.splitRequirements('Arbetsledaren ska ha minst fem års erfarenhet och erfarenheten utvärderas med upp till 10 poäng.')[0];
+ assert.equal(row.category,'award');
+ assert.ok(row.flags.some(f=>f.code==='mixed_requirement'));
+ assert.equal(p.summarize([row]).uncertain.length,1);
+ assert.match(p.draftSkeleton([row]),/Blandat minimi-\/utvärderingskrav/);
+});
+test('plain-award-does-not-look-mixed',()=>{
+ const row=p.splitRequirements('Kvalitetsplanen utvärderas och kan ge maximalt 15 poäng.')[0];
+ assert.ok(!row.flags.some(f=>f.code==='mixed_requirement'));
+});
+test('conflicting-bid-deadlines-fail-closed',()=>{
+ const rows=p.splitRequirements('Rättelse 1: Sista anbudsdag är 2026-10-30 klockan 23:59.\nRättelse 2: Sista anbudsdag är 2026-11-06 klockan 23:59.');
+ assert.deepEqual(rows.map(r=>r.processSubtype),['bid','bid']);
+ assert.ok(rows.every(r=>r.flags.some(f=>f.code==='deadline_version_conflict')));
+ assert.equal(p.summarize(rows).uncertain.length,2);
+ assert.match(rows[0].flags.find(f=>f.code==='deadline_version_conflict').label,/Motstridiga anbudsdatum/);
+});
+test('same-bid-date-is-not-conflict',()=>{
+ const rows=p.splitRequirements('Sista anbudsdag är 2026-10-30.\nRättelse: Sista anbudsdag är 2026-10-30.');
+ assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='deadline_version_conflict')));
+});
+test('clarification-and-bid-deadlines-keep-separate-purpose',()=>{
+ const rows=p.splitRequirements('Frågor om underlaget ska lämnas senast den 20 oktober.\nAnbud ska vara beställaren tillhanda senast den 31 oktober klockan 23:59.');
+ assert.deepEqual(rows.map(r=>r.processSubtype),['clarification','bid']);
+ assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='deadline_version_conflict')));
+ assert.match(rows[0].question,/frågor\/förtydliganden/);
+ assert.match(rows[1].question,/anbudsdag/);
+});
+test('conflicting-price-versions-fail-closed',()=>{
+ const rows=p.splitRequirements('Version 1: Fast pris ska anges i bilaga 6.\nVersion 2 ersätter version 1: Timpris ska anges i bilaga 9.');
+ assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
+ assert.ok(rows.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+ assert.equal(p.summarize(rows).uncertain.length,2);
+});
 test('structural-heading-preserved-not-evidence',()=>{
  const rows=p.splitRequirements('Obligatoriska krav\n\nSe bilaga 3.\nMåltiderna ska uppfylla de allergenkrav som anges i underlaget.');
  assert.equal(rows.length,3); assert.equal(rows[0].sourceLine,1); assert.equal(rows[1].sourceLine,3); assert.equal(rows[2].sourceLine,4);
