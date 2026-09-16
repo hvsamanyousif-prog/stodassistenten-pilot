@@ -87,6 +87,13 @@ CASES = [
         ]),
         "expect_conflict": True,
     },
+    {
+        "id": "same-row-explicit-bid-deadline-change",
+        "text": "Rättelse: Sista anbudsdag ändras från 2026-10-30 kl 12:00 till 2026-11-06 kl 23:59.",
+        "expect_conflict": False,
+        "expect_same_row_change": True,
+        "expected_row_count": 1,
+    },
 ]
 
 
@@ -127,17 +134,22 @@ def run_case(page, case):
 
     page.locator("#openReviewBtn").click()
     check(page.locator("#reviewDetails").get_attribute("open") is not None, f'{case["id"]}: full review did not open')
-    expect(page.locator("#requirements .req")).to_have_count(2)
+    expected_row_count = case.get("expected_row_count", 2)
+    expect(page.locator("#requirements .req")).to_have_count(expected_row_count)
     categories = [el.input_value() for el in page.locator("[data-cat]").all()]
-    check(categories == ["deadline", "deadline"], f'{case["id"]}: deadline recognition changed: {categories}')
+    check(categories == ["deadline"] * expected_row_count, f'{case["id"]}: deadline recognition changed: {categories}')
     sources = [el.inner_text() for el in page.locator("#requirements .source").all()]
-    check(sources == ["Källa rad 1", "Källa rad 2"], f'{case["id"]}: source trace changed: {sources}')
+    expected_sources = [f"Källa rad {i}" for i in range(1, expected_row_count + 1)]
+    check(sources == expected_sources, f'{case["id"]}: source trace changed: {sources}')
 
     overview = page.locator("#priorityOverview").inner_text().lower()
     review = page.locator("#requirements").inner_text().lower()
     has_conflict = "motstridiga anbudsdatum eller klockslag" in review
     overview_conflict = "motstridiga anbudsdatum eller klockslag" in overview
-    if case["expect_conflict"]:
+    if case.get("expect_same_row_change"):
+        check("ändrad anbudsdeadline" in review, f'{case["id"]}: same-row deadline change not visible in row review')
+        check("ändrad anbudsdeadline" in overview, f'{case["id"]}: same-row deadline change hidden from calm overview')
+    elif case["expect_conflict"]:
         check(has_conflict, f'{case["id"]}: source conflict not visible in row review')
         check(overview_conflict, f'{case["id"]}: source conflict hidden from calm overview')
     else:
