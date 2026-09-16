@@ -149,6 +149,17 @@ test('conflicting-price-versions-fail-closed',()=>{
  assert.ok(rows.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
  assert.equal(p.summarize(rows).uncertain.length,2);
 });
+test('changed-commercial-amount-same-scope-fails-closed',()=>{
+ const rows=p.splitRequirements('Version 1: Ersättning 1 000 000 kr ska anges i bilaga 6.\nVersion 2 ersätter version 1: Ersättning 1 200 000 kr ska anges i bilaga 6.');
+ assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
+ assert.ok(rows.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+ assert.ok(p.prioritizeReviewRows(rows).every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+});
+test('different-commercial-subareas-do-not-fabricate-version-conflict',()=>{
+ const rows=p.splitRequirements('Rättelse: Delområde A – Fast pris ska anges i bilaga 6.\nRättelse: Delområde B – Timpris ska anges i bilaga 9.');
+ assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
+ assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='commercial_version_conflict')));
+});
 test('structural-heading-preserved-not-evidence',()=>{
  const rows=p.splitRequirements('Obligatoriska krav\n\nSe bilaga 3.\nMåltiderna ska uppfylla de allergenkrav som anges i underlaget.');
  assert.equal(rows.length,3); assert.equal(rows[0].sourceLine,1); assert.equal(rows[1].sourceLine,3); assert.equal(rows[2].sourceLine,4);
