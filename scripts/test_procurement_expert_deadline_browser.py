@@ -120,6 +120,22 @@ CASES = [
         "expect_conflict": True,
     },
     {
+        "id": "trailing-nondeadline-times-do-not-create-false-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 08:00–16:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 09:00–17:00.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "trailing-nondeadline-times-do-not-hide-real-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 kl 12:00. Support öppet 08:00–16:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 08:00–16:00.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
         "id": "same-row-explicit-bid-deadline-change",
         "text": "Rättelse: Sista anbudsdag ändras från 2026-10-30 kl 12:00 till 2026-11-06 kl 23:59.",
         "expect_conflict": False,
