@@ -73,6 +73,18 @@ CASES = [
         "forbidden_marker": "Offentliga upphandlingar",
     },
     {
+        "id": "association-loan-destination",
+        "kind": "association",
+        "text": "vår förening söker lån",
+        "actor": "association",
+        "intent": "loan",
+        "label": "Lån",
+        "result_marker": "Föreningslån är ännu inte verifierat i piloten",
+        "action_marker": "verifierad lånekälla",
+        "source_marker": "verksamt.se/finansiering-radgivning",
+        "forbidden_marker": "MUCF – aktuella bidrag",
+    },
+    {
         "id": "student-loan-destination",
         "kind": "student",
         "text": "jag studerar och söker lån",
@@ -278,7 +290,7 @@ def main() -> int:
             "built_index_sha256": shared.sha256(index_path),
             "funding_continuity_sha256": shared.sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
             "scenario_count": len(CASES),
-            "comparison_count": 3,
+            "comparison_count": 4,
             "passed": 0,
             "failed": 0,
             "results": [],
@@ -308,6 +320,11 @@ def main() -> int:
                     evidence,
                     "company",
                     "company-loan-vs-scholarship-actionable-distinction",
+                )
+                compare_actionable_signatures(
+                    evidence,
+                    "association",
+                    "association-loan-vs-scholarship-actionable-distinction",
                 )
             finally:
                 browser.close()
