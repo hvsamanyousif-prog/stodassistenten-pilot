@@ -134,6 +134,8 @@ def run_case(page, case):
 
 results = []
 browser_version = None
+harness_error = None
+expected_runs = len(VIEWPORTS) * len(CASES)
 try:
     with sync_playwright() as p:
         browser_type = getattr(p, ENGINE, None)
@@ -141,37 +143,47 @@ try:
             raise RuntimeError(f"Unsupported BROWSER_ENGINE={ENGINE}")
         browser = browser_type.launch(headless=True)
         browser_version = browser.version
-        for viewport in VIEWPORTS:
-            for case in CASES:
-                context = browser.new_context(viewport=viewport, reduced_motion="reduce")
-                page = context.new_page()
-                page.set_default_timeout(3000)
-                unexpected, errors = install_offline(page, context)
-                try:
-                    run_case(page, case)
-                    check(not errors, "JavaScript errors: " + str(errors))
-                    check(not unexpected, "Unexpected external requests: " + str(unexpected))
-                    results.append({"case": case["id"], "width": viewport["width"], "status": "PASS"})
-                except Exception as exc:
-                    results.append({"case": case["id"], "width": viewport["width"], "status": "FAIL", "error": str(exc).split("\n")[0]})
-                finally:
-                    context.close()
-        browser.close()
-finally:
-    report = {
-        "scope": "Focused offline deadline/version source-truth browser regression. Network disabled; no live Pages, storage, legal, physical Safari/iPad/iPhone or assistive-technology claim.",
-        "engine": ENGINE,
-        "browser_version": browser_version,
-        "viewports": VIEWPORTS,
-        "independent_cases": len(CASES),
-        "passed": sum(x["status"] == "PASS" for x in results),
-        "failed": sum(x["status"] == "FAIL" for x in results),
-        "sources": {
-            "procurement-expert-pilot.html": sha1_blob(ROOT / "procurement-expert-pilot.html"),
-            "client/procurement-expert-pilot.js": sha1_blob(ROOT / "client/procurement-expert-pilot.js"),
-        },
-        "results": results,
-    }
-    OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(json.dumps(report, ensure_ascii=False, indent=2))
-    sys.exit(1 if report["failed"] else 0)
+        try:
+            for viewport in VIEWPORTS:
+                for case in CASES:
+                    context = None
+                    try:
+                        context = browser.new_context(viewport=viewport, reduced_motion="reduce")
+                        page = context.new_page()
+                        page.set_default_timeout(3000)
+                        unexpected, errors = install_offline(page, context)
+                        run_case(page, case)
+                        check(not errors, "JavaScript errors: " + str(errors))
+                        check(not unexpected, "Unexpected external requests: " + str(unexpected))
+                        results.append({"case": case["id"], "width": viewport["width"], "status": "PASS"})
+                    except Exception as exc:
+                        results.append({"case": case["id"], "width": viewport["width"], "status": "FAIL", "error": str(exc).split("\n")[0]})
+                    finally:
+                        if context is not None:
+                            context.close()
+        finally:
+            browser.close()
+except Exception as exc:
+    harness_error = f"{type(exc).__name__}: {exc}"
+
+report = {
+    "scope": "Focused offline deadline/version source-truth browser regression. Network disabled; no live Pages, storage, legal, physical Safari/iPad/iPhone or assistive-technology claim.",
+    "engine": ENGINE,
+    "browser_version": browser_version,
+    "viewports": VIEWPORTS,
+    "independent_cases": len(CASES),
+    "expected_runs": expected_runs,
+    "executed_runs": len(results),
+    "harness_error": harness_error,
+    "passed": sum(x["status"] == "PASS" for x in results),
+    "failed": sum(x["status"] == "FAIL" for x in results),
+    "sources": {
+        "procurement-expert-pilot.html": sha1_blob(ROOT / "procurement-expert-pilot.html"),
+        "client/procurement-expert-pilot.js": sha1_blob(ROOT / "client/procurement-expert-pilot.js"),
+    },
+    "results": results,
+}
+OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(json.dumps(report, ensure_ascii=False, indent=2))
+if harness_error or len(results) != expected_runs or report["failed"]:
+    sys.exit(1)
