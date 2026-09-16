@@ -4,12 +4,15 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
       - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
@@ -18,12 +21,15 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
       - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
@@ -59,6 +65,7 @@ jobs:
           node --check client/public-pilot-ui-gate.js
           node --check client/public-pilot-wiring.js
           node --check client/privacy-routing.js
+          node --check client/funding-intent-continuity.js
       - name: Re-run capability runtime tests used by deployed artifact
         run: |
           node client/capabilities.test.cjs

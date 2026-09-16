@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Browser regression for the built shared Stödassistenten start/search journey.
 
-This is deliberately a small, public-shell oracle. It verifies routing behavior and
-privacy boundaries in the same minimal artifact shape used for Pages, without
-claiming support eligibility, live discovery, persistence, or model quality.
+This is deliberately a small, public-shell oracle. It verifies routing behavior,
+privacy boundaries and bounded route continuity in the same minimal artifact
+shape used for Pages, without claiming support eligibility, live discovery,
+persistence, or model quality.
 """
 
 from __future__ import annotations
@@ -44,6 +45,13 @@ SCENARIOS = [
     {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private", "expect_intent": "funding"},
+]
+
+DESTINATION_SCENARIOS = [
+    {"id": "student-scholarship-destination", "kind": "student", "text": "jag studerar och söker stipendium", "intent": "scholarship", "label": "Stipendium / bidrag"},
+    {"id": "student-loan-destination", "kind": "student", "text": "jag studerar och söker lån", "intent": "loan", "label": "Lån"},
+    {"id": "company-funding-destination", "kind": "company", "text": "fonder att söka", "intent": "funding"},
+    {"id": "tampered-intent-fails-safe", "kind": "tampered", "intent": "not-allowlisted"},
 ]
 
 
@@ -120,17 +128,81 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
         if scenario["width"] <= 390:
             for index, target in enumerate(page.locator("button.lang").all()):
                 box = target.bounding_box()
-                require(
-                    box is not None and box["width"] >= 44 and box["height"] >= 44,
-                    f"{scenario['id']}: language touch target {index + 1} below 44x44",
-                )
+                require(box is not None and box["width"] >= 44 and box["height"] >= 44, f"{scenario['id']}: language touch target {index + 1} below 44x44")
 
-        # Public routing may carry coarse actor/need/intent tokens, never the raw situation.
         raw = scenario["text"]
         hrefs = results.locator("a").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         require(all(raw not in href for href in hrefs), f"{scenario['id']}: raw situation leaked into a result URL")
 
         return {"id": scenario["id"], "width": scenario["width"], "lang": scenario["lang"], "status": "passed", "question_count": question_count, "hrefs": hrefs}
+    finally:
+        page.close()
+
+
+def start_and_click_destination(page, index_path: Path, text: str, actor_type: str, intent: str, initial_actor: str | None = None) -> str:
+    query = {"lang": "sv"}
+    if initial_actor:
+        query["actor_type"] = initial_actor
+    page.goto(f"{index_path.resolve().as_uri()}?{urlencode(query)}", wait_until="load")
+    page.locator("#situation").fill(text)
+    page.locator("#analyzeBtn").click()
+    results = page.locator("#engineResults")
+    route = results.locator(f'a[href*="actor_type={actor_type}"][data-funding-intent="{intent}"]').first
+    require(route.count() == 1, f"destination route missing for actor={actor_type} intent={intent}")
+    href = route.get_attribute("href") or ""
+    require(text not in href, "raw situation leaked into destination href")
+    route.click()
+    page.wait_for_load_state("load")
+    require(f"actor_type={actor_type}" in page.url and f"funding_intent={intent}" in page.url, "destination URL lost allowlisted task context")
+    require(text not in page.url, "raw situation leaked into destination URL")
+    return href
+
+
+def run_destination_scenario(browser, index_path: Path, site: Path, scenario: dict) -> dict:
+    page = browser.new_page(viewport={"width": 768, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        if scenario["kind"] == "student":
+            start_and_click_destination(page, index_path, scenario["text"], "student", scenario["intent"])
+            context = page.locator(f'#fundingIntentContext[data-funding-intent="{scenario["intent"]}"]')
+            require(context.is_visible(), f"{scenario['id']}: person destination did not consume funding_intent")
+            context_text = context.inner_text()
+            require(scenario["label"] in context_text, f"{scenario['id']}: destination lost visible type distinction: {context_text!r}")
+            action = context.locator('button[data-funding-continuity-action="continue"]')
+            require(action.is_visible(), f"{scenario['id']}: bounded continuation action missing")
+            action.click()
+            main_text = page.locator("#main").inner_text()
+            require("Vad beskriver din arbetssituation bäst?" not in main_text, f"{scenario['id']}: known student was asked redundant work-status question")
+            require("Hur känns ekonomin efter boende och nödvändiga utgifter?" in main_text, f"{scenario['id']}: did not continue into existing student/general flow")
+            require(page.locator(f'#fundingIntentContext[data-funding-intent="{scenario["intent"]}"]').is_visible(), f"{scenario['id']}: intent context disappeared after continuation")
+            require(not page_errors, f"{scenario['id']}: JavaScript error(s): {page_errors}")
+            return {"id": scenario["id"], "status": "passed", "destination": "person-pilot.html", "intent": scenario["intent"], "context": context_text}
+
+        if scenario["kind"] == "company":
+            start_and_click_destination(page, index_path, scenario["text"], "company", "funding", initial_actor="company")
+            context = page.locator('#fundingIntentContext[data-funding-intent="funding"]')
+            require(context.is_visible(), f"{scenario['id']}: company destination did not consume funding intent")
+            action = page.locator('button[data-funding-continuity-action="company-funding"]')
+            require(action.is_visible(), f"{scenario['id']}: company funding continuation action missing")
+            require("Fortsätt med finansiering" in action.inner_text(), f"{scenario['id']}: company continuation copy drifted")
+            action.click()
+            main_text = page.locator("#main").inner_text()
+            require("Vad vill företaget främst göra?" not in main_text, f"{scenario['id']}: redundant company goal question remained")
+            require("Vilken typ av verksamhet driver ni?" in main_text, f"{scenario['id']}: company did not continue to existing sector step")
+            require(page.locator('#fundingIntentContext[data-funding-intent="funding"]').is_visible(), f"{scenario['id']}: company context disappeared after continuation")
+            require(not page_errors, f"{scenario['id']}: JavaScript error(s): {page_errors}")
+            return {"id": scenario["id"], "status": "passed", "destination": "company-pilot.html", "intent": "funding"}
+
+        if scenario["kind"] == "tampered":
+            target = f"{(site / builder.PERSON_PILOT_PATH).resolve().as_uri()}?actor_type=student&funding_intent={scenario['intent']}"
+            page.goto(target, wait_until="load")
+            require(page.locator("#fundingIntentContext").count() == 0, f"{scenario['id']}: unknown token was consumed")
+            require(page.locator("#main .hero").is_visible(), f"{scenario['id']}: unknown token did not fall back to normal person flow")
+            require(not page_errors, f"{scenario['id']}: JavaScript error(s): {page_errors}")
+            return {"id": scenario["id"], "status": "passed", "destination": "person-pilot.html", "intent": "rejected"}
+
+        raise AssertionError(f"unknown destination scenario kind: {scenario['kind']}")
     finally:
         page.close()
 
@@ -154,7 +226,10 @@ def main() -> int:
             "artifact": "minimal public pilot build",
             "built_index_sha256": sha256(index_path),
             "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
-            "scenario_count": len(SCENARIOS),
+            "funding_continuity_sha256": sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
+            "start_scenario_count": len(SCENARIOS),
+            "destination_scenario_count": len(DESTINATION_SCENARIOS),
+            "scenario_count": len(SCENARIOS) + len(DESTINATION_SCENARIOS),
             "passed": 0,
             "failed": 0,
             "results": [],
@@ -165,6 +240,13 @@ def main() -> int:
                 for scenario in SCENARIOS:
                     try:
                         evidence["results"].append(run_scenario(browser, index_path, scenario))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": scenario["id"], "status": "failed", "error": str(exc)})
+                for scenario in DESTINATION_SCENARIOS:
+                    try:
+                        evidence["results"].append(run_destination_scenario(browser, index_path, site, scenario))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1

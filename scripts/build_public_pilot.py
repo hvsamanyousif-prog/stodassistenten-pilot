@@ -23,6 +23,8 @@ SHELL_LEARNING_START = "<!-- STOD_EXPERIENCE_LEARNING_START -->"
 SHELL_LEARNING_END = "<!-- STOD_EXPERIENCE_LEARNING_END -->"
 QUICK_LEARNING_START = "<!-- STOD_QUICK_HELP_LEARNING_START -->"
 QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
+COMPANY_CONTINUITY_START = "<!-- STOD_COMPANY_FUNDING_CONTINUITY_START -->"
+COMPANY_CONTINUITY_END = "<!-- STOD_COMPANY_FUNDING_CONTINUITY_END -->"
 SHELL_REFLOW_START = "<!-- STOD_SHARED_SHELL_REFLOW_START -->"
 SHELL_REFLOW_END = "<!-- STOD_SHARED_SHELL_REFLOW_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
@@ -62,6 +64,7 @@ FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 VAB_FOCUS_PATH = "client/vab-focus.js"
 PROPERTY_FOCUS_PATH = "client/property-accessibility-focus.js"
+FUNDING_INTENT_CONTINUITY_PATH = "client/funding-intent-continuity.js"
 SHELL_RUNTIME_PATHS = (
     SHELL_ROUTING_PATH,
     SHELL_LEARNING_PATH,
@@ -125,6 +128,7 @@ SCRIPT_PATHS = (
     CHILD_ASSISTANCE_CONTEXT_PATH,
     MOBILITY_TRANSPORT_PATH,
     BEREAVEMENT_GUIDANCE_PATH,
+    FUNDING_INTENT_CONTINUITY_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
@@ -150,6 +154,16 @@ def quick_learning_block() -> str:
     lines.extend(f'<script src="{path}"></script>' for path in QUICK_RUNTIME_PATHS)
     lines.append(QUICK_LEARNING_END)
     return "\n".join(lines)
+
+
+def company_continuity_block() -> str:
+    return "\n".join(
+        (
+            COMPANY_CONTINUITY_START,
+            f'<script src="{FUNDING_INTENT_CONTINUITY_PATH}"></script>',
+            COMPANY_CONTINUITY_END,
+        )
+    )
 
 
 def shell_reflow_block() -> str:
@@ -194,6 +208,10 @@ def inject_shell_learning(html: str) -> str:
 
 def inject_quick_learning(html: str) -> str:
     return inject_before_body(html, quick_learning_block(), (QUICK_LEARNING_START, QUICK_LEARNING_END))
+
+
+def inject_company_continuity(html: str) -> str:
+    return inject_before_body(html, company_continuity_block(), (COMPANY_CONTINUITY_START, COMPANY_CONTINUITY_END))
 
 
 def inject_shell_reflow(html: str) -> str:
@@ -253,11 +271,14 @@ def build(source_root: Path, output_root: Path) -> Path:
     output_root = output_root.resolve()
     source_index = source_root / "index.html"
     source_person = source_root / PERSON_PILOT_PATH
+    source_company = source_root / "company-pilot.html"
     source_quick = source_root / "quick-help.html"
     if not source_index.is_file():
         raise FileNotFoundError("index.html is missing")
     if not source_person.is_file():
         raise FileNotFoundError(f"{PERSON_PILOT_PATH} is missing")
+    if not source_company.is_file():
+        raise FileNotFoundError("company-pilot.html is missing")
     if not source_quick.is_file():
         raise FileNotFoundError("quick-help.html is missing")
     if source_root == output_root:
@@ -278,7 +299,11 @@ def build(source_root: Path, output_root: Path) -> Path:
     validate_inline_javascript(built_person, PERSON_PILOT_PATH)
     (output_root / PERSON_PILOT_PATH).write_text(built_person, encoding="utf-8")
 
-    copy_required_asset(source_root, output_root, "company-pilot.html")
+    company_html = source_company.read_text(encoding="utf-8")
+    built_company = inject_company_continuity(company_html)
+    validate_inline_javascript(built_company, "company-pilot.html")
+    (output_root / "company-pilot.html").write_text(built_company, encoding="utf-8")
+
     quick_html = repair_known_inline_syntax(source_quick.read_text(encoding="utf-8"), "quick-help.html")
     built_quick = inject_quick_learning(quick_html)
     validate_inline_javascript(built_quick, "quick-help.html")
