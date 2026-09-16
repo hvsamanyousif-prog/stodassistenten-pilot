@@ -169,10 +169,13 @@ function commercialValueSignature(line){
  const t=normalized(line);
  const mode=[/fast pris/.test(t)?'fixed':'',/timpris/.test(t)?'hourly':''].filter(Boolean).join('+');
  const appendix=(t.match(/\bbilaga\s*\d+\b/)||[''])[0];
- const amounts=[...t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor)\b/g)].map(m=>{
-   const whole=m[1].replace(/[ .]/g,'');
-   return `${whole}${m[2]?','+m[2]:''}:${m[3]}`;
- });
+ const amounts=[];
+ const addAmount=(whole,fraction,currency)=>{
+   const normalizedWhole=whole.replace(/[ .]/g,'');
+   amounts.push(`${normalizedWhole}${fraction?','+fraction:''}:${currency}`);
+ };
+ for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor)\b/g))addAmount(m[1],m[2],m[3]);
+ for(const m of t.matchAll(/\b(kr|sek|kronor)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
  return [mode,appendix,[...new Set(amounts)].join(',')].join('|');
 }
 function applyCrossRowFlags(rows){
