@@ -97,7 +97,7 @@ def install_offline(page, context):
     html = (ROOT / "procurement-expert-pilot.html").read_text(encoding="utf-8")
     html = html.replace('<script src="client/procurement-expert-pilot.js"></script>', "")
     page.set_content(html)
-    page.evaluate("window.fetch=()=>Promise.reject(new Error('Network disabled in deadline regression'))")
+    page.evaluate("() => { window.fetch = () => Promise.reject(new Error('Network disabled in deadline regression')); }")
     page.add_script_tag(content=(ROOT / "client/procurement-expert-pilot.js").read_text(encoding="utf-8"))
     return unexpected, errors
 
