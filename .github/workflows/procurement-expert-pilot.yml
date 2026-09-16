@@ -3,17 +3,21 @@ name: Validate procurement expert pilot
 on:
   pull_request:
     paths:
+      - 'index.html'
       - 'procurement-expert-pilot.html'
       - 'client/procurement-expert-pilot.js'
       - 'scripts/test_procurement_expert_*.py'
+      - 'scripts/test_shared_search_browser.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
   push:
     branches: ['main']
     paths:
+      - 'index.html'
       - 'procurement-expert-pilot.html'
       - 'client/procurement-expert-pilot.js'
       - 'scripts/test_procurement_expert_*.py'
+      - 'scripts/test_shared_search_browser.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
 
@@ -23,7 +27,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,6 +44,14 @@ jobs:
         run: |
           python -m pip install playwright==1.57.0
           python -m playwright install --with-deps chromium webkit
+      - name: Shared start/search journeys — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_shared_search_browser.py . shared-search-chromium.json
+      - name: Shared start/search journeys — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_shared_search_browser.py . shared-search-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -58,6 +70,8 @@ jobs:
         with:
           name: procurement-offline-browser-evidence
           path: |
+            shared-search-chromium.json
+            shared-search-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
