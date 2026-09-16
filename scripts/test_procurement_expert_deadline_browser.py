@@ -56,6 +56,22 @@ CASES = [
         "expect_conflict": True,
     },
     {
+        "id": "same-date-different-bare-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 12:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "same-date-same-bare-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 23:59.",
+            "Rättelse 2: Sista anbudsdag är 30 oktober 2026 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
         "id": "same-date-one-time-unspecified",
         "text": "\n".join([
             "Rättelse 1: Sista anbudsdag är 2026-10-30.",
