@@ -43,6 +43,10 @@ CASES = [
         "actor": "company",
         "intent": "loan",
         "label": "Lån / företagsfinansiering",
+        "result_marker": "Lån är inte bidrag",
+        "action_marker": "officiella lånevägledningen",
+        "source_marker": "verksamt.se/node/229",
+        "forbidden_marker": "Bidrag och stöd kräver en aktuell primär utlysning",
     },
     {
         "id": "company-scholarship-destination",
@@ -51,6 +55,10 @@ CASES = [
         "actor": "company",
         "intent": "scholarship",
         "label": "Bidrag / företagsstöd",
+        "result_marker": "Bidrag och stöd kräver en aktuell primär utlysning",
+        "action_marker": "aktuell bidrags-/stödutlysning",
+        "source_marker": "verksamt.se/finansiering-radgivning/offentlig-finansiering",
+        "forbidden_marker": "Lån är inte bidrag",
     },
 ]
 
@@ -73,6 +81,7 @@ def run_case(browser, base_url: str, case: dict) -> dict:
         shared.require(context.is_visible(), f"{case['id']}: destination did not consume funding intent")
         context_text = context.inner_text()
         shared.require(case["label"] in context_text, f"{case['id']}: visible intent distinction missing: {context_text!r}")
+        actionable_signature = None
 
         if case["kind"] == "private":
             action = context.locator('[data-funding-continuity-action="private"]')
@@ -102,9 +111,23 @@ def run_case(browser, base_url: str, case: dict) -> dict:
             shared.require("Vilken typ av verksamhet driver ni?" in main_text, f"{case['id']}: company did not continue to existing sector step")
             shared.require(page.locator(f'#fundingIntentContext[data-funding-intent="{case["intent"]}"]').is_visible(), f"{case['id']}: company intent context disappeared")
 
+            page.get_by_text("Konsult / tjänster", exact=True).click()
+            result = page.locator(f'[data-funding-intent-result="{case["intent"]}"]')
+            plan = page.locator(f'[data-funding-intent-action-plan="{case["intent"]}"]')
+            shared.require(result.is_visible(), f"{case['id']}: typed funding result missing after sector selection")
+            shared.require(plan.is_visible(), f"{case['id']}: typed action plan missing after sector selection")
+            result_text = result.inner_text()
+            plan_text = plan.inner_text()
+            shared.require(case["result_marker"] in result_text, f"{case['id']}: result did not preserve funding type")
+            shared.require(case["action_marker"] in plan_text, f"{case['id']}: next action did not preserve funding type")
+            shared.require(case["forbidden_marker"] not in result_text, f"{case['id']}: opposite funding type leaked into result")
+            source_hrefs = result.locator("a.source").evaluate_all("els => els.map(e => e.href)")
+            shared.require(any(case["source_marker"] in href for href in source_hrefs), f"{case['id']}: expected official source route missing: {source_hrefs}")
+            actionable_signature = "\n".join([result_text, plan_text, "|".join(sorted(source_hrefs))])
+
         shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
         shared.require(case["text"] not in page.url, f"{case['id']}: raw situation leaked into destination URL")
-        return {
+        result = {
             "id": case["id"],
             "status": "passed",
             "destination": page.url.split("?")[0].split("/")[-1],
@@ -112,6 +135,9 @@ def run_case(browser, base_url: str, case: dict) -> dict:
             "intent": case["intent"],
             "context": context_text,
         }
+        if actionable_signature is not None:
+            result["actionable_signature"] = actionable_signature
+        return result
     finally:
         page.close()
 
@@ -137,6 +163,7 @@ def main() -> int:
             "built_index_sha256": shared.sha256(index_path),
             "funding_continuity_sha256": shared.sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
             "scenario_count": len(CASES),
+            "comparison_count": 1,
             "passed": 0,
             "failed": 0,
             "results": [],
@@ -151,6 +178,22 @@ def main() -> int:
                     except Exception as exc:
                         evidence["failed"] += 1
                         evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+
+                company_results = {
+                    result.get("intent"): result
+                    for result in evidence["results"]
+                    if result.get("status") == "passed" and result.get("actor") == "company"
+                }
+                comparison_id = "company-loan-vs-scholarship-actionable-distinction"
+                try:
+                    loan_signature = company_results["loan"]["actionable_signature"]
+                    scholarship_signature = company_results["scholarship"]["actionable_signature"]
+                    shared.require(loan_signature != scholarship_signature, "company loan and scholarship collapsed to the same actionable result")
+                    evidence["results"].append({"id": comparison_id, "status": "passed"})
+                    evidence["passed"] += 1
+                except Exception as exc:
+                    evidence["failed"] += 1
+                    evidence["results"].append({"id": comparison_id, "status": "failed", "error": str(exc)})
             finally:
                 browser.close()
 
