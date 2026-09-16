@@ -19,6 +19,20 @@ const SCORE_DIMS=[
 const state={sector:null,requirements:[],scores:{},sending:false,feedbackEpoch:0,controller:null};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
+function deadlinePurpose(line){
+ const t=normalized(line);
+ if(/frågor?.*(senast|sista dag)|sista dag.*frågor?|förtydliganden?.*(senast|sista dag)/.test(t))return 'clarification';
+ if(/sista anbudsdag|anbud.*tillhanda|lämna.*anbud.*senast|anbud.*senast/.test(t))return 'bid';
+ if(/giltighetstid för anbud|anbud.*giltig/.test(t))return 'validity';
+ return 'other';
+}
+function dateTokens(line){
+ const t=normalized(line);
+ const out=[];
+ for(const m of t.matchAll(/\b20\d{2}-\d{2}-\d{2}\b/g))out.push(m[0]);
+ for(const m of t.matchAll(/\b\d{1,2}\s+(?:januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december)\b/g))out.push(m[0]);
+ return [...new Set(out)];
+}
 function classifyRequirement(line){
  const t=normalized(line);
  if(!t)return 'uncertain';
@@ -38,7 +52,13 @@ function evidenceQuestion(line,category){
  if(/certifikat|certifier|behörig|behörighet|bas-p|bas-u/.test(t))return 'Kan den efterfrågade behörigheten/certifieringen styrkas på det sätt som underlaget anger?';
  if(/omsättning|ekonomisk|finansiell/.test(t))return 'Finns styrkbar ekonomisk evidens som uppfyller den publicerade nivån och perioden?';
  if(/underleverant|åberopa.*kapacitet/.test(t))return 'Om annan kapacitet används: vilka bevis/åtaganden kräver just detta underlag?';
- if(category==='deadline')return 'Är datum/tid/version kontrollerad mot senaste publicerade underlag och eventuella rättelser?';
+ if(category==='deadline'){
+   const purpose=deadlinePurpose(line);
+   if(purpose==='clarification')return 'Är sista dag för frågor/förtydliganden kontrollerad mot senaste publicerade underlag och rättelser?';
+   if(purpose==='bid')return 'Är sista anbudsdag och exakt klockslag kontrollerade mot senaste publicerade underlag och rättelser?';
+   if(purpose==='validity')return 'Är anbudets giltighetstid kontrollerad mot senaste publicerade underlag och rättelser?';
+   return 'Är datum/tid/version kontrollerad mot senaste publicerade underlag och eventuella rättelser?';
+ }
  if(category==='award')return 'Är detta något som poängsätts/utvärderas – och inte ett minimikrav? Kontrollera den publicerade modellen.';
  if(category==='contract')return 'Är detta ett villkor som ska accepteras/uppfyllas under kontraktet snarare än ett kvalificeringsbevis vid anbud?';
  if(category==='commercial')return 'Är prisformat, bilaga, valuta/enhet och eventuella reservationer hanterade exakt enligt instruktionen?';
@@ -57,7 +77,44 @@ function structureFlags(line){
  if(/\bbilaga\b|\bappendix\b|\bannex\b/.test(t))flags.push({code:'attachment_reference',label:'Bilagehänvisning – bilagans innehåll är inte analyserat här.'});
  if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
+ const awardSignal=/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t);
+ const minimumSignal=/\bska\b|\bmåste\b|\bskall\b|obligatorisk|krävs|krav på|anbudsgivaren ska ha|leverantören ska ha/.test(t);
+ if(awardSignal&&minimumSignal)flags.push({code:'mixed_requirement',label:'Blandat minimi-/utvärderingskrav i samma rad – kontrollera båda betydelserna i originalunderlaget.'});
  return flags;
+}
+function addFlag(row,code,label){
+ if(!row.flags)row.flags=[];
+ if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
+}
+function applyCrossRowFlags(rows){
+ const actionable=rows.filter(r=>r.kind!=='structural');
+ const deadlineGroups={};
+ actionable.filter(r=>r.category==='deadline').forEach(r=>{
+   const purpose=r.processSubtype||deadlinePurpose(r.text);
+   if(!deadlineGroups[purpose])deadlineGroups[purpose]=[];
+   deadlineGroups[purpose].push(r);
+ });
+ for(const [purpose,group] of Object.entries(deadlineGroups)){
+   if(purpose==='other'||group.length<2)continue;
+   const dates=[...new Set(group.flatMap(r=>dateTokens(r.text)))];
+   if(dates.length>1){
+     const label=purpose==='bid'
+       ?'Motstridiga anbudsdatum i underlaget – verifiera senaste publicerade rättelse/version innan datumet används.'
+       :purpose==='clarification'
+         ?'Motstridiga datum för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
+         :'Motstridiga datum/versioner – kontrollera senaste publicerade underlag.';
+     group.forEach(r=>addFlag(r,'deadline_version_conflict',label));
+   }
+ }
+ const pricedVersions=actionable.filter(r=>r.category==='commercial'&&/\b(version|rättelse|ersätter)\b/.test(normalized(r.text)));
+ if(pricedVersions.length>1){
+   const priceShapes=[...new Set(pricedVersions.map(r=>{
+     const t=normalized(r.text);
+     return [(/fast pris/.test(t)?'fixed':''),(/timpris/.test(t)?'hourly':''),(t.match(/bilaga\s*\d+/)||[''])[0]].join('|');
+   }))];
+   if(priceShapes.length>1)pricedVersions.forEach(r=>addFlag(r,'commercial_version_conflict','Motstridiga prisversioner eller bilagehänvisningar – välj inte version automatiskt; kontrollera senaste publicerade rättelse/originalkälla.'));
+ }
+ return rows;
 }
 // This is a bounded, local first-pass sorter, not complete document analysis.
 function splitRequirements(text){
@@ -65,11 +122,13 @@ function splitRequirements(text){
  if(source.length>100000)throw new RangeError('Underlaget är för långt. Klistra in högst 100 000 tecken åt gången. Ingen analys har gjorts.');
  const lines=source.split(/\r\n|\r|\n/).map((text,i)=>({text:text.trim(),sourceLine:i+1})).filter(r=>r.text.length>0);
  if(lines.length>400)throw new RangeError('Underlaget innehåller för många rader. Gränsen är 400 icke-tomma rader per analys. Ingen text har kapats och ingen analys har gjorts.');
- return lines.map((r,i)=>{
+ const rows=lines.map((r,i)=>{
    const kind=isStructuralHeading(r.text)?'structural':'requirement';
    const category=kind==='structural'?'uncertain':classifyRequirement(r.text);
-   return {id:i+1,text:r.text,sourceLine:r.sourceLine,kind,category,evidence:kind==='structural'?'context':'unknown',question:kind==='structural'?'Bevarad källrubrik – ingen evidensbedömning görs på rubriken.':evidenceQuestion(r.text,category),flags:kind==='structural'?[]:structureFlags(r.text)};
+   const processSubtype=category==='deadline'?deadlinePurpose(r.text):null;
+   return {id:i+1,text:r.text,sourceLine:r.sourceLine,kind,category,processSubtype,evidence:kind==='structural'?'context':'unknown',question:kind==='structural'?'Bevarad källrubrik – ingen evidensbedömning görs på rubriken.':evidenceQuestion(r.text,category),flags:kind==='structural'?[]:structureFlags(r.text)};
  });
+ return applyCrossRowFlags(rows);
 }
 function summarize(reqs){
  const actionable=reqs.filter(r=>r.kind!=='structural');
@@ -223,7 +282,7 @@ function browserInit(){
  $('copyReport').onclick=async()=>{const s=summarize(state.requirements);const report=['Stödassistenten – expertpilot offentlig upphandling',`Sektor: ${state.sector||'ej vald'}`,`Kravrader: ${s.actionableCount}`,`Källrubriker bevarade: ${s.structuralCount}`,`Rader med saknat underlag: ${s.blocking.length}`,`Osäkra/ej bedömda: ${s.uncertain.length}`,'Expertbetyg:',...SCORE_DIMS.map(([k,l])=>`- ${l}: ${state.scores[k]||'ej satt'}`),`Produktfel hittat: ${$('foundIssue').value||'ej satt'}`,`Användbart stöd: ${$('useful').value||'ej satt'}`,`Nästa steg tydligt: ${$('clearNext').value||'ej satt'}`].join('\n');try{await navigator.clipboard.writeText(report);$('feedbackStatus').className='status ok';$('feedbackStatus').textContent='Lokalt testprotokoll kopierat. Det innehåller inte inklistrad underlagstext.';}catch(e){$('feedbackStatus').className='status err';$('feedbackStatus').textContent='Kunde inte kopiera automatiskt. Använd webbläsarens kopieringsfunktion.';}};
  renderSectors();
 }
-const api={classifyRequirement,evidenceQuestion,isStructuralHeading,structureFlags,splitRequirements,summarize,draftSkeleton,sampleConstruction,buildFeedbackPayload,LABELS,CATEGORIES};
+const api={classifyRequirement,evidenceQuestion,deadlinePurpose,isStructuralHeading,structureFlags,splitRequirements,summarize,draftSkeleton,sampleConstruction,buildFeedbackPayload,LABELS,CATEGORIES};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.ProcurementExpert=api;
 if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',browserInit);else browserInit();}
