@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""Browser regression for the shared Stödassistenten start/search journey.
+"""Browser regression for the built shared Stödassistenten start/search journey.
 
 This is deliberately a small, public-shell oracle. It verifies routing behavior and
-privacy boundaries without claiming support eligibility, live discovery, persistence,
-or model quality.
+privacy boundaries in the same minimal artifact shape used for Pages, without
+claiming support eligibility, live discovery, persistence, or model quality.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
+import tempfile
 from pathlib import Path
 from urllib.parse import urlencode
 
+import build_public_pilot as builder
 from playwright.sync_api import sync_playwright
 
 
@@ -24,136 +28,31 @@ ACTOR_HREFS = {
 }
 
 SCENARIOS = [
-    {
-        "id": "sv-money-search-320",
-        "lang": "sv",
-        "width": 320,
-        "text": "pengar att söka",
-        "expect_question": True,
-        "question_token": "vem gäller det",
-    },
-    {
-        "id": "sv-search-money-390",
-        "lang": "sv",
-        "width": 390,
-        "text": "söka pengar",
-        "expect_question": True,
-        "question_token": "vem gäller det",
-    },
-    {
-        "id": "sv-funds-768",
-        "lang": "sv",
-        "width": 768,
-        "text": "fonder att söka",
-        "expect_question": True,
-        "question_token": "vem gäller det",
-    },
-    {
-        "id": "sv-scholarship-1024",
-        "lang": "sv",
-        "width": 1024,
-        "text": "stipendium",
-        "expect_question": True,
-        "question_token": "stipendium",
-    },
-    {
-        "id": "sv-scholarship-typo-1280",
-        "lang": "sv",
-        "width": 1280,
-        "text": "stipenium att söka",
-        "expect_question": True,
-        "question_token": "stipendium",
-    },
-    {
-        "id": "sv-loan-is-not-grant",
-        "lang": "sv",
-        "width": 390,
-        "text": "lån att söka",
-        "expect_question": True,
-        "question_token": "lån",
-    },
-    {
-        "id": "sv-known-student-skips-question",
-        "lang": "sv",
-        "width": 768,
-        "text": "jag studerar och söker stipendium",
-        "expect_question": False,
-        "expect_actor": "study",
-    },
-    {
-        "id": "sv-known-company-context-skips-question",
-        "lang": "sv",
-        "width": 1024,
-        "actor_type": "company",
-        "text": "fonder att söka",
-        "expect_question": False,
-        "expect_actor": "company",
-    },
-    {
-        "id": "sv-association-in-text-skips-question",
-        "lang": "sv",
-        "width": 1280,
-        "text": "vår förening söker bidrag till ett projekt",
-        "expect_question": False,
-        "expect_actor": "association",
-    },
-    {
-        "id": "sv-combined-everyday-needs-stay-open",
-        "lang": "sv",
-        "width": 390,
-        "text": "Jag behöver hjälp med läkemedel och mat/hyra",
-        "expect_question": False,
-        "expect_routes": ["actor_type=private_person", "actor_type=other"],
-    },
-    {
-        "id": "sv-procurement-remains-company",
-        "lang": "sv",
-        "width": 1280,
-        "text": "Jag driver företag och vill hitta en offentlig upphandling",
-        "expect_question": False,
-        "expect_route": "actor_type=company",
-    },
-    {
-        "id": "sv-dental-regression",
-        "lang": "sv",
-        "width": 320,
-        "text": "Jag har ont i en tand men är orolig för kostnaden",
-        "expect_question": False,
-        "expect_route": "quick-help.html?mode=dental",
-    },
-    {
-        "id": "ar-generic-funding-rtl",
-        "lang": "ar",
-        "width": 390,
-        "text": "أبحث عن منحة أو دعم مالي",
-        "expect_question": True,
-        "question_token": "من",
-        "expect_rtl": True,
-    },
-    {
-        "id": "fa-scholarship-rtl",
-        "lang": "fa",
-        "width": 768,
-        "text": "دنبال بورسیه هستم",
-        "expect_question": True,
-        "question_token": "بورسیه",
-        "expect_rtl": True,
-    },
-    {
-        "id": "sv-private-context-reused",
-        "lang": "sv",
-        "width": 1024,
-        "actor_type": "private_person",
-        "text": "pengar att söka",
-        "expect_question": False,
-        "expect_actor": "private",
-    },
+    {"id": "sv-money-search-320", "lang": "sv", "width": 320, "text": "pengar att söka", "expect_question": True, "question_token": "vem gäller det"},
+    {"id": "sv-search-money-390", "lang": "sv", "width": 390, "text": "söka pengar", "expect_question": True, "question_token": "vem gäller det"},
+    {"id": "sv-funds-768", "lang": "sv", "width": 768, "text": "fonder att söka", "expect_question": True, "question_token": "vem gäller det"},
+    {"id": "sv-scholarship-1024", "lang": "sv", "width": 1024, "text": "stipendium", "expect_question": True, "question_token": "stipendium"},
+    {"id": "sv-scholarship-typo-1280", "lang": "sv", "width": 1280, "text": "stipenium att söka", "expect_question": True, "question_token": "stipendium"},
+    {"id": "sv-loan-is-not-grant", "lang": "sv", "width": 390, "text": "lån att söka", "expect_question": True, "question_token": "lån"},
+    {"id": "sv-known-student-skips-question", "lang": "sv", "width": 768, "text": "jag studerar och söker stipendium", "expect_question": False, "expect_actor": "study"},
+    {"id": "sv-known-company-context-skips-question", "lang": "sv", "width": 1024, "actor_type": "company", "text": "fonder att söka", "expect_question": False, "expect_actor": "company"},
+    {"id": "sv-association-in-text-skips-question", "lang": "sv", "width": 1280, "text": "vår förening söker bidrag till ett projekt", "expect_question": False, "expect_actor": "association"},
+    {"id": "sv-combined-everyday-needs-stay-open", "lang": "sv", "width": 390, "text": "Jag behöver hjälp med läkemedel och mat/hyra", "expect_question": False, "expect_routes": ["actor_type=private_person", "actor_type=other"]},
+    {"id": "sv-procurement-remains-company", "lang": "sv", "width": 1280, "text": "Jag driver företag och vill hitta en offentlig upphandling", "expect_question": False, "expect_route": "actor_type=company"},
+    {"id": "sv-dental-regression", "lang": "sv", "width": 320, "text": "Jag har ont i en tand men är orolig för kostnaden", "expect_question": False, "expect_route": "quick-help.html?mode=dental"},
+    {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True},
+    {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True},
+    {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private"},
 ]
 
 
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def scenario_url(index_path: Path, scenario: dict) -> str:
@@ -180,17 +79,11 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
         if scenario.get("expect_question"):
             require(question_count == 1, f"{scenario['id']}: expected one actor-changing funding question")
             question_text = results.locator('[data-funding-question="true"]').inner_text().lower()
-            require(
-                scenario["question_token"].lower() in question_text,
-                f"{scenario['id']}: question did not preserve funding type/context: {question_text!r}",
-            )
+            require(scenario["question_token"].lower() in question_text, f"{scenario['id']}: question lost funding type/context: {question_text!r}")
             options = results.locator("a[data-funding-actor]")
             require(options.count() == 4, f"{scenario['id']}: expected four actor entrances, got {options.count()}")
             option_actors = sorted(options.evaluate_all("els => els.map(el => el.dataset.fundingActor)"))
-            require(
-                option_actors == sorted(ACTOR_HREFS),
-                f"{scenario['id']}: actor choices drifted: {option_actors}",
-            )
+            require(option_actors == sorted(ACTOR_HREFS), f"{scenario['id']}: actor choices drifted: {option_actors}")
             result_text = results.inner_text().lower()
             require("tandvård" not in result_text and "städ" not in result_text, f"{scenario['id']}: vague funding query leaked a default precise route")
         else:
@@ -211,26 +104,16 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
         if scenario.get("expect_rtl"):
             require(page.evaluate("document.documentElement.dir") == "rtl", f"{scenario['id']}: RTL direction missing")
 
-        require(
-            page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
-            f"{scenario['id']}: horizontal overflow at {scenario['width']}px",
-        )
-        button_height = page.locator("#analyzeBtn").bounding_box()["height"]
-        require(button_height >= 44, f"{scenario['id']}: primary touch target below 44px ({button_height})")
+        require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{scenario['id']}: horizontal overflow at {scenario['width']}px")
+        button_box = page.locator("#analyzeBtn").bounding_box()
+        require(button_box is not None and button_box["height"] >= 44, f"{scenario['id']}: primary touch target below 44px")
 
-        # The public shell must never put the raw free-text situation into links.
+        # Public routing may carry coarse actor/need tokens, never the raw situation.
         raw = scenario["text"]
         hrefs = results.locator("a").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         require(all(raw not in href for href in hrefs), f"{scenario['id']}: raw situation leaked into a result URL")
 
-        return {
-            "id": scenario["id"],
-            "width": scenario["width"],
-            "lang": scenario["lang"],
-            "status": "passed",
-            "question_count": question_count,
-            "hrefs": hrefs,
-        }
+        return {"id": scenario["id"], "width": scenario["width"], "lang": scenario["lang"], "status": "passed", "question_count": question_count, "hrefs": hrefs}
     finally:
         page.close()
 
@@ -243,25 +126,34 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(args.root).resolve()
-    index_path = root / "index.html"
-    require(index_path.is_file(), f"index.html not found under {root}")
-    engine_name = args.engine or __import__("os").environ.get("BROWSER_ENGINE", "chromium")
+    require((root / "index.html").is_file(), f"index.html not found under {root}")
+    engine_name = args.engine or os.environ.get("BROWSER_ENGINE", "chromium")
 
-    evidence = {"engine": engine_name, "scenario_count": len(SCENARIOS), "passed": 0, "failed": 0, "results": []}
-    with sync_playwright() as playwright:
-        browser_type = getattr(playwright, engine_name)
-        browser = browser_type.launch(headless=True)
-        try:
-            for scenario in SCENARIOS:
-                try:
-                    result = run_scenario(browser, index_path, scenario)
-                    evidence["passed"] += 1
-                    evidence["results"].append(result)
-                except Exception as exc:
-                    evidence["failed"] += 1
-                    evidence["results"].append({"id": scenario["id"], "status": "failed", "error": str(exc)})
-        finally:
-            browser.close()
+    with tempfile.TemporaryDirectory(prefix="stod-shared-search-") as tmp:
+        site = Path(tmp) / "site"
+        index_path = builder.build(root, site)
+        evidence = {
+            "engine": engine_name,
+            "artifact": "minimal public pilot build",
+            "built_index_sha256": sha256(index_path),
+            "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
+            "scenario_count": len(SCENARIOS),
+            "passed": 0,
+            "failed": 0,
+            "results": [],
+        }
+        with sync_playwright() as playwright:
+            browser = getattr(playwright, engine_name).launch(headless=True)
+            try:
+                for scenario in SCENARIOS:
+                    try:
+                        evidence["results"].append(run_scenario(browser, index_path, scenario))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": scenario["id"], "status": "failed", "error": str(exc)})
+            finally:
+                browser.close()
 
     Path(args.output).write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"shared search browser ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
