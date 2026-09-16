@@ -26,11 +26,46 @@ function deadlinePurpose(line){
  if(/giltighetstid för anbud|anbud.*giltig/.test(t))return 'validity';
  return 'other';
 }
+const MONTH_NUMBERS={januari:1,februari:2,mars:3,april:4,maj:5,juni:6,juli:7,augusti:8,september:9,oktober:10,november:11,december:12};
+function canonicalDateToken(year,month,day){
+ const y=Number(year),m=Number(month),d=Number(day);
+ if(!Number.isInteger(y)||!Number.isInteger(m)||!Number.isInteger(d)||y<2000||y>2099||m<1||m>12||d<1||d>31)return null;
+ const probe=new Date(Date.UTC(y,m-1,d));
+ if(probe.getUTCFullYear()!==y||probe.getUTCMonth()!==m-1||probe.getUTCDate()!==d)return null;
+ return `${String(y).padStart(4,'0')}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+function partialDateToken(month,day){
+ const m=Number(month),d=Number(day);
+ if(!Number.isInteger(m)||!Number.isInteger(d)||m<1||m>12||d<1||d>31)return null;
+ const probe=new Date(Date.UTC(2000,m-1,d));
+ if(probe.getUTCMonth()!==m-1||probe.getUTCDate()!==d)return null;
+ return `*-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
 function dateTokens(line){
  const t=normalized(line);
  const out=[];
- for(const m of t.matchAll(/\b20\d{2}-\d{2}-\d{2}\b/g))out.push(m[0]);
- for(const m of t.matchAll(/\b\d{1,2}\s+(?:januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december)\b/g))out.push(m[0]);
+ const add=token=>{if(token)out.push(token);};
+ for(const m of t.matchAll(/\b(20\d{2})-(\d{2})-(\d{2})\b/g))add(canonicalDateToken(m[1],m[2],m[3]));
+ for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](20\d{2})\b/g))add(canonicalDateToken(m[3],m[2],m[1]));
+ for(const m of t.matchAll(/\b(\d{1,2})\s+(januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december)(?:\s+(20\d{2}))?\b/g)){
+   const month=MONTH_NUMBERS[m[2]];
+   add(m[3]?canonicalDateToken(m[3],month,m[1]):partialDateToken(month,m[1]));
+ }
+ return [...new Set(out)];
+}
+function dateTokensConflict(tokens){
+ const parsed=tokens.map(token=>{const parts=token.split('-');return {year:parts[0],month:parts[1],day:parts[2]};});
+ const full=[...new Set(parsed.filter(p=>p.year!=='*').map(p=>`${p.year}-${p.month}-${p.day}`))];
+ if(full.length>1)return true;
+ return new Set(parsed.map(p=>`${p.month}-${p.day}`)).size>1;
+}
+function timeTokens(line){
+ const t=normalized(line);
+ const out=[];
+ for(const m of t.matchAll(/(?:\bklockan\b|\bkl\.?)\s*(\d{1,2})[:.](\d{2})\b/g)){
+   const hour=Number(m[1]),minute=Number(m[2]);
+   if(Number.isInteger(hour)&&Number.isInteger(minute)&&hour>=0&&hour<=23&&minute>=0&&minute<=59)out.push(`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`);
+ }
  return [...new Set(out)];
 }
 function classifyRequirement(line){
@@ -97,12 +132,16 @@ function applyCrossRowFlags(rows){
  for(const [purpose,group] of Object.entries(deadlineGroups)){
    if(purpose==='other'||group.length<2)continue;
    const dates=[...new Set(group.flatMap(r=>dateTokens(r.text)))];
-   if(dates.length>1){
+   const timedRows=group.map(r=>timeTokens(r.text)).filter(tokens=>tokens.length>0);
+   const times=[...new Set(timedRows.flat())];
+   const dateConflict=dateTokensConflict(dates);
+   const timeConflict=timedRows.length>1&&times.length>1;
+   if(dateConflict||timeConflict){
      const label=purpose==='bid'
-       ?'Motstridiga anbudsdatum i underlaget – verifiera senaste publicerade rättelse/version innan datumet används.'
+       ?'Motstridiga anbudsdatum eller klockslag i underlaget – verifiera senaste publicerade rättelse/version innan uppgiften används.'
        :purpose==='clarification'
-         ?'Motstridiga datum för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
-         :'Motstridiga datum/versioner – kontrollera senaste publicerade underlag.';
+         ?'Motstridiga datum eller klockslag för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
+         :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
      group.forEach(r=>addFlag(r,'deadline_version_conflict',label));
    }
  }
