@@ -28,21 +28,22 @@ ACTOR_HREFS = {
 }
 
 SCENARIOS = [
-    {"id": "sv-money-search-320", "lang": "sv", "width": 320, "text": "pengar att söka", "expect_question": True, "question_token": "vem gäller det"},
-    {"id": "sv-search-money-390", "lang": "sv", "width": 390, "text": "söka pengar", "expect_question": True, "question_token": "vem gäller det"},
-    {"id": "sv-funds-768", "lang": "sv", "width": 768, "text": "fonder att söka", "expect_question": True, "question_token": "vem gäller det"},
-    {"id": "sv-scholarship-1024", "lang": "sv", "width": 1024, "text": "stipendium", "expect_question": True, "question_token": "stipendium"},
-    {"id": "sv-scholarship-typo-1280", "lang": "sv", "width": 1280, "text": "stipenium att söka", "expect_question": True, "question_token": "stipendium"},
-    {"id": "sv-loan-is-not-grant", "lang": "sv", "width": 390, "text": "lån att söka", "expect_question": True, "question_token": "lån"},
-    {"id": "sv-known-student-skips-question", "lang": "sv", "width": 768, "text": "jag studerar och söker stipendium", "expect_question": False, "expect_actor": "study"},
-    {"id": "sv-known-company-context-skips-question", "lang": "sv", "width": 1024, "actor_type": "company", "text": "fonder att söka", "expect_question": False, "expect_actor": "company"},
-    {"id": "sv-association-in-text-skips-question", "lang": "sv", "width": 1280, "text": "vår förening söker bidrag till ett projekt", "expect_question": False, "expect_actor": "association"},
+    {"id": "sv-money-search-320", "lang": "sv", "width": 320, "text": "pengar att söka", "expect_question": True, "question_token": "vem gäller det", "expect_intent": "funding"},
+    {"id": "sv-search-money-390", "lang": "sv", "width": 390, "text": "söka pengar", "expect_question": True, "question_token": "vem gäller det", "expect_intent": "funding"},
+    {"id": "sv-funds-768", "lang": "sv", "width": 768, "text": "fonder att söka", "expect_question": True, "question_token": "vem gäller det", "expect_intent": "funding"},
+    {"id": "sv-scholarship-1024", "lang": "sv", "width": 1024, "text": "stipendium", "expect_question": True, "question_token": "stipendium", "expect_intent": "scholarship"},
+    {"id": "sv-scholarship-typo-1280", "lang": "sv", "width": 1280, "text": "stipenium att söka", "expect_question": True, "question_token": "stipendium", "expect_intent": "scholarship"},
+    {"id": "sv-loan-is-not-grant", "lang": "sv", "width": 390, "text": "lån att söka", "expect_question": True, "question_token": "lån", "expect_intent": "loan"},
+    {"id": "sv-known-student-scholarship-keeps-intent", "lang": "sv", "width": 768, "text": "jag studerar och söker stipendium", "expect_question": False, "expect_actor": "study", "expect_intent": "scholarship"},
+    {"id": "sv-known-student-loan-keeps-intent", "lang": "sv", "width": 768, "text": "jag studerar och söker lån", "expect_question": False, "expect_actor": "study", "expect_intent": "loan"},
+    {"id": "sv-known-company-context-skips-question", "lang": "sv", "width": 1024, "actor_type": "company", "text": "fonder att söka", "expect_question": False, "expect_actor": "company", "expect_intent": "funding"},
+    {"id": "sv-association-in-text-skips-question", "lang": "sv", "width": 1280, "text": "vår förening söker bidrag till ett projekt", "expect_question": False, "expect_actor": "association", "expect_intent": "funding"},
     {"id": "sv-combined-everyday-needs-stay-open", "lang": "sv", "width": 390, "text": "Jag behöver hjälp med läkemedel och mat/hyra", "expect_question": False, "expect_routes": ["actor_type=private_person", "actor_type=other"]},
     {"id": "sv-procurement-remains-company", "lang": "sv", "width": 1280, "text": "Jag driver företag och vill hitta en offentlig upphandling", "expect_question": False, "expect_route": "actor_type=company"},
     {"id": "sv-dental-regression", "lang": "sv", "width": 320, "text": "Jag har ont i en tand men är orolig för kostnaden", "expect_question": False, "expect_route": "quick-help.html?mode=dental"},
-    {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True},
-    {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True},
-    {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private"},
+    {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True, "expect_intent": "scholarship"},
+    {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True, "expect_intent": "scholarship"},
+    {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private", "expect_intent": "funding"},
 ]
 
 
@@ -95,6 +96,15 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
             require(links.count() >= 1, f"{scenario['id']}: known actor was not reused ({actor})")
             require(results.locator("a").first.get_attribute("href") == links.first.get_attribute("href"), f"{scenario['id']}: known actor route was not prioritized")
 
+        if scenario.get("expect_intent"):
+            intent = scenario["expect_intent"]
+            funding_links = results.locator("a[data-funding-actor]")
+            require(funding_links.count() >= 1, f"{scenario['id']}: funding route missing while preserving intent")
+            intents = funding_links.evaluate_all("els => els.map(el => el.dataset.fundingIntent || '')")
+            require(all(value == intent for value in intents), f"{scenario['id']}: funding intent changed or disappeared: {intents}")
+            hrefs_with_intent = funding_links.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+            require(all(f"funding_intent={intent}" in href for href in hrefs_with_intent), f"{scenario['id']}: allowlisted intent was not carried to the next route: {hrefs_with_intent}")
+
         if scenario.get("expect_route"):
             require(results.locator(f'a[href*="{scenario["expect_route"]}"]').count() >= 1, f"{scenario['id']}: expected route missing: {scenario['expect_route']}")
 
@@ -115,7 +125,7 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
                     f"{scenario['id']}: language touch target {index + 1} below 44x44",
                 )
 
-        # Public routing may carry coarse actor/need tokens, never the raw situation.
+        # Public routing may carry coarse actor/need/intent tokens, never the raw situation.
         raw = scenario["text"]
         hrefs = results.locator("a").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         require(all(raw not in href for href in hrefs), f"{scenario['id']}: raw situation leaked into a result URL")
