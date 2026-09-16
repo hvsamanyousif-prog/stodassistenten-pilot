@@ -23,6 +23,8 @@ SHELL_LEARNING_START = "<!-- STOD_EXPERIENCE_LEARNING_START -->"
 SHELL_LEARNING_END = "<!-- STOD_EXPERIENCE_LEARNING_END -->"
 QUICK_LEARNING_START = "<!-- STOD_QUICK_HELP_LEARNING_START -->"
 QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
+SHELL_REFLOW_START = "<!-- STOD_SHARED_SHELL_REFLOW_START -->"
+SHELL_REFLOW_END = "<!-- STOD_SHARED_SHELL_REFLOW_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
@@ -150,12 +152,36 @@ def quick_learning_block() -> str:
     return "\n".join(lines)
 
 
+def shell_reflow_block() -> str:
+    # The source shell slightly exceeds a 320 CSS-pixel viewport because the
+    # brand and three language controls compete for the same navigation row.
+    # Keep every control visible and make the language targets at least 44x44.
+    return "\n".join(
+        (
+            SHELL_REFLOW_START,
+            '<style id="shared-shell-reflow-guard">',
+            '@media(max-width:620px){.lang{min-width:44px;min-height:44px}}',
+            '@media(max-width:360px){.nav{gap:6px}.brand{gap:6px;font-size:13px;min-width:0}.mark{width:32px;height:32px;border-radius:10px;flex:0 0 32px}.langs{gap:0;flex:0 0 auto}.lang{padding-left:4px;padding-right:4px}}',
+            '</style>',
+            SHELL_REFLOW_END,
+        )
+    )
+
+
 def inject_before_body(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
     if any(marker in html for marker in forbidden_markers):
         raise ValueError("source HTML already contains managed wiring")
     if html.count("</body>") != 1:
         raise ValueError("source HTML must contain exactly one </body>")
     return html.replace("</body>", f"{block}\n</body>", 1)
+
+
+def inject_before_head_close(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
+    if any(marker in html for marker in forbidden_markers):
+        raise ValueError("source HTML already contains managed reflow guard")
+    if html.count("</head>") != 1:
+        raise ValueError("source HTML must contain exactly one </head>")
+    return html.replace("</head>", f"{block}\n</head>", 1)
 
 
 def inject_wiring(html: str) -> str:
@@ -168,6 +194,10 @@ def inject_shell_learning(html: str) -> str:
 
 def inject_quick_learning(html: str) -> str:
     return inject_before_body(html, quick_learning_block(), (QUICK_LEARNING_START, QUICK_LEARNING_END))
+
+
+def inject_shell_reflow(html: str) -> str:
+    return inject_before_head_close(html, shell_reflow_block(), (SHELL_REFLOW_START, SHELL_REFLOW_END))
 
 
 def repair_known_inline_syntax(html: str, page: str) -> str:
@@ -238,6 +268,7 @@ def build(source_root: Path, output_root: Path) -> Path:
     output_root.mkdir(parents=True)
 
     shell_html = repair_known_inline_syntax(source_index.read_text(encoding="utf-8"), "index.html")
+    shell_html = inject_shell_reflow(shell_html)
     built_shell = inject_shell_learning(shell_html)
     validate_inline_javascript(built_shell, "index.html")
     (output_root / "index.html").write_text(built_shell, encoding="utf-8")
