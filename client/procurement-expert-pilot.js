@@ -130,7 +130,7 @@ function structureFlags(line){
  if(purpose!=='other'){
    const deadlineSlice=semanticDeadlineSlice(raw,purpose);
    const changeText=normalized(deadlineSlice);
-   const explicitChange=/\b(?:ändras?|ändrad|flyttas?|flyttad|förlängs?|förlängd)\b.*\bfrån\b.*\btill\b/.test(changeText);
+   const explicitChange=/(?:ändras?|ändrad|flyttas?|flyttad|förlängs?|förlängd).*?\bfrån\b.*?\btill\b/.test(changeText);
    const changedValue=dateTokensConflict(dateTokens(deadlineSlice))||timeTokens(deadlineSlice).length>1;
    if(explicitChange&&changedValue){
      const label=purpose==='bid'
