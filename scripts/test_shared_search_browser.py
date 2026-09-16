@@ -14,7 +14,11 @@ import hashlib
 import json
 import os
 import tempfile
+from contextlib import contextmanager
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from threading import Thread
 from urllib.parse import urlencode
 
 import build_public_pilot as builder
@@ -64,19 +68,38 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def scenario_url(index_path: Path, scenario: dict) -> str:
+class QuietHandler(SimpleHTTPRequestHandler):
+    def log_message(self, format: str, *args) -> None:  # noqa: A002 - stdlib signature
+        return
+
+
+@contextmanager
+def serve_site(site: Path):
+    handler = partial(QuietHandler, directory=str(site))
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_port}"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+def scenario_url(base_url: str, scenario: dict) -> str:
     query = {"lang": scenario["lang"]}
     if scenario.get("actor_type"):
         query["actor_type"] = scenario["actor_type"]
-    return f"{index_path.resolve().as_uri()}?{urlencode(query)}"
+    return f"{base_url}/index.html?{urlencode(query)}"
 
 
-def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
+def run_scenario(browser, base_url: str, scenario: dict) -> dict:
     page = browser.new_page(viewport={"width": scenario["width"], "height": 900})
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(scenario_url(index_path, scenario), wait_until="load")
+        page.goto(scenario_url(base_url, scenario), wait_until="load")
         page.locator("#situation").fill(scenario["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
@@ -139,11 +162,11 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
         page.close()
 
 
-def start_and_click_destination(page, index_path: Path, text: str, actor_type: str, intent: str, initial_actor: str | None = None) -> str:
+def start_and_click_destination(page, base_url: str, text: str, actor_type: str, intent: str, initial_actor: str | None = None) -> str:
     query = {"lang": "sv"}
     if initial_actor:
         query["actor_type"] = initial_actor
-    page.goto(f"{index_path.resolve().as_uri()}?{urlencode(query)}", wait_until="load")
+    page.goto(f"{base_url}/index.html?{urlencode(query)}", wait_until="load")
     page.locator("#situation").fill(text)
     page.locator("#analyzeBtn").click()
     results = page.locator("#engineResults")
@@ -158,13 +181,13 @@ def start_and_click_destination(page, index_path: Path, text: str, actor_type: s
     return href
 
 
-def run_destination_scenario(browser, index_path: Path, site: Path, scenario: dict) -> dict:
+def run_destination_scenario(browser, base_url: str, scenario: dict) -> dict:
     page = browser.new_page(viewport={"width": 768, "height": 900})
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
         if scenario["kind"] == "student":
-            start_and_click_destination(page, index_path, scenario["text"], "student", scenario["intent"])
+            start_and_click_destination(page, base_url, scenario["text"], "student", scenario["intent"])
             context = page.locator(f'#fundingIntentContext[data-funding-intent="{scenario["intent"]}"]')
             require(context.is_visible(), f"{scenario['id']}: person destination did not consume funding_intent")
             context_text = context.inner_text()
@@ -180,7 +203,7 @@ def run_destination_scenario(browser, index_path: Path, site: Path, scenario: di
             return {"id": scenario["id"], "status": "passed", "destination": "person-pilot.html", "intent": scenario["intent"], "context": context_text}
 
         if scenario["kind"] == "company":
-            start_and_click_destination(page, index_path, scenario["text"], "company", "funding", initial_actor="company")
+            start_and_click_destination(page, base_url, scenario["text"], "company", "funding", initial_actor="company")
             context = page.locator('#fundingIntentContext[data-funding-intent="funding"]')
             require(context.is_visible(), f"{scenario['id']}: company destination did not consume funding intent")
             action = page.locator('button[data-funding-continuity-action="company-funding"]')
@@ -195,7 +218,7 @@ def run_destination_scenario(browser, index_path: Path, site: Path, scenario: di
             return {"id": scenario["id"], "status": "passed", "destination": "company-pilot.html", "intent": "funding"}
 
         if scenario["kind"] == "tampered":
-            target = f"{(site / builder.PERSON_PILOT_PATH).resolve().as_uri()}?actor_type=student&funding_intent={scenario['intent']}"
+            target = f"{base_url}/{builder.PERSON_PILOT_PATH}?actor_type=student&funding_intent={scenario['intent']}"
             page.goto(target, wait_until="load")
             require(page.locator("#fundingIntentContext").count() == 0, f"{scenario['id']}: unknown token was consumed")
             require(page.locator("#main .hero").is_visible(), f"{scenario['id']}: unknown token did not fall back to normal person flow")
@@ -224,6 +247,7 @@ def main() -> int:
         evidence = {
             "engine": engine_name,
             "artifact": "minimal public pilot build",
+            "artifact_transport": "loopback-http",
             "built_index_sha256": sha256(index_path),
             "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
             "funding_continuity_sha256": sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
@@ -234,19 +258,19 @@ def main() -> int:
             "failed": 0,
             "results": [],
         }
-        with sync_playwright() as playwright:
+        with serve_site(site) as base_url, sync_playwright() as playwright:
             browser = getattr(playwright, engine_name).launch(headless=True)
             try:
                 for scenario in SCENARIOS:
                     try:
-                        evidence["results"].append(run_scenario(browser, index_path, scenario))
+                        evidence["results"].append(run_scenario(browser, base_url, scenario))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
                         evidence["results"].append({"id": scenario["id"], "status": "failed", "error": str(exc)})
                 for scenario in DESTINATION_SCENARIOS:
                     try:
-                        evidence["results"].append(run_destination_scenario(browser, index_path, site, scenario))
+                        evidence["results"].append(run_destination_scenario(browser, base_url, scenario))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
