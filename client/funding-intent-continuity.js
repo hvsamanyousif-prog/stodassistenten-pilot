@@ -81,6 +81,60 @@ const PERSON_COPY={
  }
 };
 
+const STUDENT_RESULT_COPY={
+ sv:{
+  planTitle:'Din handlingsplan',
+  loan:{
+   tag:'Kontrollera hos CSN',
+   title:'Studiemedel: bidrag och studielån',
+   lead:'Studiemedel från CSN kan bestå av bidrag och lån. Den här vägen gäller lånedelen. Stödassistenten avgör inte om du har rätt till studiemedel, vilket belopp du kan få eller vilka villkor som gäller.',
+   source:['https://www.csn.se/bidrag-och-lan/studiestod.html','↗ Originalkälla: CSN – studiestöd'],
+   action:'1. Börja med att kontrollera lånedelen hos CSN och verifiera aktuella villkor, belopp, återbetalning och ansökningsväg i originalkällan innan du antar att lånet passar din situation.'
+  },
+  scholarship:{
+   tag:'Discovery – verifiera',
+   title:'Stipendier söks hos den aktuella stiftelsen',
+   lead:'Länsstyrelsens Stiftelsesök är ett register för att hitta stiftelser. Att en stiftelse finns i registret bevisar inte att ansökan är öppen, att du är behörig, vilket belopp som finns eller vilken deadline som gäller.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ Originalkälla: Länsstyrelsen – Stiftelsesök'],
+   action:'1. Hitta en möjlig stiftelse i Stiftelsesök och kontakta stiftelsen eller öppna dess aktuella primärkälla för att verifiera ändamål, geografi, ansökningsperiod, underlag och ansökningsväg. Om det inte kan verifieras stannar det vid discovery.'
+  }
+ },
+ ar:{
+  planTitle:'خطة العمل التالية',
+  loan:{
+   tag:'تحقق لدى CSN',
+   title:'دعم الدراسة: منحة وقرض دراسي',
+   lead:'قد يتكون دعم الدراسة من CSN من منحة وقرض. هذا المسار يتعلق بجزء القرض. لا يقرر مساعد الدعم الأهلية أو المبلغ أو الشروط.',
+   source:['https://www.csn.se/bidrag-och-lan/studiestod.html','↗ المصدر الأصلي: CSN – دعم الدراسة'],
+   action:'1. ابدأ بالتحقق من جزء القرض لدى CSN وتحقق من الشروط الحالية والمبلغ والسداد وطريقة التقديم في المصدر الأصلي قبل افتراض أن القرض يناسب وضعك.'
+  },
+  scholarship:{
+   tag:'اكتشاف – تحقق',
+   title:'تُطلب المنح من المؤسسة المعنية',
+   lead:'بحث المؤسسات لدى مجالس المحافظات هو سجل للعثور على المؤسسات. وجود مؤسسة في السجل لا يثبت أن التقديم مفتوح أو أنك مؤهل أو أن مبلغاً أو موعداً نهائياً حالياً موجود.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ المصدر الأصلي: مجالس المحافظات – بحث المؤسسات'],
+   action:'1. اعثر على مؤسسة محتملة في السجل ثم تواصل مع المؤسسة أو افتح مصدرها الأولي الحالي للتحقق من الغرض والمنطقة وفترة التقديم والمستندات وطريقة التقديم. إذا تعذر التحقق يبقى الأمر في مرحلة الاستكشاف.'
+  }
+ },
+ fa:{
+  planTitle:'برنامه اقدام بعدی',
+  loan:{
+   tag:'در CSN بررسی کن',
+   title:'کمک‌هزینه تحصیلی: کمک و وام دانشجویی',
+   lead:'حمایت تحصیلی CSN می‌تواند شامل کمک و وام باشد. این مسیر مربوط به بخش وام است. دستیار حمایت درباره واجد شرایط بودن، مبلغ یا شرایط تصمیم نمی‌گیرد.',
+   source:['https://www.csn.se/bidrag-och-lan/studiestod.html','↗ منبع اصلی: CSN – حمایت تحصیلی'],
+   action:'1. ابتدا بخش وام را در CSN بررسی کن و شرایط جاری، مبلغ، بازپرداخت و مسیر درخواست را در منبع اصلی تأیید کن؛ پیش از آن فرض نکن وام برای وضعیت تو مناسب است.'
+  },
+  scholarship:{
+   tag:'کشف – بررسی لازم',
+   title:'بورسیه از بنیاد مربوط درخواست می‌شود',
+   lead:'جست‌وجوی بنیادهای استانداری یک فهرست برای پیدا کردن بنیادهاست. وجود بنیاد در فهرست ثابت نمی‌کند که درخواست باز است، تو واجد شرایطی، مبلغی موجود است یا مهلت جاری وجود دارد.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ منبع اصلی: استانداری – جست‌وجوی بنیادها'],
+   action:'1. یک بنیاد احتمالی در فهرست پیدا کن و سپس با بنیاد تماس بگیر یا منبع اصلی و جاری آن را باز کن تا هدف، محدوده جغرافیایی، دوره درخواست، مدارک و مسیر درخواست را تأیید کنی. اگر قابل تأیید نیست، نتیجه فقط در حد کشف می‌ماند.'
+  }
+ }
+};
+
 function personLocale(){
  try{return typeof lang==='string'&&PERSON_COPY[lang]?lang:'sv';}catch(_){return 'sv';}
 }
@@ -177,6 +231,47 @@ function pruneAssociationProcurement(){
  }
 }
 
+function findPersonActionPlan(host,planTitle){
+ for(const section of host.querySelectorAll('section.card')){
+  const title=section.querySelector('h2');
+  if(title&&String(title.textContent||'').trim()===planTitle)return section;
+ }
+ return null;
+}
+
+function specializeStudentFundingResult(host,currentScreen,currentScenario){
+ if(actor!=='student'||currentScenario!=='general'||currentScreen!=='generalR')return;
+ if(intent!=='loan'&&intent!=='scholarship')return;
+ const locale=personLocale();
+ const localeCopy=STUDENT_RESULT_COPY[locale]||STUDENT_RESULT_COPY.sv;
+ const copy=localeCopy[intent];
+ if(!copy)return;
+ const article=host.querySelector('article.result');
+ const actionPlan=findPersonActionPlan(host,localeCopy.planTitle);
+ if(!article||!actionPlan){
+  console.error('student funding intent result failed closed: expected result structure missing');
+  return;
+ }
+ const title=article.querySelector('.rhead b');
+ const tag=article.querySelector('.tag');
+ const info=article.querySelector('.info');
+ const source=article.querySelector('a.source');
+ if(!title||!tag||!info||!source){
+  console.error('student funding intent result failed closed: expected result fields missing');
+  return;
+ }
+ article.dataset.fundingIntentResult=intent;
+ title.textContent=copy.title;
+ tag.textContent=copy.tag;
+ info.textContent=copy.lead;
+ source.href=copy.source[0];
+ source.textContent=copy.source[1];
+ actionPlan.dataset.fundingIntentActionPlan=intent;
+ const firstStep=actionPlan.querySelector('.info');
+ if(firstStep)firstStep.textContent=copy.action;
+ else console.error('student funding intent action failed closed: expected action step missing');
+}
+
 function decoratePerson(){
  if(actor!=='student'&&actor!=='private_person'&&actor!=='association')return;
  const host=document.getElementById('main');
@@ -185,6 +280,7 @@ function decoratePerson(){
  let currentScenario='';
  try{currentScreen=screen;currentScenario=scenario;}catch(_){return;}
  pruneAssociationProcurement();
+ specializeStudentFundingResult(host,currentScreen,currentScenario);
  if(document.getElementById('fundingIntentContext'))return;
  const text=personText(actor);
  let handler=null;
@@ -397,6 +493,6 @@ function installCompany(){
 
 const installed=installPerson()||installCompany();
 if(installed){
- root.StodFundingIntentContinuity=Object.freeze({version:'1.2.0',intent,page,actor});
+ root.StodFundingIntentContinuity=Object.freeze({version:'1.3.0',intent,page,actor});
 }
 })(window);
