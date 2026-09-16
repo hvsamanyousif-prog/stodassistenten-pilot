@@ -17,7 +17,7 @@ const SCORE_DIMS=[
  ['false_confidence','Tydlig osäkerhet']
 ];
 const state={sector:null,requirements:[],scores:{},sending:false,feedbackEpoch:0,controller:null};
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
 function deadlinePurpose(line){
  const t=normalized(line);
@@ -142,6 +142,12 @@ function summarize(reqs){
  else if(!actionable.length&&reqs.length){decision='Endast struktur/rubriker identifierades – kontrollera originalunderlaget innan du bedömer krav';}
  return {counts,blocking,uncertain,decision,tone,actionableCount:actionable.length,structuralCount:reqs.length-actionable.length};
 }
+function prioritizeReviewRows(reqs){
+ const priority=reqs.filter(r=>r.kind!=='structural'&&(r.evidence==='missing'||r.category==='uncertain'||(r.flags||[]).length>0));
+ return priority.map((row,index)=>({row,index,rank:row.evidence==='missing'?0:1}))
+   .sort((a,b)=>a.rank-b.rank||a.index-b.index)
+   .map(item=>item.row);
+}
 function buildFeedbackPayload(found,useful,clear,ratings){
  if([found,useful,clear].some(v=>typeof v!=='boolean'))throw new TypeError('Tre ja/nej-svar behövs.');
  const safe={};
@@ -200,7 +206,7 @@ function browserInit(){
    sectorGrid.querySelectorAll('[data-sector]').forEach(b=>b.onclick=()=>{state.sector=b.dataset.sector;sectorGrid.querySelectorAll('[data-sector]').forEach(el=>{el.classList.toggle('active',el.dataset.sector===state.sector);el.setAttribute('aria-pressed',String(el.dataset.sector===state.sector));});});
  }
  function renderPriorityOverview(s){
-   const priority=state.requirements.filter(r=>r.kind!=='structural'&&(r.evidence==='missing'||r.category==='uncertain'||(r.flags||[]).length>0));
+   const priority=prioritizeReviewRows(state.requirements);
    const top=priority.slice(0,3);
    let intro='Börja med en kravrad där du kan kontrollera beviset mot originalunderlaget.';
    if(s.blocking.length)intro='Börja med de rader där underlag saknas innan du går vidare.';
@@ -282,7 +288,7 @@ function browserInit(){
  $('copyReport').onclick=async()=>{const s=summarize(state.requirements);const report=['Stödassistenten – expertpilot offentlig upphandling',`Sektor: ${state.sector||'ej vald'}`,`Kravrader: ${s.actionableCount}`,`Källrubriker bevarade: ${s.structuralCount}`,`Rader med saknat underlag: ${s.blocking.length}`,`Osäkra/ej bedömda: ${s.uncertain.length}`,'Expertbetyg:',...SCORE_DIMS.map(([k,l])=>`- ${l}: ${state.scores[k]||'ej satt'}`),`Produktfel hittat: ${$('foundIssue').value||'ej satt'}`,`Användbart stöd: ${$('useful').value||'ej satt'}`,`Nästa steg tydligt: ${$('clearNext').value||'ej satt'}`].join('\n');try{await navigator.clipboard.writeText(report);$('feedbackStatus').className='status ok';$('feedbackStatus').textContent='Lokalt testprotokoll kopierat. Det innehåller inte inklistrad underlagstext.';}catch(e){$('feedbackStatus').className='status err';$('feedbackStatus').textContent='Kunde inte kopiera automatiskt. Använd webbläsarens kopieringsfunktion.';}};
  renderSectors();
 }
-const api={classifyRequirement,evidenceQuestion,deadlinePurpose,isStructuralHeading,structureFlags,splitRequirements,summarize,draftSkeleton,sampleConstruction,buildFeedbackPayload,LABELS,CATEGORIES};
+const api={classifyRequirement,evidenceQuestion,deadlinePurpose,isStructuralHeading,structureFlags,splitRequirements,summarize,prioritizeReviewRows,draftSkeleton,sampleConstruction,buildFeedbackPayload,LABELS,CATEGORIES};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 root.ProcurementExpert=api;
 if(typeof document!=='undefined'){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',browserInit);else browserInit();}
