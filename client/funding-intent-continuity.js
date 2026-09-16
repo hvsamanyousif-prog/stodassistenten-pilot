@@ -135,6 +135,60 @@ const STUDENT_RESULT_COPY={
  }
 };
 
+const PRIVATE_RESULT_COPY={
+ sv:{
+  planTitle:'Din handlingsplan',
+  loan:{
+   tag:'Kontrollera kostnad och villkor',
+   title:'Lån kostar pengar',
+   lead:'Den här vägen gäller privat lån, inte bidrag eller stöd. Konsumentverket rekommenderar att du bara lånar om du behöver och har råd, samt att du jämför villkor och kostnader. Stödassistenten väljer inte långivare, gör ingen kreditprövning och lovar inte att ett lån kan beviljas.',
+   source:['https://www.konsumentverket.se/ekonomi/lana-pengar/','↗ Originalkälla: Konsumentverket – låna pengar'],
+   action:'1. Öppna Konsumentverkets vägledning om lån. Kontrollera om lån verkligen är nödvändigt, jämför effektiv ränta, avgifter och villkor och läs avtalet innan du ansöker. Stödassistenten avgör inte kreditvärdighet eller beviljande.'
+  },
+  scholarship:{
+   tag:'Discovery – verifiera',
+   title:'Stiftelser och stipendier',
+   lead:'Länsstyrelsens Stiftelsesök är ett register som kan hjälpa dig hitta stiftelser. En registerträff bevisar inte att ansökan är öppen, att du är behörig, vilket belopp som finns eller vilken deadline som gäller.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ Originalkälla: Länsstyrelsen – Stiftelsesök'],
+   action:'1. Hitta en möjlig stiftelse i Stiftelsesök och öppna den aktuella stiftelsen eller dess primärkälla för att verifiera ändamål, geografi, ansökningsperiod, underlag och ansökningsväg. Om det inte kan verifieras stannar resultatet vid discovery.'
+  }
+ },
+ ar:{
+  planTitle:'خطة العمل التالية',
+  loan:{
+   tag:'تحقق من التكلفة والشروط',
+   title:'القرض له تكلفة',
+   lead:'هذا المسار يتعلق بقرض شخصي وليس بمنحة أو دعم. توصي هيئة حماية المستهلك بالاقتراض فقط عند الحاجة والقدرة على السداد وبمقارنة الشروط والتكاليف. لا يختار مساعد الدعم المقرض ولا يجري تقييماً ائتمانياً ولا يضمن الموافقة.',
+   source:['https://www.konsumentverket.se/ekonomi/lana-pengar/','↗ المصدر الأصلي: هيئة حماية المستهلك – اقتراض المال'],
+   action:'1. افتح إرشادات هيئة حماية المستهلك حول القروض. تحقق أولاً من أن القرض ضروري ويمكنك تحمله، وقارن الفائدة الفعلية والرسوم والشروط واقرأ العقد قبل التقديم. مساعد الدعم لا يقرر الجدارة الائتمانية أو الموافقة.'
+  },
+  scholarship:{
+   tag:'اكتشاف – تحقق',
+   title:'المؤسسات والمنح',
+   lead:'بحث المؤسسات لدى مجالس المحافظات هو سجل يمكن أن يساعدك في العثور على مؤسسات. وجود نتيجة في السجل لا يثبت أن التقديم مفتوح أو أنك مؤهل أو أن مبلغاً أو موعداً نهائياً حالياً موجود.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ المصدر الأصلي: مجالس المحافظات – بحث المؤسسات'],
+   action:'1. اعثر على مؤسسة محتملة في السجل ثم افتح المؤسسة المعنية أو مصدرها الأولي الحالي للتحقق من الغرض والمنطقة وفترة التقديم والمستندات وطريقة التقديم. إذا تعذر التحقق يبقى الأمر في مرحلة الاستكشاف.'
+  }
+ },
+ fa:{
+  planTitle:'برنامه اقدام بعدی',
+  loan:{
+   tag:'هزینه و شرایط را بررسی کن',
+   title:'وام هزینه دارد',
+   lead:'این مسیر درباره وام شخصی است، نه کمک‌هزینه یا حمایت. اداره حمایت از مصرف‌کننده توصیه می‌کند فقط در صورت نیاز و توان بازپرداخت وام بگیری و شرایط و هزینه‌ها را مقایسه کنی. دستیار حمایت وام‌دهنده انتخاب نمی‌کند، اعتبارسنجی انجام نمی‌دهد و تأیید وام را تضمین نمی‌کند.',
+   source:['https://www.konsumentverket.se/ekonomi/lana-pengar/','↗ منبع اصلی: اداره حمایت از مصرف‌کننده – وام گرفتن'],
+   action:'1. راهنمای اداره حمایت از مصرف‌کننده درباره وام را باز کن. بررسی کن که وام واقعاً لازم و قابل پرداخت است، نرخ مؤثر، کارمزدها و شرایط را مقایسه کن و پیش از درخواست قرارداد را بخوان. دستیار حمایت درباره اعتبار یا تأیید وام تصمیم نمی‌گیرد.'
+  },
+  scholarship:{
+   tag:'کشف – بررسی لازم',
+   title:'بنیادها و بورسیه‌ها',
+   lead:'جست‌وجوی بنیادهای استانداری یک فهرست برای پیدا کردن بنیادهاست. وجود یک نتیجه در فهرست ثابت نمی‌کند که درخواست باز است، تو واجد شرایطی، مبلغی موجود است یا مهلت جاری وجود دارد.',
+   source:['https://stiftelser.lansstyrelsen.se/','↗ منبع اصلی: استانداری – جست‌وجوی بنیادها'],
+   action:'1. یک بنیاد احتمالی پیدا کن و سپس بنیاد مربوط یا منبع اصلی و جاری آن را باز کن تا هدف، محدوده جغرافیایی، دوره درخواست، مدارک و مسیر درخواست را تأیید کنی. اگر قابل تأیید نیست، نتیجه فقط در حد کشف می‌ماند.'
+  }
+ }
+};
+
 function personLocale(){
  try{return typeof lang==='string'&&PERSON_COPY[lang]?lang:'sv';}catch(_){return 'sv';}
 }
@@ -195,7 +249,8 @@ function continuePrivate(){
   scenario='general';
   answers={fundingIntent:intent};
   resetPersonFeedback();
-  go('general1');
+  if(intent==='loan'||intent==='scholarship')go('generalR');
+  else go('general1');
  }catch(error){
   console.error('private funding continuity failed closed',error);
  }
@@ -239,17 +294,17 @@ function findPersonActionPlan(host,planTitle){
  return null;
 }
 
-function specializeStudentFundingResult(host,currentScreen,currentScenario){
- if(actor!=='student'||currentScenario!=='general'||currentScreen!=='generalR')return;
+function specializePersonFundingResult(host,currentScreen,currentScenario,actorType,copyByLocale,errorPrefix){
+ if(actor!==actorType||currentScenario!=='general'||currentScreen!=='generalR')return;
  if(intent!=='loan'&&intent!=='scholarship')return;
  const locale=personLocale();
- const localeCopy=STUDENT_RESULT_COPY[locale]||STUDENT_RESULT_COPY.sv;
+ const localeCopy=copyByLocale[locale]||copyByLocale.sv;
  const copy=localeCopy[intent];
  if(!copy)return;
  const article=host.querySelector('article.result');
  const actionPlan=findPersonActionPlan(host,localeCopy.planTitle);
  if(!article||!actionPlan){
-  console.error('student funding intent result failed closed: expected result structure missing');
+  console.error(`${errorPrefix} result failed closed: expected result structure missing`);
   return;
  }
  const title=article.querySelector('.rhead b');
@@ -257,7 +312,7 @@ function specializeStudentFundingResult(host,currentScreen,currentScenario){
  const info=article.querySelector('.info');
  const source=article.querySelector('a.source');
  if(!title||!tag||!info||!source){
-  console.error('student funding intent result failed closed: expected result fields missing');
+  console.error(`${errorPrefix} result failed closed: expected result fields missing`);
   return;
  }
  article.dataset.fundingIntentResult=intent;
@@ -269,7 +324,15 @@ function specializeStudentFundingResult(host,currentScreen,currentScenario){
  actionPlan.dataset.fundingIntentActionPlan=intent;
  const firstStep=actionPlan.querySelector('.info');
  if(firstStep)firstStep.textContent=copy.action;
- else console.error('student funding intent action failed closed: expected action step missing');
+ else console.error(`${errorPrefix} action failed closed: expected action step missing`);
+}
+
+function specializeStudentFundingResult(host,currentScreen,currentScenario){
+ specializePersonFundingResult(host,currentScreen,currentScenario,'student',STUDENT_RESULT_COPY,'student funding intent');
+}
+
+function specializePrivateFundingResult(host,currentScreen,currentScenario){
+ specializePersonFundingResult(host,currentScreen,currentScenario,'private_person',PRIVATE_RESULT_COPY,'private funding intent');
 }
 
 function decoratePerson(){
@@ -281,6 +344,7 @@ function decoratePerson(){
  try{currentScreen=screen;currentScenario=scenario;}catch(_){return;}
  pruneAssociationProcurement();
  specializeStudentFundingResult(host,currentScreen,currentScenario);
+ specializePrivateFundingResult(host,currentScreen,currentScenario);
  if(document.getElementById('fundingIntentContext'))return;
  const text=personText(actor);
  let handler=null;
@@ -493,6 +557,6 @@ function installCompany(){
 
 const installed=installPerson()||installCompany();
 if(installed){
- root.StodFundingIntentContinuity=Object.freeze({version:'1.3.0',intent,page,actor});
+ root.StodFundingIntentContinuity=Object.freeze({version:'1.4.0',intent,page,actor});
 }
 })(window);
