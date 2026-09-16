@@ -98,7 +98,7 @@ function classifyRequirement(line){
  if(!t)return 'uncertain';
  if(/sista anbudsdag|senast den|deadline|anbud ska vara.*tillhanda|frågor.*senast|giltighetstid för anbud/.test(t))return 'deadline';
  if(/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t))return 'award';
- if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexregler/.test(t))return 'commercial';
+ if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexreglering(?:sprincip)?|prisjustering(?:sprincip)?/.test(t))return 'commercial';
  if(/avtalstid|kontraktsvillkor|särskilda kontraktsvillkor|under avtalstiden|vite|utförandevillkor|leveransvillkor/.test(t))return 'contract';
  if(/uteslutningsgrund|uteslutas|brott enligt|obetalda skatter|socialförsäkringsavgifter/.test(t))return 'exclusion';
  if(/ekonomisk (och )?finansiell ställning|omsättning|referensuppdrag|teknisk och yrkesmässig kapacitet|kvalificeringskrav|anbudsgivaren ska ha|leverantören ska ha|åberopa.*kapacitet/.test(t))return 'qualification';
@@ -177,7 +177,7 @@ function commercialValueSignature(line){
  for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor)\b/g))addAmount(m[1],m[2],m[3]);
  for(const m of t.matchAll(/\b(kr|sek|kronor)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
  const indexPercentages=[];
- for(const m of t.matchAll(/\bindexreglering\b[^.;:]{0,80}?(\d+(?:[,.]\d+)?)\s*%/g)){
+ for(const m of t.matchAll(/\b(?:indexreglering(?:sprincip)?|prisjustering(?:sprincip)?)\b[^.;:]{0,80}?(\d+(?:[,.]\d+)?)\s*%/g)){
    indexPercentages.push(m[1].replace('.',','));
  }
  return [mode,appendix,[...new Set(amounts)].join(','),[...new Set(indexPercentages)].join(',')].join('|');
