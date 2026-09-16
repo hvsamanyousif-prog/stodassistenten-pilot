@@ -45,7 +45,7 @@ CASES = [
         "label": "Lån",
         "result_marker": "Studiemedel: bidrag och studielån",
         "action_marker": "kontrollera lånedelen",
-        "source_marker": "csn.se/bidrag-och-lan/studiemedel.html",
+        "source_marker": "csn.se/bidrag-och-lan/studiestod.html",
         "forbidden_marker": "Stipendier söks hos den aktuella stiftelsen",
     },
     {
