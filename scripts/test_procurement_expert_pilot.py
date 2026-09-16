@@ -165,6 +165,17 @@ test('unchanged-commercial-amount-currency-prefix-is-not-conflict',()=>{
  assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
  assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='commercial_version_conflict')));
 });
+test('changed-commercial-index-percent-same-scope-fails-closed',()=>{
+ const rows=p.splitRequirements('Version 1: Indexreglering 2 % ska tillämpas enligt bilaga 6.\nVersion 2 ersätter version 1: Indexreglering 3 % ska tillämpas enligt bilaga 6.');
+ assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
+ assert.ok(rows.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+ assert.ok(p.prioritizeReviewRows(rows).every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+});
+test('unchanged-commercial-index-percent-is-not-conflict',()=>{
+ const rows=p.splitRequirements('Version 1: Indexreglering 2 % ska tillämpas enligt bilaga 6.\nVersion 2 ersätter version 1: Indexreglering 2 % ska tillämpas enligt bilaga 6.');
+ assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
+ assert.ok(rows.every(r=>!r.flags.some(f=>f.code==='commercial_version_conflict')));
+});
 test('different-commercial-subareas-do-not-fabricate-version-conflict',()=>{
  const rows=p.splitRequirements('Rättelse: Delområde A – Fast pris ska anges i bilaga 6.\nRättelse: Delområde B – Timpris ska anges i bilaga 9.');
  assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
