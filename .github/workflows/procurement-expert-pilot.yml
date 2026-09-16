@@ -74,6 +74,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_funding_continuity_browser.py . funding-continuity-webkit.json
+      - name: Deadline/version source-truth — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_deadline_browser.py . procurement-deadline-chromium.json
+      - name: Deadline/version source-truth — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_deadline_browser.py . procurement-deadline-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -96,6 +104,8 @@ jobs:
             shared-search-webkit.json
             funding-continuity-chromium.json
             funding-continuity-webkit.json
+            procurement-deadline-chromium.json
+            procurement-deadline-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
