@@ -37,6 +37,30 @@ CASES = [
         "label": "Finansiering",
     },
     {
+        "id": "student-loan-destination",
+        "kind": "student",
+        "text": "jag studerar och söker lån",
+        "actor": "student",
+        "intent": "loan",
+        "label": "Lån",
+        "result_marker": "Studiemedel: bidrag och studielån",
+        "action_marker": "kontrollera lånedelen",
+        "source_marker": "csn.se/bidrag-och-lan/studiemedel.html",
+        "forbidden_marker": "Stipendier söks hos den aktuella stiftelsen",
+    },
+    {
+        "id": "student-scholarship-destination",
+        "kind": "student",
+        "text": "jag studerar och söker stipendium",
+        "actor": "student",
+        "intent": "scholarship",
+        "label": "Stipendium / bidrag",
+        "result_marker": "Stipendier söks hos den aktuella stiftelsen",
+        "action_marker": "kontakta stiftelsen",
+        "source_marker": "stiftelser.lansstyrelsen.se",
+        "forbidden_marker": "Studiemedel: bidrag och studielån",
+    },
+    {
         "id": "company-loan-destination",
         "kind": "company",
         "text": "lån att söka",
@@ -61,6 +85,30 @@ CASES = [
         "forbidden_marker": "Lån är inte bidrag",
     },
 ]
+
+
+def student_to_results(page, case: dict) -> str:
+    action = page.locator('[data-funding-continuity-action="continue"]')
+    shared.require(action.is_visible(), f"{case['id']}: student continuation action missing")
+    action.click()
+    shared.require("Hur känns ekonomin" in page.locator("#main").inner_text(), f"{case['id']}: student did not skip redundant study question")
+    page.get_by_text("Okej just nu", exact=True).click()
+    page.get_by_text("Nej", exact=True).click()
+    page.get_by_text("Nej", exact=True).click()
+    page.get_by_text("Nej", exact=True).click()
+    shared.require("Det här är värt att kontrollera först" in page.locator("#main").inner_text(), f"{case['id']}: student did not reach results")
+    result = page.locator(f'[data-funding-intent-result="{case["intent"]}"]')
+    plan = page.locator(f'[data-funding-intent-action-plan="{case["intent"]}"]')
+    shared.require(result.is_visible(), f"{case['id']}: typed student funding result missing")
+    shared.require(plan.is_visible(), f"{case['id']}: typed student next-action plan missing")
+    result_text = result.inner_text()
+    plan_text = plan.inner_text()
+    shared.require(case["result_marker"] in result_text, f"{case['id']}: result did not preserve student funding type")
+    shared.require(case["action_marker"] in plan_text, f"{case['id']}: next action did not preserve student funding type")
+    shared.require(case["forbidden_marker"] not in result_text, f"{case['id']}: opposite student funding type leaked into result")
+    source_hrefs = result.locator("a.source").evaluate_all("els => els.map(e => e.href)")
+    shared.require(any(case["source_marker"] in href for href in source_hrefs), f"{case['id']}: expected official student source missing: {source_hrefs}")
+    return "\n".join([result_text, plan_text, "|".join(sorted(source_hrefs))])
 
 
 def run_case(browser, base_url: str, case: dict) -> dict:
@@ -102,6 +150,9 @@ def run_case(browser, base_url: str, case: dict) -> dict:
             shared.require("Offentliga upphandlingar" not in main_text, f"{case['id']}: funding handoff mixed in procurement contracts")
             shared.require(page.locator('#fundingIntentContext[data-funding-intent="funding"]').is_visible(), f"{case['id']}: association funding context disappeared")
 
+        elif case["kind"] == "student":
+            actionable_signature = student_to_results(page, case)
+
         elif case["kind"] == "company":
             action = page.locator('[data-funding-continuity-action="company-funding"]')
             shared.require(action.is_visible(), f"{case['id']}: company continuation action missing")
@@ -142,6 +193,23 @@ def run_case(browser, base_url: str, case: dict) -> dict:
         page.close()
 
 
+def compare_actionable_signatures(evidence: dict, actor: str, comparison_id: str) -> None:
+    actor_results = {
+        result.get("intent"): result
+        for result in evidence["results"]
+        if result.get("status") == "passed" and result.get("actor") == actor
+    }
+    try:
+        loan_signature = actor_results["loan"]["actionable_signature"]
+        scholarship_signature = actor_results["scholarship"]["actionable_signature"]
+        shared.require(loan_signature != scholarship_signature, f"{actor} loan and scholarship collapsed to the same actionable result")
+        evidence["results"].append({"id": comparison_id, "status": "passed"})
+        evidence["passed"] += 1
+    except Exception as exc:
+        evidence["failed"] += 1
+        evidence["results"].append({"id": comparison_id, "status": "failed", "error": str(exc)})
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", default=".")
@@ -163,7 +231,7 @@ def main() -> int:
             "built_index_sha256": shared.sha256(index_path),
             "funding_continuity_sha256": shared.sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
             "scenario_count": len(CASES),
-            "comparison_count": 1,
+            "comparison_count": 2,
             "passed": 0,
             "failed": 0,
             "results": [],
@@ -179,21 +247,16 @@ def main() -> int:
                         evidence["failed"] += 1
                         evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
 
-                company_results = {
-                    result.get("intent"): result
-                    for result in evidence["results"]
-                    if result.get("status") == "passed" and result.get("actor") == "company"
-                }
-                comparison_id = "company-loan-vs-scholarship-actionable-distinction"
-                try:
-                    loan_signature = company_results["loan"]["actionable_signature"]
-                    scholarship_signature = company_results["scholarship"]["actionable_signature"]
-                    shared.require(loan_signature != scholarship_signature, "company loan and scholarship collapsed to the same actionable result")
-                    evidence["results"].append({"id": comparison_id, "status": "passed"})
-                    evidence["passed"] += 1
-                except Exception as exc:
-                    evidence["failed"] += 1
-                    evidence["results"].append({"id": comparison_id, "status": "failed", "error": str(exc)})
+                compare_actionable_signatures(
+                    evidence,
+                    "student",
+                    "student-loan-vs-scholarship-actionable-distinction",
+                )
+                compare_actionable_signatures(
+                    evidence,
+                    "company",
+                    "company-loan-vs-scholarship-actionable-distinction",
+                )
             finally:
                 browser.close()
 
