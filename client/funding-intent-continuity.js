@@ -233,6 +233,39 @@ const COMPANY_COPY={
  continues:{funding:'Fortsätt med finansiering',scholarship:'Fortsätt med bidrag / företagsstöd',loan:'Fortsätt med lån / finansiering'}
 };
 
+const COMPANY_RESULT_COPY={
+ loan:{
+  tag:'Lån / företagsfinansiering',
+  title:'Lån är inte bidrag',
+  lead:'Den här resan gäller lånefinansiering. Stödassistenten har ännu ingen verifierad automatisk lånematchning för företag och påstår därför inte att ett visst lån passar eller kan beviljas.',
+  bullets:[
+   'Börja med den officiella vägledningen om företagslån och kontrollera sedan ränta, avgifter, amortering, säkerheter och övriga villkor direkt hos den aktuella långivaren.',
+   'Jämför flera finansieringsvägar och kontrollera aktuell produktinformation i originalkällan innan företaget ansöker eller accepterar ett erbjudande.',
+   'Behandla inte ett lån som bidrag: lånefinansiering innebär återbetalning och en långivare gör sin egen bedömning.'
+  ],
+  sources:[
+   ['https://verksamt.se/node/229','↗ verksamt.se – Banklån för företag'],
+   ['https://verksamt.se/finansiering-radgivning','↗ verksamt.se – Finansiering och rådgivning']
+  ],
+  action:'Nästa handling: öppna den officiella lånevägledningen, välj vilken lånetyp eller långivare som är relevant för företagets behov och verifiera aktuella villkor direkt hos den aktören. Stödassistenten avgör inte kreditvärdighet eller beviljande.'
+ },
+ scholarship:{
+  tag:'Bidrag / offentligt företagsstöd',
+  title:'Bidrag och stöd kräver en aktuell primär utlysning',
+  lead:'Den här resan gäller bidrag eller företagsstöd, inte lån. Stödassistenten har ännu bara generell finansieringsdiscovery här och påstår inte att ett visst stöd finns öppet eller att företaget uppfyller villkoren.',
+  bullets:[
+   'Börja i officiella finansieringskällor och leta efter en aktuell stödform eller utlysning som passar företagets syfte, plats och verksamhet.',
+   'Öppna sedan den beslutande aktörens primärkälla och kontrollera målgrupp, villkor, medfinansiering, period, deadline/status och ansökningsväg.',
+   'Håll bidrag/stöd åtskilt från lån och verifiera alltid den faktiska möjligheten innan företaget lägger tid på en ansökan.'
+  ],
+  sources:[
+   ['https://verksamt.se/finansiering-radgivning','↗ verksamt.se – Finansiering och rådgivning'],
+   ['https://verksamt.se/finansiering-radgivning/offentlig-finansiering','↗ verksamt.se – Att söka offentlig finansiering']
+  ],
+  action:'Nästa handling: hitta en aktuell bidrags-/stödutlysning i en officiell källa och kontrollera den mot den beslutande aktörens originalkälla. Om ingen aktuell utlysning kan verifieras ska resan stanna vid discovery, inte bli en matchnings- eller behörighetsclaim.'
+ }
+};
+
 function continueCompany(){
  try{
   state.goal='funding';
@@ -267,6 +300,66 @@ function makeCompanyCard(){
  return card;
 }
 
+function findCompanyFundingResult(host){
+ for(const article of host.querySelectorAll('article.result')){
+  const tag=article.querySelector('.tag');
+  if(tag&&String(tag.textContent||'').includes('Finansiering'))return article;
+ }
+ return null;
+}
+
+function findCompanyActionPlan(host){
+ for(const section of host.querySelectorAll('section.card')){
+  const title=section.querySelector('h2');
+  if(title&&String(title.textContent||'').trim()==='Gör så här nu')return section;
+ }
+ return null;
+}
+
+function specializeCompanyFundingResult(host){
+ if(intent==='funding')return;
+ let currentStep;
+ try{currentStep=state.step;}catch(_){return;}
+ if(currentStep!==STEP.RESULT)return;
+ const copy=COMPANY_RESULT_COPY[intent];
+ if(!copy)return;
+ const article=findCompanyFundingResult(host);
+ const actionPlan=findCompanyActionPlan(host);
+ if(!article||!actionPlan){
+  console.error('company funding intent result failed closed: expected result structure missing');
+  return;
+ }
+ article.dataset.fundingIntentResult=intent;
+ article.replaceChildren();
+ const tag=document.createElement('span');
+ tag.className='tag';
+ tag.textContent=copy.tag;
+ const title=document.createElement('h3');
+ title.textContent=copy.title;
+ const lead=document.createElement('p');
+ lead.textContent=copy.lead;
+ const list=document.createElement('ul');
+ list.className='checklist';
+ for(const item of copy.bullets){
+  const li=document.createElement('li');
+  li.textContent=item;
+  list.append(li);
+ }
+ article.append(tag,title,lead,list);
+ for(const source of copy.sources){
+  const link=document.createElement('a');
+  link.className='source';
+  link.target='_blank';
+  link.rel='noopener';
+  link.href=source[0];
+  link.textContent=source[1];
+  article.append(link);
+ }
+ actionPlan.dataset.fundingIntentActionPlan=intent;
+ const actionBox=actionPlan.querySelector('.actionbox');
+ if(actionBox)actionBox.textContent=copy.action;
+}
+
 function decorateCompany(){
  if(actor!=='company')return;
  const host=document.getElementById('main');
@@ -290,6 +383,7 @@ function decorateCompany(){
    button.addEventListener('click',continueCompany,{once:true});
   }
  }
+ specializeCompanyFundingResult(host);
 }
 
 function installCompany(){
@@ -303,6 +397,6 @@ function installCompany(){
 
 const installed=installPerson()||installCompany();
 if(installed){
- root.StodFundingIntentContinuity=Object.freeze({version:'1.1.0',intent,page,actor});
+ root.StodFundingIntentContinuity=Object.freeze({version:'1.2.0',intent,page,actor});
 }
 })(window);
