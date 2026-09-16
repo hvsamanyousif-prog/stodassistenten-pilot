@@ -61,6 +61,18 @@ CASES = [
         "label": "Finansiering",
     },
     {
+        "id": "association-scholarship-destination",
+        "kind": "association",
+        "text": "vår förening söker stipendium",
+        "actor": "association",
+        "intent": "scholarship",
+        "label": "Stipendium / bidrag",
+        "result_marker": "Föreningsbidrag kräver en aktuell utlysning",
+        "action_marker": "MUCF:s aktuella bidrag",
+        "source_marker": "mucf.se/bidrag",
+        "forbidden_marker": "Offentliga upphandlingar",
+    },
+    {
         "id": "student-loan-destination",
         "kind": "student",
         "text": "jag studerar och söker lån",
@@ -181,7 +193,9 @@ def run_case(browser, base_url: str, case: dict) -> dict:
             shared.require("Det här är värt att kontrollera först" in main_text, f"{case['id']}: association did not continue into existing result flow")
             shared.require("Vad gäller det?" not in main_text and "Vad behöver ni hjälp med?" not in main_text, f"{case['id']}: known association/funding context was asked again")
             shared.require("Offentliga upphandlingar" not in main_text, f"{case['id']}: funding handoff mixed in procurement contracts")
-            shared.require(page.locator('#fundingIntentContext[data-funding-intent="funding"]').is_visible(), f"{case['id']}: association funding context disappeared")
+            shared.require(page.locator(f'#fundingIntentContext[data-funding-intent="{case["intent"]}"]').is_visible(), f"{case['id']}: association funding context disappeared")
+            if case.get("result_marker"):
+                actionable_signature = typed_result_signature(page, case, "association")
 
         elif case["kind"] == "student":
             actionable_signature = student_to_results(page, case)
