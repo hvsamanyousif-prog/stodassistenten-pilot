@@ -1,7 +1,7 @@
 (() => {
   // Shared product correction: refine the existing org flow instead of creating a new association engine.
   // This runtime only changes ranking/next-action rows from already-selected coarse answers.
-  if (typeof getRows !== 'function' || typeof start !== 'function') return;
+  if (typeof getRows !== 'function' || typeof start !== 'function' || typeof render !== 'function') return;
 
   const MUCF_URL='https://www.mucf.se/bidrag';
   const MUNICIPALITY_URL='https://skr.se/kommunerochregioner/kommunerlista.8288.html';
@@ -28,7 +28,7 @@
         ],
         procurement:[
           ['Offentliga affärer – leverantörsvägen','En ideell organisation som vill leverera till offentlig sektor behöver kontrollera den konkreta affären, krav och upphandlingsform. Organisationsformen i sig garanterar inte att ett anbud kan eller bör lämnas.',PROCUREMENT_URL],
-          ['Den offentliga köparen','Om behovet gäller en viss kommun eller annan offentlig aktör: gå till den aktörens officiella upphandlingsinformation och verifiera aktuell väg. Använd kommunlistan bara för att hitta rätt officiell webbplats.',MUNICIPALITY_URL]
+          ['Den offentliga köparen','Om behovet gäller en viss kommun eller annan offentlig aktör: gå till den aktörens officiella upphandlingsinformation och verifiera aktuell väg. Använd kommunlistan bara för att hitta rätt officiella webbplats.',MUNICIPALITY_URL]
         ]
       },
       company:{
@@ -89,8 +89,27 @@
     }
   };
 
+  const ASSOCIATION_SCHOLARSHIP_COPY={
+    sv:{
+      row:['Föreningsbidrag kräver en aktuell utlysning','MUCF listar stats- och EU-bidrag för civilsamhälle och organisationer, men en listning är inte bevis på att just er förening får söka eller att en viss ansökningsomgång är öppen. Öppna den konkreta utlysningen och kontrollera målgrupp, organisationsform, villkor, status, sista ansökningsdag och ansökningsväg i originalkällan.',MUCF_URL],
+      planTitle:'Din handlingsplan',
+      action:'1. Öppna MUCF:s aktuella bidrag, välj en relevant utlysning och kontrollera målgrupp, organisationsform, villkor, status, sista ansökningsdag och ansökningsväg hos MUCF innan ni går vidare.'
+    },
+    ar:{
+      row:['منح الجمعيات تتطلب دعوة حالية للتقديم','تعرض MUCF منحاً حكومية وأوروبية للمجتمع المدني والمنظمات، لكن ظهور منحة في القائمة لا يثبت أن جمعيتكم يحق لها التقديم أو أن جولة تقديم معينة مفتوحة. افتحوا الدعوة المحددة وتحققوا من الفئة المستهدفة وشكل المنظمة والشروط والحالة والموعد النهائي وطريقة التقديم في المصدر الأصلي.',MUCF_URL],
+      planTitle:'خطة العمل التالية',
+      action:'1. افتحوا منح MUCF الحالية، اختاروا دعوة ذات صلة وتحققوا لدى MUCF من الفئة المستهدفة وشكل المنظمة والشروط والحالة والموعد النهائي وطريقة التقديم قبل المتابعة.'
+    },
+    fa:{
+      row:['کمک انجمن به فراخوان جاری نیاز دارد','MUCF کمک‌های دولتی و اتحادیه اروپا برای جامعه مدنی و سازمان‌ها را فهرست می‌کند، اما بودن یک مورد در فهرست ثابت نمی‌کند انجمن شما مجاز به درخواست است یا یک دوره مشخص اکنون باز است. فراخوان مشخص را باز کنید و گروه هدف، نوع سازمان، شرایط، وضعیت، مهلت و مسیر درخواست را در منبع اصلی بررسی کنید.',MUCF_URL],
+      planTitle:'برنامه اقدام بعدی',
+      action:'1. کمک‌های فعلی MUCF را باز کنید، یک فراخوان مرتبط را انتخاب کنید و گروه هدف، نوع سازمان، شرایط، وضعیت، مهلت نهایی و مسیر درخواست را در MUCF بررسی کنید؛ سپس ادامه دهید.'
+    }
+  };
+
   const originalGetRows=getRows;
   const originalStart=start;
+  const originalRender=render;
 
   // If the user explicitly entered as an association, do not ask again whether they are an association or company.
   start=function(kind){
@@ -111,10 +130,51 @@
       const locale=(typeof lang!=='undefined' && ROWS[lang])?lang:'sv';
       const kind=answers.orgType;
       const need=answers.orgNeed;
+      if(kind==='association' && need==='funding' && answers.fundingIntent==='scholarship'){
+        const rows=ROWS[locale].association.funding.map(row=>row.slice());
+        rows[0]=ASSOCIATION_SCHOLARSHIP_COPY[locale].row.slice();
+        return rows;
+      }
       if((kind==='association'||kind==='company') && ROWS[locale][kind] && ROWS[locale][kind][need]){
         return ROWS[locale][kind][need];
       }
     }
     return originalGetRows();
   };
+
+  function decorateAssociationScholarship(){
+    if(typeof scenario==='undefined'||scenario!=='org'||typeof answers==='undefined')return;
+    if(answers.orgType!=='association'||answers.orgNeed!=='funding'||answers.fundingIntent!=='scholarship')return;
+    let currentScreen='';
+    try{currentScreen=screen;}catch(_){return;}
+    if(currentScreen!=='orgR')return;
+    const host=document.getElementById('main');
+    if(!host)return;
+    const locale=(typeof lang!=='undefined'&&ASSOCIATION_SCHOLARSHIP_COPY[lang])?lang:'sv';
+    const copy=ASSOCIATION_SCHOLARSHIP_COPY[locale];
+    const article=host.querySelector('article.result');
+    if(!article){console.error('association scholarship result failed closed: result missing');return;}
+    const source=article.querySelector('a.source');
+    if(!source||!String(source.href||'').includes('mucf.se/bidrag')){
+      console.error('association scholarship result failed closed: MUCF primary route missing');
+      return;
+    }
+    article.dataset.fundingIntentResult='scholarship';
+    let actionPlan=null;
+    for(const section of host.querySelectorAll('section.card')){
+      const title=section.querySelector('h2');
+      if(title&&String(title.textContent||'').trim()===copy.planTitle){actionPlan=section;break;}
+    }
+    if(!actionPlan){console.error('association scholarship action failed closed: action plan missing');return;}
+    actionPlan.dataset.fundingIntentActionPlan='scholarship';
+    const firstStep=actionPlan.querySelector('.info');
+    if(firstStep)firstStep.textContent=copy.action;
+    else console.error('association scholarship action failed closed: first step missing');
+  }
+
+  render=function(){
+    originalRender();
+    decorateAssociationScholarship();
+  };
+  decorateAssociationScholarship();
 })();
