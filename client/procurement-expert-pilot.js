@@ -76,10 +76,12 @@ function dateTokensConflict(tokens){
 function timeTokens(line){
  const t=normalized(line);
  const out=[];
- for(const m of t.matchAll(/(?:\bklockan\b|\bkl\.?)\s*(\d{1,2})[:.](\d{2})\b/g)){
-   const hour=Number(m[1]),minute=Number(m[2]);
+ const add=(hourText,minuteText)=>{
+   const hour=Number(hourText),minute=Number(minuteText);
    if(Number.isInteger(hour)&&Number.isInteger(minute)&&hour>=0&&hour<=23&&minute>=0&&minute<=59)out.push(`${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`);
- }
+ };
+ for(const m of t.matchAll(/(?:\bklockan\b|\bkl\.?)\s*(\d{1,2})[:.](\d{2})\b/g))add(m[1],m[2]);
+ for(const m of t.matchAll(/(?:^|[^\d])(\d{1,2}):(\d{2})(?!\d)/g))add(m[1],m[2]);
  return [...new Set(out)];
 }
 function classifyRequirement(line){
