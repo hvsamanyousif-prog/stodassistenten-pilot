@@ -94,7 +94,7 @@ def run_case(browser, base_url: str, case: dict) -> dict:
             shared.require(page.locator('#fundingIntentContext[data-funding-intent="funding"]').is_visible(), f"{case['id']}: association funding context disappeared")
 
         elif case["kind"] == "company":
-            action = context.locator('[data-funding-continuity-action="company-funding"]')
+            action = page.locator('[data-funding-continuity-action="company-funding"]')
             shared.require(action.is_visible(), f"{case['id']}: company continuation action missing")
             action.click()
             main_text = page.locator("#main").inner_text()
