@@ -161,6 +161,20 @@ function addFlag(row,code,label){
  if(!row.flags)row.flags=[];
  if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
 }
+function commercialScope(line){
+ const match=normalized(line).match(/\b(?:delområde|anbudsområde)\s+([a-zåäö0-9]+)\b/);
+ return match?`named:${match[1]}`:'unscoped';
+}
+function commercialValueSignature(line){
+ const t=normalized(line);
+ const mode=[/fast pris/.test(t)?'fixed':'',/timpris/.test(t)?'hourly':''].filter(Boolean).join('+');
+ const appendix=(t.match(/\bbilaga\s*\d+\b/)||[''])[0];
+ const amounts=[...t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor)\b/g)].map(m=>{
+   const whole=m[1].replace(/[ .]/g,'');
+   return `${whole}${m[2]?','+m[2]:''}:${m[3]}`;
+ });
+ return [mode,appendix,[...new Set(amounts)].join(',')].join('|');
+}
 function applyCrossRowFlags(rows){
  const actionable=rows.filter(r=>r.kind!=='structural');
  const deadlineGroups={};
@@ -187,12 +201,16 @@ function applyCrossRowFlags(rows){
    }
  }
  const pricedVersions=actionable.filter(r=>r.category==='commercial'&&/\b(version|rättelse|ersätter)\b/.test(normalized(r.text)));
- if(pricedVersions.length>1){
-   const priceShapes=[...new Set(pricedVersions.map(r=>{
-     const t=normalized(r.text);
-     return [(/fast pris/.test(t)?'fixed':''),(/timpris/.test(t)?'hourly':''),(t.match(/bilaga\s*\d+/)||[''])[0]].join('|');
-   }))];
-   if(priceShapes.length>1)pricedVersions.forEach(r=>addFlag(r,'commercial_version_conflict','Motstridiga prisversioner eller bilagehänvisningar – välj inte version automatiskt; kontrollera senaste publicerade rättelse/originalkälla.'));
+ const commercialGroups={};
+ pricedVersions.forEach(row=>{
+   const scope=commercialScope(row.text);
+   if(!commercialGroups[scope])commercialGroups[scope]=[];
+   commercialGroups[scope].push(row);
+ });
+ for(const group of Object.values(commercialGroups)){
+   if(group.length<2)continue;
+   const signatures=[...new Set(group.map(r=>commercialValueSignature(r.text)))];
+   if(signatures.length>1)group.forEach(r=>addFlag(r,'commercial_version_conflict','Motstridiga prisversioner, belopp eller bilagehänvisningar inom samma delområde – välj inte version automatiskt; kontrollera senaste publicerade rättelse/originalkälla.'));
  }
  return rows;
 }
