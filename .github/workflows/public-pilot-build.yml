@@ -9,6 +9,7 @@ on:
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
@@ -22,6 +23,7 @@ on:
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
@@ -56,6 +58,7 @@ jobs:
           node --check client/pilot-surface.js
           node --check client/public-pilot-ui-gate.js
           node --check client/public-pilot-wiring.js
+          node --check client/privacy-routing.js
       - name: Re-run capability runtime tests used by deployed artifact
         run: |
           node client/capabilities.test.cjs
