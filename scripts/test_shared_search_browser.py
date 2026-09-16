@@ -107,6 +107,13 @@ def run_scenario(browser, index_path: Path, scenario: dict) -> dict:
         require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{scenario['id']}: horizontal overflow at {scenario['width']}px")
         button_box = page.locator("#analyzeBtn").bounding_box()
         require(button_box is not None and button_box["height"] >= 44, f"{scenario['id']}: primary touch target below 44px")
+        if scenario["width"] <= 390:
+            for index, target in enumerate(page.locator("button.lang").all()):
+                box = target.bounding_box()
+                require(
+                    box is not None and box["width"] >= 44 and box["height"] >= 44,
+                    f"{scenario['id']}: language touch target {index + 1} below 44x44",
+                )
 
         # Public routing may carry coarse actor/need tokens, never the raw situation.
         raw = scenario["text"]
