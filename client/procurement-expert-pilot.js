@@ -143,10 +143,13 @@ function summarize(reqs){
  return {counts,blocking,uncertain,decision,tone,actionableCount:actionable.length,structuralCount:reqs.length-actionable.length};
 }
 function prioritizeReviewRows(reqs){
- const priority=reqs.filter(r=>r.kind!=='structural'&&(r.evidence==='missing'||r.category==='uncertain'||(r.flags||[]).length>0));
- return priority.map((row,index)=>({row,index,rank:row.evidence==='missing'?0:1}))
-   .sort((a,b)=>a.rank-b.rank||a.index-b.index)
-   .map(item=>item.row);
+ const priority=reqs.filter(r=>r.kind!=='structural'&&r.evidence!=='yes');
+ return priority.map((row,index)=>{
+   let rank=2;
+   if(row.evidence==='missing')rank=0;
+   else if(row.category==='uncertain'||(row.flags||[]).length>0)rank=1;
+   return {row,index,rank};
+ }).sort((a,b)=>a.rank-b.rank||a.index-b.index).map(item=>item.row);
 }
 function buildFeedbackPayload(found,useful,clear,ratings){
  if([found,useful,clear].some(v=>typeof v!=='boolean'))throw new TypeError('Tre ja/nej-svar behövs.');
@@ -208,18 +211,20 @@ function browserInit(){
  function renderPriorityOverview(s){
    const priority=prioritizeReviewRows(state.requirements);
    const top=priority.slice(0,3);
-   let intro='Börja med en kravrad där du kan kontrollera beviset mot originalunderlaget.';
+   const explicitRisk=priority.some(r=>r.evidence==='missing'||r.category==='uncertain'||(r.flags||[]).length>0);
+   let intro='Alla kravrader är genomgångna av dig. Kontrollera ändå helheten mot originalunderlaget.';
    if(s.blocking.length)intro='Börja med de rader där underlag saknas innan du går vidare.';
-   else if(priority.length)intro='Börja med de markerade riskerna och kontrollera dem mot originalunderlaget.';
+   else if(explicitRisk)intro='Börja med de markerade riskerna och kontrollera dem mot originalunderlaget.';
+   else if(priority.length)intro='Börja med nästa ej bedömda kravrad och kontrollera den mot originalunderlaget.';
    const items=top.map(r=>{
-     const explicitRisk=(r.flags||[]).map(f=>f.label).join(' ');
-     const reason=r.evidence==='missing'?'Saknat underlag':explicitRisk||(r.category==='uncertain'?'Oklar kravtyp':'Kontrollera raden');
+     const rowRisk=(r.flags||[]).map(f=>f.label).join(' ');
+     const reason=r.evidence==='missing'?'Saknat underlag':rowRisk||(r.category==='uncertain'?'Oklar kravtyp':'Ej bedömd – kontrollera raden');
      return `<li><strong>Källa rad ${r.sourceLine??r.id}:</strong> ${esc(reason)}</li>`;
    }).join('');
-   const more=priority.length>top.length?`<p class="micro">Ytterligare ${priority.length-top.length} riskmarkeringar finns i full granskning.</p>`:'';
+   const more=priority.length>top.length?`<p class="micro">Ytterligare ${priority.length-top.length} rader finns i full granskning.</p>`:'';
    $('priorityOverview').innerHTML=`<div class="priority-box"><h3>Nästa kontroll</h3><p>${esc(intro)}</p>${items?`<ul>${items}</ul>`:''}${more}</div>`;
    $('reviewSummary').textContent=`Full kravgranskning (${s.actionableCount} kravrader${s.structuralCount?` + ${s.structuralCount} källrubriker`:''})`;
-   $('openReviewBtn').textContent=s.blocking.length?'Granska saknade underlag':priority.length?'Granska risker och krav':'Öppna full kravgranskning';
+   $('openReviewBtn').textContent=s.blocking.length?'Granska saknade underlag':explicitRisk?'Granska risker och krav':priority.length?'Granska nästa krav':'Öppna full kravgranskning';
  }
  function renderRequirements(){
    const active=document.activeElement;
