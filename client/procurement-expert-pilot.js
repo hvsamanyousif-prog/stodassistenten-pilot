@@ -171,12 +171,16 @@ function commercialValueSignature(line){
  const mode=[/fast pris/.test(t)?'fixed':'',/timpris/.test(t)?'hourly':''].filter(Boolean).join('+');
  const appendix=(t.match(/\bbilaga\s*\d+\b/)||[''])[0];
  const amounts=[];
+ const currencyAliases={kr:'sek',sek:'sek',kronor:'sek',eur:'eur',euro:'eur',usd:'usd',gbp:'gbp',nok:'nok',dkk:'dkk',chf:'chf'};
  const addAmount=(whole,fraction,currency)=>{
    const normalizedWhole=whole.replace(/[ .]/g,'');
-   amounts.push(`${normalizedWhole}${fraction?','+fraction:''}:${currency}`);
+   const canonicalCurrency=currencyAliases[currency]||currency;
+   amounts.push(`${normalizedWhole}${fraction?','+fraction:''}:${canonicalCurrency}`);
  };
- for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor)\b/g))addAmount(m[1],m[2],m[3]);
- for(const m of t.matchAll(/\b(kr|sek|kronor)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
+ // Currency is deliberately bounded to explicit supported markers. Naked numbers
+ // and arbitrary three-letter words are never promoted to monetary values.
+ for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\b/g))addAmount(m[1],m[2],m[3]);
+ for(const m of t.matchAll(/\b(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
  const indexPercentages=[];
  for(const m of t.matchAll(/\b(?:indexreglering(?:sprincip)?|prisjustering(?:sprincip)?)\b[^.;:]{0,80}?(\d+(?:[,.]\d+)?)\s*%/g)){
    indexPercentages.push(m[1].replace('.',','));
