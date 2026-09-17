@@ -59,7 +59,11 @@ function semanticDeadlineSlice(line,purpose){
  return value;
 }
 function deadlineValueSlice(line,purpose){
- const scoped=semanticDeadlineSlice(line,purpose);
+ let scoped=semanticDeadlineSlice(line,purpose);
+ if(purpose==='answer_publication'){
+   const eventStart=scoped.toLowerCase().search(/\b(?:publiceras?|tillhandahålls?|ska\s+lämnas|lämnas)\b/);
+   if(eventStart>=0)scoped=scoped.slice(eventStart);
+ }
  // Cross-row comparison uses only the sentence that carries the identified
  // process deadline. Keep the full source row elsewhere for traceability.
  // The boundary deliberately requires a following letter so abbreviations such
@@ -173,7 +177,7 @@ function structureFlags(line){
  if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
- if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan; piloten jämför inte versioner av denna händelse automatiskt.'});
+ if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
  if(purpose!=='other'){
    const deadlineSlice=semanticDeadlineSlice(raw,purpose);
    const changeText=normalized(deadlineSlice);
@@ -232,9 +236,7 @@ function applyCrossRowFlags(rows){
    deadlineGroups[purpose].push(r);
  });
  for(const [purpose,group] of Object.entries(deadlineGroups)){
-   // Answer-publication timing is deliberately distinguished but not version-
-   // compared yet; each such row stays visible through answer_publication_timing.
-   if(purpose==='other'||purpose==='answer_publication'||group.length<2)continue;
+   if(purpose==='other'||group.length<2)continue;
    const withScope=group.map(row=>({row,scope:lotScope(row.text)}));
    const namedScopes=new Set(withScope.filter(item=>item.scope!=='unscoped').map(item=>item.scope));
    const hasUnscoped=withScope.some(item=>item.scope==='unscoped');
@@ -260,7 +262,9 @@ function applyCrossRowFlags(rows){
          ?'Motstridiga anbudsdatum eller klockslag i underlaget – verifiera senaste publicerade rättelse/version innan uppgiften används.'
          :purpose==='clarification'
            ?'Motstridiga datum eller klockslag för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
-           :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
+           :purpose==='answer_publication'
+             ?'Motstridiga datum eller klockslag för publicering av svar – verifiera senaste publicerade rättelse/version.'
+             :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
        scopedGroup.forEach(r=>addFlag(r,'deadline_version_conflict',label));
      }
    }

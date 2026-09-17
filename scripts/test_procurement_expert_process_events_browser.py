@@ -80,6 +80,19 @@ CASES = [
         "expect_answer_publication_check": True,
     },
     {
+        "id": "answer-publication-identical-with-embedded-question-date",
+        "text": "\n".join([
+            "Meddelande 1: Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026 kl 17:00.",
+            "Meddelande 2: Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026 kl 17:00.",
+        ]),
+        "expected_categories": ["deadline", "deadline"],
+        "expected_subtypes": ["answer_publication", "answer_publication"],
+        "expected_rows": 2,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": True,
+        "expect_answer_conflict": False,
+    },
+    {
         "id": "answer-publication-version-conflict",
         "text": "\n".join([
             "Rättelse 1: Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.",

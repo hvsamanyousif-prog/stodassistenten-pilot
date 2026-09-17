@@ -104,7 +104,17 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
     'identical answer-publication timings must not fabricate a version conflict');
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:9,failed:0}));
+{
+  const rows=p.splitRequirements([
+    'Meddelande 1: Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026 kl 17:00.',
+    'Meddelande 2: Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026 kl 17:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['answer_publication','answer_publication']);
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'embedded supplier-question dates must not be compared as answer-publication dates');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:10,failed:0}));
 '''
 
 
