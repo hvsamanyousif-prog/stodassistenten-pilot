@@ -30,6 +30,16 @@ CASES = [
         'text': 'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',
         'category': 'commercial',
     },
+    {
+        'id': 'semicolon-qualification-plus-deadline-stays-fail-closed',
+        'text': 'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',
+        'category': 'deadline',
+    },
+    {
+        'id': 'semicolon-commercial-plus-deadline-stays-fail-closed',
+        'text': 'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
+        'category': 'deadline',
+    },
 ]
 
 
