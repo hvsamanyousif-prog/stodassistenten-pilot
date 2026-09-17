@@ -21,13 +21,17 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
 function answerPublicationTiming(line){
  const t=normalized(line);
+ const formalClarificationRequest=/\bbegäran om (?:kompletterande information|kompletterande upplysningar)\b/.test(t);
+ const supplierActiveClarification=/\b(?:leverantören|leverantör|anbudsgivaren|anbudsgivare)\b.*\b(?:ska\s+)?lämna\b.*\b(?:kompletterande information|kompletterande upplysningar)\b/.test(t);
  return /\b(?:svar(?:en)?\s+p[åa]\s+frågor|svar\s+p[åa]\s+inkomna\s+frågor)\b.*\b(?:publiceras?|publicering|tillhandahålls?)\b/.test(t)
-   || /\b(?:kompletterande information|kompletterande upplysningar)\b.*\b(?:publiceras?|tillhandahålls?)\b/.test(t);
+   || /\b(?:kompletterande information|kompletterande upplysningar)\b.*\b(?:publiceras?|tillhandahålls?)\b/.test(t)
+   || (!formalClarificationRequest&&!supplierActiveClarification&&/\b(?:kompletterande information|kompletterande upplysningar)\b.*\b(?:ska\s+)?lämnas\b.*\b(?:senast|sista dag)\b/.test(t));
 }
 function clarificationSubmissionTiming(line){
  const t=normalized(line);
  return /^(?:frågor?|förtydliganden?)\b.*\b(?:senast|sista dag)\b/.test(t)
    || /\b(?:frågor?|förtydliganden?)\b.*\b(?:ska\s+)?(?:lämnas|ställas|inkomma|begäras)\b.*\b(?:senast|sista dag)\b/.test(t)
+   || /\bbegäran om (?:kompletterande information|kompletterande upplysningar)\b.*\b(?:ska\s+)?(?:lämnas|ställas|inkomma)\b.*\b(?:senast|sista dag)\b/.test(t)
    || /\b(?:sista dag|senast)\b.*\b(?:frågor?|förtydliganden?)\b/.test(t);
 }
 function deadlinePurpose(line){
