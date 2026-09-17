@@ -46,6 +46,9 @@ SCENARIOS = [
     {"id": "sv-known-student-loan-keeps-intent", "lang": "sv", "width": 768, "text": "jag studerar och söker lån", "expect_question": False, "expect_actor": "study", "expect_intent": "loan"},
     {"id": "sv-known-company-context-skips-question", "lang": "sv", "width": 1024, "actor_type": "company", "text": "fonder att söka", "expect_question": False, "expect_actor": "company", "expect_intent": "funding"},
     {"id": "sv-association-in-text-skips-question", "lang": "sv", "width": 1280, "text": "vår förening söker bidrag till ett projekt", "expect_question": False, "expect_actor": "association", "expect_intent": "funding"},
+    {"id": "sv-explicit-correction-overrides-stale-employee", "lang": "sv", "width": 390, "actor_type": "employee", "text": "Jag är inte längre anställd, jag studerar nu och söker stipendium.", "expect_question": False, "expect_actor": "study", "reject_actor": "employee", "expect_intent": "scholarship"},
+    {"id": "sv-current-employee-context-remains", "lang": "sv", "width": 768, "actor_type": "employee", "text": "Som anställd söker jag stipendium", "expect_question": False, "expect_actor": "employee", "expect_intent": "scholarship"},
+    {"id": "sv-simultaneous-employee-student-asks-once", "lang": "sv", "width": 1024, "actor_type": "employee", "text": "Jag är anställd och studerar och söker stipendium", "expect_question": True, "question_token": "stipendium", "expect_intent": "scholarship"},
     {"id": "sv-combined-everyday-needs-stay-open", "lang": "sv", "width": 390, "text": "Jag behöver hjälp med läkemedel och mat/hyra", "expect_question": False, "expect_routes": ["actor_type=private_person", "actor_type=other"]},
     {"id": "sv-procurement-remains-company", "lang": "sv", "width": 1280, "text": "Jag driver företag och vill hitta en offentlig upphandling", "expect_question": False, "expect_route": "actor_type=company"},
     {"id": "sv-dental-regression", "lang": "sv", "width": 320, "text": "Jag har ont i en tand men är orolig för kostnaden", "expect_question": False, "expect_route": "quick-help.html?mode=dental"},
@@ -129,6 +132,11 @@ def run_scenario(browser, base_url: str, scenario: dict) -> dict:
             links = results.locator(f'a[href*="{ACTOR_HREFS[actor]}"]')
             require(links.count() >= 1, f"{scenario['id']}: known actor was not reused ({actor})")
             require(results.locator("a").first.get_attribute("href") == links.first.get_attribute("href"), f"{scenario['id']}: known actor route was not prioritized")
+
+        if scenario.get("reject_actor"):
+            actor = scenario["reject_actor"]
+            links = results.locator(f'a[href*="{ACTOR_HREFS[actor]}"]')
+            require(links.count() == 0, f"{scenario['id']}: stale actor route survived explicit correction ({actor})")
 
         if scenario.get("expect_intent"):
             intent = scenario["expect_intent"]
