@@ -11,6 +11,11 @@ When the helped person's preserved need includes essential costs, the shared
 journey contract also requires that the destination consume that token in the
 existing bounded money question rather than merely display it.
 
+The pronoun contract must stay closed over every target the runtime explicitly
+accepts. A supported partner target may therefore continue with a nearby,
+unambiguous pronoun, while an explicit switch to another beneficiary must still
+fail closed instead of reassigning that person's need.
+
 This is browser/DOM/routing/privacy evidence, not eligibility, model quality,
 human comprehension, physical Safari/assistive-tech validation or storage E2E.
 """
@@ -61,8 +66,38 @@ SCENARIOS = [
         "expect_housing_skip": True,
     },
     {
+        "id": "sv-helper-partner-pronoun-rent",
+        "text": "Jag hjälper min partner att söka bidrag. Hen har hög hyra.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": {"housing"},
+        "need_copy": ("Personens bevarade behov", "Boende / hyra"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": True,
+    },
+    {
         "id": "sv-helper-subject-switch-not-reassigned",
         "text": "Jag hjälper min mamma att söka bidrag. Min pappa har hög hyra.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-helper-partner-to-mother-switch-not-reassigned",
+        "text": "Jag hjälper min partner att söka bidrag. Min mamma har hög hyra.",
         "actor_type": "relative",
         "intent": "funding",
         "context_token": "Finansiering",
