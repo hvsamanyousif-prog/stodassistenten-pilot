@@ -79,7 +79,7 @@
       }
     },
     ar:{
-      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر؟'},
+      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
       known:'أستخدم الفئة التي ظهرت بالفعل ولا أفترض دعماً محدداً.',
       actors:{
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
@@ -190,6 +190,10 @@
     if(currentActors.length===1&&currentActors[0]===previous) return previous;
     return null;
   }
+  function helperFundingScope(text){
+    const x=lower(text);
+    return /(?:åt|för)\s+(?:barnet|min(?:t|)\s+barn|min\s+mamma|min\s+pappa|min\s+mor|min\s+far|min\s+partner|henne|honom)|ل(?:طفلي|ابني|ابنتي|أمي|أبي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|او)/.test(x);
+  }
   function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
     if(lang!=='sv') url.searchParams.set('lang',lang);
@@ -203,10 +207,11 @@
   }
   function renderFundingIntent(text){
     const intent=fundingIntent(text);
-    if(!intent||hasConcreteNeed(text)) return false;
+    if(!intent) return false;
     const lang=currentLang();
     const copy=FUNDING_COPY[lang];
-    const actor=resolvedFundingActor(text);
+    const actor=resolvedFundingActor(text)||(helperFundingScope(text)?'relative':null);
+    if(hasConcreteNeed(text)&&actor!=='relative') return false;
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
