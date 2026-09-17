@@ -16,6 +16,7 @@ on:
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
   pull_request:
@@ -33,6 +34,7 @@ on:
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
 
@@ -54,6 +56,8 @@ jobs:
         run: python scripts/build_public_pilot.py --output _site
       - name: Verify build mutation, script order and multilingual invariants
         run: python scripts/test_public_pilot_build.py --site _site
+      - name: Verify plain-language shared entry contract
+        run: python scripts/test_landing_clarity.py --site _site
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
