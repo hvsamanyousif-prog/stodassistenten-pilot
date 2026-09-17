@@ -98,6 +98,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_procurement_expert_deadline_browser.py . procurement-deadline-webkit.json
+      - name: Contrastive process-deadline truth — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_deadline_contrast_browser.py . procurement-deadline-contrast-chromium.json
+      - name: Contrastive process-deadline truth — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_deadline_contrast_browser.py . procurement-deadline-contrast-webkit.json
       - name: Priority source-risk retention — Chromium
         env:
           BROWSER_ENGINE: chromium
@@ -148,6 +156,8 @@ jobs:
             funding-continuity-webkit.json
             procurement-deadline-chromium.json
             procurement-deadline-webkit.json
+            procurement-deadline-contrast-chromium.json
+            procurement-deadline-contrast-webkit.json
             procurement-priority-chromium.json
             procurement-priority-webkit.json
             procurement-currency-chromium.json
