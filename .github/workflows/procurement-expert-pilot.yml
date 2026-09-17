@@ -114,6 +114,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_procurement_expert_currency_browser.py . procurement-currency-webkit.json
+      - name: Composite requirement-row source-risk — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_composite_browser.py . procurement-composite-chromium.json
+      - name: Composite requirement-row source-risk — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_composite_browser.py . procurement-composite-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -144,6 +152,8 @@ jobs:
             procurement-priority-webkit.json
             procurement-currency-chromium.json
             procurement-currency-webkit.json
+            procurement-composite-chromium.json
+            procurement-composite-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
