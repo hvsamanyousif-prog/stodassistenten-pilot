@@ -112,6 +112,12 @@ const NEED_COPY={
  fa:{heading:'نیاز حفظ‌شده',relativeHeading:'نیاز حفظ‌شدهٔ آن شخص',labels:{housing:'مسکن / اجاره',essential_costs:'هزینه‌های ضروری'},boundary:'فقط این دسته‌های کلی بین صفحه‌ها منتقل می‌شوند، نه متن آزاد تو.'}
 };
 
+const ESSENTIAL_COSTS_QUESTION_COPY={
+ sv:{self:'Du nämnde nödvändiga utgifter. Hur pressad är ekonomin efter boende och nödvändiga utgifter?',relative:'Du nämnde nödvändiga utgifter för personen. Hur pressad är personens ekonomi efter boende och nödvändiga utgifter?'},
+ ar:{self:'ذكرت مصاريف ضرورية. ما مدى الضغط على الميزانية بعد السكن والمصاريف الضرورية؟',relative:'ذكرت مصاريف ضرورية للشخص. ما مدى الضغط على ميزانية الشخص بعد السكن والمصاريف الضرورية؟'},
+ fa:{self:'شما هزینه‌های ضروری را ذکر کردید. بعد از مسکن و هزینه‌های ضروری، فشار مالی چقدر است؟',relative:'شما هزینه‌های ضروری فرد را ذکر کردید. بعد از مسکن و هزینه‌های ضروری، فشار مالی او چقدر است؟'}
+};
+
 function installPerson(){
  if(page!=='person-pilot.html')return false;
  const actor=params.get('actor_type')||'';
@@ -120,6 +126,7 @@ function installPerson(){
  if(!needs.length)return false;
  if(typeof render!=='function'||typeof go!=='function')return false;
  const hasHousing=needs.includes('housing');
+ const hasEssentialCosts=needs.includes('essential_costs');
 
  function locale(){
   try{return typeof lang==='string'&&(lang==='ar'||lang==='fa')?lang:'sv';}catch(_){return 'sv';}
@@ -142,6 +149,18 @@ function installPerson(){
   note.textContent=`${heading}: ${needs.map(need=>copy.labels[need]).join(' + ')}. ${copy.boundary}`;
  }
 
+ function decorateEssentialCostsQuestion(){
+  if(!hasEssentialCosts)return;
+  let current='';
+  try{current=screen;}catch(_){return;}
+  if(current!=='general2')return;
+  const question=document.querySelector('#main h2');
+  if(!question)return;
+  const copy=ESSENTIAL_COSTS_QUESTION_COPY[locale()]||ESSENTIAL_COSTS_QUESTION_COPY.sv;
+  question.textContent=actor==='relative'?copy.relative:copy.self;
+  question.dataset.essentialCostsConfirmation='true';
+ }
+
  const baseGo=go;
  go=function(next){
   let current='';
@@ -160,13 +179,14 @@ function installPerson(){
  };
 
  const baseRender=render;
- render=function(){baseRender();decorateCard();};
+ render=function(){baseRender();decorateCard();decorateEssentialCostsQuestion();};
  decorateCard();
+ decorateEssentialCostsQuestion();
  return true;
 }
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.2.0',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.0',page});
 }
 })(window);
