@@ -28,9 +28,11 @@ from playwright.sync_api import sync_playwright
 ACTOR_HREFS = {
     "private": "actor_type=private_person",
     "study": "actor_type=student",
+    "employee": "actor_type=employee",
     "company": "actor_type=company",
     "association": "actor_type=association",
     "relative": "actor_type=relative",
+    "property_actor": "actor_type=property_actor",
 }
 
 SCENARIOS = [
