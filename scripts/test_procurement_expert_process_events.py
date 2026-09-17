@@ -114,7 +114,66 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
     'embedded supplier-question dates must not be compared as answer-publication dates');
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:10,failed:0}));
+{
+  const row=p.splitRequirements(
+    'Anbudsansökan ska lämnas senast den 1 oktober 2026 kl 23:59.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'participation_application');
+  assert.ok(hasFlag(row,'participation_application_timing'),
+    'participation application deadline must remain an explicit source-control risk');
+  assert.match(row.question,/anbudsansökan|få delta|deltag/i);
+}
+
+{
+  const row=p.splitRequirements(
+    'Ansökan om att få delta ska ha kommit in senast den 1 oktober 2026 kl 23:59.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'participation_application');
+  assert.ok(hasFlag(row,'participation_application_timing'));
+}
+
+{
+  const row=p.splitRequirements(
+    'Anbud ska lämnas senast den 15 oktober 2026 kl 23:59.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'bid');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Anbudsansökan ska lämnas senast den 1 oktober 2026 kl 23:59.',
+    'Anbud ska lämnas senast den 15 oktober 2026 kl 23:59.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['participation_application','bid']);
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'participation deadline and bid deadline are different process events, not versions of one deadline');
+  rows[0].evidence='yes';
+  assert.equal(p.prioritizeReviewRows(rows)[0].sourceLine,1,
+    'manual evidence must not hide unresolved participation-deadline source control');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Anbudsansökan ska lämnas senast den 1 oktober 2026 kl 12:00.',
+    'Rättelse 2: Anbudsansökan ska lämnas senast den 2 oktober 2026 kl 12:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['participation_application','participation_application']);
+  assert.ok(rows.every(r=>hasFlag(r,'deadline_version_conflict')),
+    'conflicting participation-application versions must fail closed');
+}
+
+{
+  const row=p.splitRequirements(
+    'Ansökan om kvalitetsbonus ska lämnas senast den 1 oktober 2026.'
+  )[0];
+  assert.notEqual(row.processSubtype,'participation_application');
+  assert.ok(!hasFlag(row,'participation_application_timing'));
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:16,failed:0}));
 '''
 
 
