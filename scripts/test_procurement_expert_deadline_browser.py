@@ -136,6 +136,31 @@ CASES = [
         "expect_conflict": True,
     },
     {
+        "id": "different-lot-deadlines-are-not-version-conflict",
+        "text": "\n".join([
+            "Delområde A: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Delområde B: Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "same-lot-deadline-change-is-version-conflict",
+        "text": "\n".join([
+            "Delområde A, version 1: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Delområde A, version 2 ersätter version 1: Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "mixed-named-and-unscoped-deadline-fails-closed",
+        "text": "\n".join([
+            "Delområde A: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+        "expect_scope_uncertain": True,
+    },
+    {
         "id": "same-row-explicit-bid-deadline-change",
         "text": "Rättelse: Sista anbudsdag ändras från 2026-10-30 kl 12:00 till 2026-11-06 kl 23:59.",
         "expect_conflict": False,
@@ -203,6 +228,10 @@ def run_case(page, case):
     else:
         check(not has_conflict, f'{case["id"]}: equivalent/incomplete source detail created false conflict')
         check(not overview_conflict, f'{case["id"]}: false conflict promoted into calm overview')
+
+    if case.get("expect_scope_uncertain"):
+        check("oklart delområdesscope" in review, f'{case["id"]}: missing fail-closed scope warning in row review')
+        check("oklart delområdesscope" in overview, f'{case["id"]}: scope uncertainty hidden from calm overview')
 
     sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
     check(sizes["content"] <= sizes["viewport"] + 1, f'{case["id"]}: horizontal overflow {sizes}')
