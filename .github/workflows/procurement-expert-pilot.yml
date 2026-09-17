@@ -52,6 +52,8 @@ jobs:
           node-version: '22'
       - name: Run expert-pilot behavior and privacy contracts
         run: python scripts/test_procurement_expert_pilot.py
+      - name: Composite requirement-row contracts
+        run: python scripts/test_procurement_expert_composite_rows.py
       - name: Commercial currency version contracts
         run: python scripts/test_procurement_expert_currency_versions.py
       - name: Source/link ingress boundary
