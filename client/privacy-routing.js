@@ -136,15 +136,47 @@
   function actorFromUrl(){
     return URL_ACTORS[new URLSearchParams(location.search).get('actor_type')]||null;
   }
-  function actorFromText(text){
+  function actorCandidatesFromText(text){
     const x=lower(text);
-    if(/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/.test(x)) return 'relative';
-    if(/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/.test(x)) return 'property_actor';
-    if(/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/.test(x)) return 'company';
-    if(/vår förening|föreningen|ideell förening|جمعية|انجمن/.test(x)) return 'association';
-    if(/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/.test(x)) return 'study';
-    if(/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/.test(x)) return 'employee';
-    if(/jag är privatperson|privatperson|فرد|شخصی/.test(x)) return 'private';
+    const actors=[];
+    const add=(actor,pattern)=>{if(pattern.test(x)&&!actors.includes(actor)) actors.push(actor)};
+    add('relative',/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/);
+    add('property_actor',/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/);
+    add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/);
+    add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
+    add('study',/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/);
+    add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/);
+    add('private',/jag är privatperson|privatperson|فرد|شخصی/);
+    return actors;
+  }
+  function actorFromText(text){
+    const actors=actorCandidatesFromText(text);
+    return actors.length===1?actors[0]:null;
+  }
+  function explicitlyCorrectsActor(text,actor){
+    if(currentLang()!=='sv') return false;
+    const x=lower(text);
+    const patterns={
+      employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
+      study:/studerar inte längre|inte längre student|inte student längre/,
+      company:/driver inte längre (?:ett |en )?företag|inte längre företagare/,
+      association:/inte längre (?:med i |del av )?(?:en |vår )?förening/,
+      relative:/hjälper inte längre/,
+      property_actor:/inte längre (?:brf|bostadsrättsförening|fastighetsägare|hyresvärd)/,
+      private:/inte längre privatperson/
+    };
+    return Boolean(patterns[actor]&&patterns[actor].test(x));
+  }
+  function resolvedFundingActor(text){
+    const previous=actorFromUrl();
+    const currentActors=actorCandidatesFromText(text);
+    if(!previous) return currentActors.length===1?currentActors[0]:null;
+    if(explicitlyCorrectsActor(text,previous)){
+      const replacements=currentActors.filter(actor=>actor!==previous);
+      return replacements.length===1?replacements[0]:null;
+    }
+    if(currentActors.length===0) return previous;
+    if(currentActors.length===1&&currentActors[0]===previous) return previous;
     return null;
   }
   function actorHref(actor,lang,intent){
@@ -163,7 +195,7 @@
     if(!intent||hasConcreteNeed(text)) return false;
     const lang=currentLang();
     const copy=FUNDING_COPY[lang];
-    const actor=actorFromUrl()||actorFromText(text);
+    const actor=resolvedFundingActor(text);
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
