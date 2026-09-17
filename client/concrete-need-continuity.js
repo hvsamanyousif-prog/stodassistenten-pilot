@@ -4,7 +4,7 @@
 const NEED_PARAM='need_context';
 const ALLOWED_NEEDS=new Set(['housing','essential_costs']);
 const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
-const SUPPORTED_ACTORS=new Set(['private_person','student']);
+const SUPPORTED_ACTORS=new Set(['private_person','student','relative']);
 const params=new URLSearchParams(root.location.search);
 const page=(root.location.pathname.split('/').pop()||'').toLowerCase();
 
@@ -28,6 +28,17 @@ function detectNeeds(text){
  return uniqueAllowed(needs);
 }
 
+function detectRelativeNeeds(text){
+ const relativeSubject=/(?:\bbarnet\b|\bmitt barn\b|\bmin mamma\b|\bmin pappa\b|\bmin mor\b|\bmin far\b|\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|personen jag hjälper|طفلي|ابني|ابنتي|أمي|أبي|والدتي|والدي|الشخص الذي أساعده|فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|فردی که کمک)/i;
+ const parts=String(text||'').split(/(?:[.!?;\n]+|\bmen\b|لكن|اما|ولی)/i);
+ const needs=[];
+ for(const part of parts){
+  if(!relativeSubject.test(part))continue;
+  needs.push(...detectNeeds(part));
+ }
+ return uniqueAllowed(needs);
+}
+
 function installSharedShell(){
  if(page!=='index.html'&&page!=='')return false;
  const box=document.getElementById('engineResults');
@@ -39,7 +50,7 @@ function installSharedShell(){
   const actor=url.searchParams.get('actor_type')||'';
   const intent=url.searchParams.get('funding_intent')||'';
   if(!SUPPORTED_ACTORS.has(actor)||!FUNDING_INTENTS.has(intent))return;
-  const needs=detectNeeds(composer.value);
+  const needs=actor==='relative'?detectRelativeNeeds(composer.value):detectNeeds(composer.value);
   if(needs.length)url.searchParams.set(NEED_PARAM,needs.join(','));
   else url.searchParams.delete(NEED_PARAM);
   anchor.href=url.pathname.split('/').pop()+url.search;
@@ -59,9 +70,9 @@ function installSharedShell(){
 }
 
 const NEED_COPY={
- sv:{heading:'Bevarat behov',labels:{housing:'Boende / hyra',essential_costs:'Nödvändiga utgifter'},boundary:'Vi för bara över dessa grova kategorier mellan sidor, inte din fritext.'},
- ar:{heading:'الاحتياج المحفوظ',labels:{housing:'السكن / الإيجار',essential_costs:'مصاريف ضرورية'},boundary:'ننقل فقط هذه الفئات العامة بين الصفحات، وليس النص الذي كتبته.'},
- fa:{heading:'نیاز حفظ‌شده',labels:{housing:'مسکن / اجاره',essential_costs:'هزینه‌های ضروری'},boundary:'فقط این دسته‌های کلی بین صفحه‌ها منتقل می‌شوند، نه متن آزاد تو.'}
+ sv:{heading:'Bevarat behov',relativeHeading:'Personens bevarade behov',labels:{housing:'Boende / hyra',essential_costs:'Nödvändiga utgifter'},boundary:'Vi för bara över dessa grova kategorier mellan sidor, inte din fritext.'},
+ ar:{heading:'الاحتياج المحفوظ',relativeHeading:'احتياج الشخص المحفوظ',labels:{housing:'السكن / الإيجار',essential_costs:'مصاريف ضرورية'},boundary:'ننقل فقط هذه الفئات العامة بين الصفحات، وليس النص الذي كتبته.'},
+ fa:{heading:'نیاز حفظ‌شده',relativeHeading:'نیاز حفظ‌شدهٔ آن شخص',labels:{housing:'مسکن / اجاره',essential_costs:'هزینه‌های ضروری'},boundary:'فقط این دسته‌های کلی بین صفحه‌ها منتقل می‌شوند، نه متن آزاد تو.'}
 };
 
 function installPerson(){
@@ -90,7 +101,8 @@ function installPerson(){
    card.insertBefore(note,action||null);
   }
   const copy=NEED_COPY[locale()]||NEED_COPY.sv;
-  note.textContent=`${copy.heading}: ${needs.map(need=>copy.labels[need]).join(' + ')}. ${copy.boundary}`;
+  const heading=actor==='relative'?copy.relativeHeading:copy.heading;
+  note.textContent=`${heading}: ${needs.map(need=>copy.labels[need]).join(' + ')}. ${copy.boundary}`;
  }
 
  const baseGo=go;
@@ -118,6 +130,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.0.0',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.1.0',page});
 }
 })(window);
