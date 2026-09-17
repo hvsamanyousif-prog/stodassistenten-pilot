@@ -1,4 +1,4 @@
-"""Focused calm-overview source-risk retention browser regression.
+"""Focused calm-overview source-risk and correction-state browser regression.
 
 Exercises the existing procurement pilot offline in Chromium or Playwright WebKit.
 This is UI/source-risk evidence only: no network, storage, legal conclusion, live Pages,
@@ -27,13 +27,46 @@ CASES = [
             "Version 2 ersätter version 1: Timpris ska anges i bilaga 9.",
         ]),
         "evidence_ids": ["1", "2"],
-        "required": ["motstridiga prisversioner", "källa rad 1", "källa rad 2"],
+        "required_before": ["motstridiga prisversioner", "källa rad 1", "källa rad 2"],
+        "required_after": ["motstridiga prisversioner", "källa rad 1", "källa rad 2"],
+        "forbidden_after": ["alla kravrader är genomgångna av dig"],
+        "expect_risk_intro": True,
     },
     {
         "id": "attachment-risk-survives-manual-evidence",
         "text": "Leverantören ska uppfylla samtliga tekniska krav enligt bilaga 7.",
         "evidence_ids": ["1"],
-        "required": ["bilagehänvisning", "källa rad 1"],
+        "required_before": ["bilagehänvisning", "källa rad 1"],
+        "required_after": ["bilagehänvisning", "källa rad 1"],
+        "forbidden_after": ["alla kravrader är genomgångna av dig"],
+        "expect_risk_intro": True,
+    },
+    {
+        "id": "manual-category-correction-recomputes-version-risk",
+        "text": "\n".join([
+            "Version 1: Kostnad SEK 1 000 000 ska redovisas.",
+            "Version 2 ersätter version 1: Kostnad SEK 1 200 000 ska redovisas.",
+        ]),
+        "initial_categories": ["mandatory", "mandatory"],
+        "category_updates": [("1", "commercial"), ("2", "commercial")],
+        "evidence_ids": ["1", "2"],
+        "required_after": ["motstridiga prisversioner", "källa rad 1", "källa rad 2"],
+        "forbidden_after": ["alla kravrader är genomgångna av dig"],
+        "expect_risk_intro": True,
+        "expect_uncertain_count": 2,
+    },
+    {
+        "id": "manual-category-correction-unchanged-value-no-conflict",
+        "text": "\n".join([
+            "Version 1: Kostnad SEK 1 000 000 ska redovisas.",
+            "Version 2 ersätter version 1: Kostnad SEK 1 000 000 ska redovisas.",
+        ]),
+        "initial_categories": ["mandatory", "mandatory"],
+        "category_updates": [("1", "commercial"), ("2", "commercial")],
+        "evidence_ids": ["1", "2"],
+        "forbidden_after": ["motstridiga prisversioner"],
+        "expect_calm_after": True,
+        "expect_uncertain_count": 0,
     },
 ]
 
@@ -76,17 +109,32 @@ def run_case(page, case):
     check(page.locator("#reviewDetails").get_attribute("open") is not None, f'{case["id"]}: full review did not open')
 
     before = page.locator("#priorityOverview").inner_text().lower()
-    for required in case["required"]:
-        check(required in before, f'{case["id"]}: expected source risk missing before evidence marking: {required}')
+    for required in case.get("required_before", []):
+        check(required in before, f'{case["id"]}: expected source risk missing before correction/evidence marking: {required}')
 
-    for evidence_id in case["evidence_ids"]:
+    if case.get("initial_categories"):
+        current = [el.input_value() for el in page.locator("[data-cat]").all()]
+        check(current == case["initial_categories"], f'{case["id"]}: unexpected initial categories {current}')
+
+    for category_id, category in case.get("category_updates", []):
+        page.locator(f'[data-cat="{category_id}"]').select_option(category)
+
+    for evidence_id in case.get("evidence_ids", []):
         page.locator(f'[data-ev="{evidence_id}"]').select_option("yes")
 
     overview = page.locator("#priorityOverview").inner_text().lower()
-    for required in case["required"]:
-        check(required in overview, f'{case["id"]}: unresolved source risk disappeared after manual evidence marking: {required}')
-    check("alla kravrader är genomgångna av dig" not in overview, f'{case["id"]}: calm overview became falsely reassuring while source risk remains')
-    check("börja med de markerade riskerna" in overview, f'{case["id"]}: calm overview no longer directs user to unresolved source risk')
+    summary = page.locator("#summary").inner_text().lower()
+    for required in case.get("required_after", []):
+        check(required in overview, f'{case["id"]}: expected risk missing after correction/evidence marking: {required}')
+    for forbidden in case.get("forbidden_after", []):
+        check(forbidden not in overview, f'{case["id"]}: forbidden calm/risk text present after correction: {forbidden}')
+    if case.get("expect_risk_intro"):
+        check("börja med de markerade riskerna" in overview, f'{case["id"]}: calm overview no longer directs user to unresolved source risk')
+    if case.get("expect_calm_after"):
+        check("alla kravrader är genomgångna av dig" in overview, f'{case["id"]}: unchanged-value control did not reach risk-free reviewed state')
+    if "expect_uncertain_count" in case:
+        expected = case["expect_uncertain_count"]
+        check(f"{expected} osäkra/ej bedömda" in summary, f'{case["id"]}: summary does not reflect {expected} uncertain rows: {summary}')
 
     sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
     check(sizes["content"] <= sizes["viewport"] + 1, f'{case["id"]}: horizontal overflow {sizes}')
@@ -127,7 +175,7 @@ except Exception as exc:
     harness_error = f"{type(exc).__name__}: {exc}"
 
 report = {
-    "scope": "Focused offline calm-overview source-risk retention regression. Network disabled; manual evidence marking is not source verification. No live Pages, storage, legal, physical Safari/iPad/iPhone or assistive-technology claim.",
+    "scope": "Focused offline calm-overview source-risk retention and category-correction derived-state regression. Network disabled; manual evidence marking is not source verification. No live Pages, storage, legal, physical Safari/iPad/iPhone or assistive-technology claim.",
     "engine": ENGINE,
     "browser_version": browser_version,
     "viewports": VIEWPORTS,
