@@ -79,7 +79,7 @@
       }
     },
     ar:{
-      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر؟'},
+      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
       known:'أستخدم الفئة التي ظهرت بالفعل ولا أفترض دعماً محدداً.',
       actors:{
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
@@ -116,6 +116,7 @@
   };
   const URL_ACTORS={private_person:'private',student:'study',employee:'employee',company:'company',association:'association',relative:'relative',property_actor:'property_actor'};
   const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
+  const FUNDING_DESTINATION_ACTORS=new Set(['private_person','student','employee','company','association','relative','property_actor']);
 
   function currentLang(){
     const value=new URLSearchParams(location.search).get('lang');
@@ -257,15 +258,28 @@
     const actor=safeToken(url.searchParams.get('actor_type'));
     return {employee:'work',student:'study',association:'association',property_actor:'property',private_person:'economy',relative:'general',other:'general'}[actor]||'general';
   }
+  function preserveConcreteFundingIntent(url){
+    const text=composer?composer.value.trim():'';
+    const intent=fundingIntent(text);
+    if(!intent||!hasConcreteNeed(text)) return false;
+    const actor=safeToken(url.searchParams.get('actor_type'));
+    const supportedPath=url.pathname.endsWith('person-pilot.html')||url.pathname.endsWith('company-pilot.html');
+    if(!supportedPath||!FUNDING_DESTINATION_ACTORS.has(actor)) return false;
+    url.searchParams.set('funding_intent',intent);
+    return true;
+  }
   function sanitizeAnchor(anchor){
     const url=new URL(anchor.href,location.href);
     const mode=safeToken(url.searchParams.get('mode'));
     const raw=url.searchParams.get('q');
+    let changed=false;
     if((mode==='dental'||mode==='vision')&&raw){
       url.searchParams.set('need',coarseNeed(mode,raw));
       url.searchParams.delete('q');
-      anchor.href=url.pathname.split('/').pop()+url.search;
+      changed=true;
     }
+    if(preserveConcreteFundingIntent(url)) changed=true;
+    if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
     return routeKey(url);
   }
   function sanitize(){
