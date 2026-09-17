@@ -2,10 +2,14 @@
 """Focused browser regression for helped-person pronoun need continuity.
 
 This reuses the existing combined need + funding browser harness. It covers the
-same helper semantic family with natural Swedish pronoun continuation and an
-explicit subject-switch contrast. Raw situation text must not be persisted or
-copied into the destination URL; only the existing bounded need_context tokens
-may cross the page boundary.
+same helper semantic family with natural pronoun continuation and explicit
+subject-switch contrasts. Raw situation text must not be persisted or copied
+into the destination URL; only the existing bounded need_context tokens may
+cross the page boundary.
+
+The same beneficiary facts must survive in Swedish, Arabic and Persian when the
+runtime explicitly supports those languages. Translations are language-parity
+variants of one semantic family, not independent holdout cases.
 
 When the helped person's preserved need includes essential costs, the shared
 journey contract also requires that the destination consume that token in the
@@ -28,10 +32,19 @@ import json
 import os
 import tempfile
 from pathlib import Path
+from urllib.parse import urlencode
 
 import build_public_pilot as builder
 from playwright.sync_api import sync_playwright
-from test_combined_need_funding_browser import WIDTHS, require, run_case, serve_site
+from test_combined_need_funding_browser import (
+    WIDTHS,
+    choose_first,
+    need_context_from_url,
+    no_horizontal_overflow,
+    require,
+    run_case,
+    serve_site,
+)
 
 
 SCENARIOS = [
@@ -110,11 +123,177 @@ SCENARIOS = [
         "expect_essential_confirmation": False,
         "expect_housing_skip": False,
     },
+    {
+        "id": "ar-helper-partner-inline-rent",
+        "lang": "ar",
+        "text": "أنا أساعد زوجتي التي لديها إيجار مرتفع في البحث عن دعم مالي.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تمويل",
+        "need_context": {"housing"},
+        "need_copy": ("احتياج الشخص المحفوظ", "السكن / الإيجار"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": True,
+        "housing_question": "هل تكلفة السكن جزء كبير من ميزانيتك؟",
+        "result_title": "هذه أهم الأمور التي تستحق التحقق",
+    },
+    {
+        "id": "ar-helper-partner-pronoun-rent",
+        "lang": "ar",
+        "text": "أنا أساعد زوجتي في البحث عن دعم مالي. هي لديها إيجار مرتفع.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تمويل",
+        "need_context": {"housing"},
+        "need_copy": ("احتياج الشخص المحفوظ", "السكن / الإيجار"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": True,
+        "housing_question": "هل تكلفة السكن جزء كبير من ميزانيتك؟",
+        "result_title": "هذه أهم الأمور التي تستحق التحقق",
+    },
+    {
+        "id": "ar-helper-partner-to-mother-switch-not-reassigned",
+        "lang": "ar",
+        "text": "أنا أساعد زوجتي في البحث عن دعم مالي. أمي لديها إيجار مرتفع.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تمويل",
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": False,
+        "housing_question": "هل تكلفة السكن جزء كبير من ميزانيتك؟",
+        "result_title": "هذه أهم الأمور التي تستحق التحقق",
+    },
+    {
+        "id": "fa-helper-partner-inline-rent",
+        "lang": "fa",
+        "text": "من به همسرم که اجاره بالایی دارد برای پیدا کردن کمک مالی کمک می‌کنم.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تأمین مالی",
+        "need_context": {"housing"},
+        "need_copy": ("نیاز حفظ‌شدهٔ آن شخص", "مسکن / اجاره"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": True,
+        "housing_question": "آیا هزینه مسکن بخش بزرگی از بودجه است؟",
+        "result_title": "این موارد ارزش بررسی دارند",
+    },
+    {
+        "id": "fa-helper-partner-pronoun-rent",
+        "lang": "fa",
+        "text": "من به همسرم برای پیدا کردن کمک مالی کمک می‌کنم. او اجاره بالایی دارد.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تأمین مالی",
+        "need_context": {"housing"},
+        "need_copy": ("نیاز حفظ‌شدهٔ آن شخص", "مسکن / اجاره"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": True,
+        "housing_question": "آیا هزینه مسکن بخش بزرگی از بودجه است؟",
+        "result_title": "این موارد ارزش بررسی دارند",
+    },
+    {
+        "id": "fa-helper-partner-to-mother-switch-not-reassigned",
+        "lang": "fa",
+        "text": "من به همسرم برای پیدا کردن کمک مالی کمک می‌کنم. مادرم اجاره بالایی دارد.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "تأمین مالی",
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": False,
+        "housing_question": "آیا هزینه مسکن بخش بزرگی از بودجه است؟",
+        "result_title": "این موارد ارزش بررسی دارند",
+    },
 ]
 
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def run_localized_case(browser, base_url: str, scenario: dict, width: int) -> dict:
+    case_id = f"{scenario['id']}-{width}"
+    page = browser.new_page(viewport={"width": width, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        lang = scenario["lang"]
+        page.goto(f"{base_url}/index.html?{urlencode({'lang': lang})}", wait_until="load")
+        page.locator("#situation").fill(scenario["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        require(results.is_visible(), f"{case_id}: results did not become visible")
+        require(
+            results.locator('[data-funding-question="true"]').count() == 0,
+            f"{case_id}: explicit helper actor triggered an unnecessary actor question",
+        )
+
+        target = results.locator(
+            f'a[href*="actor_type={scenario["actor_type"]}"][href*="funding_intent={scenario["intent"]}"]'
+        ).first
+        require(target.count() == 1, f"{case_id}: route lost helper/funding context")
+        href = target.get_attribute("href") or ""
+        require("q=" not in href and "situation=" not in href, f"{case_id}: raw situation parameter leaked into route: {href}")
+        require(scenario["text"] not in href, f"{case_id}: raw situation text leaked into route")
+        require(need_context_from_url(href) == scenario["need_context"], f"{case_id}: route need context mismatch: {href}")
+        no_horizontal_overflow(page, case_id, "shared results")
+        require(not page_errors, f"{case_id}: JavaScript error(s) on shared page: {page_errors}")
+
+        target.click()
+        page.wait_for_load_state("load")
+        require(f"actor_type={scenario['actor_type']}" in page.url, f"{case_id}: destination lost actor context")
+        require(f"funding_intent={scenario['intent']}" in page.url, f"{case_id}: destination lost funding intent")
+        require(f"lang={lang}" in page.url, f"{case_id}: destination lost language context")
+        require("q=" not in page.url and "situation=" not in page.url, f"{case_id}: destination URL leaked raw situation parameter")
+        require(need_context_from_url(page.url) == scenario["need_context"], f"{case_id}: destination URL need context mismatch")
+
+        context = page.locator(f'#fundingIntentContext[data-funding-intent="{scenario["intent"]}"]')
+        require(context.is_visible(), f"{case_id}: destination did not consume preserved funding intent")
+        require(scenario["context_token"] in context.inner_text(), f"{case_id}: destination lost localized funding context")
+        actual_needs = set(filter(None, (context.get_attribute("data-need-context") or "").split(",")))
+        require(actual_needs == scenario["need_context"], f"{case_id}: destination need context mismatch: {actual_needs}")
+        for token in scenario["need_copy"]:
+            require(token in context.inner_text(), f"{case_id}: localized preserved-need explanation missing: {token}")
+
+        action = context.locator(f'[data-funding-continuity-action="{scenario["continue_action"]}"]')
+        require(action.count() == 1, f"{case_id}: destination continuation action missing")
+        action.click()
+        for index in range(scenario["steps_before_result"]):
+            choose_first(page, case_id, f"step {index + 1}")
+
+        housing_question = page.get_by_text(scenario["housing_question"], exact=True)
+        result_title = page.get_by_text(scenario["result_title"], exact=True)
+        if scenario["expect_housing_skip"]:
+            require(housing_question.count() == 0 or not housing_question.is_visible(), f"{case_id}: already-known housing need was asked again")
+            require(result_title.count() == 1 and result_title.is_visible(), f"{case_id}: known housing context did not carry through to result")
+        else:
+            require(housing_question.count() == 1 and housing_question.is_visible(), f"{case_id}: housing was silently assumed after beneficiary switch")
+            require(result_title.count() == 0 or not result_title.is_visible(), f"{case_id}: subject-switch control skipped a required question")
+
+        no_horizontal_overflow(page, case_id, "destination journey")
+        require(not page_errors, f"{case_id}: JavaScript error(s) after destination handoff: {page_errors}")
+        return {
+            "id": case_id,
+            "semantic_case": scenario["id"],
+            "lang": lang,
+            "width": width,
+            "status": "passed",
+            "actor_type": scenario["actor_type"],
+            "funding_intent": scenario["intent"],
+            "need_context": sorted(scenario["need_context"]),
+            "route": href,
+        }
+    finally:
+        page.close()
 
 
 def main() -> int:
@@ -138,7 +317,8 @@ def main() -> int:
             "built_index_sha256": sha256(index_path),
             "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
             "concrete_need_continuity_sha256": sha256(site / builder.CONCRETE_NEED_CONTINUITY_PATH),
-            "independent_semantic_cases": len(SCENARIOS),
+            "independent_semantic_cases": 5,
+            "language_parity_variants": len(SCENARIOS) - 5,
             "widths": list(WIDTHS),
             "checks": len(SCENARIOS) * len(WIDTHS),
             "passed": 0,
@@ -151,13 +331,18 @@ def main() -> int:
                 for scenario in SCENARIOS:
                     for width in WIDTHS:
                         try:
-                            evidence["results"].append(run_case(browser, base_url, scenario, width))
+                            if scenario.get("lang", "sv") == "sv":
+                                result = run_case(browser, base_url, scenario, width)
+                            else:
+                                result = run_localized_case(browser, base_url, scenario, width)
+                            evidence["results"].append(result)
                             evidence["passed"] += 1
                         except Exception as exc:
                             evidence["failed"] += 1
                             evidence["results"].append({
                                 "id": f"{scenario['id']}-{width}",
                                 "semantic_case": scenario["id"],
+                                "lang": scenario.get("lang", "sv"),
                                 "width": width,
                                 "status": "failed",
                                 "error": str(exc),
