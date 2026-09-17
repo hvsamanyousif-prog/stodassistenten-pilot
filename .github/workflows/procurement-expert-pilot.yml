@@ -94,6 +94,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_procurement_expert_deadline_browser.py . procurement-deadline-webkit.json
+      - name: Priority source-risk retention — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_priority_browser.py . procurement-priority-chromium.json
+      - name: Priority source-risk retention — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_priority_browser.py . procurement-priority-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -120,6 +128,8 @@ jobs:
             funding-continuity-webkit.json
             procurement-deadline-chromium.json
             procurement-deadline-webkit.json
+            procurement-priority-chromium.json
+            procurement-priority-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
