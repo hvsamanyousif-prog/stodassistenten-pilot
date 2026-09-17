@@ -114,6 +114,54 @@ CASES = [
         "expect_question_conflict": False,
         "expect_answer_publication_check": False,
     },
+    {
+        "id": "participation-application-vs-final-bid",
+        "text": "\n".join([
+            "Anbudsansökan ska lämnas senast den 1 oktober 2026 kl 23:59.",
+            "Anbud ska lämnas senast den 15 oktober 2026 kl 23:59.",
+        ]),
+        "expected_categories": ["deadline", "deadline"],
+        "expected_subtypes": ["participation_application", "bid"],
+        "expected_rows": 2,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
+        "expect_participation_check": True,
+        "mark_first_evidence_yes": True,
+    },
+    {
+        "id": "participation-application-alternate-wording",
+        "text": "Ansökan om att få delta ska ha kommit in senast den 1 oktober 2026 kl 23:59.",
+        "expected_categories": ["deadline"],
+        "expected_subtypes": ["participation_application"],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
+        "expect_participation_check": True,
+    },
+    {
+        "id": "participation-application-version-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Anbudsansökan ska lämnas senast den 1 oktober 2026 kl 12:00.",
+            "Rättelse 2: Anbudsansökan ska lämnas senast den 2 oktober 2026 kl 12:00.",
+        ]),
+        "expected_categories": ["deadline", "deadline"],
+        "expected_subtypes": ["participation_application", "participation_application"],
+        "expected_rows": 2,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
+        "expect_participation_check": True,
+        "expect_participation_conflict": True,
+    },
+    {
+        "id": "ordinary-application-near-miss",
+        "text": "Ansökan om kvalitetsbonus ska lämnas senast den 1 oktober 2026.",
+        "expected_categories": ["mandatory"],
+        "expected_subtypes": [None],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
+        "expect_participation_check": False,
+    },
 ]
 
 
@@ -192,6 +240,29 @@ def run_case(page, case):
               f'{case["id"]}: answer publication still relabeled as supplier question deadline')
     else:
         check(publication_marker not in review, f'{case["id"]}: false answer-publication source check in full review')
+
+    participation_marker = "tidsfrist för anbudsansökan"
+    expect_participation = case.get("expect_participation_check", False)
+    check((participation_marker in review) == expect_participation,
+          f'{case["id"]}: wrong participation-application source-check state in full review')
+    check((participation_marker in overview) == expect_participation,
+          f'{case["id"]}: wrong participation-application source-check state in calm overview')
+
+    participation_conflict_phrase = "motstridiga datum eller klockslag för anbudsansökan"
+    expect_participation_conflict = case.get("expect_participation_conflict", False)
+    check((participation_conflict_phrase in review) == expect_participation_conflict,
+          f'{case["id"]}: wrong participation-application conflict state in full review')
+    check((participation_conflict_phrase in overview) == expect_participation_conflict,
+          f'{case["id"]}: wrong participation-application conflict state in calm overview')
+
+    if case.get("mark_first_evidence_yes"):
+        page.locator('[data-ev="1"]').select_option("yes")
+        review_after = page.locator("#requirements").inner_text().lower()
+        overview_after = page.locator("#priorityOverview").inner_text().lower()
+        check(participation_marker in review_after,
+              f'{case["id"]}: manual evidence hid participation source risk from full review')
+        check(participation_marker in overview_after,
+              f'{case["id"]}: manual evidence hid participation source risk from calm overview')
 
     sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
     check(sizes["content"] <= sizes["viewport"] + 1, f'{case["id"]}: horizontal overflow {sizes}')
