@@ -52,6 +52,8 @@ jobs:
           node-version: '22'
       - name: Run expert-pilot behavior and privacy contracts
         run: python scripts/test_procurement_expert_pilot.py
+      - name: Commercial currency version contracts
+        run: python scripts/test_procurement_expert_currency_versions.py
       - name: Source/link ingress boundary
         run: python scripts/test_procurement_expert_source_ingress.py
       - name: Priority overview regression
@@ -102,6 +104,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_procurement_expert_priority_browser.py . procurement-priority-webkit.json
+      - name: Explicit-currency source-risk retention — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_currency_browser.py . procurement-currency-chromium.json
+      - name: Explicit-currency source-risk retention — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_currency_browser.py . procurement-currency-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -130,6 +140,8 @@ jobs:
             procurement-deadline-webkit.json
             procurement-priority-chromium.json
             procurement-priority-webkit.json
+            procurement-currency-chromium.json
+            procurement-currency-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
