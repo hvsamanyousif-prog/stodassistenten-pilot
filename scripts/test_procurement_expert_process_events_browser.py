@@ -25,6 +25,7 @@ CASES = [
             "Frågor ska lämnas senast den 15 oktober 2026 kl 12:00.",
             "Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.",
         ]),
+        "expected_categories": ["deadline", "deadline"],
         "expected_subtypes": ["clarification", "answer_publication"],
         "expected_rows": 2,
         "expect_question_conflict": False,
@@ -36,6 +37,7 @@ CASES = [
             "Rättelse 1: Frågor ska lämnas senast den 15 oktober 2026 kl 12:00.",
             "Rättelse 2: Frågor ska lämnas senast den 16 oktober 2026 kl 12:00.",
         ]),
+        "expected_categories": ["deadline", "deadline"],
         "expected_subtypes": ["clarification", "clarification"],
         "expected_rows": 2,
         "expect_question_conflict": True,
@@ -44,10 +46,47 @@ CASES = [
     {
         "id": "answer-publication-lexical-near-miss",
         "text": "Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026.",
+        "expected_categories": ["deadline"],
         "expected_subtypes": ["answer_publication"],
         "expected_rows": 1,
         "expect_question_conflict": False,
         "expect_answer_publication_check": True,
+    },
+    {
+        "id": "formal-clarification-request",
+        "text": "Begäran om kompletterande upplysningar ska lämnas senast den 18 oktober 2026 kl 12:00.",
+        "expected_categories": ["deadline"],
+        "expected_subtypes": ["clarification"],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
+    },
+    {
+        "id": "formal-answer-publication-passive",
+        "text": "Kompletterande upplysningar ska lämnas senast den 24 oktober 2026 kl 23:59.",
+        "expected_categories": ["deadline"],
+        "expected_subtypes": ["answer_publication"],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": True,
+    },
+    {
+        "id": "formal-answer-publication-existing-positive",
+        "text": "Kompletterande upplysningar tillhandahålls senast den 24 oktober 2026 kl 23:59.",
+        "expected_categories": ["deadline"],
+        "expected_subtypes": ["answer_publication"],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": True,
+    },
+    {
+        "id": "supplier-clarification-near-miss",
+        "text": "Leverantören ska lämna kompletterande upplysningar i bilaga 4 senast den 18 oktober 2026.",
+        "expected_categories": ["mandatory"],
+        "expected_subtypes": [None],
+        "expected_rows": 1,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": False,
     },
 ]
 
@@ -93,8 +132,8 @@ def run_case(page, case):
     check(sources == [f"Källa rad {i}" for i in range(1, case["expected_rows"] + 1)],
           f'{case["id"]}: source trace changed: {sources}')
     categories = [el.input_value() for el in page.locator("[data-cat]").all()]
-    check(categories == ["deadline"] * case["expected_rows"],
-          f'{case["id"]}: expected deadline/process rows, got {categories}')
+    check(categories == case["expected_categories"],
+          f'{case["id"]}: category changed: {categories}')
 
     actual_subtypes = page.evaluate("() => window.ProcurementExpert.splitRequirements(document.querySelector('#sourceText').value).map(r => r.processSubtype)")
     check(actual_subtypes == case["expected_subtypes"],
@@ -116,6 +155,8 @@ def run_case(page, case):
         check(publication_marker in overview, f'{case["id"]}: answer-publication source check hidden from calm overview')
         check("sista dag för frågor/förtydliganden kontrollerad" not in review.split("publicering av svar")[-1],
               f'{case["id"]}: answer publication still relabeled as supplier question deadline')
+    else:
+        check(publication_marker not in review, f'{case["id"]}: false answer-publication source check in full review')
 
     sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
     check(sizes["content"] <= sizes["viewport"] + 1, f'{case["id"]}: horizontal overflow {sizes}')
