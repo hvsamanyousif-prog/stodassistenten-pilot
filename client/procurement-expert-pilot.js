@@ -19,9 +19,21 @@ const SCORE_DIMS=[
 const state={sector:null,requirements:[],scores:{},sending:false,feedbackSubmitted:false,feedbackEpoch:0,controller:null};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
+function answerPublicationTiming(line){
+ const t=normalized(line);
+ return /\b(?:svar(?:en)?\s+p[åa]\s+frågor|svar\s+p[åa]\s+inkomna\s+frågor)\b.*\b(?:publiceras?|publicering|tillhandahålls?)\b/.test(t)
+   || /\b(?:kompletterande information|kompletterande upplysningar)\b.*\b(?:publiceras?|tillhandahålls?)\b/.test(t);
+}
+function clarificationSubmissionTiming(line){
+ const t=normalized(line);
+ return /^(?:frågor?|förtydliganden?)\b.*\b(?:senast|sista dag)\b/.test(t)
+   || /\b(?:frågor?|förtydliganden?)\b.*\b(?:ska\s+)?(?:lämnas|ställas|inkomma|begäras)\b.*\b(?:senast|sista dag)\b/.test(t)
+   || /\b(?:sista dag|senast)\b.*\b(?:frågor?|förtydliganden?)\b/.test(t);
+}
 function deadlinePurpose(line){
  const t=normalized(line);
- if(/frågor?.*(senast|sista dag)|sista dag.*frågor?|förtydliganden?.*(senast|sista dag)/.test(t))return 'clarification';
+ if(answerPublicationTiming(t))return 'answer_publication';
+ if(clarificationSubmissionTiming(t))return 'clarification';
  if(/sista anbudsdag|anbud.*tillhanda|lämna.*anbud.*senast|anbud.*senast/.test(t))return 'bid';
  if(/giltighetstid för anbud|anbud.*giltig/.test(t))return 'validity';
  return 'other';
@@ -29,11 +41,13 @@ function deadlinePurpose(line){
 function semanticDeadlineSlice(line,purpose){
  const value=String(line||'');
  const lower=value.toLowerCase();
- const triggers=purpose==='clarification'
-   ?['sista dag för frågor','frågor om','förtydliganden','frågor']
-   :purpose==='validity'
-     ?['giltighetstid för anbud','anbudets giltighetstid','giltighetstid']
-     :['sista anbudsdag','anbud ska vara','anbud ska','anbudet ska','lämna anbud','anbud'];
+ const triggers=purpose==='answer_publication'
+   ?['svar på frågor','svaren på frågor','svar på inkomna frågor','kompletterande information','kompletterande upplysningar']
+   :purpose==='clarification'
+     ?['sista dag för frågor','frågor om','förtydliganden','frågor']
+     :purpose==='validity'
+       ?['giltighetstid för anbud','anbudets giltighetstid','giltighetstid']
+       :['sista anbudsdag','anbud ska vara','anbud ska','anbudet ska','lämna anbud','anbud'];
  for(const trigger of triggers){
    const index=lower.indexOf(trigger);
    if(index>=0)return value.slice(index);
@@ -96,7 +110,7 @@ function timeTokens(line){
 function classifyRequirement(line){
  const t=normalized(line);
  if(!t)return 'uncertain';
- if(/sista anbudsdag|deadline|anbud ska vara.*tillhanda|\banbud(?:et)?\b\s+ska\s+lämnas\s+senast|frågor.*senast|giltighetstid för anbud/.test(t))return 'deadline';
+ if(answerPublicationTiming(t)||clarificationSubmissionTiming(t)||/sista anbudsdag|deadline|anbud ska vara.*tillhanda|\banbud(?:et)?\b\s+ska\s+lämnas\s+senast|giltighetstid för anbud/.test(t))return 'deadline';
  if(/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t))return 'award';
  if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexreglering(?:sprincip)?|prisjustering(?:sprincip)?/.test(t))return 'commercial';
  if(/avtalstid|kontraktsvillkor|särskilda kontraktsvillkor|under avtalstiden|vite|utförandevillkor|leveransvillkor/.test(t))return 'contract';
@@ -115,6 +129,7 @@ function evidenceQuestion(line,category){
  if(category==='deadline'){
    const purpose=deadlinePurpose(line);
    if(purpose==='clarification')return 'Är sista dag för frågor/förtydliganden kontrollerad mot senaste publicerade underlag och rättelser?';
+   if(purpose==='answer_publication')return 'Är tidpunkten för publicering av svar kontrollerad mot originalkällan? Detta är inte samma sak som sista dag för frågor.';
    if(purpose==='bid')return 'Är sista anbudsdag och exakt klockslag kontrollerade mot senaste publicerade underlag och rättelser?';
    if(purpose==='validity')return 'Är anbudets giltighetstid kontrollerad mot senaste publicerade underlag och rättelser?';
    return 'Är datum/tid/version kontrollerad mot senaste publicerade underlag och eventuella rättelser?';
@@ -154,6 +169,7 @@ function structureFlags(line){
  if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
+ if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan; piloten jämför inte versioner av denna händelse automatiskt.'});
  if(purpose!=='other'){
    const deadlineSlice=semanticDeadlineSlice(raw,purpose);
    const changeText=normalized(deadlineSlice);
@@ -212,7 +228,9 @@ function applyCrossRowFlags(rows){
    deadlineGroups[purpose].push(r);
  });
  for(const [purpose,group] of Object.entries(deadlineGroups)){
-   if(purpose==='other'||group.length<2)continue;
+   // Answer-publication timing is deliberately distinguished but not version-
+   // compared yet; each such row stays visible through answer_publication_timing.
+   if(purpose==='other'||purpose==='answer_publication'||group.length<2)continue;
    const withScope=group.map(row=>({row,scope:lotScope(row.text)}));
    const namedScopes=new Set(withScope.filter(item=>item.scope!=='unscoped').map(item=>item.scope));
    const hasUnscoped=withScope.some(item=>item.scope==='unscoped');
