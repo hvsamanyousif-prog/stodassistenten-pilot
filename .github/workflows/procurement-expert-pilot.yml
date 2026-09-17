@@ -14,6 +14,7 @@ on:
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_funding_continuity_browser.py'
+      - 'scripts/test_relative_funding_continuity.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
   push:
@@ -30,6 +31,7 @@ on:
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_funding_continuity_browser.py'
+      - 'scripts/test_relative_funding_continuity.py'
       - '.github/workflows/procurement-expert-pilot.yml'
       - '.github/workflows/pages.yml'
 
@@ -68,6 +70,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_shared_search_browser.py . shared-search-webkit.json
+      - name: Relative/helper funding continuity — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_relative_funding_continuity.py . relative-funding-chromium.json
+      - name: Relative/helper funding continuity — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_relative_funding_continuity.py . relative-funding-webkit.json
       - name: Funding handoff destinations — Chromium
         env:
           BROWSER_ENGINE: chromium
@@ -104,6 +114,8 @@ jobs:
           path: |
             shared-search-chromium.json
             shared-search-webkit.json
+            relative-funding-chromium.json
+            relative-funding-webkit.json
             funding-continuity-chromium.json
             funding-continuity-webkit.json
             procurement-deadline-chromium.json
