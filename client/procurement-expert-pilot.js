@@ -237,6 +237,18 @@ function applyCrossRowFlags(rows){
  }
  return rows;
 }
+function recomputeDerivedFlags(rows){
+ rows.forEach(r=>{
+   if(r.kind==='structural'){
+     r.flags=[];
+     r.processSubtype=null;
+     return;
+   }
+   r.flags=structureFlags(r.text);
+   r.processSubtype=r.category==='deadline'?deadlinePurpose(r.text):null;
+ });
+ return applyCrossRowFlags(rows);
+}
 // This is a bounded, local first-pass sorter, not complete document analysis.
 function splitRequirements(text){
  const source=String(text||'');
@@ -358,7 +370,7 @@ function browserInit(){
      if(r.kind==='structural')return `<article class="req structural-context"><div class="reqhead"><span class="tag">Källrubrik / struktur</span><span class="source">Källa rad ${r.sourceLine??r.id}</span></div><p>${esc(r.text)}</p><p class="muted">Bevarad för källposition. Ingen krav- eller evidensbedömning görs på rubriken.</p></article>`;
      return `<article class="req"><div class="reqhead"><span class="tag">${esc(LABELS[r.category])}</span><span class="source">Källa rad ${r.sourceLine??r.id}</span></div><p>${esc(r.text)}</p>${(r.flags||[]).map(f=>`<p class="micro row-alert"><strong>Kontroll:</strong> ${esc(f.label)}</p>`).join('')}<p class="muted"><b>Kontrollfråga:</b> ${esc(r.question)}</p><div class="grid"><label>Kravtyp<select data-cat="${r.id}">${CATEGORIES.map(c=>`<option value="${c}" ${c===r.category?'selected':''}>${esc(LABELS[c])}</option>`).join('')}</select></label><label>Leverantörens evidens<select data-ev="${r.id}"><option value="unknown" ${r.evidence==='unknown'?'selected':''}>Ej bedömd</option><option value="yes" ${r.evidence==='yes'?'selected':''}>Markerad som styrkt – ej verifierad</option><option value="missing" ${r.evidence==='missing'?'selected':''}>Saknas</option><option value="na" ${r.evidence==='na'?'selected':''}>Ej tillämpligt</option></select></label></div></article>`;
    }).join('');
-   $('requirements').querySelectorAll('[data-cat]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.cat));r.category=el.value;r.question=evidenceQuestion(r.text,r.category);renderRequirements();});
+   $('requirements').querySelectorAll('[data-cat]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.cat));r.category=el.value;r.question=evidenceQuestion(r.text,r.category);recomputeDerivedFlags(state.requirements);renderRequirements();});
    $('requirements').querySelectorAll('[data-ev]').forEach(el=>el.onchange=()=>{const r=state.requirements.find(x=>x.id===Number(el.dataset.ev));r.evidence=el.value;renderRequirements();});
    $('draft').textContent=draftSkeleton(state.requirements);
    if(focusAttr&&focusId){const target=$('requirements').querySelector('['+focusAttr+'="'+focusId+'"]');if(target)target.focus({preventScroll:true});}
