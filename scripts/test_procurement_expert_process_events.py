@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+"""Focused process-event source-truth contracts for the procurement pilot."""
+from __future__ import annotations
+
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+NODE_TEST = r'''
+const assert=require('node:assert/strict');
+const p=require('./client/procurement-expert-pilot.js');
+
+function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
+
+{
+  const rows=p.splitRequirements([
+    'Frågor ska lämnas senast den 15 oktober 2026 kl 12:00.',
+    'Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.category),['deadline','deadline']);
+  assert.deepEqual(rows.map(r=>r.processSubtype),['clarification','answer_publication']);
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'different process events must not become one clarification version conflict');
+  assert.match(rows[0].question,/frågor|förtydliganden/);
+  assert.match(rows[1].question,/publicering av svar|svar.*publicer/i);
+  assert.ok(hasFlag(rows[1],'answer_publication_timing'),
+    'answer publication timing must stay visible as a fail-closed source check');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Frågor ska lämnas senast den 15 oktober 2026 kl 12:00.',
+    'Rättelse 2: Frågor ska lämnas senast den 16 oktober 2026 kl 12:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['clarification','clarification']);
+  assert.ok(rows.every(r=>hasFlag(r,'deadline_version_conflict')),
+    'genuine versions of the same supplier question deadline must still fail closed');
+}
+
+{
+  const row=p.splitRequirements(
+    'Svar på frågor som inkommit senast den 15 oktober 2026 publiceras den 20 oktober 2026.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'answer_publication');
+  assert.ok(!hasFlag(row,'deadline_version_conflict'));
+  assert.match(row.question,/publicering av svar|svar.*publicer/i);
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:3,failed:0}));
+'''
+
+
+def main() -> int:
+    subprocess.run(['node', '-e', NODE_TEST], cwd=ROOT, check=True)
+    print('procurement process-event contracts: OK')
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
