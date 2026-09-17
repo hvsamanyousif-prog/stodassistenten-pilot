@@ -9,14 +9,21 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 html = (ROOT / 'procurement-expert-pilot.html').read_text(encoding='utf-8')
+js = (ROOT / 'client/procurement-expert-pilot.js').read_text(encoding='utf-8')
 
 expected_question = 'Lärde du dig något nytt?'
 legacy_question = 'Hittade du ett verkligt produktfel?'
+expected_report_label = 'Lärde dig något nytt:'
+legacy_report_label = 'Produktfel hittat:'
 
 if expected_question not in html:
     raise AssertionError('Short feedback UI does not express learned_new semantics')
 if legacy_question in html:
     raise AssertionError('Legacy product-error wording still overloads learned_new')
+if expected_report_label not in js:
+    raise AssertionError('Copied local protocol does not express learned_new semantics')
+if legacy_report_label in js:
+    raise AssertionError('Copied local protocol still labels learned_new as a product error')
 
 node = subprocess.run(
     [
