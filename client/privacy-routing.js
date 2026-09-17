@@ -71,9 +71,11 @@
       actors:{
         private:['Privat behov','Bidrag, ersättningar och andra vägar för privatperson'],
         study:['Studier','Stipendier, studiestöd och ekonomi kring studier'],
+        employee:['Anställd','Behåll anställningsrollen och kontrollera finansieringsvägen utan att anta ett visst stöd'],
         company:['Företag','Finansiering och offentliga affärer för företag'],
         association:['Förening','Projekt-, aktivitets- och föreningsstöd'],
-        relative:['Jag hjälper någon','Behåll hjälparrollen och sök vidare utifrån personens situation']
+        relative:['Jag hjälper någon','Behåll hjälparrollen och sök vidare utifrån personens situation'],
+        property_actor:['BRF / fastighetsaktör','Behåll fastighetsrollen och kontrollera finansieringsvägen utan att anta ett visst stöd']
       }
     },
     ar:{
@@ -82,9 +84,11 @@
       actors:{
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
         study:['الدراسة','منح ودعم دراسي واقتصاد مرتبط بالدراسة'],
+        employee:['موظف','نحتفظ بدور الموظف ونتحقق من مسار التمويل من دون افتراض دعم محدد'],
         company:['شركة','تمويل وفرص أعمال عامة للشركات'],
         association:['جمعية','دعم المشاريع والأنشطة والجمعيات'],
-        relative:['أنا أساعد شخصًا','نحتفظ بدور المساعدة ونواصل وفق وضع الشخص الذي تساعده']
+        relative:['أنا أساعد شخصًا','نحتفظ بدور المساعدة ونواصل وفق وضع الشخص الذي تساعده'],
+        property_actor:['جمعية سكنية / مالك عقار','نحتفظ بدور الجهة العقارية ونتحقق من مسار التمويل من دون افتراض دعم محدد']
       }
     },
     fa:{
@@ -93,20 +97,24 @@
       actors:{
         private:['نیاز شخصی','حمایت، جبران هزینه و مسیرهای دیگر برای افراد'],
         study:['تحصیل','بورسیه، حمایت تحصیلی و اقتصاد مرتبط با تحصیل'],
+        employee:['کارمند','نقش کارمند را حفظ می‌کنیم و مسیر تأمین مالی را بدون فرض یک حمایت مشخص بررسی می‌کنیم'],
         company:['کسب‌وکار','تأمین مالی و فرصت‌های عمومی برای کسب‌وکار'],
         association:['انجمن','حمایت پروژه، فعالیت و انجمن'],
-        relative:['به کسی کمک می‌کنم','نقش کمک‌کننده را حفظ می‌کنیم و بر اساس وضعیت آن شخص ادامه می‌دهیم']
+        relative:['به کسی کمک می‌کنم','نقش کمک‌کننده را حفظ می‌کنیم و بر اساس وضعیت آن شخص ادامه می‌دهیم'],
+        property_actor:['انجمن ساختمان / مالک ملک','نقش بخش ملکی را حفظ می‌کنیم و مسیر تأمین مالی را بدون فرض یک حمایت مشخص بررسی می‌کنیم']
       }
     }
   };
   const ACTOR_ROUTES={
     private:'person-pilot.html?actor_type=private_person',
     study:'person-pilot.html?actor_type=student',
+    employee:'person-pilot.html?actor_type=employee',
     company:'company-pilot.html?actor_type=company',
     association:'person-pilot.html?actor_type=association',
-    relative:'person-pilot.html?actor_type=relative'
+    relative:'person-pilot.html?actor_type=relative',
+    property_actor:'person-pilot.html?actor_type=property_actor'
   };
-  const URL_ACTORS={private_person:'private',student:'study',company:'company',association:'association',relative:'relative'};
+  const URL_ACTORS={private_person:'private',student:'study',employee:'employee',company:'company',association:'association',relative:'relative',property_actor:'property_actor'};
   const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
 
   function currentLang(){
@@ -131,9 +139,11 @@
   function actorFromText(text){
     const x=lower(text);
     if(/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/.test(x)) return 'relative';
+    if(/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/.test(x)) return 'property_actor';
     if(/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/.test(x)) return 'company';
     if(/vår förening|föreningen|ideell förening|جمعية|انجمن/.test(x)) return 'association';
     if(/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/.test(x)) return 'study';
+    if(/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/.test(x)) return 'employee';
     if(/jag är privatperson|privatperson|فرد|شخصی/.test(x)) return 'private';
     return null;
   }
@@ -157,7 +167,7 @@
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
-      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association','relative'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
+      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','employee','company','association','relative','property_actor'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
     }
     box.hidden=false;
     box.scrollIntoView({behavior:'smooth',block:'nearest'});
