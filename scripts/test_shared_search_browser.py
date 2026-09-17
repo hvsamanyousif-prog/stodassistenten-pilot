@@ -30,6 +30,7 @@ ACTOR_HREFS = {
     "study": "actor_type=student",
     "company": "actor_type=company",
     "association": "actor_type=association",
+    "relative": "actor_type=relative",
 }
 
 SCENARIOS = [
@@ -69,7 +70,7 @@ def sha256(path: Path) -> str:
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
-    def log_message(self, format: str, *args) -> None:  # noqa: A002 - stdlib signature
+    def log_message(self, format: str, *args) -> None:
         return
 
 
@@ -113,7 +114,7 @@ def run_scenario(browser, base_url: str, scenario: dict) -> dict:
             question_text = results.locator('[data-funding-question="true"]').inner_text().lower()
             require(scenario["question_token"].lower() in question_text, f"{scenario['id']}: question lost funding type/context: {question_text!r}")
             options = results.locator("a[data-funding-actor]")
-            require(options.count() == 4, f"{scenario['id']}: expected four actor entrances, got {options.count()}")
+            require(options.count() == len(ACTOR_HREFS), f"{scenario['id']}: expected {len(ACTOR_HREFS)} actor entrances, got {options.count()}")
             option_actors = sorted(options.evaluate_all("els => els.map(el => el.dataset.fundingActor)"))
             require(option_actors == sorted(ACTOR_HREFS), f"{scenario['id']}: actor choices drifted: {option_actors}")
             result_text = results.inner_text().lower()
