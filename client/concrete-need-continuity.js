@@ -32,7 +32,7 @@ const RELATIVE_SUBJECTS=[
  {key:'child',explicit:/(?:\bbarnet\b|\bmitt barn\b|طفلي|ابني|ابنتي|فرزندم|پسرم|دخترم)/i,pronoun:/\bhen\b/i},
  {key:'mother',explicit:/(?:\bmin mamma\b|\bmin mor\b|أمي|والدتي|مادرم)/i,pronoun:/(?:\bhon\b|(?:^|\s)هي(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
- {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|همسرم)/i,pronoun:null},
+ {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|همسرم)/i,pronoun:/\bhen\b/i},
  {key:'person',explicit:/(?:personen jag hjälper|الشخص الذي أساعده|فردی که کمک)/i,pronoun:/\bhen\b/i}
 ];
 
@@ -187,6 +187,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.0',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.1',page});
 }
 })(window);
