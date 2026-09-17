@@ -46,6 +46,26 @@ ordinaryRows[2].evidence='yes';
 ordinaryPriority=p.prioritizeReviewRows(ordinaryRows);
 assert.equal(ordinaryPriority[0].sourceLine,2);
 console.log('PASS calm overview always exposes the next unresolved row without outranking known missing evidence');
+
+const versionRows=p.splitRequirements([
+  'Version 1: Fast pris ska anges i bilaga 6.',
+  'Version 2 ersätter version 1: Timpris ska anges i bilaga 9.'
+].join('\n'));
+assert.ok(versionRows.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+versionRows.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(versionRows).uncertain.length,2);
+const versionPriority=p.prioritizeReviewRows(versionRows);
+assert.deepEqual(versionPriority.map(r=>r.sourceLine),[1,2]);
+assert.ok(versionPriority.every(r=>r.flags.some(f=>f.code==='commercial_version_conflict')));
+console.log('PASS unresolved version/source risk remains prioritized after manual evidence marking');
+
+const attachmentRows=p.splitRequirements('Leverantören ska uppfylla samtliga tekniska krav enligt bilaga 7.');
+attachmentRows[0].evidence='yes';
+assert.equal(p.summarize(attachmentRows).uncertain.length,1);
+const attachmentPriority=p.prioritizeReviewRows(attachmentRows);
+assert.equal(attachmentPriority.length,1);
+assert.ok(attachmentPriority[0].flags.some(f=>f.code==='attachment_reference'));
+console.log('PASS unresolved attachment risk remains prioritized after manual evidence marking');
 '''
     subprocess.run(['node', '-e', node_test], cwd=ROOT, check=True)
     print('procurement priority regression: OK')
