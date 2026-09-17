@@ -6,6 +6,10 @@ problem and saying that they are looking for funding. When both are explicit,
 the handoff may carry only bounded, non-free-text need context that the existing
 destination can consume. Raw situation text must never be copied into the URL.
 
+Helper journeys additionally protect subject ownership: a need that clearly
+belongs to the person being helped may follow the helper route, while a helper's
+own need must not be silently reassigned to that person.
+
 This is browser/DOM evidence for the public pilot build. It does not prove
 eligibility, a live opportunity, persistence, model quality or human
 comprehension.
@@ -67,6 +71,32 @@ SCENARIOS = [
         "need_copy": (),
         "continue_action": "continue",
         "steps_before_result": 3,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-helper-child-rent-plus-funding",
+        "text": "Mitt barn behöver extra stöd. Barnet har hög hyra och jag söker bidrag åt barnet.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": {"housing"},
+        "need_copy": ("Personens bevarade behov", "Boende / hyra"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "expect_housing_skip": True,
+    },
+    {
+        "id": "sv-helper-own-rent-not-reassigned",
+        "text": "Mitt barn behöver extra stöd. Jag söker bidrag åt barnet men jag har själv hög hyra.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
         "expect_housing_skip": False,
     },
 ]
