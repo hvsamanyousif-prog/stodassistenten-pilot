@@ -154,18 +154,26 @@
     return actors.length===1?actors[0]:null;
   }
   function explicitlyCorrectsActor(text,actor){
-    if(currentLang()!=='sv') return false;
     const x=lower(text);
     const patterns={
-      employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
-      study:/studerar inte längre|inte längre student|inte student längre/,
-      company:/driver inte längre (?:ett |en )?företag|inte längre företagare/,
-      association:/inte längre (?:med i |del av )?(?:en |vår )?förening/,
-      relative:/hjälper inte längre/,
-      property_actor:/inte längre (?:brf|bostadsrättsförening|fastighetsägare|hyresvärd)/,
-      private:/inte längre privatperson/
+      sv:{
+        employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
+        study:/studerar inte längre|inte längre student|inte student längre/,
+        company:/driver inte längre (?:ett |en )?företag|inte längre företagare/,
+        association:/inte längre (?:med i |del av )?(?:en |vår )?förening/,
+        relative:/hjälper inte längre/,
+        property_actor:/inte längre (?:brf|bostadsrättsförening|fastighetsägare|hyresvärd)/,
+        private:/inte längre privatperson/
+      },
+      ar:{
+        employee:/لم أعد موظف|لست موظف/
+      },
+      fa:{
+        employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم/
+      }
     };
-    return Boolean(patterns[actor]&&patterns[actor].test(x));
+    const langPatterns=patterns[currentLang()]||{};
+    return Boolean(langPatterns[actor]&&langPatterns[actor].test(x));
   }
   function resolvedFundingActor(text){
     const previous=actorFromUrl();
