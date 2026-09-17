@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regression for helper/relative continuity in the shared funding journey.
+"""Focused regression for governed actor continuity in the shared funding journey.
 
 This reuses the existing public-build and Playwright harness. It proves only
 bounded navigation/context behavior; it does not prove eligibility, live
@@ -26,11 +26,27 @@ HELPER_CASES = [
     {"id": "fa-explicit-helper-funding", "lang": "fa", "width": 768, "text": "به مادرم کمک می‌کنم برای کمک مالی جست‌وجو کند"},
 ]
 
-DESTINATION_CASES = [
+RELATIVE_DESTINATION_CASES = [
     {"id": "sv-relative-destination", "lang": "sv", "marker": "hjälper"},
     {"id": "ar-relative-destination", "lang": "ar", "marker": "تساعد"},
     {"id": "fa-relative-destination", "lang": "fa", "marker": "کمک"},
 ]
+
+KNOWN_ACTOR_CASES = [
+    {"id": "sv-known-employee-context-reused", "actor_type": "employee", "data_actor": "employee"},
+    {"id": "sv-known-property-context-reused", "actor_type": "property_actor", "data_actor": "property_actor"},
+]
+
+NATURAL_ACTOR_CASES = [
+    {"id": "sv-natural-property-funding", "text": "Vi är en BRF och söker bidrag", "actor_type": "property_actor", "data_actor": "property_actor"},
+]
+
+BOUNDED_DESTINATION_CASES = [
+    {"id": "sv-employee-funding-destination", "actor_type": "employee", "marker": "anställd"},
+    {"id": "sv-property-funding-destination", "actor_type": "property_actor", "marker": "fastighets"},
+]
+
+GOVERNED_ACTORS = ["private", "study", "employee", "company", "association", "relative", "property_actor"]
 
 
 def start_url(base_url: str, lang: str, actor_type: str | None = None) -> str:
@@ -40,14 +56,18 @@ def start_url(base_url: str, lang: str, actor_type: str | None = None) -> str:
     return f"{base_url}/index.html?{urlencode(query)}"
 
 
-def assert_relative_route(results, case_id: str, raw_text: str) -> str:
-    route = results.locator('a[data-funding-actor="relative"]')
-    shared.require(route.count() == 1, f"{case_id}: relative/helper route missing")
+def assert_actor_route(results, case_id: str, raw_text: str, actor_type: str, data_actor: str) -> str:
+    route = results.locator(f'a[data-funding-actor="{data_actor}"]')
+    shared.require(route.count() == 1, f"{case_id}: governed actor route missing ({data_actor})")
     href = route.get_attribute("href") or ""
-    shared.require("actor_type=relative" in href, f"{case_id}: helper role not preserved in href: {href}")
+    shared.require(f"actor_type={actor_type}" in href, f"{case_id}: actor role not preserved in href: {href}")
     shared.require("funding_intent=funding" in href, f"{case_id}: funding intent not preserved: {href}")
-    shared.require(raw_text not in href, f"{case_id}: raw situation leaked into helper route")
+    shared.require(raw_text not in href, f"{case_id}: raw situation leaked into governed actor route")
     return href
+
+
+def assert_relative_route(results, case_id: str, raw_text: str) -> str:
+    return assert_actor_route(results, case_id, raw_text, "relative", "relative")
 
 
 def run_helper_case(browser, base_url: str, case: dict) -> dict:
@@ -88,7 +108,7 @@ def run_known_relative_case(browser, base_url: str) -> dict:
 
 
 def run_vague_choice_case(browser, base_url: str) -> dict:
-    case_id = "sv-vague-funding-offers-helper-route"
+    case_id = "sv-vague-funding-offers-governed-actors"
     page = browser.new_page(viewport={"width": 320, "height": 900})
     try:
         page.goto(start_url(base_url, "sv"), wait_until="load")
@@ -97,14 +117,14 @@ def run_vague_choice_case(browser, base_url: str) -> dict:
         results = page.locator("#engineResults")
         shared.require(results.locator('[data-funding-question="true"]').count() == 1, f"{case_id}: expected exactly one path-changing actor question")
         actors = sorted(results.locator("a[data-funding-actor]").evaluate_all("els => els.map(el => el.dataset.fundingActor)"))
-        shared.require(actors == sorted(["private", "study", "company", "association", "relative"]), f"{case_id}: actor choices lost helper route: {actors}")
+        shared.require(actors == sorted(GOVERNED_ACTORS), f"{case_id}: actor choices narrowed the product actor universe: {actors}")
         assert_relative_route(results, case_id, "pengar att söka")
         return {"id": case_id, "status": "passed", "actors": actors}
     finally:
         page.close()
 
 
-def run_destination_case(browser, base_url: str, case: dict) -> dict:
+def run_relative_destination_case(browser, base_url: str, case: dict) -> dict:
     page = browser.new_page(viewport={"width": 768, "height": 900})
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
@@ -129,6 +149,60 @@ def run_destination_case(browser, base_url: str, case: dict) -> dict:
         page.close()
 
 
+def run_known_actor_case(browser, base_url: str, case: dict) -> dict:
+    raw_text = "pengar att söka"
+    page = browser.new_page(viewport={"width": 1024, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(start_url(base_url, "sv", case["actor_type"]), wait_until="load")
+        page.locator("#situation").fill(raw_text)
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        shared.require(results.locator('[data-funding-question="true"]').count() == 0, f"{case['id']}: known actor context was discarded")
+        href = assert_actor_route(results, case["id"], raw_text, case["actor_type"], case["data_actor"])
+        shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
+        return {"id": case["id"], "status": "passed", "href": href}
+    finally:
+        page.close()
+
+
+def run_natural_actor_case(browser, base_url: str, case: dict) -> dict:
+    page = browser.new_page(viewport={"width": 390, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(start_url(base_url, "sv"), wait_until="load")
+        page.locator("#situation").fill(case["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        shared.require(results.locator('[data-funding-question="true"]').count() == 0, f"{case['id']}: explicit product actor was replaced by a generic actor question")
+        href = assert_actor_route(results, case["id"], case["text"], case["actor_type"], case["data_actor"])
+        shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
+        return {"id": case["id"], "status": "passed", "href": href}
+    finally:
+        page.close()
+
+
+def run_bounded_destination_case(browser, base_url: str, case: dict) -> dict:
+    page = browser.new_page(viewport={"width": 768, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        target = f"{base_url}/{builder.PERSON_PILOT_PATH}?{urlencode({'lang': 'sv', 'actor_type': case['actor_type'], 'funding_intent': 'funding'})}"
+        page.goto(target, wait_until="load")
+        context = page.locator('#fundingIntentContext[data-funding-intent="funding"][data-funding-state="unsupported"]')
+        shared.require(context.is_visible(), f"{case['id']}: unsupported actor×funding destination did not fail closed explicitly")
+        context_text = context.inner_text().lower()
+        shared.require(case["marker"] in context_text, f"{case['id']}: actor context disappeared from bounded destination: {context_text!r}")
+        shared.require("inte verifierad" in context_text or "ingen verifierad" in context_text, f"{case['id']}: destination did not disclose capability boundary")
+        shared.require(context.locator('[data-funding-continuity-action]').count() == 0, f"{case['id']}: unsupported destination rendered a pretend continuation action")
+        shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
+        return {"id": case["id"], "status": "passed", "actor_type": case["actor_type"], "state": "unsupported", "context": context_text}
+    finally:
+        page.close()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", default=".")
@@ -139,7 +213,8 @@ def main() -> int:
     root = Path(args.root).resolve()
     shared.require((root / "index.html").is_file(), f"index.html not found under {root}")
     engine_name = args.engine or os.environ.get("BROWSER_ENGINE", "chromium")
-    evidence = {"engine": engine_name, "scenario_count": len(HELPER_CASES) + len(DESTINATION_CASES) + 2, "passed": 0, "failed": 0, "results": []}
+    scenario_count = len(HELPER_CASES) + len(RELATIVE_DESTINATION_CASES) + len(KNOWN_ACTOR_CASES) + len(NATURAL_ACTOR_CASES) + len(BOUNDED_DESTINATION_CASES) + 2
+    evidence = {"engine": engine_name, "scenario_count": scenario_count, "passed": 0, "failed": 0, "results": []}
 
     with tempfile.TemporaryDirectory(prefix="stod-relative-funding-") as tmp:
         site = Path(tmp) / "site"
@@ -147,24 +222,44 @@ def main() -> int:
         with shared.serve_site(site) as base_url, sync_playwright() as playwright:
             browser = getattr(playwright, engine_name).launch(headless=True)
             try:
-                runners = [(run_helper_case, case) for case in HELPER_CASES]
-                for fn, case in runners:
+                for case in HELPER_CASES:
                     try:
-                        evidence["results"].append(fn(browser, base_url, case))
+                        evidence["results"].append(run_helper_case(browser, base_url, case))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
                         evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
-                for fn, case_id in [(run_known_relative_case, "sv-known-relative-context-reused"), (run_vague_choice_case, "sv-vague-funding-offers-helper-route")]:
+                for fn, case_id in [(run_known_relative_case, "sv-known-relative-context-reused"), (run_vague_choice_case, "sv-vague-funding-offers-governed-actors")]:
                     try:
                         evidence["results"].append(fn(browser, base_url))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
                         evidence["results"].append({"id": case_id, "status": "failed", "error": str(exc)})
-                for case in DESTINATION_CASES:
+                for case in RELATIVE_DESTINATION_CASES:
                     try:
-                        evidence["results"].append(run_destination_case(browser, base_url, case))
+                        evidence["results"].append(run_relative_destination_case(browser, base_url, case))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+                for case in KNOWN_ACTOR_CASES:
+                    try:
+                        evidence["results"].append(run_known_actor_case(browser, base_url, case))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+                for case in NATURAL_ACTOR_CASES:
+                    try:
+                        evidence["results"].append(run_natural_actor_case(browser, base_url, case))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+                for case in BOUNDED_DESTINATION_CASES:
+                    try:
+                        evidence["results"].append(run_bounded_destination_case(browser, base_url, case))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
@@ -173,7 +268,7 @@ def main() -> int:
                 browser.close()
 
     Path(args.output).write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"relative funding continuity ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
+    print(f"governed actor funding continuity ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
     if evidence["failed"]:
         for result in evidence["results"]:
             if result["status"] == "failed":
