@@ -28,6 +28,7 @@ COMPANY_CONTINUITY_END = "<!-- STOD_COMPANY_FUNDING_CONTINUITY_END -->"
 SHELL_REFLOW_START = "<!-- STOD_SHARED_SHELL_REFLOW_START -->"
 SHELL_REFLOW_END = "<!-- STOD_SHARED_SHELL_REFLOW_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
+CONCRETE_NEED_CONTINUITY_PATH = "client/concrete-need-continuity.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 STUDY_TRANSITION_PATH = "client/study-transition.js"
@@ -67,6 +68,7 @@ PROPERTY_FOCUS_PATH = "client/property-accessibility-focus.js"
 FUNDING_INTENT_CONTINUITY_PATH = "client/funding-intent-continuity.js"
 SHELL_RUNTIME_PATHS = (
     SHELL_ROUTING_PATH,
+    CONCRETE_NEED_CONTINUITY_PATH,
     SHELL_LEARNING_PATH,
     SHELL_GUIDANCE_PATH,
     STUDY_TRANSITION_PATH,
@@ -129,6 +131,7 @@ SCRIPT_PATHS = (
     MOBILITY_TRANSPORT_PATH,
     BEREAVEMENT_GUIDANCE_PATH,
     FUNDING_INTENT_CONTINUITY_PATH,
+    CONCRETE_NEED_CONTINUITY_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
