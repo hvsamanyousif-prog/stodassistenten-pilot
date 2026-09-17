@@ -18,9 +18,6 @@
           'طفلي مريض ويجب أن أبقى في المنزل','أحتاج إلى رعاية طفلي المريض','أحتاج إلى VAB','طفل مريض وإجازة مرضية جزئية',
           'کودکم بیمار است و باید خانه بمانم','برای کودک بیمار باید خانه بمانم','به VAB نیاز دارم','کودک بیمار و مرخصی بیماری پاره‌وقت'
         ];
-        // Owner-side housing-adaptation discovery. Keep this bounded to explicit
-        // BRF/landlord/property + adaptation/common-area language so a resident
-        // asking about their own home is not reclassified as a property actor.
         KEYWORDS.property=[
           'brf styrelse bostadsanpassning','bostadsrättsförening bostadsanpassning','hyresvärd bostadsanpassning','fastighetsägare bostadsanpassning','brf ramp entré','brf dörröppnare entré','ta över bostadsanpassningsbidrag','gemensamma utrymmen bostadsanpassning',
           'جمعية سكنية تكييف السكن','مالك العقار تكييف السكن','منحدر مدخل المبنى','المساحات المشتركة تكييف السكن',
@@ -67,10 +64,6 @@
   const composer=document.getElementById('situation');
   const analyzeButton=document.getElementById('analyzeBtn');
 
-  // A vague request for "money/funds/scholarship/loan" is an information-gain
-  // problem, not evidence for a particular support. Keep this in the SAME public
-  // contingency router: ask only the actor-changing question when actor context is
-  // absent, and never put raw situation text in the URL.
   const FUNDING_COPY={
     sv:{
       questions:{funding:'För att inte gissa stöd: vem gäller det?',scholarship:'Du söker stipendium. Vem gäller det?',loan:'Du söker lån. Vem gäller det?'},
@@ -79,7 +72,8 @@
         private:['Privat behov','Bidrag, ersättningar och andra vägar för privatperson'],
         study:['Studier','Stipendier, studiestöd och ekonomi kring studier'],
         company:['Företag','Finansiering och offentliga affärer för företag'],
-        association:['Förening','Projekt-, aktivitets- och föreningsstöd']
+        association:['Förening','Projekt-, aktivitets- och föreningsstöd'],
+        relative:['Jag hjälper någon','Behåll hjälparrollen och sök vidare utifrån personens situation']
       }
     },
     ar:{
@@ -89,7 +83,8 @@
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
         study:['الدراسة','منح ودعم دراسي واقتصاد مرتبط بالدراسة'],
         company:['شركة','تمويل وفرص أعمال عامة للشركات'],
-        association:['جمعية','دعم المشاريع والأنشطة والجمعيات']
+        association:['جمعية','دعم المشاريع والأنشطة والجمعيات'],
+        relative:['أنا أساعد شخصًا','نحتفظ بدور المساعدة ونواصل وفق وضع الشخص الذي تساعده']
       }
     },
     fa:{
@@ -99,7 +94,8 @@
         private:['نیاز شخصی','حمایت، جبران هزینه و مسیرهای دیگر برای افراد'],
         study:['تحصیل','بورسیه، حمایت تحصیلی و اقتصاد مرتبط با تحصیل'],
         company:['کسب‌وکار','تأمین مالی و فرصت‌های عمومی برای کسب‌وکار'],
-        association:['انجمن','حمایت پروژه، فعالیت و انجمن']
+        association:['انجمن','حمایت پروژه، فعالیت و انجمن'],
+        relative:['به کسی کمک می‌کنم','نقش کمک‌کننده را حفظ می‌کنیم و بر اساس وضعیت آن شخص ادامه می‌دهیم']
       }
     }
   };
@@ -107,9 +103,10 @@
     private:'person-pilot.html?actor_type=private_person',
     study:'person-pilot.html?actor_type=student',
     company:'company-pilot.html?actor_type=company',
-    association:'person-pilot.html?actor_type=association'
+    association:'person-pilot.html?actor_type=association',
+    relative:'person-pilot.html?actor_type=relative'
   };
-  const URL_ACTORS={private_person:'private',student:'study',company:'company',association:'association'};
+  const URL_ACTORS={private_person:'private',student:'study',company:'company',association:'association',relative:'relative'};
   const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
 
   function currentLang(){
@@ -133,6 +130,7 @@
   }
   function actorFromText(text){
     const x=lower(text);
+    if(/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/.test(x)) return 'relative';
     if(/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/.test(x)) return 'company';
     if(/vår förening|föreningen|ideell förening|جمعية|انجمن/.test(x)) return 'association';
     if(/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/.test(x)) return 'study';
@@ -159,7 +157,7 @@
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
-      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
+      box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','company','association','relative'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
     }
     box.hidden=false;
     box.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -172,9 +170,6 @@
     event.stopImmediatePropagation();
   }
   if(composer&&analyzeButton){
-    // Capture phase is intentional: the source shell registered its button handler
-    // before this runtime loads. We only pre-empt that handler for the narrow vague
-    // funding intents above; all other situations stay on the existing route engine.
     analyzeButton.addEventListener('click',interceptFunding,true);
     composer.addEventListener('keydown',event=>{
       if((event.metaKey||event.ctrlKey)&&event.key==='Enter') interceptFunding(event);
