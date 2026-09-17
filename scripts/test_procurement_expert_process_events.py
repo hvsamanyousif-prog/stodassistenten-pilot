@@ -48,7 +48,43 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
   assert.match(row.question,/publicering av svar|svar.*publicer/i);
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:3,failed:0}));
+{
+  const row=p.splitRequirements(
+    'Begäran om kompletterande upplysningar ska lämnas senast den 18 oktober 2026 kl 12:00.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'clarification');
+  assert.match(row.question,/frågor|förtydliganden|upplysningar/i);
+}
+
+{
+  const row=p.splitRequirements(
+    'Kompletterande upplysningar ska lämnas senast den 24 oktober 2026 kl 23:59.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'answer_publication');
+  assert.ok(hasFlag(row,'answer_publication_timing'));
+  assert.match(row.question,/publicering av svar|svar.*publicer|upplysningar|originalkäll/i);
+}
+
+{
+  const row=p.splitRequirements(
+    'Kompletterande upplysningar tillhandahålls senast den 24 oktober 2026 kl 23:59.'
+  )[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'answer_publication');
+  assert.ok(hasFlag(row,'answer_publication_timing'));
+}
+
+{
+  const row=p.splitRequirements(
+    'Leverantören ska lämna kompletterande upplysningar i bilaga 4 senast den 18 oktober 2026.'
+  )[0];
+  assert.notEqual(row.processSubtype,'answer_publication');
+  assert.ok(!hasFlag(row,'answer_publication_timing'));
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:7,failed:0}));
 '''
 
 
