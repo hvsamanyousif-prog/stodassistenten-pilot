@@ -68,6 +68,14 @@ jobs:
         run: |
           python -m pip install playwright==1.57.0
           python -m playwright install --with-deps chromium webkit
+      - name: Feedback state machine — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_feedback_state.py . procurement-feedback-state-chromium.json
+      - name: Feedback state machine — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_feedback_state.py . procurement-feedback-state-webkit.json
       - name: Shared start/search journeys — Chromium
         env:
           BROWSER_ENGINE: chromium
@@ -150,6 +158,8 @@ jobs:
         with:
           name: procurement-offline-browser-evidence
           path: |
+            procurement-feedback-state-chromium.json
+            procurement-feedback-state-webkit.json
             shared-search-chromium.json
             shared-search-webkit.json
             relative-funding-chromium.json
