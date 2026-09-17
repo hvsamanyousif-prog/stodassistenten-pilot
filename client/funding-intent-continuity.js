@@ -28,9 +28,14 @@ const PERSON_COPY={
     funding:'Du kom hit som förening med ett finansieringsbehov. Vi behåller både rollen och finansieringsinriktningen i samma resa.',
     scholarship:'Du kom hit som förening efter att ha sökt stipendium eller bidrag. Vi behåller den inriktningen utan att tolka den som ett beviljat stöd.',
     loan:'Du kom hit som förening efter att ha sökt lån. Låneinriktningen behålls, men den här piloten har ännu ingen verifierad lånespecifik resultatlista för föreningar.'
+   },
+   relative:{
+    funding:'Du hjälper någon annan att söka finansiering. Vi behåller hjälparrollen och finansieringsinriktningen och går vidare utifrån det du vet om personens situation.',
+    scholarship:'Du hjälper någon annan att söka stipendium eller bidrag. Vi behåller hjälparrollen och stipendieinriktningen utan att anta att ett visst stöd passar.',
+    loan:'Du hjälper någon annan att söka lån. Vi behåller hjälparrollen och låneinriktningen utan att blanda ihop den med bidrag eller göra en kreditbedömning.'
    }
   },
-  actions:{student:'Fortsätt utan att svara om studier igen',private_person:'Fortsätt till nästa relevanta fråga',association:'Fortsätt med föreningsfinansiering'},
+  actions:{student:'Fortsätt utan att svara om studier igen',private_person:'Fortsätt till nästa relevanta fråga',association:'Fortsätt med föreningsfinansiering',relative:'Fortsätt med personens situation'},
   preserved:'Inriktningen används bara som navigationskontext. Stöd, villkor, belopp och rätt till stöd måste fortfarande verifieras i originalkällan.'
  },
  ar:{
@@ -51,9 +56,14 @@ const PERSON_COPY={
     funding:'وصلت إلى هنا كجمعية ولديك حاجة إلى تمويل. نحتفظ بنوع الجهة وبمسار التمويل في الرحلة نفسها.',
     scholarship:'وصلت إلى هنا كجمعية بعد البحث عن منحة أو دعم. نحتفظ بهذا المسار من دون اعتباره دعماً مضموناً.',
     loan:'وصلت إلى هنا كجمعية بعد البحث عن قرض. نحتفظ بمسار القرض، لكن هذه النسخة لا تملك بعد قائمة نتائج موثقة خاصة بقروض الجمعيات.'
+   },
+   relative:{
+    funding:'أنت تساعد شخصًا آخر في البحث عن تمويل. نحتفظ بدور المساعدة ومسار التمويل ونتابع وفق ما تعرفه عن وضع الشخص.',
+    scholarship:'أنت تساعد شخصًا آخر في البحث عن منحة أو دعم. نحتفظ بدور المساعدة ومسار المنحة من دون افتراض أن دعماً محدداً مناسب.',
+    loan:'أنت تساعد شخصًا آخر في البحث عن قرض. نحتفظ بدور المساعدة ومسار القرض من دون خلطه بالدعم أو إجراء تقييم ائتماني.'
    }
   },
-  actions:{student:'متابعة دون تكرار سؤال الدراسة',private_person:'متابعة إلى السؤال التالي ذي الصلة',association:'متابعة تمويل الجمعية'},
+  actions:{student:'متابعة دون تكرار سؤال الدراسة',private_person:'متابعة إلى السؤال التالي ذي الصلة',association:'متابعة تمويل الجمعية',relative:'متابعة وضع الشخص الذي تساعده'},
   preserved:'يُستخدم هذا الاختيار فقط كسياق للتنقل. يجب التحقق من الدعم والشروط والمبالغ والأهلية من المصدر الأصلي.'
  },
  fa:{
@@ -74,9 +84,14 @@ const PERSON_COPY={
     funding:'به عنوان انجمن با نیاز تأمین مالی وارد شدی. هم نوع بازیگر و هم جهت تأمین مالی را در همان مسیر حفظ می‌کنیم.',
     scholarship:'به عنوان انجمن بعد از جست‌وجوی بورسیه یا کمک‌هزینه وارد شدی. این مسیر را حفظ می‌کنیم بدون اینکه آن را حمایت قطعی بدانیم.',
     loan:'به عنوان انجمن بعد از جست‌وجوی وام وارد شدی. مسیر وام حفظ می‌شود، اما این پایلوت هنوز فهرست نتیجه تأییدشده ویژه وام انجمن‌ها ندارد.'
+   },
+   relative:{
+    funding:'به شخص دیگری برای جست‌وجوی تأمین مالی کمک می‌کنی. نقش کمک‌کننده و مسیر تأمین مالی را حفظ می‌کنیم و بر اساس آنچه از وضعیت شخص می‌دانی ادامه می‌دهیم.',
+    scholarship:'به شخص دیگری برای جست‌وجوی بورسیه یا کمک‌هزینه کمک می‌کنی. نقش کمک‌کننده و مسیر بورسیه را حفظ می‌کنیم بدون اینکه مناسب بودن یک حمایت مشخص را فرض کنیم.',
+    loan:'به شخص دیگری برای جست‌وجوی وام کمک می‌کنی. نقش کمک‌کننده و مسیر وام را حفظ می‌کنیم بدون اینکه آن را با کمک‌هزینه یکی کنیم یا اعتبارسنجی انجام دهیم.'
    }
   },
-  actions:{student:'ادامه بدون تکرار سؤال دانشجو بودن',private_person:'ادامه به پرسش بعدی مرتبط',association:'ادامه با تأمین مالی انجمن'},
+  actions:{student:'ادامه بدون تکرار سؤال دانشجو بودن',private_person:'ادامه به پرسش بعدی مرتبط',association:'ادامه با تأمین مالی انجمن',relative:'ادامه با وضعیت شخصی که به او کمک می‌کنی'},
   preserved:'این انتخاب فقط برای حفظ مسیر استفاده می‌شود. حمایت، شرایط، مبلغ و واجد شرایط بودن باید در منبع اصلی بررسی شود.'
  }
 };
@@ -256,6 +271,17 @@ function continuePrivate(){
  }
 }
 
+function continueRelative(){
+ try{
+  scenario='general';
+  answers={fundingIntent:intent};
+  resetPersonFeedback();
+  go('general1');
+ }catch(error){
+  console.error('relative funding continuity failed closed',error);
+ }
+}
+
 function continueAssociation(){
  try{
   scenario='org';
@@ -336,7 +362,7 @@ function specializePrivateFundingResult(host,currentScreen,currentScenario){
 }
 
 function decoratePerson(){
- if(actor!=='student'&&actor!=='private_person'&&actor!=='association')return;
+ if(actor!=='student'&&actor!=='private_person'&&actor!=='association'&&actor!=='relative')return;
  const host=document.getElementById('main');
  if(!host)return;
  let currentScreen='';
@@ -353,6 +379,7 @@ function decoratePerson(){
   if(actor==='student'){handler=continueStudent;actionName='continue';}
   if(actor==='private_person'){handler=continuePrivate;actionName='private';}
   if(actor==='association'){handler=continueAssociation;actionName='association-funding';}
+  if(actor==='relative'){handler=continueRelative;actionName='relative';}
  }
  const card=makeContextCard(text.copy,text.label,text.description,text.action,actionName,handler);
  if(currentScreen==='home'){
@@ -360,7 +387,7 @@ function decoratePerson(){
   if(hero)hero.insertAdjacentElement('afterend',card);else host.prepend(card);
   return;
  }
- if((actor==='student'||actor==='private_person')&&currentScenario==='general'){
+ if((actor==='student'||actor==='private_person'||actor==='relative')&&currentScenario==='general'){
   const backButton=host.querySelector('.back');
   if(backButton)backButton.insertAdjacentElement('afterend',card);else host.prepend(card);
   return;
@@ -373,7 +400,7 @@ function decoratePerson(){
 
 function installPerson(){
  if(page!=='person-pilot.html')return false;
- if(actor!=='student'&&actor!=='private_person'&&actor!=='association')return false;
+ if(actor!=='student'&&actor!=='private_person'&&actor!=='association'&&actor!=='relative')return false;
  if(typeof render!=='function'||typeof go!=='function')return false;
  const baseRender=render;
  render=function(){baseRender();decoratePerson();};
@@ -557,6 +584,6 @@ function installCompany(){
 
 const installed=installPerson()||installCompany();
 if(installed){
- root.StodFundingIntentContinuity=Object.freeze({version:'1.4.0',intent,page,actor});
+ root.StodFundingIntentContinuity=Object.freeze({version:'1.5.0',intent,page,actor});
 }
 })(window);
