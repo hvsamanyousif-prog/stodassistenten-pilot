@@ -10,6 +10,12 @@ Helper journeys additionally protect subject ownership: a need that clearly
 belongs to the person being helped may follow the helper route, while a helper's
 own need must not be silently reassigned to that person.
 
+A preserved essential-cost need must also be consumed by the destination as
+bounded task state. Because the pilot cannot safely infer financial hardship or
+eligibility from that token alone, the receiver must acknowledge it in the
+existing money question and ask for one explicit confirmation instead of
+silently displaying the token and then ignoring it.
+
 This is browser/DOM evidence for the public pilot build. It does not prove
 eligibility, a live opportunity, persistence, model quality or human
 comprehension.
@@ -45,6 +51,38 @@ SCENARIOS = [
         "need_copy": ("Nödvändiga utgifter", "Boende / hyra"),
         "continue_action": "private",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": True,
+        "expect_housing_skip": True,
+    },
+    {
+        "id": "sv-household-essential-costs-plus-funding",
+        "text": "Jag behöver hjälp med läkemedel och söker bidrag.",
+        "actor_type": "private_person",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": True,
+        "need_context": {"essential_costs"},
+        "need_copy": ("Nödvändiga utgifter",),
+        "continue_action": "private",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": True,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-household-housing-only-plus-funding",
+        "text": "Jag behöver hjälp med hyran och söker bidrag.",
+        "actor_type": "private_person",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": True,
+        "need_context": {"housing"},
+        "need_copy": ("Boende / hyra",),
+        "continue_action": "private",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": True,
     },
     {
@@ -58,6 +96,8 @@ SCENARIOS = [
         "need_copy": ("Boende / hyra",),
         "continue_action": "continue",
         "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": True,
     },
     {
@@ -71,6 +111,8 @@ SCENARIOS = [
         "need_copy": (),
         "continue_action": "continue",
         "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": False,
     },
     {
@@ -84,6 +126,8 @@ SCENARIOS = [
         "need_copy": ("Personens bevarade behov", "Boende / hyra"),
         "continue_action": "relative",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": True,
     },
     {
@@ -97,6 +141,8 @@ SCENARIOS = [
         "need_copy": (),
         "continue_action": "relative",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": False,
     },
 ]
@@ -148,6 +194,17 @@ def choose_first(page, case_id: str, stage: str) -> None:
     choices.first.click()
 
 
+def assert_essential_costs_consumption(page, scenario: dict, case_id: str) -> None:
+    confirmation = page.locator('[data-essential-costs-confirmation="true"]')
+    if scenario["expect_essential_confirmation"]:
+        require(confirmation.count() == 1 and confirmation.is_visible(), f"{case_id}: preserved essential-cost need was displayed but not consumed by the destination question")
+        text = confirmation.inner_text()
+        require("Du nämnde nödvändiga utgifter" in text, f"{case_id}: essential-cost confirmation did not acknowledge the known need")
+        require("ekonom" in text.lower(), f"{case_id}: essential-cost confirmation did not ask the bounded financial follow-up")
+    else:
+        require(confirmation.count() == 0, f"{case_id}: essential-cost confirmation was fabricated without essential-cost context")
+
+
 def run_destination_journey(page, scenario: dict, case_id: str) -> None:
     context = page.locator(f'#fundingIntentContext[data-funding-intent="{scenario["intent"]}"]')
     require(context.is_visible(), f"{case_id}: destination did not consume preserved funding intent")
@@ -162,7 +219,13 @@ def run_destination_journey(page, scenario: dict, case_id: str) -> None:
     require(action.count() == 1, f"{case_id}: destination continuation action missing")
     action.click()
 
-    for index in range(scenario["steps_before_result"]):
+    money_stage_after_choices = scenario["money_stage_after_choices"]
+    for index in range(money_stage_after_choices):
+        choose_first(page, case_id, f"pre-money step {index + 1}")
+
+    assert_essential_costs_consumption(page, scenario, case_id)
+
+    for index in range(money_stage_after_choices, scenario["steps_before_result"]):
         choose_first(page, case_id, f"step {index + 1}")
 
     housing_question = page.get_by_text("Är boendekostnaden en stor del av ekonomin?", exact=True)
@@ -174,7 +237,7 @@ def run_destination_journey(page, scenario: dict, case_id: str) -> None:
         require(set(filter(None, (result_context.get_attribute("data-need-context") or "").split(","))) == scenario["need_context"], f"{case_id}: result lost bounded need context")
     else:
         require(housing_question.count() == 1 and housing_question.is_visible(), f"{case_id}: housing was silently assumed without explicit concrete need")
-        require(result_title.count() == 0 or not result_title.is_visible(), f"{case_id}: no-need control skipped a required question")
+        require(result_title.count() == 0 or not result_title.is_visible(), f"{case_id}: no-housing control skipped a required question")
 
 
 def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
@@ -224,6 +287,7 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
             "actor_type": scenario["actor_type"],
             "funding_intent": scenario["intent"],
             "need_context": sorted(scenario["need_context"]),
+            "essential_costs_confirmation": scenario["expect_essential_confirmation"],
             "route": href,
         }
     finally:
@@ -251,6 +315,7 @@ def main() -> int:
             "built_index_sha256": sha256(index_path),
             "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
             "funding_continuity_sha256": sha256(site / builder.FUNDING_INTENT_CONTINUITY_PATH),
+            "concrete_need_continuity_sha256": sha256(site / builder.CONCRETE_NEED_CONTINUITY_PATH),
             "independent_semantic_cases": len(SCENARIOS),
             "widths": list(WIDTHS),
             "checks": len(SCENARIOS) * len(WIDTHS),
