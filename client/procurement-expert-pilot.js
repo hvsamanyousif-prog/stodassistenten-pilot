@@ -129,11 +129,24 @@ function isStructuralHeading(line){
  const t=normalized(line).replace(/^\d+(?:\.\d+)*[.)]?\s+/,'').replace(/:$/,'').trim();
  return /^(obligatoriska krav|ska-krav|kvalificeringskrav|tilldelningskriterier|utvärderingskriterier|kommersiella villkor|kontraktsvillkor|administrativa föreskrifter|kravspecifikation|tekniska krav|tidplan|viktiga datum)$/.test(t);
 }
+function materialClauseCount(line){
+ const raw=String(line||'').trim();
+ if(!raw)return 0;
+ const clauses=raw.split(/(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])/).map(part=>normalized(part)).filter(Boolean);
+ const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
+ let count=clauses.filter(clause=>material.test(clause)).length;
+ if(count<2){
+   const normativeHits=[...normalized(raw).matchAll(/\b(?:ska|skall|måste|krävs)\b/g)].length;
+   if(normativeHits>=2)count=normativeHits;
+ }
+ return count;
+}
 function structureFlags(line){
  const raw=String(line||'');
  const t=normalized(raw);
  const flags=[];
  if(raw.length>600)flags.push({code:'long_paragraph',label:'Långt stycke – kan innehålla flera krav. Dela upp manuellt eller kontrollera raden extra.'});
+ if(materialClauseCount(raw)>=2)flags.push({code:'multi_requirement_line',label:'Flera materiella krav kan ligga på samma källrad – ett enda evidensval verifierar inte alla. Dela upp eller kontrollera varje självständigt krav mot originalunderlaget.'});
  if(/\bbilaga\b|\bappendix\b|\bannex\b/.test(t))flags.push({code:'attachment_reference',label:'Bilagehänvisning – bilagans innehåll är inte analyserat här.'});
  if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
