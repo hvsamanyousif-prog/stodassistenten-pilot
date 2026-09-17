@@ -80,6 +80,19 @@ CASES = [
         "expect_answer_publication_check": True,
     },
     {
+        "id": "answer-publication-version-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.",
+            "Rättelse 2: Svar på frågor publiceras senast den 20 oktober 2026 kl 18:00.",
+        ]),
+        "expected_categories": ["deadline", "deadline"],
+        "expected_subtypes": ["answer_publication", "answer_publication"],
+        "expected_rows": 2,
+        "expect_question_conflict": False,
+        "expect_answer_publication_check": True,
+        "expect_answer_conflict": True,
+    },
+    {
         "id": "supplier-clarification-near-miss",
         "text": "Leverantören ska lämna kompletterande upplysningar i bilaga 4 senast den 18 oktober 2026.",
         "expected_categories": ["mandatory"],
@@ -148,6 +161,15 @@ def run_case(page, case):
           f'{case["id"]}: wrong clarification-conflict state in full review')
     check(overview_conflict == case["expect_question_conflict"],
           f'{case["id"]}: wrong clarification-conflict state in calm overview')
+
+    answer_conflict_phrase = "motstridiga datum eller klockslag för publicering av svar"
+    answer_conflict = answer_conflict_phrase in review
+    overview_answer_conflict = answer_conflict_phrase in overview
+    expect_answer_conflict = case.get("expect_answer_conflict", False)
+    check(answer_conflict == expect_answer_conflict,
+          f'{case["id"]}: wrong answer-publication conflict state in full review')
+    check(overview_answer_conflict == expect_answer_conflict,
+          f'{case["id"]}: wrong answer-publication conflict state in calm overview')
 
     publication_marker = "publicering av svar"
     if case["expect_answer_publication_check"]:

@@ -84,7 +84,27 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
   assert.ok(!hasFlag(row,'answer_publication_timing'));
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:7,failed:0}));
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.',
+    'Rättelse 2: Svar på frågor publiceras senast den 21 oktober 2026 kl 17:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['answer_publication','answer_publication']);
+  assert.ok(rows.every(r=>hasFlag(r,'deadline_version_conflict')),
+    'conflicting answer-publication versions must fail closed instead of only showing per-row source checks');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Meddelande 1: Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.',
+    'Meddelande 2: Svar på frågor publiceras senast den 20 oktober 2026 kl 17:00.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['answer_publication','answer_publication']);
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'identical answer-publication timings must not fabricate a version conflict');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:9,failed:0}));
 '''
 
 
