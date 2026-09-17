@@ -264,7 +264,7 @@ function summarize(reqs){
  return {counts,blocking,uncertain,decision,tone,actionableCount:actionable.length,structuralCount:reqs.length-actionable.length};
 }
 function prioritizeReviewRows(reqs){
- const priority=reqs.filter(r=>r.kind!=='structural'&&r.evidence!=='yes');
+ const priority=reqs.filter(r=>r.kind!=='structural'&&(r.evidence!=='yes'||r.category==='uncertain'||(r.flags||[]).length>0));
  return priority.map((row,index)=>{
    let rank=2;
    if(row.evidence==='missing')rank=0;
