@@ -166,10 +166,12 @@
         private:/inte längre privatperson/
       },
       ar:{
-        employee:/لم أعد موظف|لست موظف/
+        employee:/لم أعد موظف|لست موظف/,
+        study:/لم أعد طالب|لست طالب/
       },
       fa:{
-        employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم/
+        employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم/,
+        study:/دیگر دانشجو نیستم|دانشجو نیستم/
       }
     };
     const langPatterns=patterns[currentLang()]||{};
