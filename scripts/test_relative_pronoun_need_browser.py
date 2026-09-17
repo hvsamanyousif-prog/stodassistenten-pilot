@@ -7,6 +7,10 @@ explicit subject-switch contrast. Raw situation text must not be persisted or
 copied into the destination URL; only the existing bounded need_context tokens
 may cross the page boundary.
 
+When the helped person's preserved need includes essential costs, the shared
+journey contract also requires that the destination consume that token in the
+existing bounded money question rather than merely display it.
+
 This is browser/DOM/routing/privacy evidence, not eligibility, model quality,
 human comprehension, physical Safari/assistive-tech validation or storage E2E.
 """
@@ -37,6 +41,8 @@ SCENARIOS = [
         "need_copy": ("Personens bevarade behov", "Boende / hyra"),
         "continue_action": "relative",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": True,
     },
     {
@@ -50,6 +56,8 @@ SCENARIOS = [
         "need_copy": ("Personens bevarade behov", "Nödvändiga utgifter", "Boende / hyra"),
         "continue_action": "relative",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": True,
         "expect_housing_skip": True,
     },
     {
@@ -63,6 +71,8 @@ SCENARIOS = [
         "need_copy": (),
         "continue_action": "relative",
         "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
         "expect_housing_skip": False,
     },
 ]
