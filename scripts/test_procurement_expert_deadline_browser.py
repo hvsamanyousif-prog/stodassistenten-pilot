@@ -161,6 +161,14 @@ CASES = [
         "expect_scope_uncertain": True,
     },
     {
+        "id": "dated-qualification-condition-not-process-deadline",
+        "text": "Leverantören ska ha två referensuppdrag som ska vara slutförda senast den 1 september 2026.",
+        "expect_conflict": False,
+        "expected_row_count": 1,
+        "expected_category": "qualification",
+        "expected_question": "referensuppdrag",
+    },
+    {
         "id": "same-row-explicit-bid-deadline-change",
         "text": "Rättelse: Sista anbudsdag ändras från 2026-10-30 kl 12:00 till 2026-11-06 kl 23:59.",
         "expect_conflict": False,
@@ -208,15 +216,18 @@ def run_case(page, case):
     page.locator("#openReviewBtn").click()
     check(page.locator("#reviewDetails").get_attribute("open") is not None, f'{case["id"]}: full review did not open')
     expected_row_count = case.get("expected_row_count", 2)
+    expected_category = case.get("expected_category", "deadline")
     expect(page.locator("#requirements .req")).to_have_count(expected_row_count)
     categories = [el.input_value() for el in page.locator("[data-cat]").all()]
-    check(categories == ["deadline"] * expected_row_count, f'{case["id"]}: deadline recognition changed: {categories}')
+    check(categories == [expected_category] * expected_row_count, f'{case["id"]}: category recognition changed: {categories}')
     sources = [el.inner_text() for el in page.locator("#requirements .source").all()]
     expected_sources = [f"Källa rad {i}" for i in range(1, expected_row_count + 1)]
     check(sources == expected_sources, f'{case["id"]}: source trace changed: {sources}')
 
     overview = page.locator("#priorityOverview").inner_text().lower()
     review = page.locator("#requirements").inner_text().lower()
+    if case.get("expected_question"):
+        check(case["expected_question"].lower() in review, f'{case["id"]}: expected category-specific control question missing')
     has_conflict = "motstridiga anbudsdatum eller klockslag" in review
     overview_conflict = "motstridiga anbudsdatum eller klockslag" in overview
     if case.get("expect_same_row_change"):
