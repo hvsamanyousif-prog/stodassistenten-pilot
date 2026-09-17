@@ -16,7 +16,7 @@ const SCORE_DIMS=[
  ['source_trace','Hänvisningar till rätt rad'],
  ['false_confidence','Tydlig osäkerhet']
 ];
-const state={sector:null,requirements:[],scores:{},sending:false,feedbackEpoch:0,controller:null};
+const state={sector:null,requirements:[],scores:{},sending:false,feedbackSubmitted:false,feedbackEpoch:0,controller:null};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
 function deadlinePurpose(line){
@@ -345,7 +345,7 @@ function browserInit(){
  const sourceError=document.createElement('p');sourceError.id='sourceError';sourceError.setAttribute('role','alert');
  $('sourceText').after(sourceError);$('sourceText').setAttribute('aria-describedby','sourceError');
  function resetFeedback(){
-   state.feedbackEpoch++;if(state.controller)state.controller.abort();state.controller=null;state.sending=false;state.scores={};
+   state.feedbackEpoch++;if(state.controller)state.controller.abort();state.controller=null;state.sending=false;state.feedbackSubmitted=false;state.scores={};
    document.querySelectorAll('[data-score]').forEach(el=>el.value='');
    ['foundIssue','useful','clearNext'].forEach(id=>$(id).value='');
    $('feedbackStatus').textContent='';$('feedbackStatus').className='';$('sendFeedback').disabled=false;
@@ -419,7 +419,7 @@ function browserInit(){
  $('scoreRows').innerHTML=SCORE_DIMS.map(([k,l])=>`<div class="score"><label for="score-${k}">${l}</label><select class="field" id="score-${k}" data-score="${k}">${scoreOptions()}</select></div>`).join('');
  $('scoreRows').querySelectorAll('[data-score]').forEach(el=>el.onchange=()=>{const v=Number(el.value);if(Number.isInteger(v)&&v>=1&&v<=5)state.scores[el.dataset.score]=v;else delete state.scores[el.dataset.score];});
  async function sendFeedback(){
-   if(state.sending)return;
+   if(state.sending||state.feedbackSubmitted)return;
    const status=$('feedbackStatus');const found=$('foundIssue').value,useful=$('useful').value,clear=$('clearNext').value;
    let payload;
    try{
@@ -433,13 +433,13 @@ function browserInit(){
      const res=await fetch(FEEDBACK_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
      if(!res.ok)throw new Error('HTTP '+res.status);
      if(epoch!==state.feedbackEpoch)return;
-     status.className='status ok';status.textContent='Tack. Strukturerad expertfeedback skickad utan underlagstext eller företagsuppgifter.';
+     state.feedbackSubmitted=true;status.className='status ok';status.textContent='Tack. Strukturerad expertfeedback skickad utan underlagstext eller företagsuppgifter.';
    }catch(e){
      if(epoch!==state.feedbackEpoch)return;
      status.className='status err';status.textContent='Feedback kunde inte skickas just nu. Dina svar ligger kvar på sidan så du kan försöka igen.';
    }finally{
      clearTimeout(timeout);
-     if(epoch===state.feedbackEpoch){state.sending=false;state.controller=null;$('sendFeedback').disabled=false;}
+     if(epoch===state.feedbackEpoch){state.sending=false;state.controller=null;$('sendFeedback').disabled=state.feedbackSubmitted;}
    }
  }
  $('sendFeedback').onclick=sendFeedback;
