@@ -132,7 +132,10 @@ function isStructuralHeading(line){
 function materialClauseCount(line){
  const raw=String(line||'').trim();
  if(!raw)return 0;
- const clauses=raw.split(/(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])/).map(part=>normalized(part)).filter(Boolean);
+ // Keep the physical source row intact, but treat semicolons as bounded clause
+ // separators when deciding whether one evidence control would cover multiple
+ // materially different objects. This is detection only, not document splitting.
+ const clauses=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>normalized(part)).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  let count=clauses.filter(clause=>material.test(clause)).length;
  if(count<2){
