@@ -28,13 +28,50 @@ function detectNeeds(text){
  return uniqueAllowed(needs);
 }
 
+const RELATIVE_SUBJECTS=[
+ {key:'child',explicit:/(?:\bbarnet\b|\bmitt barn\b|طفلي|ابني|ابنتي|فرزندم|پسرم|دخترم)/i,pronoun:/\bhen\b/i},
+ {key:'mother',explicit:/(?:\bmin mamma\b|\bmin mor\b|أمي|والدتي|مادرم)/i,pronoun:/(?:\bhon\b|(?:^|\s)هي(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
+ {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
+ {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|همسرم)/i,pronoun:null},
+ {key:'person',explicit:/(?:personen jag hjälper|الشخص الذي أساعده|فردی که کمک)/i,pronoun:/\bhen\b/i}
+];
+
+function relativeSubjectKeys(text){
+ const keys=[];
+ for(const subject of RELATIVE_SUBJECTS){
+  if(subject.explicit.test(String(text||''))&&!keys.includes(subject.key))keys.push(subject.key);
+ }
+ return keys;
+}
+
+function isHelperSelfNeed(text){
+ return /(?:\bjag har själv\b|\bjag själv har\b|\bmin egen\b|\bmitt eget\b|\bmina egna\b|\bför mig själv\b|بنفسي|لي أنا|خودم|برای خودم)/i.test(String(text||''));
+}
+
+function pronounMatchesTarget(text,target){
+ const subject=RELATIVE_SUBJECTS.find(item=>item.key===target);
+ return !!(subject&&subject.pronoun&&subject.pronoun.test(String(text||'')));
+}
+
 function detectRelativeNeeds(text){
- const relativeSubject=/(?:\bbarnet\b|\bmitt barn\b|\bmin mamma\b|\bmin pappa\b|\bmin mor\b|\bmin far\b|\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|personen jag hjälper|طفلي|ابني|ابنتي|أمي|أبي|والدتي|والدي|الشخص الذي أساعده|فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|فردی که کمک)/i;
- const parts=String(text||'').split(/(?:[.!?;\n]+|\bmen\b|لكن|اما|ولی)/i);
+ const value=String(text||'');
+ const explicitKeys=relativeSubjectKeys(value);
+ // More than one explicitly named beneficiary is ambiguous for a single helper route.
+ // Fail closed rather than silently assigning one person's need to another.
+ if(explicitKeys.length!==1)return [];
+ const target=explicitKeys[0];
+ const parts=value.split(/(?:[.!?؟;\n]+|\bmen\b|لكن|اما|ولی)/i).filter(part=>part.trim());
  const needs=[];
+ let established=false;
  for(const part of parts){
-  if(!relativeSubject.test(part))continue;
-  needs.push(...detectNeeds(part));
+  const partKeys=relativeSubjectKeys(part);
+  if(partKeys.includes(target)){
+   established=true;
+   needs.push(...detectNeeds(part));
+   continue;
+  }
+  if(!established||isHelperSelfNeed(part))continue;
+  if(pronounMatchesTarget(part,target))needs.push(...detectNeeds(part));
  }
  return uniqueAllowed(needs);
 }
@@ -130,6 +167,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.1.0',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.2.0',page});
 }
 })(window);
