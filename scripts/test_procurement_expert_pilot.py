@@ -143,6 +143,12 @@ test('clarification-and-bid-deadlines-keep-separate-purpose',()=>{
  assert.match(rows[0].question,/frågor\/förtydliganden/);
  assert.match(rows[1].question,/anbudsdag/);
 });
+test('dated-qualification-condition-is-not-process-deadline',()=>{
+ const row=p.splitRequirements('Leverantören ska ha två referensuppdrag som ska vara slutförda senast den 1 september 2026.')[0];
+ assert.equal(row.category,'qualification');
+ assert.equal(row.processSubtype,null);
+ assert.match(row.question,/referensuppdrag|bevis/);
+});
 test('conflicting-price-versions-fail-closed',()=>{
  const rows=p.splitRequirements('Version 1: Fast pris ska anges i bilaga 6.\nVersion 2 ersätter version 1: Timpris ska anges i bilaga 9.');
  assert.deepEqual(rows.map(r=>r.category),['commercial','commercial']);
