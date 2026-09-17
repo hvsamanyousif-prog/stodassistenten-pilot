@@ -161,10 +161,11 @@ function addFlag(row,code,label){
  if(!row.flags)row.flags=[];
  if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
 }
-function commercialScope(line){
+function lotScope(line){
  const match=normalized(line).match(/\b(?:delområde|anbudsområde)\s+([a-zåäö0-9]+)\b/);
  return match?`named:${match[1]}`:'unscoped';
 }
+function commercialScope(line){return lotScope(line);}
 function commercialValueSignature(line){
  const t=normalized(line);
  const mode=[/fast pris/.test(t)?'fixed':'',/timpris/.test(t)?'hourly':''].filter(Boolean).join('+');
@@ -192,19 +193,34 @@ function applyCrossRowFlags(rows){
  });
  for(const [purpose,group] of Object.entries(deadlineGroups)){
    if(purpose==='other'||group.length<2)continue;
-   const scoped=group.map(r=>deadlineValueSlice(r.text,purpose));
-   const dates=[...new Set(scoped.flatMap(value=>dateTokens(value)))];
-   const timedRows=scoped.map(value=>timeTokens(value)).filter(tokens=>tokens.length>0);
-   const times=[...new Set(timedRows.flat())];
-   const dateConflict=dateTokensConflict(dates);
-   const timeConflict=timedRows.length>1&&times.length>1;
-   if(dateConflict||timeConflict){
-     const label=purpose==='bid'
-       ?'Motstridiga anbudsdatum eller klockslag i underlaget – verifiera senaste publicerade rättelse/version innan uppgiften används.'
-       :purpose==='clarification'
-         ?'Motstridiga datum eller klockslag för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
-         :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
-     group.forEach(r=>addFlag(r,'deadline_version_conflict',label));
+   const withScope=group.map(row=>({row,scope:lotScope(row.text)}));
+   const namedScopes=new Set(withScope.filter(item=>item.scope!=='unscoped').map(item=>item.scope));
+   const hasUnscoped=withScope.some(item=>item.scope==='unscoped');
+   if(namedScopes.size&&hasUnscoped){
+     withScope.filter(item=>item.scope==='unscoped').forEach(({row})=>addFlag(row,'deadline_scope_uncertain','Oklart delområdesscope för deadline – raden saknar delområde medan andra deadline-rader anger delområde. Jämför inte raderna som samma version; kontrollera originalkällan/rättelsen.'));
+   }
+   const scopeGroups={};
+   withScope.forEach(item=>{
+     if(item.scope==='unscoped'&&namedScopes.size)return;
+     if(!scopeGroups[item.scope])scopeGroups[item.scope]=[];
+     scopeGroups[item.scope].push(item.row);
+   });
+   for(const scopedGroup of Object.values(scopeGroups)){
+     if(scopedGroup.length<2)continue;
+     const scoped=scopedGroup.map(r=>deadlineValueSlice(r.text,purpose));
+     const dates=[...new Set(scoped.flatMap(value=>dateTokens(value)))];
+     const timedRows=scoped.map(value=>timeTokens(value)).filter(tokens=>tokens.length>0);
+     const times=[...new Set(timedRows.flat())];
+     const dateConflict=dateTokensConflict(dates);
+     const timeConflict=timedRows.length>1&&times.length>1;
+     if(dateConflict||timeConflict){
+       const label=purpose==='bid'
+         ?'Motstridiga anbudsdatum eller klockslag i underlaget – verifiera senaste publicerade rättelse/version innan uppgiften används.'
+         :purpose==='clarification'
+           ?'Motstridiga datum eller klockslag för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
+           :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
+       scopedGroup.forEach(r=>addFlag(r,'deadline_version_conflict',label));
+     }
    }
  }
  const pricedVersions=actionable.filter(r=>r.category==='commercial'&&/\b(version|rättelse|ersätter)\b/.test(normalized(r.text)));
