@@ -34,10 +34,20 @@ function clarificationSubmissionTiming(line){
    || /\bbegäran om (?:kompletterande information|kompletterande upplysningar)\b.*\b(?:ska\s+)?(?:lämnas|ställas|inkomma)\b.*\b(?:senast|sista dag)\b/.test(t)
    || /\b(?:sista dag|senast)\b.*\b(?:frågor?|förtydliganden?)\b/.test(t);
 }
+function participationApplicationTiming(line){
+ const t=normalized(line);
+ const subject=/\b(?:anbudsansökan|ansökan om att få delta)\b/.test(t);
+ const timing=/\b(?:senast|sista dag)\b/.test(t);
+ const action=/\b(?:ska\s+)?(?:lämnas|inkomma)\b/.test(t)
+   || /\bska\s+ha\s+kommit\s+in\b/.test(t)
+   || /\b(?:ska\s+)?vara\b[^.]{0,40}\btillhanda\b/.test(t);
+ return subject&&timing&&action;
+}
 function deadlinePurpose(line){
  const t=normalized(line);
  if(answerPublicationTiming(t))return 'answer_publication';
  if(clarificationSubmissionTiming(t))return 'clarification';
+ if(participationApplicationTiming(t))return 'participation_application';
  if(/sista anbudsdag|anbud.*tillhanda|lämna.*anbud.*senast|anbud.*senast/.test(t))return 'bid';
  if(/giltighetstid för anbud|anbud.*giltig/.test(t))return 'validity';
  return 'other';
@@ -49,9 +59,11 @@ function semanticDeadlineSlice(line,purpose){
    ?['svar på frågor','svaren på frågor','svar på inkomna frågor','kompletterande information','kompletterande upplysningar']
    :purpose==='clarification'
      ?['sista dag för frågor','frågor om','förtydliganden','frågor']
-     :purpose==='validity'
-       ?['giltighetstid för anbud','anbudets giltighetstid','giltighetstid']
-       :['sista anbudsdag','anbud ska vara','anbud ska','anbudet ska','lämna anbud','anbud'];
+     :purpose==='participation_application'
+       ?['anbudsansökan','ansökan om att få delta']
+       :purpose==='validity'
+         ?['giltighetstid för anbud','anbudets giltighetstid','giltighetstid']
+         :['sista anbudsdag','anbud ska vara','anbud ska','anbudet ska','lämna anbud','anbud'];
  for(const trigger of triggers){
    const index=lower.indexOf(trigger);
    if(index>=0)return value.slice(index);
@@ -118,7 +130,7 @@ function timeTokens(line){
 function classifyRequirement(line){
  const t=normalized(line);
  if(!t)return 'uncertain';
- if(answerPublicationTiming(t)||clarificationSubmissionTiming(t)||/sista anbudsdag|deadline|anbud ska vara.*tillhanda|\banbud(?:et)?\b\s+ska\s+lämnas\s+senast|giltighetstid för anbud/.test(t))return 'deadline';
+ if(answerPublicationTiming(t)||clarificationSubmissionTiming(t)||participationApplicationTiming(t)||/sista anbudsdag|deadline|anbud ska vara.*tillhanda|\banbud(?:et)?\b\s+ska\s+lämnas\s+senast|giltighetstid för anbud/.test(t))return 'deadline';
  if(/tilldelningskriter|utvärder|\bmervärde\b|poäng|bästa förhållandet|lägsta pris/.test(t))return 'award';
  if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexreglering(?:sprincip)?|prisjustering(?:sprincip)?/.test(t))return 'commercial';
  if(/avtalstid|kontraktsvillkor|särskilda kontraktsvillkor|under avtalstiden|vite|utförandevillkor|leveransvillkor/.test(t))return 'contract';
@@ -138,6 +150,7 @@ function evidenceQuestion(line,category){
    const purpose=deadlinePurpose(line);
    if(purpose==='clarification')return 'Är sista dag för frågor/förtydliganden kontrollerad mot senaste publicerade underlag och rättelser?';
    if(purpose==='answer_publication')return 'Är tidpunkten för publicering av svar kontrollerad mot originalkällan? Detta är inte samma sak som sista dag för frågor.';
+   if(purpose==='participation_application')return 'Är tidsfristen för anbudsansökan/ansökan om att få delta, inklusive exakt klockslag när det anges, kontrollerad mot senaste publicerade originalkälla och rättelser? Detta är inte samma sak som sista anbudsdag.';
    if(purpose==='bid')return 'Är sista anbudsdag och exakt klockslag kontrollerade mot senaste publicerade underlag och rättelser?';
    if(purpose==='validity')return 'Är anbudets giltighetstid kontrollerad mot senaste publicerade underlag och rättelser?';
    return 'Är datum/tid/version kontrollerad mot senaste publicerade underlag och eventuella rättelser?';
@@ -178,6 +191,7 @@ function structureFlags(line){
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
  if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
+ if(purpose==='participation_application')flags.push({code:'participation_application_timing',label:'Tidsfrist för anbudsansökan/ansökan om att få delta – en separat processhändelse från sista anbudsdag. Kontrollera originalkällan och senaste publicerade rättelser.'});
  if(purpose!=='other'){
    const deadlineSlice=semanticDeadlineSlice(raw,purpose);
    const changeText=normalized(deadlineSlice);
@@ -188,7 +202,9 @@ function structureFlags(line){
        ?'Ändrad anbudsdeadline på samma källrad – verifiera senaste publicerade rättelse/version innan uppgiften används.'
        :purpose==='clarification'
          ?'Ändrad tidsgräns för frågor/förtydliganden på samma källrad – verifiera senaste publicerade rättelse/version.'
-         :'Ändrad deadline på samma källrad – verifiera senaste publicerade underlag/version.';
+         :purpose==='participation_application'
+           ?'Ändrad tidsfrist för anbudsansökan/ansökan om att få delta på samma källrad – verifiera senaste publicerade rättelse/version.'
+           :'Ändrad deadline på samma källrad – verifiera senaste publicerade underlag/version.';
      flags.push({code:'deadline_change_same_row',label});
    }
  }
@@ -264,7 +280,9 @@ function applyCrossRowFlags(rows){
            ?'Motstridiga datum eller klockslag för frågor/förtydliganden – verifiera senaste publicerade rättelse/version.'
            :purpose==='answer_publication'
              ?'Motstridiga datum eller klockslag för publicering av svar – verifiera senaste publicerade rättelse/version.'
-             :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
+             :purpose==='participation_application'
+               ?'Motstridiga datum eller klockslag för anbudsansökan/ansökan om att få delta – verifiera senaste publicerade rättelse/version.'
+               :'Motstridiga datum, klockslag eller versioner – kontrollera senaste publicerade underlag.';
        scopedGroup.forEach(r=>addFlag(r,'deadline_version_conflict',label));
      }
    }
