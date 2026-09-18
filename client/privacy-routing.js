@@ -24,6 +24,7 @@
             },0);
           };
         }
+        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت').concat(['شرکت من']);
         if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn'&&term!=='نظر').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
