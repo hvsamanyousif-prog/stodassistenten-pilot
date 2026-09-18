@@ -3,9 +3,10 @@
 
 The shared shell must not let the verb "hyra" (rent an object) inject an economy
 route when another known route already explains the sentence, while preserving
-ordinary noun phrases that do describe rent pressure. The contrast deliberately
-avoids the generic no-match fallback so the oracle isolates the lexical signal.
-This is a routing/UX regression only; it does not claim eligibility.
+ordinary noun phrases that do describe rent pressure. The same scenario family
+also covers the natural standalone no-match journey: object rental without
+another known signal must fail closed instead of fabricating economy/work
+relevance. This is routing/UX evidence only; it does not claim eligibility.
 """
 
 from __future__ import annotations
@@ -36,6 +37,18 @@ SCENARIOS = [
         "expect_economy": False,
     },
     {
+        "id": "standalone-rent-car-fails-closed",
+        "text": "Jag behöver hyra en bil till helgen.",
+        "expect_economy": False,
+        "expect_no_match": True,
+    },
+    {
+        "id": "standalone-rent-trailer-fails-closed",
+        "text": "Jag behöver hyra ett släp till helgen.",
+        "expect_economy": False,
+        "expect_no_match": True,
+    },
+    {
         "id": "high-rent-is-economy",
         "text": "Jag har hög hyra och behöver hjälp.",
         "expect_economy": True,
@@ -52,6 +65,7 @@ SCENARIOS = [
     },
 ]
 WIDTHS = [390, 1280]
+FALLBACK_COPY = "Jag behöver en sak till för att välja rätt väg. Välj det som ligger närmast:"
 
 
 def require(condition: bool, message: str) -> None:
@@ -102,6 +116,13 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
             require(economy_links.count() == 0, f"{case_id}: object-rental verb incorrectly produced the economy route")
 
         hrefs = results.locator("a").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+        if scenario.get("expect_no_match"):
+            interpretation = results.locator(".interpret").inner_text().strip()
+            require(interpretation == FALLBACK_COPY, f"{case_id}: no-match copy presented domain routes as matches: {interpretation!r}")
+            require(len(hrefs) == 1, f"{case_id}: standalone no-match should expose one generic route, got {hrefs}")
+            require("actor_type=other" in hrefs[0], f"{case_id}: standalone no-match did not lead to the generic route: {hrefs}")
+            require(all("actor_type=employee" not in href for href in hrefs), f"{case_id}: standalone object rental fabricated a work route")
+
         require(all(scenario["text"] not in href for href in hrefs), f"{case_id}: raw situation leaked into result URL")
         require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case_id}: horizontal overflow")
 
@@ -111,6 +132,7 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
             "width": width,
             "status": "passed",
             "expect_economy": scenario["expect_economy"],
+            "expect_no_match": bool(scenario.get("expect_no_match")),
             "hrefs": hrefs,
         }
     finally:
