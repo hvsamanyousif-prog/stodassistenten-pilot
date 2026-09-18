@@ -248,7 +248,7 @@
   }
   function helperFundingScope(text){
     const x=lower(text);
-    return /(?:åt|för)\s+(?:barnet|min(?:t|)\s+barn|min\s+mamma|min\s+pappa|min\s+mor|min\s+far|min\s+partner|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    return /(?:åt|för)\s+(?:barnet|min(?:t|)\s+barn|min\s+(?:mamma|pappa|mor|far|partner|syster|bror|syskon)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
   }
   function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
