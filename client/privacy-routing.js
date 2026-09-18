@@ -133,7 +133,11 @@
     return null;
   }
   function hasConcreteNeed(text){
-    return /hyra|mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|syn|bostad|sjuk|vård|assistans|funktions|arbetslös|hemma|rent|food|medicine|دواء|دواء|طعام|إيجار|سكن|مرض|أسنان|بصر|دارو|غذا|اجاره|مسکن|بیمار|دندان|بینایی/.test(lower(text));
+    const x=lower(text);
+    const boundedRent=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$)))/.test(x);
+    const governedNeed=typeof KEYWORDS!=='undefined'&&['vision','family'].some(key=>Array.isArray(KEYWORDS[key])&&KEYWORDS[key].some(term=>String(term||'')&&x.includes(lower(term))));
+    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|bostad|sjuk|vård|assistans|funktions|arbetslös|hemma|rent|food|medicine|دواء|دواء|طعام|إيجار|سكن|مرض|أسنان|بصر|دارو|غذا|اجاره|مسکن|بیمار|دندان|بینایی/.test(x);
+    return boundedRent||governedNeed||otherNeed;
   }
   function boundedSelfFundingFallback(text){
     const x=lower(text);
