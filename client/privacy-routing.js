@@ -11,6 +11,7 @@
               const needle=String(term||'').toLocaleLowerCase();
               let hit=false;
               if(needle==='tand') hit=/(?:^|[^\p{L}\p{N}])tand(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='råd') hit=/(?:^|[^\p{L}\p{N}])(?:har\s+)?inte\s+råd(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
               else hit=Boolean(needle&&hay.includes(needle));
