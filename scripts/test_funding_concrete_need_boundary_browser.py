@@ -2,10 +2,10 @@
 """Browser regression for concrete-need lexical boundaries inside funding handoff.
 
 The shared start page must keep vague funding language in the funding handoff when
-near-miss words such as `synpunkt` or object-rental `hyra` are present, while
-preserving genuine concrete family/housing needs. This is browser/DOM/routing
-evidence only; it does not claim eligibility, persistence, model quality, or
-physical-device evidence.
+near-miss words such as `synpunkt` or object-rental `hyra`/Arabic-Persian rent
+lexemes are present, while preserving genuine concrete family/housing needs.
+This is browser/DOM/routing evidence only; it does not claim eligibility,
+persistence, model quality, or physical-device evidence.
 """
 
 from __future__ import annotations
@@ -38,6 +38,43 @@ CASES = [
         "expect_question": True,
         "expect_first": "actor_type=private_person",
         "expect_intent": "funding_intent=funding",
+        "reject_need": "need_context=housing",
+    },
+    {
+        "id": "ar-funding-car-rental-is-not-concrete-housing",
+        "lang": "ar",
+        "text": "أبحث عن تمويل لإيجار سيارة.",
+        "expect_question": True,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "reject_need": "need_context=housing",
+    },
+    {
+        "id": "fa-funding-car-rental-is-not-concrete-housing",
+        "lang": "fa",
+        "text": "برای اجاره خودرو دنبال بودجه هستم.",
+        "expect_question": True,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "reject_need": "need_context=housing",
+    },
+    {
+        "id": "ar-funding-high-rent-remains-concrete-housing",
+        "lang": "ar",
+        "text": "لدي إيجار مرتفع وأبحث عن تمويل.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "expect_need": "need_context=housing",
+    },
+    {
+        "id": "fa-funding-high-rent-remains-concrete-housing",
+        "lang": "fa",
+        "text": "اجاره گران دارم و دنبال بودجه هستم.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "expect_need": "need_context=housing",
     },
     {
         "id": "funding-extra-supervision-remains-concrete-family",
@@ -53,6 +90,7 @@ CASES = [
         "expect_question": False,
         "expect_first": "actor_type=private_person",
         "expect_intent": "funding_intent=funding",
+        "expect_need": "need_context=housing",
     },
 ]
 
@@ -88,12 +126,15 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(f"{base_url}/index.html?lang=sv", wait_until="load")
+        lang = case.get("lang", "sv")
+        page.goto(f"{base_url}/index.html?lang={lang}", wait_until="load")
         page.locator("#situation").fill(case["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
         require(results.is_visible(), f"{case['id']}@{width}: results not visible")
         require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
+        if lang in {"ar", "fa"}:
+            require(page.locator("html").get_attribute("dir") == "rtl", f"{case['id']}@{width}: RTL direction missing")
 
         question_count = results.locator('[data-funding-question="true"]').count()
         expected_question_count = 1 if case["expect_question"] else 0
@@ -105,6 +146,10 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         first_href = hrefs[0]
         require(case["expect_first"] in first_href, f"{case['id']}@{width}: first route {first_href!r} did not match {case['expect_first']!r}")
         require(case["expect_intent"] in first_href, f"{case['id']}@{width}: funding intent was not preserved in first route: {first_href!r}")
+        if case.get("expect_need"):
+            require(case["expect_need"] in first_href, f"{case['id']}@{width}: concrete need was not preserved in first route: {first_href!r}")
+        if case.get("reject_need"):
+            require(all(case["reject_need"] not in href for href in hrefs), f"{case['id']}@{width}: false concrete need rendered: {hrefs}")
         if case.get("reject"):
             require(all(case["reject"] not in href for href in hrefs), f"{case['id']}@{width}: rejected route rendered: {hrefs}")
 
@@ -112,6 +157,7 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case['id']}@{width}: horizontal overflow")
         return {
             "id": case["id"],
+            "lang": lang,
             "width": width,
             "status": "passed",
             "question_count": question_count,
@@ -139,7 +185,7 @@ def main() -> int:
         "results": [],
         "limits": [
             "Browser/DOM/routing evidence only.",
-            "Viewport repetition is not an independent semantic case.",
+            "Language and viewport repetitions are not independent semantic cases.",
             "Playwright WebKit is not physical iPhone/iPad Safari evidence.",
         ],
     }
@@ -158,7 +204,7 @@ def main() -> int:
                             evidence["passed"] += 1
                         except Exception as exc:
                             evidence["failed"] += 1
-                            evidence["results"].append({"id": case["id"], "width": width, "status": "failed", "error": str(exc)})
+                            evidence["results"].append({"id": case["id"], "lang": case.get("lang", "sv"), "width": width, "status": "failed", "error": str(exc)})
             finally:
                 browser.close()
 
