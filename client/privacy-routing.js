@@ -3,6 +3,7 @@
     let rerender=false;
     try{
       if(typeof KEYWORDS!=='undefined'){
+        if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn').concat(['dålig syn','sämre syn','synproblem']);
         KEYWORDS.assistance=[
           'personlig assistans','assistans','hjälp med hygien','personlig hygien','hjälp med påklädning','påklädning','hjälp med toalett','toalett','hjälp att äta','hjälp med måltider','hjälp med kommunikation','andning',
           'مساعدة شخصية','النظافة الشخصية','المساعدة في اللباس','ارتداء الملابس','المساعدة في الأكل','المساعدة في التواصل','التنفس',
