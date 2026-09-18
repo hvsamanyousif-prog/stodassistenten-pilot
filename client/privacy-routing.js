@@ -134,6 +134,21 @@
   function hasConcreteNeed(text){
     return /hyra|mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|syn|bostad|sjuk|vård|assistans|funktions|arbetslös|hemma|rent|food|medicine|دواء|دواء|طعام|إيجار|سكن|مرض|أسنان|بصر|دارو|غذا|اجاره|مسکن|بیمار|دندان|بینایی/.test(lower(text));
   }
+  function boundedSelfFundingFallback(text){
+    const x=lower(text);
+    const self=/(?:^|\s)jag(?:\s|$)/.test(x)||/(?:^|[\s،,.])أنا(?:$|[\s،,.])/.test(x)||/(?:^|[\s،,.])من(?:$|[\s،,.])/.test(x);
+    if(!self) return false;
+    const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(x);
+    const essential=/(?:\bmat(?:en)?\b|livsmedel|läkemed|medicin|\b(?:elräkning(?:en|ar|arna)?|hushållsel|elkostnad(?:en|er|erna)?)\b|\bfood\b|medicine|دواء|طعام|(?:فاتورة|تكلفة|تكاليف)\s+الكهرباء|دارو|غذا|قبض\s+برق|هزینه(?:‌ی|ی)?\s*برق)/.test(x);
+    if(!housing&&!essential) return false;
+    if(typeof classify!=='function') return false;
+    try{
+      const keys=classify(text);
+      return Array.isArray(keys)&&keys.length===1&&keys[0]==='general';
+    }catch(_err){
+      return false;
+    }
+  }
   function actorFromUrl(){
     return URL_ACTORS[new URLSearchParams(location.search).get('actor_type')]||null;
   }
@@ -211,9 +226,11 @@
     const lang=currentLang();
     const copy=FUNDING_COPY[lang];
     const actor=resolvedFundingActor(text)||(helperFundingScope(text)?'relative':null);
-    if(hasConcreteNeed(text)&&actor!=='relative') return false;
-    if(actor){
-      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
+    const fallbackActor=!actor&&boundedSelfFundingFallback(text)?'private':null;
+    if(hasConcreteNeed(text)&&actor!=='relative'&&!fallbackActor) return false;
+    const routeActor=actor||fallbackActor;
+    if(routeActor){
+      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(routeActor,copy,lang,intent)}`;
     }else{
       box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','employee','company','association','relative','property_actor'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
     }
