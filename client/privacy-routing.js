@@ -161,8 +161,9 @@
     const x=lower(text);
     const boundedRent=boundedHousingNeed(x);
     const governedNeed=typeof KEYWORDS!=='undefined'&&['vision','family'].some(key=>Array.isArray(KEYWORDS[key])&&KEYWORDS[key].some(term=>String(term||'')&&x.includes(lower(term))));
-    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|sjuk|vård|assistans|funktions|arbetslös|hemma|food|medicine|دواء|دواء|طعام|مرض|أسنان|بصر|دارو|غذا|بیمار|دندان|بینایی/.test(x);
-    return boundedRent||governedNeed||otherNeed;
+    const dentalNeed=/(?:^|[^\p{L}\p{N}])tand/u.test(x);
+    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|sjuk|vård|assistans|funktions|arbetslös|hemma|food|medicine|دواء|دواء|طعام|مرض|أسنان|بصر|دارو|غذا|بیمار|دندان|بینایی/.test(x);
+    return boundedRent||governedNeed||dentalNeed||otherNeed;
   }
   function boundedSelfFundingFallback(text){
     const x=lower(text);
