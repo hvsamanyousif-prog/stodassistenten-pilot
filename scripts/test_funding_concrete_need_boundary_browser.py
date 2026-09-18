@@ -41,6 +41,13 @@ CASES = [
         "reject": "quick-help.html?mode=dental",
     },
     {
+        "id": "funding-material-is-not-concrete-food",
+        "text": "Jag söker bidrag till material för en aktivitet.",
+        "expect_question": True,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+    },
+    {
         "id": "funding-rent-car-is-not-concrete-housing",
         "text": "Jag söker bidrag och behöver hyra en bil.",
         "expect_question": True,
