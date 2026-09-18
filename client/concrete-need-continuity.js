@@ -4,7 +4,7 @@
 const NEED_PARAM='need_context';
 const ALLOWED_NEEDS=new Set(['housing','essential_costs']);
 const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
-const SUPPORTED_ACTORS=new Set(['private_person','student','relative']);
+const SUPPORTED_ACTORS=new Set(['private_person','student','relative','employee']);
 const params=new URLSearchParams(root.location.search);
 const page=(root.location.pathname.split('/').pop()||'').toLowerCase();
 
@@ -112,6 +112,12 @@ const NEED_COPY={
  fa:{heading:'نیاز حفظ‌شده',relativeHeading:'نیاز حفظ‌شدهٔ آن شخص',labels:{housing:'مسکن / اجاره',essential_costs:'هزینه‌های ضروری'},boundary:'فقط این دسته‌های کلی بین صفحه‌ها منتقل می‌شوند، نه متن آزاد تو.'}
 };
 
+const EMPLOYEE_NEED_BRIDGE_COPY={
+ sv:'Fortsätt med behovet',
+ ar:'تابع مع الاحتياج',
+ fa:'ادامه با نیاز'
+};
+
 const ESSENTIAL_COSTS_QUESTION_COPY={
  sv:{self:'Du nämnde nödvändiga utgifter. Hur pressad är ekonomin efter boende och nödvändiga utgifter?',relative:'Du nämnde nödvändiga utgifter för personen. Hur pressad är personens ekonomi efter boende och nödvändiga utgifter?'},
  ar:{self:'ذكرت مصاريف ضرورية. ما مدى الضغط على الميزانية بعد السكن والمصاريف الضرورية؟',relative:'ذكرت مصاريف ضرورية للشخص. ما مدى الضغط على ميزانية الشخص بعد السكن والمصاريف الضرورية؟'},
@@ -122,6 +128,7 @@ function installPerson(){
  if(page!=='person-pilot.html')return false;
  const actor=params.get('actor_type')||'';
  if(!SUPPORTED_ACTORS.has(actor))return false;
+ const intent=params.get('funding_intent')||'';
  const needs=parseNeedContext(params.get(NEED_PARAM));
  if(!needs.length)return false;
  if(typeof render!=='function'||typeof go!=='function')return false;
@@ -130,6 +137,27 @@ function installPerson(){
 
  function locale(){
   try{return typeof lang==='string'&&(lang==='ar'||lang==='fa')?lang:'sv';}catch(_){return 'sv';}
+ }
+
+ function installEmployeeNeedBridge(card){
+  if(actor!=='employee'||!FUNDING_INTENTS.has(intent))return;
+  if(card.querySelector('[data-funding-continuity-action]'))return;
+  const button=document.createElement('button');
+  button.type='button';
+  button.className='btn primary';
+  button.dataset.fundingContinuityAction='employee';
+  button.textContent=EMPLOYEE_NEED_BRIDGE_COPY[locale()]||EMPLOYEE_NEED_BRIDGE_COPY.sv;
+  button.addEventListener('click',()=>{
+   try{
+    scenario='general';
+    answers={fundingIntent:intent};
+    try{matchRatings={};finalFeedback={};submitState='idle';}catch(_){/* base page owns feedback state */}
+    go('general1');
+   }catch(error){
+    console.error('employee need continuity failed closed',error);
+   }
+  });
+  card.append(button);
  }
 
  function decorateCard(){
@@ -147,6 +175,7 @@ function installPerson(){
   const copy=NEED_COPY[locale()]||NEED_COPY.sv;
   const heading=actor==='relative'?copy.relativeHeading:copy.heading;
   note.textContent=`${heading}: ${needs.map(need=>copy.labels[need]).join(' + ')}. ${copy.boundary}`;
+  installEmployeeNeedBridge(card);
  }
 
  function decorateEssentialCostsQuestion(){
@@ -187,6 +216,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.2',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.3',page});
 }
 })(window);
