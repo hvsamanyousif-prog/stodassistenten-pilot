@@ -24,6 +24,9 @@ HELPER_CASES = [
     {"id": "sv-explicit-helper-funding", "lang": "sv", "width": 390, "text": "Jag hjälper min mamma att söka bidrag"},
     {"id": "ar-explicit-helper-funding", "lang": "ar", "width": 390, "text": "أساعد أمي في البحث عن دعم مالي"},
     {"id": "fa-explicit-helper-funding", "lang": "fa", "width": 768, "text": "به مادرم کمک می‌کنم برای کمک مالی جست‌وجو کند"},
+    {"id": "sv-helper-child-student-funding", "lang": "sv", "width": 390, "text": "Jag hjälper min son som är student att söka bidrag"},
+    {"id": "ar-helper-child-student-funding", "lang": "ar", "width": 390, "text": "أساعد ابني الطالب في البحث عن دعم مالي"},
+    {"id": "fa-helper-child-student-funding", "lang": "fa", "width": 768, "text": "به پسرم که دانشجو است کمک می‌کنم برای کمک مالی"},
 ]
 
 RELATIVE_DESTINATION_CASES = [
