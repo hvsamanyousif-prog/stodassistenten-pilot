@@ -154,6 +154,26 @@ SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "ar-property-actor-specificity",
+        "lang": "ar",
+        "width": 390,
+        "text": "نحن جمعية سكنية ونبحث عن تمويل لتكييف مدخل المبنى.",
+        "expect_question": False,
+        "expect_actor": "property_actor",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-generic-association-remains-generic",
+        "lang": "ar",
+        "width": 1280,
+        "text": "نحن جمعية ونبحث عن تمويل لمشروع.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
