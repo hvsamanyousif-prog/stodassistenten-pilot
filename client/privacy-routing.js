@@ -156,7 +156,7 @@
     if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return null;
     if(/stipen|منح(?:ة|)|بورسیه/.test(x)) return 'scholarship';
     if(/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/.test(x)) return 'loan';
-    if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|fond(?:er)?(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم مالي|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
+    if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|fond(?:er)?(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
     return null;
   }
   function boundedHousingNeed(text){
