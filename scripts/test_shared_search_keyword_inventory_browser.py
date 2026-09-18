@@ -39,6 +39,23 @@ SCENARIOS = [
         "expect_route": "quick-help.html?mode=dental",
     },
     {
+        "id": "sv-advice-not-economy",
+        "lang": "sv",
+        "width": 390,
+        "text": "Jag behöver råd om hur jag söker skolstöd.",
+        "expect_question": False,
+        "reject_route": "actor_type=private_person",
+        "expect_route": "actor_type=other",
+    },
+    {
+        "id": "sv-cannot-afford-positive",
+        "lang": "sv",
+        "width": 1280,
+        "text": "Jag har inte råd med mat den här månaden.",
+        "expect_question": False,
+        "expect_route": "actor_type=private_person",
+    },
+    {
         "id": "ar-surgery-not-work",
         "lang": "ar",
         "width": 390,
