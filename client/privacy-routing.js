@@ -14,13 +14,14 @@
               else if(needle==='råd') hit=/(?:^|[^\p{L}\p{N}])(?:har\s+)?inte\s+råd(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='بصر') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?بصر(?=$|[^\p{L}\p{N}])/u.test(hay);
               else hit=Boolean(needle&&hay.includes(needle));
               return count+(hit?1:0);
             },0);
           };
         }
         if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
-        if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn').concat(['dålig syn','sämre syn','synproblem']);
+        if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn'&&term!=='نظر').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
           'إيجار مرتفع','إيجار عالي','إيجار عالية','إيجار غالي','إيجار غالية','تكلفة السكن','تكاليف السكن','السكن',
           'اجاره بالا','اجاره بالایی','اجاره زیاد','اجاره سنگین','اجاره گران','مسکن'
@@ -160,9 +161,9 @@
   function hasConcreteNeed(text){
     const x=lower(text);
     const boundedRent=boundedHousingNeed(x);
-    const governedNeed=typeof KEYWORDS!=='undefined'&&['vision','family'].some(key=>Array.isArray(KEYWORDS[key])&&KEYWORDS[key].some(term=>String(term||'')&&x.includes(lower(term))));
+    const governedNeed=typeof score==='function'&&['vision','family'].some(key=>score(x,key)>0);
     const dentalNeed=/(?:^|[^\p{L}\p{N}])tand/u.test(x);
-    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|sjuk|vård|assistans|funktions|arbetslös|hemma|food|medicine|دواء|دواء|طعام|مرض|أسنان|بصر|دارو|غذا|بیمار|دندان|بینایی/.test(x);
+    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|sjuk|vård|assistans|funktions|arbetslös|hemma|food|medicine|دواء|دواء|طعام|مرض|أسنان|دارو|غذا|بیمار|دندان|بینایی/.test(x);
     return boundedRent||governedNeed||dentalNeed||otherNeed;
   }
   function boundedSelfFundingFallback(text){
