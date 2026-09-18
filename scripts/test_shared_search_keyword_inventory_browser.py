@@ -109,6 +109,16 @@ SCENARIOS = [
         "expect_rtl": True,
     },
     {
+        "id": "ar-third-party-employee-funding-asks-actor",
+        "lang": "ar",
+        "width": 390,
+        "text": "موظف البنك رفض طلبي وأبحث عن دعم مالي.",
+        "expect_question": True,
+        "question_token": "من",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
         "id": "fa-solution-not-work",
         "lang": "fa",
         "width": 390,
