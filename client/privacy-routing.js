@@ -19,6 +19,7 @@
               else if(needle==='بصر') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?بصر(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='طالب') hit=/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='جمعية') hit=!hay.includes('جمعية سكنية')&&hay.includes(needle);
+              else if(needle==='موظف') hit=/(?:^|[^\p{L}\p{N}])أنا\s+موظف(?=$|[^\p{L}\p{N}])/u.test(hay);
               else hit=Boolean(needle&&hay.includes(needle));
               return count+(hit?1:0);
             },0);
@@ -200,7 +201,7 @@
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
-    add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/);
+    add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|کارمند|شاغل/);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
     return actors;
   }
@@ -326,20 +327,6 @@
     if(!supportedPath||!FUNDING_DESTINATION_ACTORS.has(actor)) return false;
     url.searchParams.set('funding_intent',intent);
     return true;
-  }
-  function sanitizeAnchor(anchor){
-    const url=new URL(anchor.href,location.href);
-    const mode=safeToken(url.searchParams.get('mode'));
-    const raw=url.searchParams.get('q');
-    let changed=false;
-    if((mode==='dental'||mode==='vision')&&raw){
-      url.searchParams.set('need',coarseNeed(mode,raw));
-      url.searchParams.delete('q');
-      changed=true;
-    }
-    if(preserveConcreteFundingIntent(url)) changed=true;
-    if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
-    return routeKey(url);
   }
   function ensureBoundedSelfFundingAlternative(){
     const text=composer?composer.value.trim():'';
