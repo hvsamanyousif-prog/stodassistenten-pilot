@@ -2,7 +2,7 @@
 """Browser regression for concrete-need lexical boundaries inside funding handoff.
 
 The shared start page must keep vague funding language in the funding handoff when
-near-miss words such as `synpunkt` or object-rental `hyra`/Arabic-Persian rent
+near-miss words such as `synpunkt`, `standard` or object-rental `hyra`/Arabic-Persian rent
 lexemes are present, while preserving genuine concrete family/housing needs.
 This is browser/DOM/routing evidence only; it does not claim eligibility,
 persistence, model quality, or physical-device evidence.
@@ -31,6 +31,14 @@ CASES = [
         "expect_first": "actor_type=private_person",
         "expect_intent": "funding_intent=funding",
         "reject": "quick-help.html?mode=vision",
+    },
+    {
+        "id": "funding-standard-is-not-concrete-dental",
+        "text": "Jag söker bidrag och vill veta vilken standard som krävs.",
+        "expect_question": True,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "reject": "quick-help.html?mode=dental",
     },
     {
         "id": "funding-rent-car-is-not-concrete-housing",
