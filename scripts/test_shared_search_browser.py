@@ -60,6 +60,10 @@ SCENARIOS = [
     {"id": "sv-combined-everyday-needs-stay-open", "lang": "sv", "width": 390, "text": "Jag behöver hjälp med läkemedel och mat/hyra", "expect_question": False, "expect_routes": ["actor_type=private_person", "actor_type=other"]},
     {"id": "sv-procurement-remains-company", "lang": "sv", "width": 1280, "text": "Jag driver företag och vill hitta en offentlig upphandling", "expect_question": False, "expect_route": "actor_type=company"},
     {"id": "sv-dental-regression", "lang": "sv", "width": 320, "text": "Jag har ont i en tand men är orolig för kostnaden", "expect_question": False, "expect_route": "quick-help.html?mode=dental"},
+    {"id": "sv-mouth-dental-positive", "lang": "sv", "width": 390, "text": "Jag har ont i munnen och behöver tandvård", "expect_question": False, "expect_route": "quick-help.html?mode=dental"},
+    {"id": "sv-municipality-home-service-not-dental", "lang": "sv", "width": 390, "text": "Jag behöver hjälp från kommunen med hemtjänst.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
+    {"id": "sv-municipality-housing-adaptation-not-dental", "lang": "sv", "width": 1280, "text": "Jag behöver information från min kommun om bostadsanpassning.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
+    {"id": "sv-municipal-housing-support-not-dental", "lang": "sv", "width": 768, "text": "Jag söker kommunalt stöd för att anpassa min bostad.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
     {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private", "expect_intent": "funding"},
@@ -157,6 +161,9 @@ def run_scenario(browser, base_url: str, scenario: dict) -> dict:
 
         if scenario.get("expect_route"):
             require(results.locator(f'a[href*="{scenario["expect_route"]}"]').count() >= 1, f"{scenario['id']}: expected route missing: {scenario['expect_route']}")
+
+        if scenario.get("reject_route"):
+            require(results.locator(f'a[href*="{scenario["reject_route"]}"]').count() == 0, f"{scenario['id']}: rejected route was shown: {scenario['reject_route']}")
 
         for token in scenario.get("expect_routes", []):
             require(results.locator(f'a[href*="{token}"]').count() >= 1, f"{scenario['id']}: combined need route missing: {token}")
