@@ -24,7 +24,7 @@
             },0);
           };
         }
-        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت').concat(['شرکت من']);
+        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت'&&term!=='شركة').concat(['شرکت من','لدي شركة','لدينا شركة','شركتي','شركتنا','نحن شركة','أنا صاحب شركة']);
         if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn'&&term!=='نظر').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
@@ -197,7 +197,7 @@
     const propertyHit=propertyPattern.test(x);
     add('relative',/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/);
     add('property_actor',propertyPattern);
-    add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/);
+    add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/);
