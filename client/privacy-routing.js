@@ -226,11 +226,9 @@
     const lang=currentLang();
     const copy=FUNDING_COPY[lang];
     const actor=resolvedFundingActor(text)||(helperFundingScope(text)?'relative':null);
-    const fallbackActor=!actor&&boundedSelfFundingFallback(text)?'private':null;
-    if(hasConcreteNeed(text)&&actor!=='relative'&&!fallbackActor) return false;
-    const routeActor=actor||fallbackActor;
-    if(routeActor){
-      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(routeActor,copy,lang,intent)}`;
+    if(hasConcreteNeed(text)&&actor!=='relative') return false;
+    if(actor){
+      box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
     }else{
       box.innerHTML=`<div class="interpret" data-funding-question="true">${copy.questions[intent]}</div>${['private','study','employee','company','association','relative','property_actor'].map(a=>routeHtmlForActor(a,copy,lang,intent)).join('')}`;
     }
@@ -304,7 +302,25 @@
     if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
     return routeKey(url);
   }
+  function ensureBoundedSelfFundingAlternative(){
+    const text=composer?composer.value.trim():'';
+    const intent=fundingIntent(text);
+    if(!intent||!hasConcreteNeed(text)||!boundedSelfFundingFallback(text)) return;
+    if(box.querySelector('a.route[data-bounded-self-funding="true"]')) return;
+    const routes=[...box.querySelectorAll('a.route')];
+    const broad=routes.find(anchor=>safeToken(new URL(anchor.href,location.href).searchParams.get('actor_type'))==='other');
+    if(!broad) return;
+    const hasTypedRoute=routes.some(anchor=>FUNDING_DESTINATION_ACTORS.has(safeToken(new URL(anchor.href,location.href).searchParams.get('actor_type'))));
+    if(hasTypedRoute) return;
+    const wrapper=document.createElement('div');
+    wrapper.innerHTML=routeHtmlForActor('private',FUNDING_COPY[currentLang()],currentLang(),intent);
+    const fallback=wrapper.firstElementChild;
+    if(!fallback) return;
+    fallback.dataset.boundedSelfFunding='true';
+    broad.before(fallback);
+  }
   function sanitize(){
+    ensureBoundedSelfFundingAlternative();
     const routes=[...box.querySelectorAll('a.route')];
     routes.forEach(sanitizeAnchor);
     if(routes[0]) box.dataset.primaryRoute=sanitizeAnchor(routes[0]);
