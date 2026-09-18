@@ -208,6 +208,17 @@ SCENARIOS = [
         "expect_rtl": True,
     },
     {
+        "id": "ar-financial-assistance-funding-asks-actor",
+        "lang": "ar",
+        "width": 390,
+        "text": "أحتاج إلى مساعدة مالية.",
+        "expect_question": True,
+        "question_token": "من",
+        "expect_intent": "funding",
+        "reject_actor": "private_person",
+        "expect_rtl": True,
+    },
+    {
         "id": "fa-participate-not-company",
         "lang": "fa",
         "width": 390,
