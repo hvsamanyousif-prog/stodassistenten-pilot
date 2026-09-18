@@ -207,6 +207,25 @@ SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "fa-participate-not-company",
+        "lang": "fa",
+        "width": 390,
+        "text": "برای شرکت در برنامه توانبخشی به راهنمایی نیاز دارم.",
+        "expect_question": False,
+        "reject_route": "company-pilot.html?actor_type=company",
+        "expect_route": "actor_type=other",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-company-positive",
+        "lang": "fa",
+        "width": 1280,
+        "text": "شرکت من برای یک مناقصه عمومی به راهنمایی نیاز دارد.",
+        "expect_question": False,
+        "expect_actor": "company",
+        "expect_rtl": True,
+    },
 ]
 
 
