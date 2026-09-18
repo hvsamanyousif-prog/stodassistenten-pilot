@@ -15,6 +15,8 @@
               else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='بصر') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?بصر(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='طالب') hit=/(?:^|[^\p{L}\p{N}])طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='جمعية') hit=!hay.includes('جمعية سكنية')&&hay.includes(needle);
               else hit=Boolean(needle&&hay.includes(needle));
               return count+(hit?1:0);
             },0);
@@ -43,7 +45,7 @@
         ];
         KEYWORDS.property=[
           'brf styrelse bostadsanpassning','bostadsrättsförening bostadsanpassning','hyresvärd bostadsanpassning','fastighetsägare bostadsanpassning','brf ramp entré','brf dörröppnare entré','ta över bostadsanpassningsbidrag','gemensamma utrymmen bostadsanpassning',
-          'جمعية سكنية تكييف السكن','مالك العقار تكييف السكن','منحدر مدخل المبنى','المساحات المشتركة تكييف السكن',
+          'جمعية سكنية','جمعية سكنية تكييف السكن','مالك العقار تكييف السكن','منحدر مدخل المبنى','المساحات المشتركة تكييف السكن',
           'هیئت مدیره ساختمان مناسب سازی مسکن','مالک ساختمان مناسب سازی','رمپ ورودی ساختمان','فضای مشترک مناسب سازی'
         ];
       }
@@ -188,11 +190,13 @@
     const x=lower(text);
     const actors=[];
     const add=(actor,pattern)=>{if(pattern.test(x)&&!actors.includes(actor)) actors.push(actor)};
+    const propertyPattern=/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/;
+    const propertyHit=propertyPattern.test(x);
     add('relative',/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/);
-    add('property_actor',/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/);
+    add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/);
-    add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
-    add('study',/jag studerar|student|studerar|studerande|طالب|أدرس|دانشجو|تحصیل/);
+    if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
+    if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}])طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
     return actors;
