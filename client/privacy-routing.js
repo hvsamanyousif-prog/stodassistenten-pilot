@@ -3,6 +3,22 @@
     let rerender=false;
     try{
       if(typeof KEYWORDS!=='undefined'){
+        if(typeof score==='function'){
+          score=function(text,key){
+            const hay=String(text||'').toLocaleLowerCase();
+            const terms=Array.isArray(KEYWORDS[key])?KEYWORDS[key]:[];
+            return terms.reduce((count,term)=>{
+              const needle=String(term||'').toLocaleLowerCase();
+              let hit=false;
+              if(needle==='tand') hit=/(?:^|[^\p{L}\p{N}])tand(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else hit=Boolean(needle&&hay.includes(needle));
+              return count+(hit?1:0);
+            },0);
+          };
+        }
+        if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
           'إيجار مرتفع','إيجار عالي','إيجار عالية','إيجار غالي','إيجار غالية','تكلفة السكن','تكاليف السكن','السكن',
@@ -19,7 +35,7 @@
           'کودکم به حمایت بیشتری نیاز دارد','نظارت بیشتر','مراقبت بیشتر','کمک بیشتر در مدرسه'
         ];
         KEYWORDS.vab=[
-          'jag behöver vabba','behöver vabba','mitt barn är sjukt','barnet är sjukt och jag måste vara hemma','stanna hemma med sjukt barn','sjukt barn och sjukskriven','vabba resten av dagen','vabba del av dagen',
+          'jag behöver vabba','behöver vabba','mitt barn är sjukt','barnet är sjukt and jag måste vara hemma','stanna hemma med sjukt barn','sjukt barn och sjukskriven','vabba resten av dagen','vabba del av dagen',
           'طفلي مريض ويجب أن أبقى في المنزل','أحتاج إلى رعاية طفلي المريض','أحتاج إلى VAB','طفل مريض وإجازة مرضية جزئية',
           'کودکم بیمار است و باید خانه بمانم','برای کودک بیمار باید خانه بمانم','به VAB نیاز دارم','کودک بیمار و مرخصی بیماری پاره‌وقت'
         ];
