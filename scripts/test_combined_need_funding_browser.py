@@ -16,6 +16,11 @@ eligibility from that token alone, the receiver must acknowledge it in the
 existing money question and ask for one explicit confirmation instead of
 silently displaying the token and then ignoring it.
 
+Concrete-need detection is contrastive: everyday housing wording may establish
+bounded housing context, while an unrelated use of the verb "hyra" must not be
+serialized as a housing fact. Ordinary necessary household costs such as an
+explicit electricity bill may use the existing coarse essential-cost category.
+
 This is browser/DOM evidence for the public pilot build. It does not prove
 eligibility, a live opportunity, persistence, model quality or human
 comprehension.
@@ -113,6 +118,66 @@ SCENARIOS = [
         "steps_before_result": 3,
         "money_stage_after_choices": 0,
         "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-student-rent-verb-car-not-housing",
+        "text": "Jag studerar och behöver hyra en bil och söker stipendium.",
+        "actor_type": "student",
+        "intent": "scholarship",
+        "context_token": "Stipendium / bidrag",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "continue",
+        "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-student-rent-verb-trailer-not-housing",
+        "text": "Jag studerar och behöver hyra ett släp och söker stipendium.",
+        "actor_type": "student",
+        "intent": "scholarship",
+        "context_token": "Stipendium / bidrag",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "continue",
+        "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-student-housing-cost-wording-plus-scholarship",
+        "text": "Jag studerar och har hög boendekostnad och söker stipendium.",
+        "actor_type": "student",
+        "intent": "scholarship",
+        "context_token": "Stipendium / bidrag",
+        "expect_general_route": False,
+        "need_context": {"housing"},
+        "need_copy": ("Boende / hyra",),
+        "continue_action": "continue",
+        "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": True,
+    },
+    {
+        "id": "sv-student-electricity-bill-plus-scholarship",
+        "text": "Jag studerar och har svårt att betala elräkningen och söker stipendium.",
+        "actor_type": "student",
+        "intent": "scholarship",
+        "context_token": "Stipendium / bidrag",
+        "expect_general_route": False,
+        "need_context": {"essential_costs"},
+        "need_copy": ("Nödvändiga utgifter",),
+        "continue_action": "continue",
+        "steps_before_result": 3,
+        "money_stage_after_choices": 0,
+        "expect_essential_confirmation": True,
         "expect_housing_skip": False,
     },
     {
