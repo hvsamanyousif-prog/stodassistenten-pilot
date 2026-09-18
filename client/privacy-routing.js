@@ -15,7 +15,7 @@
               else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='بصر') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?بصر(?=$|[^\p{L}\p{N}])/u.test(hay);
-              else if(needle==='طالب') hit=/(?:^|[^\p{L}\p{N}])طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(needle==='طالب') hit=/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='جمعية') hit=!hay.includes('جمعية سكنية')&&hay.includes(needle);
               else hit=Boolean(needle&&hay.includes(needle));
               return count+(hit?1:0);
@@ -196,7 +196,7 @@
     add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|شركة|شركتي|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
-    if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}])طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
+    if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|موظف|کارمند|شاغل/);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
     return actors;
