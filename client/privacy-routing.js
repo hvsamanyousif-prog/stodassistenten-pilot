@@ -4,6 +4,10 @@
     try{
       if(typeof KEYWORDS!=='undefined'){
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn').concat(['dålig syn','sämre syn','synproblem']);
+        if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
+          'إيجار مرتفع','إيجار عالي','إيجار عالية','إيجار غالي','إيجار غالية','تكلفة السكن','تكاليف السكن','السكن',
+          'اجاره بالا','اجاره بالایی','اجاره زیاد','اجاره سنگین','اجاره گران','مسکن'
+        ]);
         KEYWORDS.assistance=[
           'personlig assistans','assistans','hjälp med hygien','personlig hygien','hjälp med påklädning','påklädning','hjälp med toalett','toalett','hjälp att äta','hjälp med måltider','hjälp med kommunikation','andning',
           'مساعدة شخصية','النظافة الشخصية','المساعدة في اللباس','ارتداء الملابس','المساعدة في الأكل','المساعدة في التواصل','التنفس',
@@ -132,18 +136,22 @@
     if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|fond(?:er)?(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم مالي|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
     return null;
   }
+  function boundedHousingNeed(text){
+    const x=lower(text);
+    return /(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(x);
+  }
   function hasConcreteNeed(text){
     const x=lower(text);
-    const boundedRent=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$)))/.test(x);
+    const boundedRent=boundedHousingNeed(x);
     const governedNeed=typeof KEYWORDS!=='undefined'&&['vision','family'].some(key=>Array.isArray(KEYWORDS[key])&&KEYWORDS[key].some(term=>String(term||'')&&x.includes(lower(term))));
-    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|bostad|sjuk|vård|assistans|funktions|arbetslös|hemma|rent|food|medicine|دواء|دواء|طعام|إيجار|سكن|مرض|أسنان|بصر|دارو|غذا|اجاره|مسکن|بیمار|دندان|بینایی/.test(x);
+    const otherNeed=/mat(?:en|)|livsmedel|läkemed|medicin|elräkning|skuld|tand|sjuk|vård|assistans|funktions|arbetslös|hemma|food|medicine|دواء|دواء|طعام|مرض|أسنان|بصر|دارو|غذا|بیمار|دندان|بینایی/.test(x);
     return boundedRent||governedNeed||otherNeed;
   }
   function boundedSelfFundingFallback(text){
     const x=lower(text);
     const self=/(?:^|\s)jag(?:\s|$)/.test(x)||/(?:^|[\s،,.])أنا(?:$|[\s،,.])/.test(x)||/(?:^|[\s،,.])من(?:$|[\s،,.])/.test(x);
     if(!self) return false;
-    const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(x);
+    const housing=boundedHousingNeed(x);
     const essential=/(?:\bmat(?:en)?\b|livsmedel|läkemed|medicin|\b(?:elräkning(?:en|ar|arna)?|hushållsel|elkostnad(?:en|er|erna)?)\b|\bfood\b|medicine|دواء|طعام|(?:فاتورة|تكلفة|تكاليف)\s+الكهرباء|دارو|غذا|قبض\s+برق|هزینه(?:‌ی|ی)?\s*برق)/.test(x);
     if(!housing&&!essential) return false;
     if(typeof classify!=='function') return false;
