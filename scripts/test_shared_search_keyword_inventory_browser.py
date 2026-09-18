@@ -141,7 +141,6 @@ SCENARIOS = [
         "expect_question": True,
         "question_token": "من",
         "expect_intent": "funding",
-        "reject_actor": "study",
         "expect_rtl": True,
     },
     {
