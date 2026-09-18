@@ -79,7 +79,7 @@
       }
     },
     ar:{
-      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
+      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر?',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
       known:'أستخدم الفئة التي ظهرت بالفعل ولا أفترض دعماً محدداً.',
       actors:{
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
@@ -96,7 +96,7 @@
       known:'از نقشی که از قبل مشخص است استفاده می‌کنم و یک حمایت مشخص را حدس نمی‌زنم.',
       actors:{
         private:['نیاز شخصی','حمایت، جبران هزینه و مسیرهای دیگر برای افراد'],
-        study:['تحصیل','بورسیه، حمایت تحصیلی و اقتصاد مرتبط با تحصیل'],
+        study:['تحصیل','بورسیه، حمایت تحصیلی و اقتصاد مرتبط بالدراسة'],
         employee:['کارمند','نقش کارمند را حفظ می‌کنیم و مسیر تأمین مالی را بدون فرض یک حمایت مشخص بررسی می‌کنیم'],
         company:['کسب‌وکار','تأمین مالی و فرصت‌های عمومی برای کسب‌وکار'],
         association:['انجمن','حمایت پروژه، فعالیت و انجمن'],
@@ -127,7 +127,7 @@
     const x=lower(text);
     if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return null;
     if(/stipen|منح(?:ة|)|بورسیه/.test(x)) return 'scholarship';
-    if(/\blån(?:e|et|en|a)?\b|قرض|وام/.test(x)) return 'loan';
+    if(/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/.test(x)) return 'loan';
     if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|fond(?:er)?(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم مالي|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
     return null;
   }
