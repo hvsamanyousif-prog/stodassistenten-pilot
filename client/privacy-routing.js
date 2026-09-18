@@ -328,6 +328,20 @@
     url.searchParams.set('funding_intent',intent);
     return true;
   }
+  function sanitizeAnchor(anchor){
+    const url=new URL(anchor.href,location.href);
+    const mode=safeToken(url.searchParams.get('mode'));
+    const raw=url.searchParams.get('q');
+    let changed=false;
+    if((mode==='dental'||mode==='vision')&&raw){
+      url.searchParams.set('need',coarseNeed(mode,raw));
+      url.searchParams.delete('q');
+      changed=true;
+    }
+    if(preserveConcreteFundingIntent(url)) changed=true;
+    if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
+    return routeKey(url);
+  }
   function ensureBoundedSelfFundingAlternative(){
     const text=composer?composer.value.trim():'';
     const intent=fundingIntent(text);
