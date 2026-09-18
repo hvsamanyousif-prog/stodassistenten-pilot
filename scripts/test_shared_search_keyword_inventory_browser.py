@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""Focused inventory coverage for authoritative start-page keyword containment.
+
+This extends the existing shared-search browser oracle. It does not create a new
+matcher or product path; it reuses the same built public artifact and
+`test_shared_search_browser.run_scenario` assertions.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import tempfile
+from pathlib import Path
+
+import build_public_pilot as builder
+import test_shared_search_browser as shared
+from playwright.sync_api import sync_playwright
+
+
+SCENARIOS = [
+    {
+        "id": "sv-standard-procurement-not-dental",
+        "lang": "sv",
+        "width": 390,
+        "text": "standardkrav i en upphandling",
+        "expect_question": False,
+        "expect_actor": "company",
+        "reject_route": "quick-help.html?mode=dental",
+    },
+    {
+        "id": "sv-bare-tand-positive",
+        "lang": "sv",
+        "width": 1280,
+        "text": "Jag har ont i en tand",
+        "expect_question": False,
+        "expect_route": "quick-help.html?mode=dental",
+    },
+    {
+        "id": "ar-surgery-not-work",
+        "lang": "ar",
+        "width": 390,
+        "text": "أحتاج مساعدة لفهم عملية جراحية.",
+        "expect_question": False,
+        "reject_actor": "employee",
+        "expect_route": "actor_type=other",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-work-positive",
+        "lang": "ar",
+        "width": 1280,
+        "text": "أنا موظف وأحتاج مساعدة في العمل.",
+        "expect_question": False,
+        "expect_actor": "employee",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-solution-not-work",
+        "lang": "fa",
+        "width": 390,
+        "text": "به یک راهکار ساده برای مشکل روزمره نیاز دارم.",
+        "expect_question": False,
+        "reject_actor": "employee",
+        "expect_route": "actor_type=other",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-work-positive",
+        "lang": "fa",
+        "width": 1280,
+        "text": "من کارمند هستم و برای کار به راهنمایی نیاز دارم.",
+        "expect_question": False,
+        "expect_actor": "employee",
+        "expect_rtl": True,
+    },
+]
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("root", nargs="?", default=".")
+    parser.add_argument("output", nargs="?", default=None)
+    parser.add_argument("--engine", choices=("chromium", "webkit"), default=None)
+    args = parser.parse_args()
+
+    root = Path(args.root).resolve()
+    engine_name = args.engine or os.environ.get("BROWSER_ENGINE", "chromium")
+    output = args.output or os.environ.get("EVIDENCE_PATH", f"shared-search-keyword-inventory-{engine_name}.json")
+
+    with tempfile.TemporaryDirectory(prefix="stod-keyword-inventory-") as tmp:
+        site = Path(tmp) / "site"
+        index_path = builder.build(root, site)
+        evidence = {
+            "engine": engine_name,
+            "artifact": "minimal public pilot build",
+            "artifact_transport": "loopback-http",
+            "built_index_sha256": sha256(index_path),
+            "privacy_routing_sha256": sha256(site / builder.SHELL_ROUTING_PATH),
+            "independent_semantic_cases": len(SCENARIOS),
+            "passed": 0,
+            "failed": 0,
+            "results": [],
+        }
+        with shared.serve_site(site) as base_url, sync_playwright() as playwright:
+            browser = getattr(playwright, engine_name).launch(headless=True)
+            try:
+                for scenario in SCENARIOS:
+                    try:
+                        evidence["results"].append(shared.run_scenario(browser, base_url, scenario))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": scenario["id"], "status": "failed", "error": str(exc)})
+            finally:
+                browser.close()
+
+    Path(output).write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"shared search keyword inventory ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
+    for result in evidence["results"]:
+        if result["status"] == "failed":
+            print(f"FAIL {result['id']}: {result['error']}")
+    return 1 if evidence["failed"] else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
