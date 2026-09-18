@@ -133,6 +133,27 @@ SCENARIOS = [
         "expect_route": "quick-help.html?mode=vision",
         "expect_rtl": True,
     },
+    {
+        "id": "ar-asylum-seeker-not-student",
+        "lang": "ar",
+        "width": 390,
+        "text": "أنا طالب اللجوء وأبحث عن دعم مالي.",
+        "expect_question": True,
+        "question_token": "من",
+        "expect_intent": "funding",
+        "reject_actor": "study",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-student-positive",
+        "lang": "ar",
+        "width": 1280,
+        "text": "أنا طالب وأبحث عن دعم مالي للدراسة.",
+        "expect_question": False,
+        "expect_actor": "study",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
