@@ -23,8 +23,10 @@ function parseNeedContext(value){
 function detectNeeds(text){
  const value=String(text||'').toLocaleLowerCase();
  const needs=[];
- if(/hyra|bostad|\brent\b|إيجار|سكن|اجاره|مسکن/.test(value))needs.push('housing');
- if(/\bmat(?:en)?\b|livsmedel|läkemed|medicin|\bfood\b|medicine|دواء|طعام|دارو|غذا/.test(value))needs.push('essential_costs');
+ const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|إيجار|سكن|اجاره|مسکن)/.test(value);
+ const essentialCosts=/(?:\bmat(?:en)?\b|livsmedel|läkemed|medicin|\b(?:elräkning(?:en|ar|arna)?|hushållsel|elkostnad(?:en|er|erna)?)\b|\bfood\b|medicine|دواء|طعام|دارو|غذا)/.test(value);
+ if(housing)needs.push('housing');
+ if(essentialCosts)needs.push('essential_costs');
  return uniqueAllowed(needs);
 }
 
@@ -216,6 +218,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.3',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.4',page});
 }
 })(window);
