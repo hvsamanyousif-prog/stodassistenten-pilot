@@ -226,6 +226,36 @@ SCENARIOS = [
         "expect_actor": "company",
         "expect_rtl": True,
     },
+    {
+        "id": "ar-third-party-company-not-self-company",
+        "lang": "ar",
+        "width": 390,
+        "text": "أحتاج دعما بسبب مشكلة مع شركة التأمين.",
+        "expect_question": False,
+        "reject_actor": "company",
+        "expect_route": "actor_type=other",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-third-party-company-funding-asks-actor",
+        "lang": "ar",
+        "width": 390,
+        "text": "أحتاج دعما ماليا بسبب مشكلة مع شركة الكهرباء.",
+        "expect_question": True,
+        "question_token": "من",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-self-company-positive",
+        "lang": "ar",
+        "width": 1280,
+        "text": "لدي شركة وأبحث عن دعم مالي.",
+        "expect_question": False,
+        "expect_actor": "company",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
