@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Browser regression for bounded Swedish `hyra` semantics on the shared start page.
 
-The shared shell must not treat the verb "hyra" (rent/borrow an object) as proof of
-an economic/housing problem, while preserving ordinary noun phrases that do describe
-rent pressure. This is a routing/UX regression only; it does not claim eligibility.
+The shared shell must not let the verb "hyra" (rent an object) inject an economy
+route when another known route already explains the sentence, while preserving
+ordinary noun phrases that do describe rent pressure. The contrast deliberately
+avoids the generic no-match fallback so the oracle isolates the lexical signal.
+This is a routing/UX regression only; it does not claim eligibility.
 """
 
 from __future__ import annotations
@@ -25,12 +27,12 @@ from playwright.sync_api import sync_playwright
 SCENARIOS = [
     {
         "id": "rent-car-is-not-economy",
-        "text": "Jag vill hyra en bil till helgen.",
+        "text": "Jag behöver hyra en bil till jobbet.",
         "expect_economy": False,
     },
     {
         "id": "rent-trailer-is-not-economy",
-        "text": "Jag behöver hyra ett släp.",
+        "text": "Mitt företag behöver hyra ett släp.",
         "expect_economy": False,
     },
     {
