@@ -138,6 +138,16 @@ SCENARIOS = [
         "expect_rtl": True,
     },
     {
+        "id": "fa-third-party-employee-funding-asks-actor",
+        "lang": "fa",
+        "width": 390,
+        "text": "کارمند بانک درخواست من را رد کرد و به کمک مالی نیاز دارم.",
+        "expect_question": True,
+        "question_token": "چه کسی",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
         "id": "ar-frankly-funding-not-vision",
         "lang": "ar",
         "width": 390,
