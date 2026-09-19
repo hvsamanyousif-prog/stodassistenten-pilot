@@ -263,7 +263,7 @@
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
-    return actors;
+    return actors.filter(actor=>!explicitlyCorrectsActor(text,actor));
   }
   function actorFromText(text){
     const actors=actorCandidatesFromText(text);
