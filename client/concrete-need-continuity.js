@@ -31,7 +31,7 @@ function detectNeeds(text){
 }
 
 const RELATIVE_SUBJECTS=[
- {key:'child',explicit:/(?:\bbarnet\b|\bmitt barn\b|طفلي|ابني|ابنتي|فرزندم|پسرم|دخترم)/i,pronoun:/\bhen\b/i},
+ {key:'child',explicit:/(?:\bbarnet\b|\bmitt barn\b|طفلي|ابني|ابنتي|فرزندم|پسرم|دخترم)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'mother',explicit:/(?:\bmin mamma\b|\bmin mor\b|أمي|والدتي|مادرم)/i,pronoun:/(?:\bhon\b|(?:^|\s)هي(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|زوجتي|زوجي|همسرم)/i,pronoun:/(?:\bhen\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
