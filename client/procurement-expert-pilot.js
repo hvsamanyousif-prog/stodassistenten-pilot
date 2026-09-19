@@ -104,6 +104,11 @@ function dateTokens(line){
  const add=token=>{if(token)out.push(token);};
  for(const m of t.matchAll(/\b(20\d{2})-(\d{2})-(\d{2})\b/g))add(canonicalDateToken(m[1],m[2],m[3]));
  for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](20\d{2})\b/g))add(canonicalDateToken(m[3],m[2],m[1]));
+ for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})(?![/.]\d)\b/g)){
+   const prefix=t.slice(Math.max(0,m.index-16),m.index);
+   if(/\b(?:version|punkt|bilaga|avsnitt|kapitel)\s*$/.test(prefix))continue;
+   add(partialDateToken(m[2],m[1]));
+ }
  for(const m of t.matchAll(/\b(\d{1,2})\s+(januari|februari|mars|april|maj|juni|juli|augusti|september|oktober|november|december)(?:\s+(20\d{2}))?\b/g)){
    const month=MONTH_NUMBERS[m[2]];
    add(m[3]?canonicalDateToken(m[3],month,m[1]):partialDateToken(month,m[1]));
@@ -168,9 +173,6 @@ function isStructuralHeading(line){
 function materialClauseCount(line){
  const raw=String(line||'').trim();
  if(!raw)return 0;
- // Keep the physical source row intact, but treat semicolons as bounded clause
- // separators when deciding whether one evidence control would cover multiple
- // materially different objects. This is detection only, not document splitting.
  const clauses=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>normalized(part)).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  let count=clauses.filter(clause=>material.test(clause)).length;
@@ -233,8 +235,6 @@ function commercialValueSignature(line){
    const canonicalCurrency=currencyAliases[currency]||currency;
    amounts.push(`${normalizedWhole}${fraction?','+fraction:''}:${canonicalCurrency}`);
  };
- // Currency is deliberately bounded to explicit supported markers. Naked numbers
- // and arbitrary three-letter words are never promoted to monetary values.
  for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\b/g))addAmount(m[1],m[2],m[3]);
  for(const m of t.matchAll(/\b(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
  const indexPercentages=[];
@@ -313,7 +313,6 @@ function recomputeDerivedFlags(rows){
  });
  return applyCrossRowFlags(rows);
 }
-// This is a bounded, local first-pass sorter, not complete document analysis.
 function splitRequirements(text){
  const source=String(text||'');
  if(source.length>100000)throw new RangeError('Underlaget är för långt. Klistra in högst 100 000 tecken åt gången. Ingen analys har gjorts.');
