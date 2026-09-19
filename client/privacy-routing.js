@@ -161,12 +161,25 @@
     return value==='ar'||value==='fa'?value:'sv';
   }
   function lower(value){return String(value||'').toLocaleLowerCase()}
+  function fundingClauses(text){
+    return lower(text).split(/[,.!?;،؛؟\n]+/u).map(part=>part.trim()).filter(Boolean);
+  }
+  function fundingClauseNegated(clause){
+    const x=lower(clause);
+    const sv=/\b(?:(?:sök(?:a|er)?|letar(?:\s+efter)?)\s+inte(?!\s+bara)|(?:vill|önskar)\s+inte(?!\s+bara)(?:\s+ha)?)\b/u.test(x);
+    const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
+    const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
+    return sv||ar||fa;
+  }
+  function hasAffirmedFundingMention(text,pattern){
+    return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause));
+  }
   function fundingIntent(text){
     const x=lower(text);
     if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return null;
-    if(/stipen|منحة|منح\s+دراسية|بورسیه/.test(x)) return 'scholarship';
-    if(/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/.test(x)) return 'loan';
-    if(/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/.test(x)) return 'funding';
+    if(hasAffirmedFundingMention(x,/stipen|منحة|منح\s+دراسية|بورسیه/u)) return 'scholarship';
+    if(hasAffirmedFundingMention(x,/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/u)) return 'loan';
+    if(hasAffirmedFundingMention(x,/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u)) return 'funding';
     return null;
   }
   function boundedHousingNeed(text){
