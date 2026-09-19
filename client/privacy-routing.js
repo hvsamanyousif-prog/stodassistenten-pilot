@@ -169,7 +169,10 @@
     const sv=/\b(?:(?:sök(?:a|er)?|letar(?:\s+efter)?)\s+inte(?!\s+bara)|(?:vill|önskar)\s+inte(?!\s+bara)(?:\s+ha)?)\b/u.test(x);
     const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
-    return sv||ar||fa;
+    const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
+    return sv||ar||fa||svBare||arBare||faBare;
   }
   function hasAffirmedFundingMention(text,pattern){
     return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause));
