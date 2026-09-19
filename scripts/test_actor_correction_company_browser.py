@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused browser regression for stale company actor correction.
+"""Focused browser regression for stale actor correction.
 
 Reuses the existing shared-search browser harness against the same public pilot build.
 This is a focused regression probe, not a separate routing or matching implementation.
@@ -87,6 +87,74 @@ SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "ar-stale-association-corrected-to-student",
+        "lang": "ar",
+        "width": 390,
+        "actor_type": "association",
+        "text": "لم أعد في جمعية، أنا طالب الآن وأبحث عن منحة دراسية.",
+        "expect_question": False,
+        "expect_actor": "study",
+        "reject_actor": "association",
+        "expect_intent": "scholarship",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-stale-association-negated-without-replacement-asks-once",
+        "lang": "ar",
+        "width": 768,
+        "actor_type": "association",
+        "text": "لم أعد في جمعية وأبحث عن تمويل.",
+        "expect_question": True,
+        "question_token": "من",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-current-association-context-remains",
+        "lang": "ar",
+        "width": 1024,
+        "actor_type": "association",
+        "text": "أنا في جمعية وأبحث عن تمويل.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-stale-association-corrected-to-student",
+        "lang": "fa",
+        "width": 390,
+        "actor_type": "association",
+        "text": "دیگر عضو انجمن نیستم، من دانشجو هستم و دنبال بورسیه هستم.",
+        "expect_question": False,
+        "expect_actor": "study",
+        "reject_actor": "association",
+        "expect_intent": "scholarship",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-stale-association-negated-without-replacement-asks-once",
+        "lang": "fa",
+        "width": 768,
+        "actor_type": "association",
+        "text": "دیگر عضو انجمن نیستم و به کمک مالی نیاز دارم.",
+        "expect_question": True,
+        "question_token": "درخواست",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-current-association-context-remains",
+        "lang": "fa",
+        "width": 1024,
+        "actor_type": "association",
+        "text": "من عضو انجمن هستم و به کمک مالی نیاز دارم.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
@@ -110,7 +178,7 @@ def main() -> int:
         "results": [],
     }
 
-    with tempfile.TemporaryDirectory(prefix="stod-company-correction-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="stod-actor-correction-") as tmp:
         site = Path(tmp) / "site"
         builder.build(root, site)
         with shared.serve_site(site) as base_url, sync_playwright() as playwright:
@@ -127,7 +195,7 @@ def main() -> int:
                 browser.close()
 
     Path(args.output).write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"company actor correction ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
+    print(f"actor correction ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
     if evidence["failed"]:
         for result in evidence["results"]:
             if result["status"] == "failed":
