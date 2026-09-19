@@ -8,6 +8,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_actor_correction_company_browser.py'
+      - 'scripts/test_actor_target_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -17,6 +18,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_actor_correction_company_browser.py'
+      - 'scripts/test_actor_target_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -38,12 +40,12 @@ jobs:
       - name: Company actor correction — Chromium
         env:
           BROWSER_ENGINE: chromium
-        run: python scripts/test_actor_correction_company_browser.py . actor-correction-company-chromium.json
+        run: python scripts/test_actor_target_scope_browser.py . actor-correction-company-chromium.json
       - name: Company actor correction — Playwright WebKit
         if: always()
         env:
           BROWSER_ENGINE: webkit
-        run: python scripts/test_actor_correction_company_browser.py . actor-correction-company-webkit.json
+        run: python scripts/test_actor_target_scope_browser.py . actor-correction-company-webkit.json
       - name: Preserve company actor-correction evidence
         if: always()
         uses: actions/upload-artifact@v4
