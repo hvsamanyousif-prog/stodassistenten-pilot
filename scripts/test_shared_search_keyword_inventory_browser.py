@@ -286,6 +286,27 @@ SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "fa-third-party-employed-partner-funding-asks-actor",
+        "lang": "fa",
+        "width": 390,
+        "text": "همسرم شاغل است و من به کمک مالی نیاز دارم.",
+        "expect_question": True,
+        "question_token": "چه کسی",
+        "expect_intent": "funding",
+        "reject_actor": "employee",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-self-employed-positive",
+        "lang": "fa",
+        "width": 1280,
+        "text": "من شاغل هستم و به کمک مالی نیاز دارم.",
+        "expect_question": False,
+        "expect_actor": "employee",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
