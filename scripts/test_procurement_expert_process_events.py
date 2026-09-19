@@ -206,11 +206,21 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
     'Rättelse 1: Sista anbudsdag är 30.10 kl 23:59.',
     'Rättelse 2: Sista anbudsdag är 31.10 kl 23:59.'
   ].join('\n'));
-  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
-    'ambiguous dotted numeric tokens must not be promoted to partial deadline dates');
+  assert.deepEqual(rows.map(r=>r.processSubtype),['bid','bid']);
+  assert.ok(rows.every(r=>hasFlag(r,'deadline_version_conflict')),
+    'material dotted day/month deadline changes must fail closed in a recognized bid-deadline clause');
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:20,failed:0}));
+{
+  const rows=p.splitRequirements([
+    'Version 1.2: Sista anbudsdag är 30.10 kl 23:59.',
+    'Version 1.3: Sista anbudsdag är 30.10 kl 23:59.'
+  ].join('\n'));
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'dotted version numbers must remain metadata when the actual dotted deadline is unchanged');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:21,failed:0}));
 '''
 
 
