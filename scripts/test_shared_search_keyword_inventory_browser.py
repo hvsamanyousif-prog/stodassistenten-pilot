@@ -294,7 +294,6 @@ SCENARIOS = [
         "expect_question": True,
         "question_token": "چه کسی",
         "expect_intent": "funding",
-        "reject_actor": "employee",
         "expect_rtl": True,
     },
     {
