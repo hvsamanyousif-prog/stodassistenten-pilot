@@ -3,8 +3,10 @@
 
 A user saying they want to borrow an object must not be routed as if they were
 seeking a financial loan. Explicit financial loan language must keep working.
-This is browser/DOM routing evidence, not eligibility, model-quality, storage,
-or human-comprehension evidence.
+When the user affirms more than one funding type in the same additive request,
+the start journey must ask one bounded type-changing question rather than
+silently choosing by lexical priority. This is browser/DOM routing evidence,
+not eligibility, model-quality, storage, or human-comprehension evidence.
 """
 
 from __future__ import annotations
@@ -62,6 +64,35 @@ SCENARIOS = [
         "actor": "student",
         "expect_loan": False,
     },
+    {
+        "id": "sv-loan-and-scholarship-asks-one-type-question",
+        "lang": "sv",
+        "text": "Jag söker lån och stipendium.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "vilken",
+    },
+    {
+        "id": "ar-loan-and-scholarship-asks-one-type-question",
+        "lang": "ar",
+        "text": "أبحث عن قرض ومنحة دراسية.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "نوع",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-loan-and-scholarship-asks-one-type-question",
+        "lang": "fa",
+        "text": "دنبال وام و بورسیه هستم.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "کدام",
+        "expect_rtl": True,
+    },
 ]
 WIDTHS = (390, 1280)
 
@@ -107,7 +138,7 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        params = {"lang": "sv"}
+        params = {"lang": scenario.get("lang", "sv")}
         if scenario["actor"]:
             params["actor_type"] = scenario["actor"]
         page.goto(f"{base_url}/index.html?{urlencode(params)}", wait_until="load")
@@ -120,7 +151,25 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
         loan_count = loan_links.count()
         all_hrefs = [href or "" for href in results.locator("a[href]").evaluate_all("els => els.map(el => el.getAttribute('href'))")]
 
-        if scenario["expect_loan"]:
+        if scenario.get("expect_intent_question"):
+            intent_questions = results.locator('[data-funding-intent-question="true"]')
+            actor_questions = results.locator('[data-funding-question="true"]')
+            require(intent_questions.count() == 1, f"{case_id}: expected exactly one funding-type clarification")
+            require(actor_questions.count() == 0, f"{case_id}: actor question must not compete with funding-type clarification")
+            question_text = intent_questions.inner_text().lower()
+            require(
+                scenario["intent_question_token"].lower() in question_text,
+                f"{case_id}: funding-type clarification lost its purpose: {question_text!r}",
+            )
+            require(
+                results.locator("a[data-funding-actor]").count() == 0,
+                f"{case_id}: ambiguous funding request was silently routed to an actor/intention",
+            )
+            require(
+                all("funding_intent=" not in href for href in all_hrefs),
+                f"{case_id}: ambiguous funding request leaked a chosen funding_intent",
+            )
+        elif scenario["expect_loan"]:
             require(loan_count > 0, f"{case_id}: explicit financial loan intent was not preserved")
         else:
             require(loan_count == 0, f"{case_id}: ordinary object borrowing fabricated financial loan intent")
@@ -138,6 +187,8 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
                 all("funding_intent=loan" not in href for href in all_hrefs),
                 f"{case_id}: known actor was hijacked into a loan route",
             )
+        if scenario.get("expect_rtl"):
+            require(page.evaluate("document.documentElement.dir") == "rtl", f"{case_id}: RTL direction missing")
         require(not page_errors, f"{case_id}: JavaScript error(s): {page_errors}")
         no_horizontal_overflow(page, case_id)
         return {
@@ -146,7 +197,9 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
             "width": width,
             "status": "passed",
             "actor": scenario["actor"],
+            "lang": scenario.get("lang", "sv"),
             "expect_loan": scenario["expect_loan"],
+            "expect_intent_question": scenario.get("expect_intent_question", False),
             "loan_links": loan_count,
         }
     finally:
@@ -197,7 +250,9 @@ def main() -> int:
                                     "width": width,
                                     "status": "failed",
                                     "actor": scenario["actor"],
+                                    "lang": scenario.get("lang", "sv"),
                                     "expect_loan": scenario["expect_loan"],
+                                    "expect_intent_question": scenario.get("expect_intent_question", False),
                                     "error": str(exc),
                                 }
                             )
