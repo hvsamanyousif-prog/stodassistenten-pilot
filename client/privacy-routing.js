@@ -199,6 +199,17 @@
   function actorFromUrl(){
     return URL_ACTORS[new URLSearchParams(location.search).get('actor_type')]||null;
   }
+  function helperRoleNegated(text){
+    const x=lower(text);
+    return /\bjag\s+hjälper\s+inte(?:\s+längre)?\b/u.test(x)||/لم\s+أعد\s+أساعد|لا\s+أساعد/u.test(x)||/کمک\s+نمی(?:‌|\s)?کنم/u.test(x);
+  }
+  function currentHelperRole(text){
+    const x=lower(text);
+    const sv=/\bjag\s+hjälper(?!\s+inte\b)/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])أساعد(?=$|[^\p{L}\p{N}])/u.test(x.replace(/لم\s+أعد\s+أساعد|لا\s+أساعد/gu,' '));
+    const fa=/کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    return sv||ar||fa;
+  }
   function actorCandidatesFromText(text){
     const x=lower(text);
     const actors=[];
@@ -206,7 +217,7 @@
     const propertyPattern=/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/;
     const propertyHit=propertyPattern.test(x);
     const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي/u.test(x)||/(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من/u.test(x);
-    add('relative',/jag hjälper|أساعد|کمک می‌کنم|کمک میکنم/);
+    if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
@@ -221,6 +232,7 @@
   }
   function explicitlyCorrectsActor(text,actor){
     const x=lower(text);
+    if(actor==='relative'&&helperRoleNegated(x)) return true;
     const patterns={
       sv:{
         employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
@@ -263,6 +275,7 @@
   }
   function helperFundingScope(text){
     const x=lower(text);
+    if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
     return /(?:åt|för)\s+(?:barnet|min(?:t|)\s+barn|min\s+(?:mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
   }
   function actorHref(actor,lang,intent){
