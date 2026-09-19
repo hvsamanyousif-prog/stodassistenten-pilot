@@ -180,7 +180,7 @@
     const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
-    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|يا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
@@ -402,6 +402,20 @@
     if(!supportedPath||!FUNDING_DESTINATION_ACTORS.has(actor)) return false;
     url.searchParams.set('funding_intent',intent);
     return true;
+  }
+  function sanitizeAnchor(anchor){
+    const url=new URL(anchor.href,location.href);
+    const mode=safeToken(url.searchParams.get('mode'));
+    const raw=url.searchParams.get('q');
+    let changed=false;
+    if((mode==='dental'||mode==='vision')&&raw){
+      url.searchParams.set('need',coarseNeed(mode,raw));
+      url.searchParams.delete('q');
+      changed=true;
+    }
+    if(preserveConcreteFundingIntent(url)) changed=true;
+    if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
+    return routeKey(url);
   }
   function ensureBoundedSelfFundingAlternative(){
     const text=composer?composer.value.trim():'';
