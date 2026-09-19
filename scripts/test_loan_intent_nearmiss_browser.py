@@ -3,10 +3,11 @@
 
 A user saying they want to borrow an object must not be routed as if they were
 seeking a financial loan. Explicit financial loan language must keep working.
-When the user affirms more than one funding type in the same additive request,
-the start journey must ask one bounded type-changing question rather than
-silently choosing by lexical priority. This is browser/DOM routing evidence,
-not eligibility, model-quality, storage, or human-comprehension evidence.
+When the user affirms more than one funding type in the same request, whether
+additive or an explicit alternative, the start journey must ask one bounded
+type-changing question rather than silently choosing by lexical priority. This
+is browser/DOM routing evidence, not eligibility, model-quality, storage, or
+human-comprehension evidence.
 """
 
 from __future__ import annotations
@@ -91,6 +92,45 @@ SCENARIOS = [
         "expect_loan": False,
         "expect_intent_question": True,
         "intent_question_token": "کدام",
+        "expect_rtl": True,
+    },
+    {
+        "id": "sv-scholarship-or-loan-asks-one-type-question",
+        "lang": "sv",
+        "text": "Jag söker stipendium eller lån.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "vilken",
+    },
+    {
+        "id": "ar-scholarship-or-loan-asks-one-type-question",
+        "lang": "ar",
+        "text": "أبحث عن منحة أو قرض.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "نوع",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-scholarship-or-loan-asks-one-type-question",
+        "lang": "fa",
+        "text": "بورسیه یا وام می‌خواهم.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "کدام",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-scholarship-or-funding-asks-one-type-question",
+        "lang": "ar",
+        "text": "أبحث عن منحة أو دعم مالي",
+        "actor": None,
+        "expect_loan": False,
+        "expect_intent_question": True,
+        "intent_question_token": "نوع",
         "expect_rtl": True,
     },
 ]
