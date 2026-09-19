@@ -143,6 +143,11 @@
       }
     }
   };
+  const FUNDING_INTENT_CLARIFICATION={
+    sv:'Du nämner flera sätt att få pengar. Vilken vill du börja med? Skriv ett av alternativen i rutan ovan och analysera igen.',
+    ar:'ذكرت أكثر من نوع تمويل. أي نوع تريد أن نبدأ به؟ اكتب نوعًا واحدًا في المربع أعلاه ثم حلّل مرة أخرى.',
+    fa:'چند نوع تأمین مالی را نام بردید. از کدام می‌خواهید شروع کنیم؟ یک مورد را در کادر بالا بنویسید و دوباره بررسی کنید.'
+  };
   const ACTOR_ROUTES={
     private:'person-pilot.html?actor_type=private_person',
     study:'person-pilot.html?actor_type=student',
@@ -155,6 +160,11 @@
   const URL_ACTORS={private_person:'private',student:'study',employee:'employee',company:'company',association:'association',relative:'relative',property_actor:'property_actor'};
   const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
   const FUNDING_DESTINATION_ACTORS=new Set(['private_person','student','employee','company','association','relative','property_actor']);
+  const FUNDING_INTENT_PATTERNS=[
+    ['scholarship',/stipen|منحة|منح\s+دراسية|بورسیه/u],
+    ['loan',/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/u],
+    ['funding',/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
+  ];
 
   function currentLang(){
     const value=new URLSearchParams(location.search).get('lang');
@@ -170,20 +180,33 @@
     const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
-    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
   function hasAffirmedFundingMention(text,pattern){
     return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause));
   }
-  function fundingIntent(text){
+  function affirmedFundingIntents(text){
     const x=lower(text);
-    if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return null;
-    if(hasAffirmedFundingMention(x,/stipen|منحة|منح\s+دراسية|بورسیه/u)) return 'scholarship';
-    if(hasAffirmedFundingMention(x,/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|وام/u)) return 'loan';
-    if(hasAffirmedFundingMention(x,/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u)) return 'funding';
-    return null;
+    if(/upphandling|anbud|offentlig(?:a|) affär|مناقصة|مناقصه/.test(x)) return [];
+    return FUNDING_INTENT_PATTERNS.filter(([_intent,pattern])=>hasAffirmedFundingMention(x,pattern)).map(([intent])=>intent);
+  }
+  function hasFundingAlternativeConnector(text){
+    const x=lower(text);
+    return /\beller\b/u.test(x)||/(?:^|[\s،])أو(?=$|[\s،])/u.test(x)||/(?:^|[\s،])یا(?=$|[\s،])/u.test(x);
+  }
+  function hasFundingAdditiveConnector(text){
+    const x=lower(text);
+    return /\boch\b/u.test(x)||/(?:^|[\s،])و(?=$|[\s،])/u.test(x)||/و(?=(?:منحة|منح|قرض|دعم|تمويل|بورسیه|وام|کمک|حمایت|بودجه))/u.test(x);
+  }
+  function fundingIntentNeedsClarification(text,intents=affirmedFundingIntents(text)){
+    return intents.length>1&&hasFundingAdditiveConnector(text)&&!hasFundingAlternativeConnector(text);
+  }
+  function fundingIntent(text){
+    const intents=affirmedFundingIntents(text);
+    if(fundingIntentNeedsClarification(text,intents)) return null;
+    return intents[0]||null;
   }
   function boundedHousingNeed(text){
     const x=lower(text);
@@ -306,9 +329,16 @@
     return `<a class="route" data-funding-actor="${actor}" data-funding-intent="${safeIntent}" href="${actorHref(actor,lang,safeIntent)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
   }
   function renderFundingIntent(text){
-    const intent=fundingIntent(text);
-    if(!intent) return false;
+    const intents=affirmedFundingIntents(text);
     const lang=currentLang();
+    if(fundingIntentNeedsClarification(text,intents)){
+      box.innerHTML=`<div class="interpret" data-funding-intent-question="true">${FUNDING_INTENT_CLARIFICATION[lang]}</div>`;
+      box.hidden=false;
+      box.scrollIntoView({behavior:'smooth',block:'nearest'});
+      return true;
+    }
+    const intent=intents[0]||null;
+    if(!intent) return false;
     const copy=FUNDING_COPY[lang];
     const actor=resolvedFundingActor(text)||(helperFundingScope(text)?'relative':null);
     if(hasConcreteNeed(text)&&actor!=='relative') return false;
