@@ -249,6 +249,16 @@
     const fa=/کمک\s+می(?:‌|\s)?کنم/u.test(x);
     return sv||ar||fa;
   }
+  function positiveSupportTargetActors(text){
+    const x=lower(text);
+    const patterns={
+      sv:{study:/\bför mina studier\b/u,employee:/\bför mitt (?:jobb|arbete)\b/u},
+      ar:{study:/لدراستي/u,employee:/لعملي/u},
+      fa:{study:/برای\s+تحصیلم/u,employee:/برای\s+کارم/u}
+    };
+    const current=patterns[currentLang()]||{};
+    return ['study','employee'].filter(actor=>current[actor]&&current[actor].test(x)&&!explicitlyCorrectsActor(text,actor));
+  }
   function actorCandidatesFromText(text){
     const x=lower(text);
     const actors=[];
@@ -263,6 +273,7 @@
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
+    for(const actor of positiveSupportTargetActors(text)){if(!actors.includes(actor)) actors.push(actor)}
     return actors.filter(actor=>!explicitlyCorrectsActor(text,actor));
   }
   function actorFromText(text){
@@ -303,6 +314,8 @@
   function resolvedFundingActor(text){
     const previous=actorFromUrl();
     const currentActors=actorCandidatesFromText(text);
+    const explicitTargets=positiveSupportTargetActors(text);
+    if(explicitTargets.length===1) return explicitTargets[0];
     if(!previous) return currentActors.length===1?currentActors[0]:null;
     if(explicitlyCorrectsActor(text,previous)){
       const replacements=currentActors.filter(actor=>actor!==previous);
