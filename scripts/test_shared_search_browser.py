@@ -65,6 +65,10 @@ SCENARIOS = [
     {"id": "sv-municipality-housing-adaptation-not-dental", "lang": "sv", "width": 1280, "text": "Jag behöver information från min kommun om bostadsanpassning.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
     {"id": "sv-municipal-housing-support-not-dental", "lang": "sv", "width": 768, "text": "Jag söker kommunalt stöd för att anpassa min bostad.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
     {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True, "expect_intent": "scholarship"},
+    {"id": "ar-residence-granted-not-scholarship", "lang": "ar", "width": 390, "text": "تم منحك تصريح الإقامة. ما الخطوة التالية؟", "expect_question": False, "reject_route": "funding_intent=scholarship", "expect_rtl": True},
+    {"id": "ar-residence-grant-heading-not-scholarship", "lang": "ar", "width": 768, "text": "منح تصريح الإقامة", "expect_question": False, "reject_route": "funding_intent=scholarship", "expect_rtl": True},
+    {"id": "ar-scholarship-study-positive", "lang": "ar", "width": 1024, "text": "أبحث عن منحة دراسية", "expect_question": True, "question_token": "منحة", "expect_rtl": True, "expect_intent": "scholarship"},
+    {"id": "ar-scholarship-study-plural-positive", "lang": "ar", "width": 1280, "text": "أبحث عن منح دراسية", "expect_question": True, "question_token": "منحة", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "fa-scholarship-rtl", "lang": "fa", "width": 768, "text": "دنبال بورسیه هستم", "expect_question": True, "question_token": "بورسیه", "expect_rtl": True, "expect_intent": "scholarship"},
     {"id": "sv-private-context-reused", "lang": "sv", "width": 1024, "actor_type": "private_person", "text": "pengar att söka", "expect_question": False, "expect_actor": "private", "expect_intent": "funding"},
 ]
