@@ -173,7 +173,35 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
   assert.ok(!hasFlag(row,'participation_application_timing'));
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:16,failed:0}));
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Sista anbudsdag är 30/10 kl 23:59.',
+    'Rättelse 2: Sista anbudsdag är 31/10 kl 23:59.'
+  ].join('\n'));
+  assert.deepEqual(rows.map(r=>r.processSubtype),['bid','bid']);
+  assert.ok(rows.every(r=>hasFlag(r,'deadline_version_conflict')),
+    'conflicting numeric day/month deadlines without year must fail closed');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Sista anbudsdag är 30/10 kl 23:59.',
+    'Rättelse 2: Sista anbudsdag är 30 oktober 2026 kl 23:59.'
+  ].join('\n'));
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'same month/day with one missing year must not fabricate a version conflict');
+}
+
+{
+  const rows=p.splitRequirements([
+    'Version 2.1: Sista anbudsdag är 30/10 kl 23:59.',
+    'Version 3.1: Sista anbudsdag är 30/10 kl 23:59.'
+  ].join('\n'));
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'version numbers must not be parsed as partial deadline dates');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:19,failed:0}));
 '''
 
 
