@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Browser regression for concrete-need lexical boundaries inside funding handoff.
+"""Browser regression for concrete-need and funding lexical boundaries.
 
 The shared start page must keep vague funding language in the funding handoff when
 near-miss words such as `synpunkt`, `standard` or object-rental `hyra`/Arabic-Persian rent
-lexemes are present, while preserving genuine concrete family/housing needs.
+lexemes are present, while preserving genuine concrete family/housing needs. Ordinary
+words that merely begin like a funding term must not fabricate funding intent.
 This is browser/DOM/routing evidence only; it does not claim eligibility,
 persistence, model quality, or physical-device evidence.
 """
@@ -46,6 +47,12 @@ CASES = [
         "expect_question": True,
         "expect_first": "actor_type=private_person",
         "expect_intent": "funding_intent=funding",
+    },
+    {
+        "id": "fondue-is-not-funding",
+        "text": "Jag letar efter ett fonduerecept till helgen.",
+        "expect_question": False,
+        "reject_intent": "funding_intent=",
     },
     {
         "id": "funding-rent-car-is-not-concrete-housing",
@@ -159,8 +166,12 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         require(links.count() >= 1, f"{case['id']}@{width}: no route rendered")
         hrefs = links.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         first_href = hrefs[0]
-        require(case["expect_first"] in first_href, f"{case['id']}@{width}: first route {first_href!r} did not match {case['expect_first']!r}")
-        require(case["expect_intent"] in first_href, f"{case['id']}@{width}: funding intent was not preserved in first route: {first_href!r}")
+        if case.get("expect_first"):
+            require(case["expect_first"] in first_href, f"{case['id']}@{width}: first route {first_href!r} did not match {case['expect_first']!r}")
+        if case.get("expect_intent"):
+            require(case["expect_intent"] in first_href, f"{case['id']}@{width}: funding intent was not preserved in first route: {first_href!r}")
+        if case.get("reject_intent"):
+            require(all(case["reject_intent"] not in href for href in hrefs), f"{case['id']}@{width}: false funding intent rendered: {hrefs}")
         if case.get("expect_need"):
             require(case["expect_need"] in first_href, f"{case['id']}@{width}: concrete need was not preserved in first route: {first_href!r}")
         if case.get("reject_need"):
