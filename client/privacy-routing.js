@@ -274,8 +274,8 @@
     if(actor==='relative'&&helperRoleNegated(x)) return true;
     const patterns={
       sv:{
-        employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
-        study:/studerar inte längre|inte längre student|inte student längre/,
+        employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb|inte för mitt jobb|inte för mitt arbete/,
+        study:/studerar inte längre|inte längre student|inte student längre|inte för mina studier/,
         company:/driver inte längre (?:ett |en )?företag|inte längre företagare|inte för mitt företag/,
         association:/inte längre (?:med i |del av )?(?:en |vår )?förening|inte för (?:min|vår) förening/,
         relative:/hjälper inte längre/,
@@ -283,15 +283,15 @@
         private:/inte längre privatperson/
       },
       ar:{
-        employee:/لم أعد موظف|لست موظف/,
-        study:/لم أعد طالب|لست طالب/,
+        employee:/لم أعد موظف|لست موظف|ليس لعملي/,
+        study:/لم أعد طالب|لست طالب|ليس لدراستي/,
         company:/لم أعد صاحب شركة|لست صاحب شركة|ليس لشركتي/,
         association:/لم أعد (?:في |عضو(?:ًا|ا)? في )?جمعية|لست (?:في |عضو(?:ًا|ا)? في )?جمعية|ليس لجمعية/,
         property_actor:/لم أعد مالك العقار|لست مالك العقار|ليس لمالك العقار/
       },
       fa:{
-        employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم/,
-        study:/دیگر دانشجو نیستم|دانشجو نیستم/,
+        employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم|نه برای کارم/,
+        study:/دیگر دانشجو نیستم|دانشجو نیستم|نه برای تحصیلم/,
         company:/دیگر صاحب شرکت نیستم|صاحب شرکت نیستم|نه برای شرکت من/,
         association:/دیگر (?:عضو )?انجمن نیستم|(?:عضو )?انجمن نیستم|نه برای انجمن من/,
         property_actor:/دیگر مالک ساختمان نیستم|مالک ساختمان نیستم|نه برای مالک ساختمان/
