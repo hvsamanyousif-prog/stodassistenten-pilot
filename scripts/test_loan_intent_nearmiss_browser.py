@@ -66,6 +66,22 @@ SCENARIOS = [
         "expect_loan": False,
     },
     {
+        "id": "fa-explicit-financial-loan",
+        "lang": "fa",
+        "text": "من وام می‌خواهم.",
+        "actor": None,
+        "expect_loan": True,
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-endurance-word-not-financial-loan",
+        "lang": "fa",
+        "text": "من برای دوام آوردن در این شرایط به کمک نیاز دارم.",
+        "actor": None,
+        "expect_loan": False,
+        "expect_rtl": True,
+    },
+    {
         "id": "sv-loan-and-scholarship-asks-one-type-question",
         "lang": "sv",
         "text": "Jag söker lån och stipendium.",
