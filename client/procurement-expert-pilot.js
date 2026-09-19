@@ -104,7 +104,7 @@ function dateTokens(line){
  const add=token=>{if(token)out.push(token);};
  for(const m of t.matchAll(/\b(20\d{2})-(\d{2})-(\d{2})\b/g))add(canonicalDateToken(m[1],m[2],m[3]));
  for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})[/.](20\d{2})\b/g))add(canonicalDateToken(m[3],m[2],m[1]));
- for(const m of t.matchAll(/\b(\d{1,2})[/.](\d{1,2})(?![/.]\d)\b/g)){
+ for(const m of t.matchAll(/\b(\d{1,2})\/(\d{1,2})(?!\/\d)\b/g)){
    const prefix=t.slice(Math.max(0,m.index-16),m.index);
    if(/\b(?:version|punkt|bilaga|avsnitt|kapitel)\s*$/.test(prefix))continue;
    add(partialDateToken(m[2],m[1]));
