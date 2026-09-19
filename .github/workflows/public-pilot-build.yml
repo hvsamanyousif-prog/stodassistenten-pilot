@@ -4,27 +4,37 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
   pull_request:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
 
@@ -46,6 +56,8 @@ jobs:
         run: python scripts/build_public_pilot.py --output _site
       - name: Verify build mutation, script order and multilingual invariants
         run: python scripts/test_public_pilot_build.py --site _site
+      - name: Verify plain-language shared entry contract
+        run: python scripts/test_landing_clarity.py --site _site
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -56,6 +68,8 @@ jobs:
           node --check client/pilot-surface.js
           node --check client/public-pilot-ui-gate.js
           node --check client/public-pilot-wiring.js
+          node --check client/privacy-routing.js
+          node --check client/funding-intent-continuity.js
       - name: Re-run capability runtime tests used by deployed artifact
         run: |
           node client/capabilities.test.cjs

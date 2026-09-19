@@ -23,7 +23,12 @@ SHELL_LEARNING_START = "<!-- STOD_EXPERIENCE_LEARNING_START -->"
 SHELL_LEARNING_END = "<!-- STOD_EXPERIENCE_LEARNING_END -->"
 QUICK_LEARNING_START = "<!-- STOD_QUICK_HELP_LEARNING_START -->"
 QUICK_LEARNING_END = "<!-- STOD_QUICK_HELP_LEARNING_END -->"
+COMPANY_CONTINUITY_START = "<!-- STOD_COMPANY_FUNDING_CONTINUITY_START -->"
+COMPANY_CONTINUITY_END = "<!-- STOD_COMPANY_FUNDING_CONTINUITY_END -->"
+SHELL_REFLOW_START = "<!-- STOD_SHARED_SHELL_REFLOW_START -->"
+SHELL_REFLOW_END = "<!-- STOD_SHARED_SHELL_REFLOW_END -->"
 SHELL_ROUTING_PATH = "client/privacy-routing.js"
+CONCRETE_NEED_CONTINUITY_PATH = "client/concrete-need-continuity.js"
 SHELL_LEARNING_PATH = "client/experience-learning.js"
 SHELL_GUIDANCE_PATH = "client/professional-guidance.js"
 STUDY_TRANSITION_PATH = "client/study-transition.js"
@@ -60,8 +65,10 @@ FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"
 ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"
 VAB_FOCUS_PATH = "client/vab-focus.js"
 PROPERTY_FOCUS_PATH = "client/property-accessibility-focus.js"
+FUNDING_INTENT_CONTINUITY_PATH = "client/funding-intent-continuity.js"
 SHELL_RUNTIME_PATHS = (
     SHELL_ROUTING_PATH,
+    CONCRETE_NEED_CONTINUITY_PATH,
     SHELL_LEARNING_PATH,
     SHELL_GUIDANCE_PATH,
     STUDY_TRANSITION_PATH,
@@ -123,6 +130,8 @@ SCRIPT_PATHS = (
     CHILD_ASSISTANCE_CONTEXT_PATH,
     MOBILITY_TRANSPORT_PATH,
     BEREAVEMENT_GUIDANCE_PATH,
+    FUNDING_INTENT_CONTINUITY_PATH,
+    CONCRETE_NEED_CONTINUITY_PATH,
 )
 PROFILE_PATH = "config/public_pilot_capabilities.json"
 PERSON_PILOT_PATH = "person-pilot.html"
@@ -150,12 +159,46 @@ def quick_learning_block() -> str:
     return "\n".join(lines)
 
 
+def company_continuity_block() -> str:
+    return "\n".join(
+        (
+            COMPANY_CONTINUITY_START,
+            f'<script src="{FUNDING_INTENT_CONTINUITY_PATH}"></script>',
+            COMPANY_CONTINUITY_END,
+        )
+    )
+
+
+def shell_reflow_block() -> str:
+    # The source shell slightly exceeds a 320 CSS-pixel viewport because the
+    # brand and three language controls compete for the same navigation row.
+    # Keep every control visible and make the language targets at least 44x44.
+    return "\n".join(
+        (
+            SHELL_REFLOW_START,
+            '<style id="shared-shell-reflow-guard">',
+            '@media(max-width:620px){.lang{min-width:44px;min-height:44px}}',
+            '@media(max-width:360px){.nav{gap:6px}.brand{gap:6px;font-size:13px;min-width:0}.mark{width:32px;height:32px;border-radius:10px;flex:0 0 32px}.langs{gap:0;flex:0 0 auto}.lang{padding-left:4px;padding-right:4px}}',
+            '</style>',
+            SHELL_REFLOW_END,
+        )
+    )
+
+
 def inject_before_body(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
     if any(marker in html for marker in forbidden_markers):
         raise ValueError("source HTML already contains managed wiring")
     if html.count("</body>") != 1:
         raise ValueError("source HTML must contain exactly one </body>")
     return html.replace("</body>", f"{block}\n</body>", 1)
+
+
+def inject_before_head_close(html: str, block: str, forbidden_markers: tuple[str, ...]) -> str:
+    if any(marker in html for marker in forbidden_markers):
+        raise ValueError("source HTML already contains managed reflow guard")
+    if html.count("</head>") != 1:
+        raise ValueError("source HTML must contain exactly one </head>")
+    return html.replace("</head>", f"{block}\n</head>", 1)
 
 
 def inject_wiring(html: str) -> str:
@@ -168,6 +211,14 @@ def inject_shell_learning(html: str) -> str:
 
 def inject_quick_learning(html: str) -> str:
     return inject_before_body(html, quick_learning_block(), (QUICK_LEARNING_START, QUICK_LEARNING_END))
+
+
+def inject_company_continuity(html: str) -> str:
+    return inject_before_body(html, company_continuity_block(), (COMPANY_CONTINUITY_START, COMPANY_CONTINUITY_END))
+
+
+def inject_shell_reflow(html: str) -> str:
+    return inject_before_head_close(html, shell_reflow_block(), (SHELL_REFLOW_START, SHELL_REFLOW_END))
 
 
 def repair_known_inline_syntax(html: str, page: str) -> str:
@@ -223,11 +274,14 @@ def build(source_root: Path, output_root: Path) -> Path:
     output_root = output_root.resolve()
     source_index = source_root / "index.html"
     source_person = source_root / PERSON_PILOT_PATH
+    source_company = source_root / "company-pilot.html"
     source_quick = source_root / "quick-help.html"
     if not source_index.is_file():
         raise FileNotFoundError("index.html is missing")
     if not source_person.is_file():
         raise FileNotFoundError(f"{PERSON_PILOT_PATH} is missing")
+    if not source_company.is_file():
+        raise FileNotFoundError("company-pilot.html is missing")
     if not source_quick.is_file():
         raise FileNotFoundError("quick-help.html is missing")
     if source_root == output_root:
@@ -238,6 +292,7 @@ def build(source_root: Path, output_root: Path) -> Path:
     output_root.mkdir(parents=True)
 
     shell_html = repair_known_inline_syntax(source_index.read_text(encoding="utf-8"), "index.html")
+    shell_html = inject_shell_reflow(shell_html)
     built_shell = inject_shell_learning(shell_html)
     validate_inline_javascript(built_shell, "index.html")
     (output_root / "index.html").write_text(built_shell, encoding="utf-8")
@@ -247,7 +302,11 @@ def build(source_root: Path, output_root: Path) -> Path:
     validate_inline_javascript(built_person, PERSON_PILOT_PATH)
     (output_root / PERSON_PILOT_PATH).write_text(built_person, encoding="utf-8")
 
-    copy_required_asset(source_root, output_root, "company-pilot.html")
+    company_html = source_company.read_text(encoding="utf-8")
+    built_company = inject_company_continuity(company_html)
+    validate_inline_javascript(built_company, "company-pilot.html")
+    (output_root / "company-pilot.html").write_text(built_company, encoding="utf-8")
+
     quick_html = repair_known_inline_syntax(source_quick.read_text(encoding="utf-8"), "quick-help.html")
     built_quick = inject_quick_learning(quick_html)
     validate_inline_javascript(built_quick, "quick-help.html")
