@@ -9,6 +9,7 @@ on:
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_actor_correction_company_browser.py'
       - 'scripts/test_actor_target_scope_browser.py'
+      - 'scripts/test_actor_positive_target_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -19,6 +20,7 @@ on:
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_actor_correction_company_browser.py'
       - 'scripts/test_actor_target_scope_browser.py'
+      - 'scripts/test_actor_positive_target_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -46,6 +48,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_target_scope_browser.py . actor-correction-company-webkit.json
+      - name: Positive support-target actor scope — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-chromium.json
+      - name: Positive support-target actor scope — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-webkit.json
       - name: Preserve company actor-correction evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -54,5 +66,7 @@ jobs:
           path: |
             actor-correction-company-chromium.json
             actor-correction-company-webkit.json
+            actor-positive-target-chromium.json
+            actor-positive-target-webkit.json
           if-no-files-found: warn
           retention-days: 14
