@@ -180,7 +180,7 @@
     const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
-    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|يا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
@@ -277,24 +277,24 @@
         employee:/inte längre anställd|inte anställd längre|är inte anställd|har slutat (?:mitt |på )?jobb/,
         study:/studerar inte längre|inte längre student|inte student längre/,
         company:/driver inte längre (?:ett |en )?företag|inte längre företagare|inte för mitt företag/,
-        association:/inte längre (?:med i |del av )?(?:en |vår )?förening/,
+        association:/inte längre (?:med i |del av )?(?:en |vår )?förening|inte för (?:min|vår) förening/,
         relative:/hjälper inte längre/,
-        property_actor:/inte längre (?:brf|bostadsrättsförening|fastighetsägare|hyresvärd)/,
+        property_actor:/inte längre (?:brf|bostadsrättsförening|fastighetsägare|hyresvärd)|inte för (?:min|vår) (?:brf|bostadsrättsförening)/,
         private:/inte längre privatperson/
       },
       ar:{
         employee:/لم أعد موظف|لست موظف/,
         study:/لم أعد طالب|لست طالب/,
         company:/لم أعد صاحب شركة|لست صاحب شركة|ليس لشركتي/,
-        association:/لم أعد (?:في |عضو(?:ًا|ا)? في )?جمعية|لست (?:في |عضو(?:ًا|ا)? في )?جمعية/,
-        property_actor:/لم أعد مالك العقار|لست مالك العقار/
+        association:/لم أعد (?:في |عضو(?:ًا|ا)? في )?جمعية|لست (?:في |عضو(?:ًا|ا)? في )?جمعية|ليس لجمعية/,
+        property_actor:/لم أعد مالك العقار|لست مالك العقار|ليس لمالك العقار/
       },
       fa:{
         employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم/,
         study:/دیگر دانشجو نیستم|دانشجو نیستم/,
         company:/دیگر صاحب شرکت نیستم|صاحب شرکت نیستم|نه برای شرکت من/,
-        association:/دیگر (?:عضو )?انجمن نیستم|(?:عضو )?انجمن نیستم/,
-        property_actor:/دیگر مالک ساختمان نیستم|مالک ساختمان نیستم/
+        association:/دیگر (?:عضو )?انجمن نیستم|(?:عضو )?انجمن نیستم|نه برای انجمن من/,
+        property_actor:/دیگر مالک ساختمان نیستم|مالک ساختمان نیستم|نه برای مالک ساختمان/
       }
     };
     const langPatterns=patterns[currentLang()]||{};
@@ -402,20 +402,6 @@
     if(!supportedPath||!FUNDING_DESTINATION_ACTORS.has(actor)) return false;
     url.searchParams.set('funding_intent',intent);
     return true;
-  }
-  function sanitizeAnchor(anchor){
-    const url=new URL(anchor.href,location.href);
-    const mode=safeToken(url.searchParams.get('mode'));
-    const raw=url.searchParams.get('q');
-    let changed=false;
-    if((mode==='dental'||mode==='vision')&&raw){
-      url.searchParams.set('need',coarseNeed(mode,raw));
-      url.searchParams.delete('q');
-      changed=true;
-    }
-    if(preserveConcreteFundingIntent(url)) changed=true;
-    if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
-    return routeKey(url);
   }
   function ensureBoundedSelfFundingAlternative(){
     const text=composer?composer.value.trim():'';
