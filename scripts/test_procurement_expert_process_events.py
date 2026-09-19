@@ -201,7 +201,16 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
     'version numbers must not be parsed as partial deadline dates');
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:19,failed:0}));
+{
+  const rows=p.splitRequirements([
+    'Rättelse 1: Sista anbudsdag är 30.10 kl 23:59.',
+    'Rättelse 2: Sista anbudsdag är 31.10 kl 23:59.'
+  ].join('\n'));
+  assert.ok(rows.every(r=>!hasFlag(r,'deadline_version_conflict')),
+    'ambiguous dotted numeric tokens must not be promoted to partial deadline dates');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:20,failed:0}));
 '''
 
 
