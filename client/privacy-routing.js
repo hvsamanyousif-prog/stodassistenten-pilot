@@ -255,7 +255,7 @@
     const add=(actor,pattern)=>{if(pattern.test(x)&&!actors.includes(actor)) actors.push(actor)};
     const propertyPattern=/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/;
     const propertyHit=propertyPattern.test(x);
-    const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي/u.test(x)||/(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من/u.test(x);
+    const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي|طلبي[^.!؟\n]{0,80}(?:مالك العقار|جمعية سكنية))/u.test(x)||/(?:(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من|درخواست\s+من[^.!؟\n]{0,80}(?:مالک ساختمان|هیئت مدیره ساختمان))/u.test(x);
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
