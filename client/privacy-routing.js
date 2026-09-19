@@ -201,7 +201,7 @@
     return /\boch\b/u.test(x)||/(?:^|[\s،])و(?=$|[\s،])/u.test(x)||/و(?=(?:منحة|منح|قرض|دعم|تمويل|بورسیه|وام|کمک|حمایت|بودجه))/u.test(x);
   }
   function fundingIntentNeedsClarification(text,intents=affirmedFundingIntents(text)){
-    return intents.length>1&&hasFundingAdditiveConnector(text)&&!hasFundingAlternativeConnector(text);
+    return intents.length>1;
   }
   function fundingIntent(text){
     const intents=affirmedFundingIntents(text);
