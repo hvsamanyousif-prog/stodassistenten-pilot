@@ -76,7 +76,7 @@ SCENARIOS = [
     {"id": "sv-municipality-home-service-not-dental", "lang": "sv", "width": 390, "text": "Jag behöver hjälp från kommunen med hemtjänst.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
     {"id": "sv-municipality-housing-adaptation-not-dental", "lang": "sv", "width": 1280, "text": "Jag behöver information från min kommun om bostadsanpassning.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
     {"id": "sv-municipal-housing-support-not-dental", "lang": "sv", "width": 768, "text": "Jag söker kommunalt stöd för att anpassa min bostad.", "expect_question": False, "reject_route": "quick-help.html?mode=dental"},
-    {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": True, "question_token": "من", "expect_rtl": True, "expect_intent": "scholarship"},
+    {"id": "ar-generic-funding-rtl", "lang": "ar", "width": 390, "text": "أبحث عن منحة أو دعم مالي", "expect_question": False, "expect_intent_question": True, "intent_question_token": "نوع", "expect_rtl": True},
     {"id": "ar-residence-granted-not-scholarship", "lang": "ar", "width": 390, "text": "تم منحك تصريح الإقامة. ما الخطوة التالية؟", "expect_question": False, "reject_route": "funding_intent=scholarship", "expect_rtl": True},
     {"id": "ar-residence-grant-heading-not-scholarship", "lang": "ar", "width": 768, "text": "منح تصريح الإقامة", "expect_question": False, "reject_route": "funding_intent=scholarship", "expect_rtl": True},
     {"id": "ar-scholarship-study-positive", "lang": "ar", "width": 1024, "text": "أبحث عن منحة دراسية", "expect_question": True, "question_token": "منحة", "expect_rtl": True, "expect_intent": "scholarship"},
@@ -141,19 +141,31 @@ def run_scenario(browser, base_url: str, scenario: dict) -> dict:
         require(not page_errors, f"{scenario['id']}: JavaScript error(s): {page_errors}")
 
         question_count = results.locator('[data-funding-question="true"]').count()
+        intent_question_count = results.locator('[data-funding-intent-question="true"]').count()
         require(question_count <= 1, f"{scenario['id']}: more than one first funding question rendered")
-        if scenario.get("expect_question"):
-            require(question_count == 1, f"{scenario['id']}: expected one actor-changing funding question")
-            question_text = results.locator('[data-funding-question="true"]').inner_text().lower()
-            require(scenario["question_token"].lower() in question_text, f"{scenario['id']}: question lost funding type/context: {question_text!r}")
-            options = results.locator("a[data-funding-actor]")
-            require(options.count() == len(ACTOR_HREFS), f"{scenario['id']}: expected {len(ACTOR_HREFS)} actor entrances, got {options.count()}")
-            option_actors = sorted(options.evaluate_all("els => els.map(el => el.dataset.fundingActor)"))
-            require(option_actors == sorted(ACTOR_HREFS), f"{scenario['id']}: actor choices drifted: {option_actors}")
-            result_text = results.inner_text().lower()
-            require("tandvård" not in result_text and "städ" not in result_text, f"{scenario['id']}: vague funding query leaked a default precise route")
+        require(intent_question_count <= 1, f"{scenario['id']}: more than one funding-type clarification rendered")
+        if scenario.get("expect_intent_question"):
+            require(intent_question_count == 1, f"{scenario['id']}: expected one funding-type clarification")
+            require(question_count == 0, f"{scenario['id']}: actor question competed with funding-type clarification")
+            question_text = results.locator('[data-funding-intent-question="true"]').inner_text().lower()
+            require(scenario["intent_question_token"].lower() in question_text, f"{scenario['id']}: funding-type clarification lost its purpose: {question_text!r}")
+            require(results.locator("a[data-funding-actor]").count() == 0, f"{scenario['id']}: ambiguous funding request was silently routed")
+            hrefs = results.locator("a[href]").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+            require(all("funding_intent=" not in href for href in hrefs), f"{scenario['id']}: ambiguous request leaked a chosen funding_intent")
         else:
-            require(question_count == 0, f"{scenario['id']}: redundant actor question was shown")
+            require(intent_question_count == 0, f"{scenario['id']}: unexpected funding-type clarification was shown")
+            if scenario.get("expect_question"):
+                require(question_count == 1, f"{scenario['id']}: expected one actor-changing funding question")
+                question_text = results.locator('[data-funding-question="true"]').inner_text().lower()
+                require(scenario["question_token"].lower() in question_text, f"{scenario['id']}: question lost funding type/context: {question_text!r}")
+                options = results.locator("a[data-funding-actor]")
+                require(options.count() == len(ACTOR_HREFS), f"{scenario['id']}: expected {len(ACTOR_HREFS)} actor entrances, got {options.count()}")
+                option_actors = sorted(options.evaluate_all("els => els.map(el => el.dataset.fundingActor)"))
+                require(option_actors == sorted(ACTOR_HREFS), f"{scenario['id']}: actor choices drifted: {option_actors}")
+                result_text = results.inner_text().lower()
+                require("tandvård" not in result_text and "städ" not in result_text, f"{scenario['id']}: vague funding query leaked a default precise route")
+            else:
+                require(question_count == 0, f"{scenario['id']}: redundant actor question was shown")
 
         if scenario.get("expect_actor"):
             actor = scenario["expect_actor"]
@@ -199,7 +211,7 @@ def run_scenario(browser, base_url: str, scenario: dict) -> dict:
         hrefs = results.locator("a").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         require(all(raw not in href for href in hrefs), f"{scenario['id']}: raw situation leaked into a result URL")
 
-        return {"id": scenario["id"], "width": scenario["width"], "lang": scenario["lang"], "status": "passed", "question_count": question_count, "hrefs": hrefs}
+        return {"id": scenario["id"], "width": scenario["width"], "lang": scenario["lang"], "status": "passed", "question_count": question_count, "intent_question_count": intent_question_count, "hrefs": hrefs}
     finally:
         page.close()
 
