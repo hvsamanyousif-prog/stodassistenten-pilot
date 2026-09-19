@@ -1,4 +1,11 @@
 (() => {
+  function selfStudyIdentity(text){
+    const x=String(text||'').toLocaleLowerCase();
+    const sv=/\bjag\s+(?:är\s+student|studerar|studerande)\b/u.test(x)||/\bjag\s+är\s+anställd\s+och\s+studerar\b/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])أدرس(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])أنا\s+(?:(?:موظف|موظفة)\s+و)?طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x);
+    const fa=/(?:^|[^\p{L}\p{N}])(?:من\s+[^.!؟\n]{0,32})?دانشجو\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])(?:من\s+)?تحصیل\s+می(?:‌|\s)?کنم(?=$|[^\p{L}\p{N}])/u.test(x);
+    return sv||ar||fa;
+  }
   function installGovernedRoutes(){
     let rerender=false;
     try{
@@ -17,7 +24,7 @@
               else if(needle==='عمل') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?عمل(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کار') hit=/(?:^|[^\p{L}\p{N}])کار(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='بصر') hit=/(?:^|[^\p{L}\p{N}])(?:ال)?بصر(?=$|[^\p{L}\p{N}])/u.test(hay);
-              else if(needle==='طالب') hit=/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(hay);
+              else if(key==='study'&&['student','studera','طالب','دانشجو','تحصیل'].includes(needle)) hit=selfStudyIdentity(hay);
               else if(needle==='جمعية') hit=!hay.includes('جمعية سكنية')&&hay.includes(needle);
               else if(needle==='موظف') hit=/(?:^|[^\p{L}\p{N}])أنا\s+موظف(?=$|[^\p{L}\p{N}])/u.test(hay);
               else if(needle==='کارمند') hit=/(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u.test(hay);
@@ -202,7 +209,7 @@
     add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
-    if(/jag studerar|student|studerar|studerande|أدرس|دانشجو|تحصیل/.test(x)||/(?:^|[^\p{L}\p{N}]|و)طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x)) actors.push('study');
+    if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
     return actors;
