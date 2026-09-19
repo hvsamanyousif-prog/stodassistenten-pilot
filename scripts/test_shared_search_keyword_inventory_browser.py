@@ -354,6 +354,24 @@ SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "sv-third-party-property-actor-funding-asks-actor",
+        "lang": "sv",
+        "width": 390,
+        "text": "Min hyresvärd nekade min ansökan och jag söker bidrag.",
+        "expect_question": True,
+        "question_token": "vem",
+        "expect_intent": "funding",
+    },
+    {
+        "id": "sv-self-property-actor-positive",
+        "lang": "sv",
+        "width": 1280,
+        "text": "Jag är fastighetsägare och söker bidrag.",
+        "expect_question": False,
+        "expect_actor": "property_actor",
+        "expect_intent": "funding",
+    },
 ]
 
 
