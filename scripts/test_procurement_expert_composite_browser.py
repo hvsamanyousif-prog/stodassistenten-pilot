@@ -52,7 +52,7 @@ CASES = [
     },
     {
         'id': 'single-evidence-object-with-descriptive-and-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller under hela avtalstiden.',
+        'text': 'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller från startdagen.',
         'category': 'qualification',
         'expect_composite': False,
     },
@@ -98,7 +98,6 @@ def run_case(page, case):
     check(page.locator('[data-cat]').first.input_value() == case['category'], f"{case['id']}: unexpected category")
 
     overview = page.locator('#priorityOverview').inner_text().lower()
-    full_review_before = ''
     if case['expect_composite']:
         check('flera materiella krav' in overview, f"{case['id']}: composite risk missing from short overview")
         check('källa rad 1' in overview, f"{case['id']}: physical source trace missing")
