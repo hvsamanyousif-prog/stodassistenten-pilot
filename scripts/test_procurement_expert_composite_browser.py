@@ -24,21 +24,37 @@ CASES = [
         'id': 'four-material-clauses-stay-fail-closed',
         'text': 'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.',
         'category': 'deadline',
+        'expect_composite': True,
     },
     {
         'id': 'three-material-clauses-stay-fail-closed',
         'text': 'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',
         'category': 'commercial',
+        'expect_composite': True,
     },
     {
         'id': 'semicolon-qualification-plus-deadline-stays-fail-closed',
         'text': 'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',
         'category': 'deadline',
+        'expect_composite': True,
     },
     {
         'id': 'semicolon-commercial-plus-deadline-stays-fail-closed',
         'text': 'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
         'category': 'deadline',
+        'expect_composite': True,
+    },
+    {
+        'id': 'single-clause-insurance-plus-certificate-stays-fail-closed',
+        'text': 'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
+        'id': 'single-evidence-object-with-descriptive-and-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller under hela avtalstiden.',
+        'category': 'qualification',
+        'expect_composite': False,
     },
 ]
 
@@ -82,21 +98,32 @@ def run_case(page, case):
     check(page.locator('[data-cat]').first.input_value() == case['category'], f"{case['id']}: unexpected category")
 
     overview = page.locator('#priorityOverview').inner_text().lower()
-    check('flera materiella krav' in overview, f"{case['id']}: composite risk missing from short overview")
-    check('källa rad 1' in overview, f"{case['id']}: physical source trace missing")
-    check('börja med de markerade riskerna' in overview, f"{case['id']}: risk is not next action")
+    full_review_before = ''
+    if case['expect_composite']:
+        check('flera materiella krav' in overview, f"{case['id']}: composite risk missing from short overview")
+        check('källa rad 1' in overview, f"{case['id']}: physical source trace missing")
+        check('börja med de markerade riskerna' in overview, f"{case['id']}: risk is not next action")
+    else:
+        check('flera materiella krav' not in overview, f"{case['id']}: descriptive conjunction fabricated composite risk")
 
     page.locator('#openReviewBtn').click()
     check(page.locator('#reviewDetails').get_attribute('open') is not None, f"{case['id']}: full review did not open")
-    full_review = page.locator('#requirements').inner_text().lower()
-    check('flera materiella krav' in full_review, f"{case['id']}: composite risk missing from full review")
+    full_review_before = page.locator('#requirements').inner_text().lower()
+    if case['expect_composite']:
+        check('flera materiella krav' in full_review_before, f"{case['id']}: composite risk missing from full review")
+    else:
+        check('flera materiella krav' not in full_review_before, f"{case['id']}: descriptive conjunction fabricated full-review composite risk")
 
     page.locator('[data-ev="1"]').select_option('yes')
     overview_after = page.locator('#priorityOverview').inner_text().lower()
     summary_after = page.locator('#summary').inner_text().lower()
-    check('flera materiella krav' in overview_after, f"{case['id']}: manual evidence=yes hid composite risk")
-    check('alla kravrader är genomgångna av dig' not in overview_after, f"{case['id']}: false calm completion after evidence=yes")
-    check('1 osäkra/ej bedömda' in summary_after, f"{case['id']}: unresolved composite row disappeared from summary")
+    if case['expect_composite']:
+        check('flera materiella krav' in overview_after, f"{case['id']}: manual evidence=yes hid composite risk")
+        check('alla kravrader är genomgångna av dig' not in overview_after, f"{case['id']}: false calm completion after evidence=yes")
+        check('1 osäkra/ej bedömda' in summary_after, f"{case['id']}: unresolved composite row disappeared from summary")
+    else:
+        check('flera materiella krav' not in overview_after, f"{case['id']}: evidence=yes introduced composite risk")
+        check('1 osäkra/ej bedömda' not in summary_after, f"{case['id']}: simple single-object row stayed uncertain without another risk")
 
     sizes = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')
     check(sizes['content'] <= sizes['viewport'] + 1, f"{case['id']}: horizontal overflow {sizes}")
