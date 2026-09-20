@@ -10,11 +10,9 @@ NODE_TEST = r'''
 const assert=require('node:assert/strict');
 const p=require('./client/procurement-expert-pilot.js');
 
+// Conjunction-bound requirements stay on one physical review row for now, but
+// must remain fail-closed because one evidence control cannot verify siblings.
 const cases=[
-  'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.',
-  'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',
-  'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',
-  'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
   'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
   'Leverantören ska ha ISO 9001-certifikat och ISO 14001-certifikat.',
   'Leverantören ska ha två referensuppdrag inom markentreprenad och två referensuppdrag inom elinstallationer.',
@@ -35,9 +33,7 @@ const cases=[
 
 for(const [index,text] of cases.entries()){
   const rows=p.splitRequirements(text);
-  // Do not introduce naive sentence splitting in this bounded fix. Preserve the
-  // physical source row, but mark it as a composite that needs manual review.
-  assert.equal(rows.length,1,`case ${index+1}: physical row must stay intact`);
+  assert.equal(rows.length,1,`case ${index+1}: conjunction-bound physical row must stay intact`);
   const row=rows[0];
   assert.equal(row.sourceLine,1,`case ${index+1}: source line must be preserved`);
   assert.ok(row.flags.some(f=>f.code==='multi_requirement_line'),`case ${index+1}: missing composite-row risk`);
@@ -46,6 +42,33 @@ for(const [index,text] of cases.entries()){
   row.evidence='yes';
   assert.ok(p.prioritizeReviewRows(rows).some(r=>r.id===row.id),`case ${index+1}: manual evidence=yes must not hide composite risk`);
   assert.equal(p.summarize(rows).uncertain.length,1,`case ${index+1}: composite risk must remain uncertain`);
+}
+
+// First bounded semantic-segmentation contract: explicit sentence/semicolon
+// boundaries on one physical source line become independently reviewable rows
+// while keeping the original physical source line for traceability. This is
+// intentionally narrower than full document segmentation and does not split
+// conjunction-bound clauses above.
+const explicitBoundaryCases=[
+  ['Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.',4],
+  ['Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',3],
+  ['Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',2],
+  ['Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',2]
+];
+for(const [caseIndex,[text,expectedCount]] of explicitBoundaryCases.entries()){
+  const rows=p.splitRequirements(text);
+  assert.equal(rows.length,expectedCount,`segmentation case ${caseIndex+1}: explicit material clauses must become independent review rows`);
+  rows.forEach((row,index)=>{
+    assert.equal(row.sourceLine,1,`segmentation case ${caseIndex+1}: physical source line must stay traceable`);
+    assert.equal(row.sourceSegment,index+1,`segmentation case ${caseIndex+1}: source segment index must be stable`);
+    assert.equal(row.sourceSegmentCount,expectedCount,`segmentation case ${caseIndex+1}: source segment count must be explicit`);
+    assert.ok(!row.flags.some(f=>f.code==='multi_requirement_line'),`segmentation case ${caseIndex+1}: already-separated clause must not retain composite-row warning`);
+  });
+  const first=rows[0];
+  first.evidence='yes';
+  assert.equal(p.summarize(rows).uncertain.length,expectedCount-1,`segmentation case ${caseIndex+1}: evidence on one segment must not verify sibling segments`);
+  assert.ok(p.prioritizeReviewRows(rows).every(r=>r.id!==first.id),`segmentation case ${caseIndex+1}: reviewed segment should leave priority independently`);
+  assert.equal(p.prioritizeReviewRows(rows).length,expectedCount-1,`segmentation case ${caseIndex+1}: sibling segments must remain independently prioritized`);
 }
 
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
@@ -105,7 +128,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 19 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + 19 negative controls passed`);
 '''
 
 
