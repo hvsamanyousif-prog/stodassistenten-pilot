@@ -15,7 +15,8 @@ const cases=[
   'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',
   'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',
   'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
-  'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.'
+  'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
+  'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -38,6 +39,9 @@ assert.ok(!simple.flags.some(f=>f.code==='multi_requirement_line'),'single mater
 
 const descriptiveConjunction=p.splitRequirements('Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller under hela avtalstiden.')[0];
 assert.ok(!descriptiveConjunction.flags.some(f=>f.code==='multi_requirement_line'),'single evidence object with descriptive conjunction must not fabricate composite risk');
+
+const descriptiveStaffExperience=p.splitRequirements('Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.')[0];
+assert.ok(!descriptiveStaffExperience.flags.some(f=>f.code==='multi_requirement_line'),'descriptive named-role experience outside the normative clause must not fabricate composite risk');
 
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
