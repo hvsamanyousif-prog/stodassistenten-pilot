@@ -10,6 +10,7 @@ on:
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_direct_helped_person_pronoun_browser.py'
       - '.github/workflows/generic-helped-person-pronoun.yml'
   push:
     branches: ['main']
@@ -21,6 +22,7 @@ on:
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_direct_helped_person_pronoun_browser.py'
       - '.github/workflows/generic-helped-person-pronoun.yml'
 
 permissions:
@@ -48,6 +50,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_generic_helped_person_pronoun_browser.py . generic-helped-person-pronoun-webkit.json
+      - name: Direct helped-person target continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_direct_helped_person_pronoun_browser.py . direct-helped-person-pronoun-chromium.json
+      - name: Direct helped-person target continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_direct_helped_person_pronoun_browser.py . direct-helped-person-pronoun-webkit.json
       - name: Preserve generic helped-person pronoun evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -56,5 +68,7 @@ jobs:
           path: |
             generic-helped-person-pronoun-chromium.json
             generic-helped-person-pronoun-webkit.json
+            direct-helped-person-pronoun-chromium.json
+            direct-helped-person-pronoun-webkit.json
           if-no-files-found: warn
           retention-days: 14
