@@ -74,6 +74,26 @@ for(const [caseIndex,[text,expectedCount]] of explicitBoundaryCases.entries()){
   });
 }
 
+// Punctuation is not semantic independence. Explicit boundaries must stay
+// fail-closed when the following material clause is an alternative or exception
+// to its sibling; otherwise segmentation would turn one relational rule into
+// two apparently cumulative obligations.
+const relationalBoundaryCases=[
+  'Anbudet ska lämnas elektroniskt; alternativt ska anbudet lämnas enligt reservrutinen.',
+  'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.'
+];
+for(const [caseIndex,text] of relationalBoundaryCases.entries()){
+  const rows=p.splitRequirements(text);
+  assert.equal(rows.length,1,`relational segmentation case ${caseIndex+1}: alternative/exception siblings must stay on one review row`);
+  const row=rows[0];
+  assert.equal(row.sourceLine,1,`relational segmentation case ${caseIndex+1}: physical source line must stay traceable`);
+  assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'),`relational segmentation case ${caseIndex+1}: relationship risk must remain visible`);
+  assert.ok(row.flags.some(f=>f.code==='multi_requirement_line'),`relational segmentation case ${caseIndex+1}: one evidence control must not silently cover both material clauses`);
+  row.evidence='yes';
+  assert.ok(p.prioritizeReviewRows(rows).some(r=>r.id===row.id),`relational segmentation case ${caseIndex+1}: evidence=yes must not hide relational uncertainty`);
+  assert.equal(p.summarize(rows).uncertain.length,1,`relational segmentation case ${caseIndex+1}: relational row must remain uncertain`);
+}
+
 // Second bounded semantic-segmentation contract: a coordinating conjunction may
 // become a safe boundary only when the right-hand sibling carries its own
 // explicit normative modal and both resulting clauses independently carry a
@@ -158,7 +178,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 contrastive controls passed`);
 '''
 
 
