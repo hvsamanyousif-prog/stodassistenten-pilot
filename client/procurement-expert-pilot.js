@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.1';
+const APP_VERSION='procurement-expert-0.2.2';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -170,6 +170,17 @@ function isStructuralHeading(line){
  const t=normalized(line).replace(/^\d+(?:\.\d+)*[.)]?\s+/,'').replace(/:$/,'').trim();
  return /^(obligatoriska krav|ska-krav|kvalificeringskrav|tilldelningskriterier|utvärderingskriterier|kommersiella villkor|kontraktsvillkor|administrativa föreskrifter|kravspecifikation|tekniska krav|tidplan|viktiga datum)$/.test(t);
 }
+function materialEvidenceObjectCount(line){
+ const t=normalized(line);
+ const families=[
+   /\b(?:ansvarsförsäkring|försäkring)\b/,
+   /\b(?:certifikat|certifier|behörig|behörighet|bas-p|bas-u)\b/,
+   /\breferens(?:uppdrag|er)?\b/,
+   /\b(?:omsättning|ekonomisk|finansiell)\b/,
+   /\bunderleverant|\båberopa\b.*\bkapacitet\b/
+ ];
+ return families.filter(pattern=>pattern.test(t)).length;
+}
 function materialClauseCount(line){
  const raw=String(line||'').trim();
  if(!raw)return 0;
@@ -182,6 +193,10 @@ function materialClauseCount(line){
  if(count<2){
    const normativeHits=[...normalized(raw).matchAll(/\b(?:ska|skall|måste|krävs)\b/g)].length;
    if(normativeHits>=2)count=normativeHits;
+ }
+ if(count<2){
+   const evidenceObjects=materialEvidenceObjectCount(raw);
+   if(evidenceObjects>=2)count=evidenceObjects;
  }
  return count;
 }
