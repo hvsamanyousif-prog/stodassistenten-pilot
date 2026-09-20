@@ -51,6 +51,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'same-family-two-distinct-certificates-stay-fail-closed',
+        'text': 'Leverantören ska ha ISO 9001-certifikat och ISO 14001-certifikat.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
         'id': 'single-clause-reference-plus-named-role-experience-stays-fail-closed',
         'text': 'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
         'category': 'qualification',
@@ -79,6 +85,12 @@ CASES = [
         'text': 'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
         'category': 'contract',
         'expect_composite': True,
+    },
+    {
+        'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
+        'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
     },
     {
         'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
