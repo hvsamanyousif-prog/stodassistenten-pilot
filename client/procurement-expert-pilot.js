@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.8';
+const APP_VERSION='procurement-expert-0.2.9';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -172,6 +172,8 @@ function isStructuralHeading(line){
 }
 function materialEvidenceObjectCount(line){
  const t=normalized(line);
+ const certificatePair=t.match(/\b(?:ska|skall|måste)\s+(?:ha|inneha)\b[^.;]{0,160}\b(iso\s+\d{3,5}(?:-\d{4})?-certifikat)\b\s+(?:och|samt)\s+\b(iso\s+\d{3,5}(?:-\d{4})?-certifikat)\b/);
+ const distinctCertificatePair=Boolean(certificatePair&&certificatePair[1]!==certificatePair[2]);
  const families=[
    /\b(?:ansvarsförsäkring|försäkring)\b/,
    /\b(?:certifikat|certifier|behörig|behörighet|bas-p|bas-u)\b/,
@@ -185,7 +187,7 @@ function materialEvidenceObjectCount(line){
    /\bunder avtalstiden\b[^.;]{0,160}\b(?:ska|skall|måste|kunna)\b[^.;]{0,120}\b(?:inställa sig|inställelsetid|svarstid|responstid|påbörja|åtgärda)\b/,
    /\b(?:ska|skall|måste)\b[^.;]{0,220}\bunder avtalstiden\b[^.;]{0,120}\b(?:följa|upprätta|tillämpa|efterleva)\b[^.;]{0,100}\b(?:arbetsmiljöplan(?:en)?|arbetsmiljökrav(?:en)?|arbetsmiljöregler(?:na)?|säkerhetsföreskrifter(?:na)?)\b/
  ];
- return families.filter(pattern=>pattern.test(t)).length;
+ return families.filter(pattern=>pattern.test(t)).length+(distinctCertificatePair?1:0);
 }
 function materialClauseCount(line){
  const raw=String(line||'').trim();
