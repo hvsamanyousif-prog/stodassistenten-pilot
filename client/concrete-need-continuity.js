@@ -35,7 +35,7 @@ const RELATIVE_SUBJECTS=[
  {key:'mother',explicit:/(?:\bmin mamma\b|\bmin mor\b|أمي|والدتي|مادرم)/i,pronoun:/(?:\bhon\b|(?:^|\s)هي(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|زوجتي|زوجي|همسرم)/i,pronoun:/(?:\bhen\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
- {key:'person',explicit:/(?:personen jag hjälper|الشخص الذي أساعده|فردی که کمک)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
+ {key:'person',explicit:/(?:personen (?:som )?jag hjälper|الشخص الذي (?:أنا )?أساعده|فردی که (?:من )?کمک)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
 ];
 
 function relativeSubjectKeys(text){
