@@ -57,6 +57,18 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-register-qualification-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
+        'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
         'id': 'descriptive-named-role-experience-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.',
         'category': 'qualification',
