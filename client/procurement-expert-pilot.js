@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.16';
+const APP_VERSION='procurement-expert-0.2.17';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -181,7 +181,7 @@ function materialEvidenceObjectCount(line){
  const rolePairPattern=new RegExp(`\\b(?:ska|skall|måste|krävs)\\b[^.;]{0,180}\\b(${rolePattern})\\b[^.;]{0,80}?\\b${competencePattern}\\b[^.;]{0,80}\\b(?:och|samt)\\b[^.;]{0,80}\\b(${rolePattern})\\b[^.;]{0,80}?\\b${competencePattern}\\b`);
  const rolePair=t.match(rolePairPattern);
  const distinctNamedRoleCompetencePair=Boolean(rolePair&&rolePair[1]!==rolePair[2]);
- const requestedDeliverablePattern='[a-zåäö0-9-]{2,40}(?:plan|intyg|bilaga|bevis|dokument|beskrivning)';
+ const requestedDeliverablePattern='[a-zåäö0-9-]{2,40}(?:plan|intyg|bilaga|bevis|dokument|beskrivning|analys)';
  const requestedDeliverablePairPattern=new RegExp(`\\b(?:ska|skall|måste)\\b[^.;]{0,100}\\b(?:innehålla|omfatta|inkludera|bifoga|lämna|redovisa|skicka in|ge in)\\b[^.;]{0,100}\\b(?:en|ett)?\\s*(${requestedDeliverablePattern})\\b\\s+(?:och|samt)\\s+(?:en|ett)?\\s*(${requestedDeliverablePattern})\\b(?=\\s*[.;]|$)`);
  const requestedDeliverablePair=t.match(requestedDeliverablePairPattern);
  const distinctRequestedDeliverablePair=Boolean(requestedDeliverablePair&&requestedDeliverablePair[1]!==requestedDeliverablePair[2]);
