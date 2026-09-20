@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.5';
+const APP_VERSION='procurement-expert-0.2.6';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -180,7 +180,8 @@ function materialEvidenceObjectCount(line){
    /\bunderleverant|\båberopa\b.*\bkapacitet\b/,
    /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:arbetsledare|projektledare|uppdragsledare|nyckelperson(?:en|er|erna)?|specialist(?:en|er|erna)?)\b[^.;]{0,120}\b(?:erfarenhet|kompetens|utbildning|cv|meriter?)\b/,
    /\b(?:ska|skall|måste)\s+(?:ha|inneha|upprätthålla|tillämpa)\b[^.;]{0,180}\b(?:kvalitetsledningssystem|miljöledningssystem|ledningssystem)\b|\b(?:kvalitetsledningssystem|miljöledningssystem|ledningssystem)\b[^.;]{0,80}\bkrävs\b/,
-   /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:registrerad|registrering|inskriven|auktoriserad|godkänd)\b[^.;]{0,140}\b(?:aktiebolags|handels|förenings|yrkes|företags|bolags|närings)?register\b/
+   /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:registrerad|registrering|inskriven|auktoriserad|godkänd)\b[^.;]{0,140}\b(?:aktiebolags|handels|förenings|yrkes|företags|bolags|närings)?register\b/,
+   /\b(?:ska|skall|måste)\b[^.;]{0,220}\b(?:förfoga över|ha tillgång till)\b[^.;]{0,140}\b(?:verktyg(?:en)?|maskin(?:er|erna)?|teknisk(?:a)?\s+(?:resurser|utrustning(?:en)?))\b/
  ];
  return families.filter(pattern=>pattern.test(t)).length;
 }
