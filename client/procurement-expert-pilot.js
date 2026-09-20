@@ -177,12 +177,10 @@ function materialEvidenceObjectCount(line){
  const referencePair=t.match(/\b(?:ska|skall|måste)\s+(?:ha|inneha)\b[^.;]{0,120}\b(?:minst\s+)?(?:\d+|ett|en|två|tre|fyra)\s+referens(?:uppdrag|er)?\s+(?:inom|avseende|för)\s+([a-zåäö0-9][a-zåäö0-9 /-]{0,60}?)\s+(?:och|samt)\s+(?:minst\s+)?(?:\d+|ett|en|två|tre|fyra)\s+referens(?:uppdrag|er)?\s+(?:inom|avseende|för)\s+([a-zåäö0-9][a-zåäö0-9 /-]{0,60}?)(?=[.;]|$)/);
  const distinctReferencePair=Boolean(referencePair&&referencePair[1]!==referencePair[2]);
  const rolePattern='(?:arbetsledar(?:e|en|ens)|projektledar(?:e|en|ens)|uppdragsledar(?:e|en|ens)|nyckelperson(?:en|er|erna|ens)?|specialist(?:en|er|erna|ens)?)';
- const roleCompetencePattern=new RegExp(`\\b(${rolePattern})\\b[^.;]{0,100}\\b(?:erfarenhet|kompetens|utbildning|cv|meriter?)\\b`,'g');
- const distinctNamedRoleCompetencePair=t.split(/[.;]/).some(clause=>{
-   if(!/\b(?:ska|skall|måste|krävs)\b/.test(clause))return false;
-   const matches=[...clause.matchAll(roleCompetencePattern)];
-   return matches.length>=2&&new Set(matches.map(match=>match[1])).size>=2;
- });
+ const competencePattern='(?:erfarenhet|kompetens|utbildning|cv|meriter?)';
+ const rolePairPattern=new RegExp(`\\b(?:ska|skall|måste|krävs)\\b[^.;]{0,180}\\b(${rolePattern})\\b[^.;]{0,80}?\\b${competencePattern}\\b[^.;]{0,80}\\b(?:och|samt)\\b[^.;]{0,80}\\b(${rolePattern})\\b[^.;]{0,80}?\\b${competencePattern}\\b`);
+ const rolePair=t.match(rolePairPattern);
+ const distinctNamedRoleCompetencePair=Boolean(rolePair&&rolePair[1]!==rolePair[2]);
  const families=[
    /\b(?:ansvarsförsäkring|försäkring)\b/,
    /\b(?:certifikat|certifier|behörig|behörighet|bas-p|bas-u)\b/,
