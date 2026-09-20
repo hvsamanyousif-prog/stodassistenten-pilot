@@ -26,7 +26,8 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.',
   'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
   'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
-  'Anbudet ska innehålla en kvalitetsplan och en bemanningsplan.'
+  'Anbudet ska innehålla en kvalitetsplan och en bemanningsplan.',
+  'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -83,13 +84,16 @@ assert.ok(!descriptiveCommercial.flags.some(f=>f.code==='multi_requirement_line'
 const descriptiveRequestedDeliverable=p.splitRequirements('Anbudet ska innehålla en kvalitetsplan och bemanningsplanen nämns endast som bakgrund.')[0];
 assert.ok(!descriptiveRequestedDeliverable.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-document mention must not fabricate composite risk');
 
+const descriptiveRequestedDescription=p.splitRequirements('Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.')[0];
+assert.ok(!descriptiveRequestedDescription.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-description mention must not fabricate composite risk');
+
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
 
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 15 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 16 negative controls passed`);
 '''
 
 
