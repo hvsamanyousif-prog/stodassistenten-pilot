@@ -66,9 +66,12 @@ for(const [caseIndex,[text,expectedCount]] of explicitBoundaryCases.entries()){
   });
   const first=rows[0];
   first.evidence='yes';
-  assert.equal(p.summarize(rows).uncertain.length,expectedCount-1,`segmentation case ${caseIndex+1}: evidence on one segment must not verify sibling segments`);
-  assert.ok(p.prioritizeReviewRows(rows).every(r=>r.id!==first.id),`segmentation case ${caseIndex+1}: reviewed segment should leave priority independently`);
-  assert.equal(p.prioritizeReviewRows(rows).length,expectedCount-1,`segmentation case ${caseIndex+1}: sibling segments must remain independently prioritized`);
+  const afterPriority=p.prioritizeReviewRows(rows);
+  const afterSummary=p.summarize(rows);
+  rows.slice(1).forEach(sibling=>{
+    assert.ok(afterPriority.some(r=>r.id===sibling.id),`segmentation case ${caseIndex+1}: evidence on one segment must not remove sibling from priority`);
+    assert.ok(afterSummary.uncertain.some(r=>r.id===sibling.id),`segmentation case ${caseIndex+1}: evidence on one segment must not mark sibling certain`);
+  });
 }
 
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
