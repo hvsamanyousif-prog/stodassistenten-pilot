@@ -117,6 +117,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'requested-risk-analysis-plus-plan-stays-fail-closed',
+        'text': 'Anbudet ska innehålla en riskanalys och en tidplan.',
+        'category': 'mandatory',
+        'expect_composite': True,
+    },
+    {
         'id': 'requested-staff-cv-plus-reference-list-stays-fail-closed',
         'text': 'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.',
         'category': 'qualification',
@@ -178,7 +184,13 @@ CASES = [
     },
     {
         'id': 'descriptive-requested-description-does-not-fabricate-composite',
-        'text': 'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.',
+        'text': 'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast i bakgrundsbeskrivningen.',
+        'category': 'mandatory',
+        'expect_composite': False,
+    },
+    {
+        'id': 'background-plan-does-not-fabricate-requested-risk-analysis-composite',
+        'text': 'Anbudet ska innehålla en riskanalys och information om tidplan används endast som bakgrund.',
         'category': 'mandatory',
         'expect_composite': False,
     },
