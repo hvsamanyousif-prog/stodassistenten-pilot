@@ -64,7 +64,7 @@ CASES = [
     },
     {
         'id': 'single-clause-reference-plus-technical-equipment-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustning som krävs för att fullgöra kontraktet.',
+        'text': 'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.',
         'category': 'qualification',
         'expect_composite': True,
     },
