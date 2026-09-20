@@ -17,6 +17,7 @@ const cases=[
   'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
   'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
   'Leverantören ska ha ISO 9001-certifikat och ISO 14001-certifikat.',
+  'Leverantören ska ha två referensuppdrag inom markentreprenad och två referensuppdrag inom elinstallationer.',
   'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
   'Leverantören ska ha två referensuppdrag och ett dokumenterat kvalitetsledningssystem.',
   'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
@@ -49,6 +50,9 @@ assert.ok(!descriptiveConjunction.flags.some(f=>f.code==='multi_requirement_line
 const descriptiveSameFamilyCertificate=p.splitRequirements('Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.')[0];
 assert.ok(!descriptiveSameFamilyCertificate.flags.some(f=>f.code==='multi_requirement_line'),'descriptive mention of a second certificate must not fabricate same-family object multiplicity');
 
+const descriptiveSameFamilyReference=p.splitRequirements('Leverantören ska ha två referensuppdrag inom markentreprenad och information om referensuppdrag inom elinstallationer används endast som bakgrund.')[0];
+assert.ok(!descriptiveSameFamilyReference.flags.some(f=>f.code==='multi_requirement_line'),'descriptive mention of a second reference scope must not fabricate same-family object multiplicity');
+
 const descriptiveStaffExperience=p.splitRequirements('Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.')[0];
 assert.ok(!descriptiveStaffExperience.flags.some(f=>f.code==='multi_requirement_line'),'descriptive named-role experience outside the normative clause must not fabricate composite risk');
 
@@ -73,7 +77,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 11 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 12 negative controls passed`);
 '''
 
 
