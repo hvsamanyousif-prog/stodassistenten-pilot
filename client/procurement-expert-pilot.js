@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.14';
+const APP_VERSION='procurement-expert-0.2.15';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -185,6 +185,7 @@ function materialEvidenceObjectCount(line){
  const requestedDeliverablePairPattern=new RegExp(`\\b(?:ska|skall|måste)\\b[^.;]{0,100}\\b(?:innehålla|omfatta|inkludera|bifoga|lämna|redovisa|skicka in|ge in)\\b[^.;]{0,100}\\b(?:en|ett)?\\s*(${requestedDeliverablePattern})\\b\\s+(?:och|samt)\\s+(?:en|ett)?\\s*(${requestedDeliverablePattern})\\b(?=\\s*[.;]|$)`);
  const requestedDeliverablePair=t.match(requestedDeliverablePairPattern);
  const distinctRequestedDeliverablePair=Boolean(requestedDeliverablePair&&requestedDeliverablePair[1]!==requestedDeliverablePair[2]);
+ const requestedStaffReferencePair=/\b(?:ska|skall|måste)\b[^.;]{0,100}\b(?:innehålla|omfatta|inkludera|bifoga|lämna|redovisa|skicka in|ge in)\b[^.;]{0,100}\bcv\b\s+(?:för|avseende)\s+\b(?:arbetsledar(?:e|en)|projektledar(?:e|en)|uppdragsledar(?:e|en)|nyckelperson(?:en|er|erna)?|specialist(?:en|er|erna)?)\b[^.;]{0,80}\b(?:och|samt)\b\s+(?:en|ett)?\s*\b(?:lista|förteckning)\b[^.;]{0,50}\b(?:med\s+)?(?:minst\s+)?(?:\d+|ett|en|två|tre|fyra)?\s*referens(?:uppdrag|er)?\b(?=\s*[.;]|$)/.test(t);
  const families=[
    /\b(?:ansvarsförsäkring|försäkring)\b/,
    /\b(?:certifikat|certifier|behörig|behörighet|bas-p|bas-u)\b/,
@@ -199,7 +200,7 @@ function materialEvidenceObjectCount(line){
    /\b(?:ska|skall|måste)\b[^.;]{0,220}\bunder avtalstiden\b[^.;]{0,120}\b(?:följa|upprätta|tillämpa|efterleva)\b[^.;]{0,100}\b(?:arbetsmiljöplan(?:en)?|arbetsmiljökrav(?:en)?|arbetsmiljöregler(?:na)?|säkerhetsföreskrifter(?:na)?)\b/,
    /\b(?:ska|skall|måste)\b[^.;]{0,220}\b(?:ange|anges|lämna|redovisa)\b[^.;]{0,120}\b(?:fast pris|timpris|anbudspris|prisbilaga)\b/
  ];
- return families.filter(pattern=>pattern.test(t)).length+(distinctCertificatePair?1:0)+(distinctReferencePair?1:0)+(distinctNamedRoleCompetencePair?1:0)+(distinctRequestedDeliverablePair?2:0);
+ return families.filter(pattern=>pattern.test(t)).length+(distinctCertificatePair?1:0)+(distinctReferencePair?1:0)+(distinctNamedRoleCompetencePair?1:0)+(distinctRequestedDeliverablePair?2:0)+(requestedStaffReferencePair?2:0);
 }
 function materialClauseCount(line){
  const raw=String(line||'').trim();
