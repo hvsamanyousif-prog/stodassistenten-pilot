@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.20';
+const APP_VERSION='procurement-expert-0.2.21';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -245,7 +245,11 @@ function explicitMaterialSegments(line){
  if(!raw)return [];
  const parts=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>part.trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
- if(parts.length>=2)return parts.every(part=>material.test(normalized(part)))?parts:[raw];
+ if(parts.length>=2){
+   const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|i förekommande fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
+   const relationBound=parts.slice(1).some(part=>relationalStart.test(normalized(part)));
+   return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
+ }
  return repeatedModalMaterialSegments(raw);
 }
 function structureFlags(line){
