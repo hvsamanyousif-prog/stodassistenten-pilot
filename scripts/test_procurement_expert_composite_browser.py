@@ -63,8 +63,20 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-technical-equipment-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustning som krävs för att fullgöra kontraktet.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-technical-equipment-outside-normative-clause-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag; den tekniska utrustningen beskrivs endast som bakgrund.',
         'category': 'qualification',
         'expect_composite': False,
     },
