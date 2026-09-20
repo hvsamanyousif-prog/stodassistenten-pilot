@@ -58,7 +58,7 @@ function pronounMatchesTarget(text,target){
 
 function beneficiaryNeedsBeforeHelperSelf(text,target){
  const value=String(text||'');
- const helperStart=/(?:\bjag\s+(?:behöver|har)\b|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|(?:^|[\s،,])و\s*من(?=\s|$))/i.exec(value);
+ const helperStart=/(?:\bjag\s+(?:behöver|har)\b|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|(?:^|[\s،,])(?:و\s*)?من(?=\s|$))/i.exec(value);
  if(!helperStart)return [];
  const prefix=value.slice(0,helperStart.index);
  const prefixKeys=relativeSubjectKeys(prefix);
