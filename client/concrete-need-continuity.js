@@ -56,6 +56,16 @@ function pronounMatchesTarget(text,target){
  return !!(subject&&subject.pronoun&&subject.pronoun.test(String(text||'')));
 }
 
+function beneficiaryNeedsBeforeHelperSelf(text,target){
+ const value=String(text||'');
+ const helperStart=/(?:\bjag\s+(?:behöver|har)\b|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|(?:^|[\s،,])و\s*من\b)/i.exec(value);
+ if(!helperStart)return [];
+ const prefix=value.slice(0,helperStart.index);
+ const prefixKeys=relativeSubjectKeys(prefix);
+ if(!prefixKeys.includes(target)&&!pronounMatchesTarget(prefix,target))return [];
+ return detectNeeds(prefix);
+}
+
 function detectRelativeNeeds(text){
  const value=String(text||'');
  const explicitKeys=relativeSubjectKeys(value);
@@ -71,11 +81,15 @@ function detectRelativeNeeds(text){
   const helperSelfNeed=isHelperSelfNeed(part);
   if(partKeys.includes(target)){
    established=true;
-   if(!helperSelfNeed)needs.push(...detectNeeds(part));
+   if(helperSelfNeed)needs.push(...beneficiaryNeedsBeforeHelperSelf(part,target));
+   else needs.push(...detectNeeds(part));
    continue;
   }
-  if(!established||helperSelfNeed)continue;
-  if(pronounMatchesTarget(part,target))needs.push(...detectNeeds(part));
+  if(!established)continue;
+  if(pronounMatchesTarget(part,target)){
+   if(helperSelfNeed)needs.push(...beneficiaryNeedsBeforeHelperSelf(part,target));
+   else needs.push(...detectNeeds(part));
+  }
  }
  return uniqueAllowed(needs);
 }
@@ -220,6 +234,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.6',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.7',page});
 }
 })(window);
