@@ -69,6 +69,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-contract-performance-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.',
+        'category': 'contract',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.',
         'category': 'qualification',
@@ -78,6 +84,12 @@ CASES = [
         'id': 'descriptive-technical-equipment-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; den tekniska utrustningen beskrivs endast som bakgrund.',
         'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-contract-performance-outside-normative-clause-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag; inställelsetiden under avtalstiden beskrivs endast som bakgrund.',
+        'category': 'contract',
         'expect_composite': False,
     },
     {
