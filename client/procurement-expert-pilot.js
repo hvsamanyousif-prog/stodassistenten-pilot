@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.19';
+const APP_VERSION='procurement-expert-0.2.20';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -228,13 +228,25 @@ function materialClauseCount(line){
  }
  return count;
 }
+function repeatedModalMaterialSignal(part){
+ const t=normalized(part);
+ if(materialEvidenceObjectCount(part)>=1)return true;
+ return /\b(?:arbetsledar(?:e|en)|projektledar(?:e|en)|uppdragsledar(?:e|en)|nyckelperson(?:en|er|erna)?|specialist(?:en|er|erna)?)\b[^.;]{0,100}\b(?:ska|skall|måste|krävs)\b[^.;]{0,140}\b(?:erfarenhet|kompetens|utbildning|cv|meriter?)\b/.test(t);
+}
+function repeatedModalMaterialSegments(line){
+ const raw=String(line||'').trim();
+ if(!raw)return [];
+ const parts=raw.split(/\s+(?:och|samt)\s+(?=[^.;]{0,100}\b(?:ska|skall|måste|krävs)\b)/i).map(part=>part.trim()).filter(Boolean);
+ if(parts.length<2)return [raw];
+ return parts.every(repeatedModalMaterialSignal)?parts:[raw];
+}
 function explicitMaterialSegments(line){
  const raw=String(line||'').trim();
  if(!raw)return [];
  const parts=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>part.trim()).filter(Boolean);
- if(parts.length<2)return [raw];
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
- return parts.every(part=>material.test(normalized(part)))?parts:[raw];
+ if(parts.length>=2)return parts.every(part=>material.test(normalized(part)))?parts:[raw];
+ return repeatedModalMaterialSegments(raw);
 }
 function structureFlags(line){
  const raw=String(line||'');
