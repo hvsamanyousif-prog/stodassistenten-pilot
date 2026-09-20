@@ -51,6 +51,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'shared-modal-participation-application-plus-bid-deadline-stays-fail-closed',
+        'text': 'Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.',
+        'category': 'deadline',
+        'expect_composite': True,
+    },
+    {
         'id': 'single-clause-insurance-plus-certificate-stays-fail-closed',
         'text': 'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
         'category': 'qualification',
@@ -203,6 +209,12 @@ CASES = [
     {
         'id': 'background-bid-date-does-not-fabricate-process-event-multiplicity',
         'text': 'Frågor ska lämnas senast den 20 oktober och anbudsdatumet den 31 oktober nämns endast som bakgrund.',
+        'category': 'deadline',
+        'expect_composite': False,
+    },
+    {
+        'id': 'background-bid-date-does-not-fabricate-participation-process-event-multiplicity',
+        'text': 'Anbudsansökan ska lämnas senast den 10 oktober och information om planerad anbudsdag den 31 oktober lämnas endast som bakgrund.',
         'category': 'deadline',
         'expect_composite': False,
     },
