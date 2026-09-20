@@ -220,7 +220,33 @@ function hasFlag(row, code){return (row.flags||[]).some(f=>f.code===code);}
     'dotted version numbers must remain metadata when the actual dotted deadline is unchanged');
 }
 
-console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:21,failed:0}));
+{
+  const rows=p.splitRequirements('Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.');
+  assert.equal(rows.length,1);
+  const row=rows[0];
+  assert.equal(row.category,'deadline');
+  assert.equal(row.processSubtype,'participation_application');
+  assert.equal(row.sourceLine,1);
+  assert.ok(hasFlag(row,'multi_requirement_line'),
+    'shared-modal participation-application + bid deadlines must remain independently reviewable');
+  assert.ok(!hasFlag(row,'deadline_version_conflict'),
+    'different process events on one physical row must not become a false version conflict');
+  row.evidence='yes';
+  assert.ok(p.prioritizeReviewRows(rows).some(r=>r.id===row.id),
+    'manual evidence=yes must not hide the unresolved sibling bid deadline');
+  assert.equal(p.summarize(rows).uncertain.length,1);
+}
+
+{
+  const row=p.splitRequirements(
+    'Anbudsansökan ska lämnas senast den 10 oktober och information om planerad anbudsdag den 31 oktober lämnas endast som bakgrund.'
+  )[0];
+  assert.equal(row.processSubtype,'participation_application');
+  assert.ok(!hasFlag(row,'multi_requirement_line'),
+    'background-only bid date must not fabricate a second actionable process event');
+}
+
+console.log(JSON.stringify({scope:'procurement deadline process-event contracts',passed:23,failed:0}));
 '''
 
 
