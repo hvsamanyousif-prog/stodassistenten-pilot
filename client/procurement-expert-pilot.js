@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.2';
+const APP_VERSION='procurement-expert-0.2.3';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -177,7 +177,8 @@ function materialEvidenceObjectCount(line){
    /\b(?:certifikat|certifier|behörig|behörighet|bas-p|bas-u)\b/,
    /\breferens(?:uppdrag|er)?\b/,
    /\b(?:omsättning|ekonomisk|finansiell)\b/,
-   /\bunderleverant|\båberopa\b.*\bkapacitet\b/
+   /\bunderleverant|\båberopa\b.*\bkapacitet\b/,
+   /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:arbetsledare|projektledare|uppdragsledare|nyckelperson(?:en|er|erna)?|specialist(?:en|er|erna)?)\b[^.;]{0,120}\b(?:erfarenhet|kompetens|utbildning|cv|meriter?)\b/
  ];
  return families.filter(pattern=>pattern.test(t)).length;
 }
