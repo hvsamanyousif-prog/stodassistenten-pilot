@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused browser regression for generic helped-person pronoun continuity.
+"""Focused browser regression for helped-person beneficiary/pronoun continuity.
 
 Reuses the existing helped-person browser harness. This is browser/DOM/routing/
 privacy evidence only: raw situation text must not cross the route, and only the
@@ -47,6 +47,66 @@ SCENARIOS = [
         "money_stage_after_choices": 1,
         "expect_essential_confirmation": False,
         "expect_housing_skip": True,
+    },
+    {
+        "id": "sv-helper-daughter-pronoun-essential",
+        "text": "Jag hjälper min dotter att söka bidrag. Hon behöver medicin.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": {"essential_costs"},
+        "need_copy": ("Personens bevarade behov", "Nödvändiga utgifter"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": True,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-helper-son-pronoun-rent",
+        "text": "Jag hjälper min son att söka bidrag. Han har hög hyra.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": {"housing"},
+        "need_copy": ("Personens bevarade behov", "Boende / hyra"),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": True,
+    },
+    {
+        "id": "sv-helper-daughter-helper-self-essential-not-reassigned",
+        "text": "Jag hjälper min dotter att söka bidrag. Hon mår bra och jag behöver medicin.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
+    },
+    {
+        "id": "sv-helper-son-to-mother-switch-not-reassigned",
+        "text": "Jag hjälper min son att söka bidrag. Min mamma har hög hyra.",
+        "actor_type": "relative",
+        "intent": "funding",
+        "context_token": "Finansiering",
+        "expect_general_route": False,
+        "need_context": set(),
+        "need_copy": (),
+        "continue_action": "relative",
+        "steps_before_result": 4,
+        "money_stage_after_choices": 1,
+        "expect_essential_confirmation": False,
+        "expect_housing_skip": False,
     },
     {
         "id": "ar-helper-person-pronoun-hu-rent",
@@ -132,7 +192,7 @@ def main() -> int:
             "built_index_sha256": base.sha256(index_path),
             "privacy_routing_sha256": base.sha256(site / base.builder.SHELL_ROUTING_PATH),
             "concrete_need_continuity_sha256": base.sha256(site / base.builder.CONCRETE_NEED_CONTINUITY_PATH),
-            "independent_semantic_cases": 2,
+            "independent_semantic_cases": 6,
             "language_parity_variants": 4,
             "widths": list(base.WIDTHS),
             "checks": len(SCENARIOS) * len(base.WIDTHS),
@@ -166,7 +226,7 @@ def main() -> int:
                 browser.close()
 
     Path(args.output).write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"generic helped-person pronoun browser ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
+    print(f"helped-person beneficiary/pronoun browser ({engine_name}): {evidence['passed']} passed / {evidence['failed']} failed")
     if evidence["failed"]:
         for result in evidence["results"]:
             if result["status"] == "failed":
