@@ -20,210 +20,49 @@ VIEWPORTS = [
     {'width': 1280, 'height': 900},
 ]
 CASES = [
+    {'id':'four-material-clauses-stay-fail-closed','text':'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.','category':'deadline','expect_composite':True},
+    {'id':'three-material-clauses-stay-fail-closed','text':'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.','category':'commercial','expect_composite':True},
+    {'id':'semicolon-qualification-plus-deadline-stays-fail-closed','text':'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.','category':'deadline','expect_composite':True},
+    {'id':'semicolon-commercial-plus-deadline-stays-fail-closed','text':'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.','category':'deadline','expect_composite':True},
+    {'id':'shared-modal-question-plus-bid-deadline-stays-fail-closed','text':'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.','category':'deadline','expect_composite':True},
+    {'id':'shared-modal-participation-application-plus-bid-deadline-stays-fail-closed','text':'Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.','category':'deadline','expect_composite':True},
+    {'id':'single-clause-insurance-plus-certificate-stays-fail-closed','text':'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.','category':'qualification','expect_composite':True},
+    {'id':'same-family-two-distinct-certificates-stay-fail-closed','text':'Leverantören ska ha ISO 9001-certifikat och ISO 14001-certifikat.','category':'qualification','expect_composite':True},
+    {'id':'same-family-two-distinct-reference-scopes-stay-fail-closed','text':'Leverantören ska ha två referensuppdrag inom markentreprenad och två referensuppdrag inom elinstallationer.','category':'qualification','expect_composite':True},
+    {'id':'single-clause-reference-plus-named-role-experience-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.','category':'qualification','expect_composite':True},
+    {'id':'same-family-two-distinct-named-role-competence-obligations-stay-fail-closed','text':'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och en projektledare med minst tre års erfarenhet.','category':'qualification','expect_composite':True},
+    {'id':'single-clause-reference-plus-register-qualification-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.','category':'qualification','expect_composite':True},
+    {'id':'single-clause-reference-plus-technical-equipment-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.','category':'qualification','expect_composite':True},
+    {'id':'single-clause-reference-plus-contract-performance-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.','category':'contract','expect_composite':True},
+    {'id':'single-clause-reference-plus-work-environment-obligation-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.','category':'contract','expect_composite':True},
+    {'id':'single-clause-reference-plus-commercial-price-obligation-stays-fail-closed','text':'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.','category':'commercial','expect_composite':True},
+    {'id':'requested-description-plus-plan-stays-fail-closed','text':'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.','category':'mandatory','expect_composite':True},
+    {'id':'requested-risk-analysis-plus-plan-stays-fail-closed','text':'Anbudet ska innehålla en riskanalys och en tidplan.','category':'mandatory','expect_composite':True},
+    {'id':'requested-staff-cv-plus-reference-list-stays-fail-closed','text':'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.','category':'qualification','expect_composite':True},
+    {'id':'descriptive-second-certificate-does-not-fabricate-cardinality','text':'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-second-reference-scope-does-not-fabricate-cardinality','text':'Leverantören ska ha två referensuppdrag inom markentreprenad och information om referensuppdrag inom elinstallationer används endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-second-named-role-does-not-fabricate-cardinality','text':'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och projektledaren nämns endast i bakgrundsbeskrivningen.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-register-outside-normative-clause-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-technical-equipment-outside-normative-clause-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag; den tekniska utrustningen beskrivs endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-contract-performance-outside-normative-clause-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag; inställelsetiden under avtalstiden beskrivs endast som bakgrund.','category':'contract','expect_composite':False},
+    {'id':'descriptive-work-environment-outside-normative-clause-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag; arbetsmiljöplanen under avtalstiden beskrivs endast som bakgrund.','category':'contract','expect_composite':False},
+    {'id':'descriptive-commercial-price-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag och information om fast pris i prisbilaga 6 används endast som bakgrund.','category':'commercial','expect_composite':False},
+    {'id':'descriptive-named-role-experience-outside-normative-clause-does-not-fabricate-composite','text':'Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'descriptive-requested-description-does-not-fabricate-composite','text':'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast i bakgrundsbeskrivningen.','category':'mandatory','expect_composite':False},
+    {'id':'background-plan-does-not-fabricate-requested-risk-analysis-composite','text':'Anbudet ska innehålla en riskanalys och information om tidplan används endast som bakgrund.','category':'mandatory','expect_composite':False},
+    {'id':'background-reference-mention-does-not-fabricate-requested-staff-composite','text':'Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.','category':'qualification','expect_composite':False},
+    {'id':'background-bid-date-does-not-fabricate-process-event-multiplicity','text':'Frågor ska lämnas senast den 20 oktober och anbudsdatumet den 31 oktober nämns endast som bakgrund.','category':'deadline','expect_composite':False},
     {
-        'id': 'four-material-clauses-stay-fail-closed',
-        'text': 'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.',
-        'category': 'deadline',
-        'expect_composite': True,
+        'id':'background-bid-date-does-not-fabricate-participation-process-event-multiplicity',
+        'text':'Anbudsansökan ska lämnas senast den 10 oktober och information om planerad anbudsdag den 31 oktober lämnas endast som bakgrund.',
+        'category':'deadline',
+        'expect_composite':False,
+        # The negative only disproves a fabricated sibling bid event. A genuine
+        # participation-application deadline still carries its existing source-control
+        # risk and must remain prioritized even after a manual evidence mark.
+        'expect_residual_risk':'tidsfrist för anbudsansökan',
     },
-    {
-        'id': 'three-material-clauses-stay-fail-closed',
-        'text': 'Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',
-        'category': 'commercial',
-        'expect_composite': True,
-    },
-    {
-        'id': 'semicolon-qualification-plus-deadline-stays-fail-closed',
-        'text': 'Leverantören ska ha ansvarsförsäkring; sista anbudsdag är 2026-10-30 klockan 23:59.',
-        'category': 'deadline',
-        'expect_composite': True,
-    },
-    {
-        'id': 'semicolon-commercial-plus-deadline-stays-fail-closed',
-        'text': 'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
-        'category': 'deadline',
-        'expect_composite': True,
-    },
-    {
-        'id': 'shared-modal-question-plus-bid-deadline-stays-fail-closed',
-        'text': 'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.',
-        'category': 'deadline',
-        'expect_composite': True,
-    },
-    {
-        'id': 'shared-modal-participation-application-plus-bid-deadline-stays-fail-closed',
-        'text': 'Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.',
-        'category': 'deadline',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-insurance-plus-certificate-stays-fail-closed',
-        'text': 'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'same-family-two-distinct-certificates-stay-fail-closed',
-        'text': 'Leverantören ska ha ISO 9001-certifikat och ISO 14001-certifikat.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'same-family-two-distinct-reference-scopes-stay-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag inom markentreprenad och två referensuppdrag inom elinstallationer.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-named-role-experience-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'same-family-two-distinct-named-role-competence-obligations-stay-fail-closed',
-        'text': 'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och en projektledare med minst tre års erfarenhet.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-register-qualification-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-technical-equipment-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-contract-performance-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.',
-        'category': 'contract',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-work-environment-obligation-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
-        'category': 'contract',
-        'expect_composite': True,
-    },
-    {
-        'id': 'single-clause-reference-plus-commercial-price-obligation-stays-fail-closed',
-        'text': 'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
-        'category': 'commercial',
-        'expect_composite': True,
-    },
-    {
-        'id': 'requested-description-plus-plan-stays-fail-closed',
-        'text': 'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.',
-        'category': 'mandatory',
-        'expect_composite': True,
-    },
-    {
-        'id': 'requested-risk-analysis-plus-plan-stays-fail-closed',
-        'text': 'Anbudet ska innehålla en riskanalys och en tidplan.',
-        'category': 'mandatory',
-        'expect_composite': True,
-    },
-    {
-        'id': 'requested-staff-cv-plus-reference-list-stays-fail-closed',
-        'text': 'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.',
-        'category': 'qualification',
-        'expect_composite': True,
-    },
-    {
-        'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
-        'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-second-reference-scope-does-not-fabricate-cardinality',
-        'text': 'Leverantören ska ha två referensuppdrag inom markentreprenad och information om referensuppdrag inom elinstallationer används endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-second-named-role-does-not-fabricate-cardinality',
-        'text': 'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och projektledaren nämns endast i bakgrundsbeskrivningen.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-technical-equipment-outside-normative-clause-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag; den tekniska utrustningen beskrivs endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-contract-performance-outside-normative-clause-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag; inställelsetiden under avtalstiden beskrivs endast som bakgrund.',
-        'category': 'contract',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-work-environment-outside-normative-clause-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag; arbetsmiljöplanen under avtalstiden beskrivs endast som bakgrund.',
-        'category': 'contract',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-commercial-price-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag och information om fast pris i prisbilaga 6 används endast som bakgrund.',
-        'category': 'commercial',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-named-role-experience-outside-normative-clause-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'descriptive-requested-description-does-not-fabricate-composite',
-        'text': 'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast i bakgrundsbeskrivningen.',
-        'category': 'mandatory',
-        'expect_composite': False,
-    },
-    {
-        'id': 'background-plan-does-not-fabricate-requested-risk-analysis-composite',
-        'text': 'Anbudet ska innehålla en riskanalys och information om tidplan används endast som bakgrund.',
-        'category': 'mandatory',
-        'expect_composite': False,
-    },
-    {
-        'id': 'background-reference-mention-does-not-fabricate-requested-staff-composite',
-        'text': 'Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
-    {
-        'id': 'background-bid-date-does-not-fabricate-process-event-multiplicity',
-        'text': 'Frågor ska lämnas senast den 20 oktober och anbudsdatumet den 31 oktober nämns endast som bakgrund.',
-        'category': 'deadline',
-        'expect_composite': False,
-    },
-    {
-        'id': 'background-bid-date-does-not-fabricate-participation-process-event-multiplicity',
-        'text': 'Anbudsansökan ska lämnas senast den 10 oktober och information om planerad anbudsdag den 31 oktober lämnas endast som bakgrund.',
-        'category': 'deadline',
-        'expect_composite': False,
-    },
-    {
-        'id': 'single-evidence-object-with-descriptive-and-does-not-fabricate-composite',
-        'text': 'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller från startdagen.',
-        'category': 'qualification',
-        'expect_composite': False,
-    },
+    {'id':'single-evidence-object-with-descriptive-and-does-not-fabricate-composite','text':'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller från startdagen.','category':'qualification','expect_composite':False},
 ]
 
 
@@ -280,6 +119,9 @@ def run_case(page, case):
         check('flera materiella krav' in full_review_before, f"{case['id']}: composite risk missing from full review")
     else:
         check('flera materiella krav' not in full_review_before, f"{case['id']}: descriptive conjunction fabricated full-review composite risk")
+        residual = case.get('expect_residual_risk')
+        if residual:
+            check(residual in full_review_before, f"{case['id']}: expected independent source-control risk disappeared")
 
     page.locator('[data-ev="1"]').select_option('yes')
     overview_after = page.locator('#priorityOverview').inner_text().lower()
@@ -290,7 +132,12 @@ def run_case(page, case):
         check('1 osäkra/ej bedömda' in summary_after, f"{case['id']}: unresolved composite row disappeared from summary")
     else:
         check('flera materiella krav' not in overview_after, f"{case['id']}: evidence=yes introduced composite risk")
-        check('1 osäkra/ej bedömda' not in summary_after, f"{case['id']}: simple single-object row stayed uncertain without another risk")
+        residual = case.get('expect_residual_risk')
+        if residual:
+            check(residual in overview_after, f"{case['id']}: legitimate source-control risk was hidden after evidence=yes")
+            check('1 osäkra/ej bedömda' in summary_after, f"{case['id']}: legitimate source-control risk disappeared from summary")
+        else:
+            check('1 osäkra/ej bedömda' not in summary_after, f"{case['id']}: simple single-object row stayed uncertain without another risk")
 
     sizes = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')
     check(sizes['content'] <= sizes['viewport'] + 1, f"{case['id']}: horizontal overflow {sizes}")
