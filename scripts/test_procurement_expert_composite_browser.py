@@ -75,6 +75,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-work-environment-obligation-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
+        'category': 'contract',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-register-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; registrering i aktiebolags-, handels- eller föreningsregister beskrivs endast som bakgrund.',
         'category': 'qualification',
@@ -89,6 +95,12 @@ CASES = [
     {
         'id': 'descriptive-contract-performance-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; inställelsetiden under avtalstiden beskrivs endast som bakgrund.',
+        'category': 'contract',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-work-environment-outside-normative-clause-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag; arbetsmiljöplanen under avtalstiden beskrivs endast som bakgrund.',
         'category': 'contract',
         'expect_composite': False,
     },
