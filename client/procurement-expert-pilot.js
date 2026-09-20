@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.21';
+const APP_VERSION='procurement-expert-0.2.22';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -76,10 +76,6 @@ function deadlineValueSlice(line,purpose){
    const eventStart=scoped.toLowerCase().search(/\b(?:publiceras?|tillhandahålls?|ska\s+lämnas|lämnas)\b/);
    if(eventStart>=0)scoped=scoped.slice(eventStart);
  }
- // Cross-row comparison uses only the sentence that carries the identified
- // process deadline. Keep the full source row elsewhere for traceability.
- // The boundary deliberately requires a following letter so abbreviations such
- // as "kl. 23:59" stay inside the deadline expression.
  const boundary=scoped.search(/\.\s+(?=[A-Za-zÅÄÖåäö])/);
  return boundary>=0?scoped.slice(0,boundary+1):scoped;
 }
@@ -205,9 +201,6 @@ function materialEvidenceObjectCount(line){
 function materialClauseCount(line){
  const raw=String(line||'').trim();
  if(!raw)return 0;
- // Keep the physical source row intact, but treat semicolons as bounded clause
- // separators when deciding whether one evidence control would cover multiple
- // materially different objects. This is detection only, not document splitting.
  const clauses=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>normalized(part)).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  let count=clauses.filter(clause=>material.test(clause)).length;
@@ -240,6 +233,18 @@ function repeatedModalMaterialSegments(line){
  if(parts.length<2)return [raw];
  return parts.every(repeatedModalMaterialSignal)?parts:[raw];
 }
+function enumeratedMaterialSegments(line){
+ const raw=String(line||'').trim();
+ if(!raw)return [];
+ const markerPattern=/(?:^|\s)(?:[a-zåäö]|\d{1,2})[.)]\s+/gi;
+ const markers=[...raw.matchAll(markerPattern)];
+ if(markers.length<2||markers[0].index!==0)return [raw];
+ const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?markers[index+1].index:raw.length).trim()).filter(Boolean);
+ const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
+ const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|i förekommande fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
+ const relationBound=parts.slice(1).some(part=>relationalStart.test(normalized(part).replace(/^(?:[a-zåäö]|\d{1,2})[.)]\s*/,'')));
+ return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
+}
 function explicitMaterialSegments(line){
  const raw=String(line||'').trim();
  if(!raw)return [];
@@ -250,6 +255,8 @@ function explicitMaterialSegments(line){
    const relationBound=parts.slice(1).some(part=>relationalStart.test(normalized(part)));
    return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
  }
+ const enumerated=enumeratedMaterialSegments(raw);
+ if(enumerated.length>=2)return enumerated;
  return repeatedModalMaterialSegments(raw);
 }
 function structureFlags(line){
@@ -305,8 +312,6 @@ function commercialValueSignature(line){
    const canonicalCurrency=currencyAliases[currency]||currency;
    amounts.push(`${normalizedWhole}${fraction?','+fraction:''}:${canonicalCurrency}`);
  };
- // Currency is deliberately bounded to explicit supported markers. Naked numbers
- // and arbitrary three-letter words are never promoted to monetary values.
  for(const m of t.matchAll(/\b(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\s*(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\b/g))addAmount(m[1],m[2],m[3]);
  for(const m of t.matchAll(/\b(kr|sek|kronor|eur|euro|usd|gbp|nok|dkk|chf)\s*(\d{1,3}(?:[ .]\d{3})+|\d+)(?:[,.](\d{1,2}))?\b/g))addAmount(m[2],m[3],m[1]);
  const indexPercentages=[];
@@ -385,7 +390,6 @@ function recomputeDerivedFlags(rows){
  });
  return applyCrossRowFlags(rows);
 }
-// This is a bounded, local first-pass sorter, not complete document analysis.
 function splitRequirements(text){
  const source=String(text||'');
  if(source.length>100000)throw new RangeError('Underlaget är för långt. Klistra in högst 100 000 tecken åt gången. Ingen analys har gjorts.');
