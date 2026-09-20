@@ -105,7 +105,7 @@ assert.ok(!descriptiveConjunction.flags.some(f=>f.code==='multi_requirement_line
 
 const descriptiveRepeatedModal=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och informationen ska användas som bakgrund.');
 assert.equal(descriptiveRepeatedModal.length,1,'repeated modal with non-material narrative sibling must not be segmented');
-assert.ok(!descriptiveRepeatedModal[0].flags.some(f=>f.code==='multi_requirement_line'),'repeated modal with non-material narrative sibling must not fabricate composite risk');
+assert.ok(descriptiveRepeatedModal[0].flags.some(f=>f.code==='multi_requirement_line'),'ambiguous repeated modal that is not safely segmented must remain fail-closed');
 
 const descriptiveSameFamilyCertificate=p.splitRequirements('Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.')[0];
 assert.ok(!descriptiveSameFamilyCertificate.flags.some(f=>f.code==='multi_requirement_line'),'descriptive mention of a second certificate must not fabricate same-family object multiplicity');
@@ -158,7 +158,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 contrastive controls passed`);
 '''
 
 
