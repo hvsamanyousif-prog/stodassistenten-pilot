@@ -19,7 +19,7 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
   'Leverantören ska ha två referensuppdrag och ett dokumenterat kvalitetsledningssystem.',
   'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
-  'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustning som krävs för att fullgöra kontraktet.'
+  'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.'
 ];
 
 for(const [index,text] of cases.entries()){
