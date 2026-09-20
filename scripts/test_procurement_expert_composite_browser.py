@@ -12,7 +12,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, expect
 
-ROOT = Path(sys.argv[1]).resolve()
+ROOT = Path(sys.argv[1]).resolve().parents[1]
 OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path('procurement-composite-browser.json')
 ENGINE = os.environ.get('BROWSER_ENGINE', 'chromium').strip().lower()
 VIEWPORTS = [
@@ -57,6 +57,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'same-family-two-distinct-reference-scopes-stay-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag inom markentreprenad och två referensuppdrag inom elinstallationer.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
         'id': 'single-clause-reference-plus-named-role-experience-stays-fail-closed',
         'text': 'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
         'category': 'qualification',
@@ -89,6 +95,12 @@ CASES = [
     {
         'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
         'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-second-reference-scope-does-not-fabricate-cardinality',
+        'text': 'Leverantören ska ha två referensuppdrag inom markentreprenad och information om referensuppdrag inom elinstallationer används endast som bakgrund.',
         'category': 'qualification',
         'expect_composite': False,
     },
