@@ -111,6 +111,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'requested-staff-cv-plus-reference-list-stays-fail-closed',
+        'text': 'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
         'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
         'category': 'qualification',
@@ -168,6 +174,12 @@ CASES = [
         'id': 'descriptive-requested-description-does-not-fabricate-composite',
         'text': 'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.',
         'category': 'mandatory',
+        'expect_composite': False,
+    },
+    {
+        'id': 'background-reference-mention-does-not-fabricate-requested-staff-composite',
+        'text': 'Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.',
+        'category': 'qualification',
         'expect_composite': False,
     },
     {
