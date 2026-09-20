@@ -20,10 +20,11 @@ VIEWPORTS = [
     {'width': 1280, 'height': 900},
 ]
 
-# Explicit sentence/semicolon boundaries are the first bounded semantic-
-# segmentation step. They must create independent evidence controls while
-# preserving the same physical source line. Conjunction-bound material clauses
-# remain one fail-closed composite row until deeper segmentation exists.
+# Explicit sentence/semicolon boundaries and tightly bounded conjunctions whose
+# right-hand sibling carries its own normative modal are semantic-segmentation
+# steps. They must create independent evidence controls while preserving the
+# same physical source line. Implicit shared-modal conjunctions remain one
+# fail-closed composite row.
 CASES = [
     {
         'id':'four-explicit-material-clauses-segment-independently',
@@ -49,6 +50,20 @@ CASES = [
     {
         'id':'semicolon-commercial-plus-deadline-segment-independently',
         'text':'Pris ska anges i bilaga 6; sista anbudsdag är 2026-10-30 klockan 23:59.',
+        'expected_rows':2,
+        'expect_composite':False,
+        'segmented':True,
+    },
+    {
+        'id':'repeated-modal-insurance-plus-certificate-segment-independently',
+        'text':'Leverantören ska ha ansvarsförsäkring och ska ha ISO 9001-certifikat.',
+        'expected_rows':2,
+        'expect_composite':False,
+        'segmented':True,
+    },
+    {
+        'id':'repeated-modal-named-roles-segment-independently',
+        'text':'Arbetsledaren ska ha minst fem års erfarenhet samt projektledaren ska ha minst tre års erfarenhet.',
         'expected_rows':2,
         'expect_composite':False,
         'segmented':True,
@@ -89,6 +104,7 @@ CASES = [
         'expect_composite':False,
         'expect_residual_risk':'tidsfrist för anbudsansökan',
     },
+    {'id':'repeated-modal-narrative-sibling-does-not-segment','text':'Leverantören ska ha ansvarsförsäkring och informationen ska användas som bakgrund.','category':'qualification','expected_rows':1,'expect_composite':False},
     {'id':'single-evidence-object-with-descriptive-and-does-not-fabricate-composite','text':'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller från startdagen.','category':'qualification','expected_rows':1,'expect_composite':False},
 ]
 
@@ -238,7 +254,7 @@ except Exception as exc:
 passed = sum(1 for row in results if row['status'] == 'PASS')
 failed = sum(1 for row in results if row['status'] == 'FAIL')
 report = {
-    'scope': 'Focused offline composite-row and bounded explicit-clause segmentation source-risk regression',
+    'scope': 'Focused offline composite-row and bounded semantic-segmentation source-risk regression',
     'engine': ENGINE,
     'browser_version': browser_version,
     'viewports': [v['width'] for v in VIEWPORTS],
