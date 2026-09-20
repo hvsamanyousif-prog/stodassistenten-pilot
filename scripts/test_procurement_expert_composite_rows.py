@@ -25,7 +25,8 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.',
   'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.',
   'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
-  'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.'
+  'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
+  'Anbudet ska innehålla en kvalitetsplan och en bemanningsplan.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -79,13 +80,16 @@ assert.ok(!descriptiveWorkEnvironment.flags.some(f=>f.code==='multi_requirement_
 const descriptiveCommercial=p.splitRequirements('Leverantören ska ha två referensuppdrag och information om fast pris i prisbilaga 6 används endast som bakgrund.')[0];
 assert.ok(!descriptiveCommercial.flags.some(f=>f.code==='multi_requirement_line'),'descriptive commercial prose must not fabricate composite risk');
 
+const descriptiveRequestedDeliverable=p.splitRequirements('Anbudet ska innehålla en kvalitetsplan och bemanningsplanen nämns endast som bakgrund.')[0];
+assert.ok(!descriptiveRequestedDeliverable.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-document mention must not fabricate composite risk');
+
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
 
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 14 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 15 negative controls passed`);
 '''
 
 
