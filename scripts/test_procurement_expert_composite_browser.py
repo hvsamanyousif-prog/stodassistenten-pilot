@@ -45,6 +45,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'shared-modal-question-plus-bid-deadline-stays-fail-closed',
+        'text': 'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.',
+        'category': 'deadline',
+        'expect_composite': True,
+    },
+    {
         'id': 'single-clause-insurance-plus-certificate-stays-fail-closed',
         'text': 'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.',
         'category': 'qualification',
@@ -180,6 +186,12 @@ CASES = [
         'id': 'background-reference-mention-does-not-fabricate-requested-staff-composite',
         'text': 'Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.',
         'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'background-bid-date-does-not-fabricate-process-event-multiplicity',
+        'text': 'Frågor ska lämnas senast den 20 oktober och anbudsdatumet den 31 oktober nämns endast som bakgrund.',
+        'category': 'deadline',
         'expect_composite': False,
     },
     {
