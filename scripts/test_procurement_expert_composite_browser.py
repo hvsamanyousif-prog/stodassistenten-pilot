@@ -12,7 +12,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright, expect
 
-ROOT = Path(sys.argv[1]).resolve().parents[1]
+ROOT = Path(sys.argv[1]).resolve()
 OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path('procurement-composite-browser.json')
 ENGINE = os.environ.get('BROWSER_ENGINE', 'chromium').strip().lower()
 VIEWPORTS = [
