@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.17';
+const APP_VERSION='procurement-expert-0.2.18';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -218,8 +218,9 @@ function materialClauseCount(line){
  if(count<2){
    const t=normalized(raw);
    const clarificationEvent=/\b(?:frågor?|förtydliganden?)\b[^.;]{0,100}\b(?:ska\s+)?(?:lämnas|ställas|inkomma|begäras)\b[^.;]{0,80}\b(?:senast|sista dag)\b/.test(t);
+   const participationEvent=participationApplicationTiming(t);
    const bidEvent=/\b(?:och|samt)\b[^.;]{0,80}\banbud(?:et)?\b[^.;]{0,80}\b(?:senast|sista anbudsdag|tillhanda)\b/.test(t);
-   if(clarificationEvent&&bidEvent)count=2;
+   if((clarificationEvent||participationEvent)&&bidEvent)count=2;
  }
  if(count<2){
    const evidenceObjects=materialEvidenceObjectCount(raw);
