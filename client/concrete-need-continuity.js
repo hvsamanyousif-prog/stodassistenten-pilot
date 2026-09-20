@@ -58,7 +58,7 @@ function pronounMatchesTarget(text,target){
 
 function beneficiaryNeedsBeforeHelperSelf(text,target){
  const value=String(text||'');
- const helperStart=/(?:\bjag\s+(?:behöver|har)\b|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|(?:^|[\s،,])و\s*من\b)/i.exec(value);
+ const helperStart=/(?:\bjag\s+(?:behöver|har)\b|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|(?:^|[\s،,])و\s*من(?=\s|$))/i.exec(value);
  if(!helperStart)return [];
  const prefix=value.slice(0,helperStart.index);
  const prefixKeys=relativeSubjectKeys(prefix);
@@ -234,6 +234,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.7',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.8',page});
 }
 })(window);
