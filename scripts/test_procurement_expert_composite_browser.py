@@ -51,6 +51,18 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-named-role-experience-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och en arbetsledare med minst fem års erfarenhet.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
+        'id': 'descriptive-named-role-experience-outside-normative-clause-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
         'id': 'single-evidence-object-with-descriptive-and-does-not-fabricate-composite',
         'text': 'Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller från startdagen.',
         'category': 'qualification',
