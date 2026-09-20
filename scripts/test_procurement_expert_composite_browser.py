@@ -23,8 +23,9 @@ VIEWPORTS = [
 # Explicit sentence/semicolon boundaries and tightly bounded conjunctions whose
 # right-hand sibling carries its own normative modal are semantic-segmentation
 # steps. They must create independent evidence controls while preserving the
-# same physical source line. Implicit shared-modal conjunctions and ambiguous
-# repeated-modal prose remain one fail-closed composite row.
+# same physical source line. Implicit shared-modal conjunctions, relation-bound
+# punctuation siblings and ambiguous repeated-modal prose remain one fail-closed
+# composite row.
 CASES = [
     {
         'id':'four-explicit-material-clauses-segment-independently',
@@ -68,6 +69,8 @@ CASES = [
         'expect_composite':False,
         'segmented':True,
     },
+    {'id':'semicolon-alternative-stays-relational-fail-closed','text':'Anbudet ska lämnas elektroniskt; alternativt ska anbudet lämnas enligt reservrutinen.','category':'mandatory','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
+    {'id':'sentence-exception-stays-relational-fail-closed','text':'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'shared-modal-question-plus-bid-deadline-stays-fail-closed','text':'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.','category':'deadline','expected_rows':1,'expect_composite':True},
     {'id':'shared-modal-participation-application-plus-bid-deadline-stays-fail-closed','text':'Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.','category':'deadline','expected_rows':1,'expect_composite':True},
     {'id':'single-clause-insurance-plus-certificate-stays-fail-closed','text':'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.','category':'qualification','expected_rows':1,'expect_composite':True},
@@ -172,6 +175,9 @@ def run_single_row_case(page, case):
         check('börja med de markerade riskerna' in overview, f"{case['id']}: risk is not next action")
     else:
         check('flera materiella krav' not in overview, f"{case['id']}: descriptive conjunction fabricated composite risk")
+    relation = case.get('expect_relation')
+    if relation:
+        check(relation in overview, f"{case['id']}: relation/exception risk missing from short overview")
 
     page.locator('#openReviewBtn').click()
     check(page.locator('#reviewDetails').get_attribute('open') is not None, f"{case['id']}: full review did not open")
@@ -183,6 +189,8 @@ def run_single_row_case(page, case):
         residual = case.get('expect_residual_risk')
         if residual:
             check(residual in full_review_before, f"{case['id']}: expected independent source-control risk disappeared")
+    if relation:
+        check(relation in full_review_before, f"{case['id']}: relation/exception risk missing from full review")
 
     page.locator('[data-ev="1"]').select_option('yes')
     overview_after = page.locator('#priorityOverview').inner_text().lower()
@@ -199,6 +207,8 @@ def run_single_row_case(page, case):
             check('1 osäkra/ej bedömda' in summary_after, f"{case['id']}: legitimate source-control risk disappeared from summary")
         else:
             check('1 osäkra/ej bedömda' not in summary_after, f"{case['id']}: simple single-object row stayed uncertain without another risk")
+    if relation:
+        check(relation in overview_after, f"{case['id']}: evidence=yes hid relation/exception risk")
 
 
 def run_case(page, case):
