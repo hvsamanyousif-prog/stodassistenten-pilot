@@ -47,7 +47,8 @@ function relativeSubjectKeys(text){
 }
 
 function isHelperSelfNeed(text){
- return /(?:\bjag har själv\b|\bjag själv har\b|\bmin egen\b|\bmitt eget\b|\bmina egna\b|\bför mig själv\b|بنفسي|لي أنا|خودم|برای خودم)/i.test(String(text||''));
+ const value=String(text||'');
+ return /(?:\bjag har själv\b|\bjag själv har\b|\bmin egen\b|\bmitt eget\b|\bmina egna\b|\bför mig själv\b|\bjag\s+(?:behöver|har)\b|بنفسي|لي أنا|(?:^|[\s،,])و?أنا\s+(?:أحتاج|احتاج|لدي|عندي)|خودم|برای خودم|(?:^|[\s،,])من(?=[^.!?؟;\n]{0,60}(?:نیاز\s+دارم|(?:اجاره|مسکن|دارو|غذا|برق)[^.!?؟;\n]{0,24}دارم)))/i.test(value);
 }
 
 function pronounMatchesTarget(text,target){
@@ -67,12 +68,13 @@ function detectRelativeNeeds(text){
  let established=false;
  for(const part of parts){
   const partKeys=relativeSubjectKeys(part);
+  const helperSelfNeed=isHelperSelfNeed(part);
   if(partKeys.includes(target)){
    established=true;
-   needs.push(...detectNeeds(part));
+   if(!helperSelfNeed)needs.push(...detectNeeds(part));
    continue;
   }
-  if(!established||isHelperSelfNeed(part))continue;
+  if(!established||helperSelfNeed)continue;
   if(pronounMatchesTarget(part,target))needs.push(...detectNeeds(part));
  }
  return uniqueAllowed(needs);
@@ -218,6 +220,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.5',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.6',page});
 }
 })(window);
