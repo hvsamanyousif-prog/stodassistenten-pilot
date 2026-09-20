@@ -105,6 +105,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'requested-description-plus-plan-stays-fail-closed',
+        'text': 'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.',
+        'category': 'mandatory',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
         'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
         'category': 'qualification',
@@ -156,6 +162,12 @@ CASES = [
         'id': 'descriptive-named-role-experience-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; information om arbetsledarens erfarenhet används endast som bakgrund.',
         'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-requested-description-does-not-fabricate-composite',
+        'text': 'Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.',
+        'category': 'mandatory',
         'expect_composite': False,
     },
     {
