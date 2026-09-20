@@ -27,7 +27,8 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
   'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
   'Anbudet ska innehålla en kvalitetsplan och en bemanningsplan.',
-  'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.'
+  'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.',
+  'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -87,13 +88,16 @@ assert.ok(!descriptiveRequestedDeliverable.flags.some(f=>f.code==='multi_require
 const descriptiveRequestedDescription=p.splitRequirements('Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.')[0];
 assert.ok(!descriptiveRequestedDescription.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-description mention must not fabricate composite risk');
 
+const descriptiveRequestedStaffEvidence=p.splitRequirements('Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.')[0];
+assert.ok(!descriptiveRequestedStaffEvidence.flags.some(f=>f.code==='multi_requirement_line'),'background-only reference mention must not turn requested staff evidence into a fabricated composite risk');
+
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
 
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 16 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 17 negative controls passed`);
 '''
 
 
