@@ -28,7 +28,8 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
   'Anbudet ska innehålla en kvalitetsplan och en bemanningsplan.',
   'Anbudet ska innehålla en metodbeskrivning och en genomförandeplan.',
-  'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.'
+  'Anbudet ska innehålla CV för arbetsledaren och en lista med två referensuppdrag.',
+  'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -91,13 +92,16 @@ assert.ok(!descriptiveRequestedDescription.flags.some(f=>f.code==='multi_require
 const descriptiveRequestedStaffEvidence=p.splitRequirements('Anbudet ska innehålla CV för arbetsledaren och information om referensuppdrag används endast som bakgrund.')[0];
 assert.ok(!descriptiveRequestedStaffEvidence.flags.some(f=>f.code==='multi_requirement_line'),'background-only reference mention must not turn requested staff evidence into a fabricated composite risk');
 
+const descriptiveSecondProcessDate=p.splitRequirements('Frågor ska lämnas senast den 20 oktober och anbudsdatumet den 31 oktober nämns endast som bakgrund.')[0];
+assert.ok(!descriptiveSecondProcessDate.flags.some(f=>f.code==='multi_requirement_line'),'background-only bid date must not fabricate a second actionable process event');
+
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
 
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 17 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 18 negative controls passed`);
 '''
 
 
