@@ -123,7 +123,9 @@ for(const [caseIndex,[text,expectedCount]] of repeatedModalBoundaryCases.entries
 // is invented. This targets pasted PDF/DOCX lists that lost their line breaks.
 const enumeratedBoundaryCases=[
   ['a) Leverantören ska ha ansvarsförsäkring b) Leverantören ska ha ISO 9001-certifikat.',2],
-  ['1) Pris ska anges i bilaga 6 2) Sista anbudsdag är 2026-10-30 klockan 23:59.',2]
+  ['1) Pris ska anges i bilaga 6 2) Sista anbudsdag är 2026-10-30 klockan 23:59.',2],
+  ['• Leverantören ska ha ansvarsförsäkring • Leverantören ska ha ISO 9001-certifikat.',2],
+  ['• Pris ska anges i bilaga 6 • Sista anbudsdag är 2026-10-30 klockan 23:59.',2]
 ];
 for(const [caseIndex,[text,expectedCount]] of enumeratedBoundaryCases.entries()){
   const rows=p.splitRequirements(text);
@@ -143,6 +145,11 @@ const relationBoundEnumerated=p.splitRequirements('1) Leverantören ska ha ansva
 assert.equal(relationBoundEnumerated.length,1,'enumerated alternative must stay relation-bound and unsplit');
 assert.ok(relationBoundEnumerated[0].flags.some(f=>f.code==='conditional_or_exception'),'enumerated alternative must retain relation warning');
 assert.ok(relationBoundEnumerated[0].flags.some(f=>f.code==='multi_requirement_line'),'enumerated alternative must remain fail-closed');
+
+const relationBoundBulleted=p.splitRequirements('• Leverantören ska ha ansvarsförsäkring • alternativt ska leverantören ha likvärdigt försäkringsskydd.');
+assert.equal(relationBoundBulleted.length,1,'bulleted alternative must stay relation-bound and unsplit');
+assert.ok(relationBoundBulleted[0].flags.some(f=>f.code==='conditional_or_exception'),'bulleted alternative must retain relation warning');
+assert.ok(relationBoundBulleted[0].flags.some(f=>f.code==='multi_requirement_line'),'bulleted alternative must remain fail-closed');
 
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
 assert.ok(!simple.flags.some(f=>f.code==='multi_requirement_line'),'single material requirement must not fabricate composite risk');
@@ -187,7 +194,7 @@ assert.ok(!descriptiveCommercial.flags.some(f=>f.code==='multi_requirement_line'
 const descriptiveRequestedDeliverable=p.splitRequirements('Anbudet ska innehålla en kvalitetsplan och bemanningsplanen nämns endast som bakgrund.')[0];
 assert.ok(!descriptiveRequestedDeliverable.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-document mention must not fabricate composite risk');
 
-const descriptiveRequestedDescription=p.splitRequirements('Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast som bakgrund.')[0];
+const descriptiveRequestedDescription=p.splitRequirements('Anbudet ska innehålla en metodbeskrivning och genomförandeplanen nämns endast i bakgrundsbeskrivningen.')[0];
 assert.ok(!descriptiveRequestedDescription.flags.some(f=>f.code==='multi_requirement_line'),'descriptive requested-description mention must not fabricate composite risk');
 
 const descriptiveRequestedRiskAnalysis=p.splitRequirements('Anbudet ska innehålla en riskanalys och information om tidplan används endast som bakgrund.')[0];
@@ -205,7 +212,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 21 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 22 contrastive controls passed`);
 '''
 
 
