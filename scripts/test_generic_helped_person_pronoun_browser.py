@@ -51,7 +51,7 @@ SCENARIOS = [
     {
         "id": "ar-helper-person-pronoun-hu-rent",
         "lang": "ar",
-        "text": "الشخص الذي أساعده يبحث عن دعم مالي. هو لديه إيجار مرتفع.",
+        "text": "أنا أساعد صديقي. الشخص الذي أساعده يبحث عن دعم مالي. هو لديه إيجار مرتفع.",
         "actor_type": "relative",
         "intent": "funding",
         "context_token": "تمويل",
@@ -81,7 +81,7 @@ SCENARIOS = [
     {
         "id": "fa-helper-person-pronoun-ou-rent",
         "lang": "fa",
-        "text": "فردی که کمک می‌کنم دنبال کمک مالی است. او اجاره بالایی دارد.",
+        "text": "من به دوستم کمک می‌کنم. فردی که کمک می‌کنم دنبال کمک مالی است. او اجاره بالایی دارد.",
         "actor_type": "relative",
         "intent": "funding",
         "context_token": "تأمین مالی",
