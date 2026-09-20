@@ -48,7 +48,7 @@ for(const [index,text] of cases.entries()){
 // boundaries on one physical source line become independently reviewable rows
 // while keeping the original physical source line for traceability. This is
 // intentionally narrower than full document segmentation and does not split
-// conjunction-bound clauses above.
+// implicit shared-modal conjunctions above.
 const explicitBoundaryCases=[
   ['Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Pris ska anges i bilaga 6. Sista anbudsdag är 2026-10-30 klockan 23:59.',4],
   ['Leverantören ska ha ansvarsförsäkring. Arbetsledaren ska ha minst fem års erfarenhet. Anbudspris ska anges i SEK.',3],
@@ -74,11 +74,38 @@ for(const [caseIndex,[text,expectedCount]] of explicitBoundaryCases.entries()){
   });
 }
 
+// Second bounded semantic-segmentation contract: a coordinating conjunction may
+// become a safe boundary only when the right-hand sibling carries its own
+// explicit normative modal and both resulting clauses independently carry a
+// bounded material signal. Implicit shared-modal conjunctions above remain
+// unsplit/fail-closed.
+const repeatedModalBoundaryCases=[
+  ['Leverantören ska ha ansvarsförsäkring och ska ha ISO 9001-certifikat.',2],
+  ['Arbetsledaren ska ha minst fem års erfarenhet samt projektledaren ska ha minst tre års erfarenhet.',2]
+];
+for(const [caseIndex,[text,expectedCount]] of repeatedModalBoundaryCases.entries()){
+  const rows=p.splitRequirements(text);
+  assert.equal(rows.length,expectedCount,`repeated-modal segmentation case ${caseIndex+1}: independent normative siblings must become separate review rows`);
+  rows.forEach((row,index)=>{
+    assert.equal(row.sourceLine,1,`repeated-modal segmentation case ${caseIndex+1}: physical source line must stay traceable`);
+    assert.equal(row.sourceSegment,index+1,`repeated-modal segmentation case ${caseIndex+1}: source segment index must be stable`);
+    assert.equal(row.sourceSegmentCount,expectedCount,`repeated-modal segmentation case ${caseIndex+1}: source segment count must be explicit`);
+    assert.ok(!row.flags.some(f=>f.code==='multi_requirement_line'),`repeated-modal segmentation case ${caseIndex+1}: separated sibling retained composite warning`);
+  });
+  rows[0].evidence='yes';
+  assert.ok(p.prioritizeReviewRows(rows).some(r=>r.id===rows[1].id),`repeated-modal segmentation case ${caseIndex+1}: evidence on first sibling must not hide second`);
+  assert.ok(p.summarize(rows).uncertain.some(r=>r.id===rows[1].id),`repeated-modal segmentation case ${caseIndex+1}: second sibling must remain uncertain`);
+}
+
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
 assert.ok(!simple.flags.some(f=>f.code==='multi_requirement_line'),'single material requirement must not fabricate composite risk');
 
 const descriptiveConjunction=p.splitRequirements('Leverantören ska ha ansvarsförsäkring som omfattar verksamheten och gäller under hela avtalstiden.')[0];
 assert.ok(!descriptiveConjunction.flags.some(f=>f.code==='multi_requirement_line'),'single evidence object with descriptive conjunction must not fabricate composite risk');
+
+const descriptiveRepeatedModal=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och informationen ska användas som bakgrund.');
+assert.equal(descriptiveRepeatedModal.length,1,'repeated modal with non-material narrative sibling must not be segmented');
+assert.ok(!descriptiveRepeatedModal[0].flags.some(f=>f.code==='multi_requirement_line'),'repeated modal with non-material narrative sibling must not fabricate composite risk');
 
 const descriptiveSameFamilyCertificate=p.splitRequirements('Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.')[0];
 assert.ok(!descriptiveSameFamilyCertificate.flags.some(f=>f.code==='multi_requirement_line'),'descriptive mention of a second certificate must not fabricate same-family object multiplicity');
@@ -131,7 +158,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + 19 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 negative controls passed`);
 '''
 
 
