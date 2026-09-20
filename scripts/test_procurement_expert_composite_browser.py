@@ -69,6 +69,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'same-family-two-distinct-named-role-competence-obligations-stay-fail-closed',
+        'text': 'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och en projektledare med minst tre års erfarenhet.',
+        'category': 'qualification',
+        'expect_composite': True,
+    },
+    {
         'id': 'single-clause-reference-plus-register-qualification-stays-fail-closed',
         'text': 'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
         'category': 'qualification',
@@ -101,6 +107,12 @@ CASES = [
     {
         'id': 'descriptive-second-reference-scope-does-not-fabricate-cardinality',
         'text': 'Leverantören ska ha två referensuppdrag inom markentreprenad och information om referensuppdrag inom elinstallationer används endast som bakgrund.',
+        'category': 'qualification',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-second-named-role-does-not-fabricate-cardinality',
+        'text': 'Leverantören ska ha en arbetsledare med minst fem års erfarenhet och projektledaren nämns endast i bakgrundsbeskrivningen.',
         'category': 'qualification',
         'expect_composite': False,
     },
