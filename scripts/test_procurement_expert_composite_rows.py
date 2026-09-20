@@ -24,7 +24,8 @@ const cases=[
   'Leverantören ska ha två referensuppdrag och vara registrerad i ett aktiebolags-, handels- eller föreningsregister.',
   'Leverantören ska ha två referensuppdrag och förfoga över den tekniska utrustningen för uppdraget.',
   'Leverantören ska ha två referensuppdrag och under avtalstiden kunna inställa sig inom två timmar.',
-  'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.'
+  'Leverantören ska ha två referensuppdrag och under avtalstiden följa arbetsmiljöplanen.',
+  'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.'
 ];
 
 for(const [index,text] of cases.entries()){
@@ -75,13 +76,16 @@ assert.ok(!descriptivePerformance.flags.some(f=>f.code==='multi_requirement_line
 const descriptiveWorkEnvironment=p.splitRequirements('Leverantören ska ha två referensuppdrag; arbetsmiljöplanen under avtalstiden beskrivs endast som bakgrund.')[0];
 assert.ok(!descriptiveWorkEnvironment.flags.some(f=>f.code==='multi_requirement_line'),'descriptive work-environment prose outside the normative clause must not fabricate composite risk');
 
+const descriptiveCommercial=p.splitRequirements('Leverantören ska ha två referensuppdrag och information om fast pris i prisbilaga 6 används endast som bakgrund.')[0];
+assert.ok(!descriptiveCommercial.flags.some(f=>f.code==='multi_requirement_line'),'descriptive commercial prose must not fabricate composite risk');
+
 const narrative=p.splitRequirements('Leverantören beskriver organisationen. Informationen används som bakgrund.')[0];
 assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative prose must not fabricate composite risk');
 
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 13 negative controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} positive composite fixtures + 14 negative controls passed`);
 '''
 
 
