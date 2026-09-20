@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.18';
+const APP_VERSION='procurement-expert-0.2.19';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -195,7 +195,7 @@ function materialEvidenceObjectCount(line){
    /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:arbetsledare|projektledare|uppdragsledare|nyckelperson(?:en|er|erna)?|specialist(?:en|er|erna)?)\b[^.;]{0,120}\b(?:erfarenhet|kompetens|utbildning|cv|meriter?)\b/,
    /\b(?:ska|skall|måste)\s+(?:ha|inneha|upprätthålla|tillämpa)\b[^.;]{0,180}\b(?:kvalitetsledningssystem|miljöledningssystem|ledningssystem)\b|\b(?:kvalitetsledningssystem|miljöledningssystem|ledningssystem)\b[^.;]{0,80}\bkrävs\b/,
    /\b(?:ska|skall|måste|krävs)\b[^.;]{0,180}\b(?:registrerad|registrering|inskriven|auktoriserad|godkänd)\b[^.;]{0,140}\b(?:aktiebolags|handels|förenings|yrkes|företags|bolags|närings)?register\b/,
-   /\b(?:ska|skall|måste)\b[^.;]{0,220}\b(?:förfoga över|ha tillgång till)\b[^.;]{0,140}\b(?:verktyg(?:en)?|maskin(?:er|erna)?|teknisk(?:a)?\s+(?:resurser|utrustning(?:en)?))\b/,
+   /\b(?:ska|skall|måste|krävs)\b[^.;]{0,220}\b(?:förfoga över|ha tillgång till)\b[^.;]{0,140}\b(?:verktyg(?:en)?|maskin(?:er|erna)?|teknisk(?:a)?\s+(?:resurser|utrustning(?:en)?))\b/,
    /\bunder avtalstiden\b[^.;]{0,160}\b(?:ska|skall|måste|kunna)\b[^.;]{0,120}\b(?:inställa sig|inställelsetid|svarstid|responstid|påbörja|åtgärda)\b/,
    /\b(?:ska|skall|måste)\b[^.;]{0,220}\bunder avtalstiden\b[^.;]{0,120}\b(?:följa|upprätta|tillämpa|efterleva)\b[^.;]{0,100}\b(?:arbetsmiljöplan(?:en)?|arbetsmiljökrav(?:en)?|arbetsmiljöregler(?:na)?|säkerhetsföreskrifter(?:na)?)\b/,
    /\b(?:ska|skall|måste)\b[^.;]{0,220}\b(?:ange|anges|lämna|redovisa)\b[^.;]{0,120}\b(?:fast pris|timpris|anbudspris|prisbilaga)\b/
@@ -227,6 +227,14 @@ function materialClauseCount(line){
    if(evidenceObjects>=2)count=evidenceObjects;
  }
  return count;
+}
+function explicitMaterialSegments(line){
+ const raw=String(line||'').trim();
+ if(!raw)return [];
+ const parts=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>part.trim()).filter(Boolean);
+ if(parts.length<2)return [raw];
+ const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
+ return parts.every(part=>material.test(normalized(part)))?parts:[raw];
 }
 function structureFlags(line){
  const raw=String(line||'');
@@ -367,11 +375,16 @@ function splitRequirements(text){
  if(source.length>100000)throw new RangeError('Underlaget är för långt. Klistra in högst 100 000 tecken åt gången. Ingen analys har gjorts.');
  const lines=source.split(/\r\n|\r|\n/).map((text,i)=>({text:text.trim(),sourceLine:i+1})).filter(r=>r.text.length>0);
  if(lines.length>400)throw new RangeError('Underlaget innehåller för många rader. Gränsen är 400 icke-tomma rader per analys. Ingen text har kapats och ingen analys har gjorts.');
- const rows=lines.map((r,i)=>{
+ const segments=[];
+ lines.forEach(r=>{
+   const parts=isStructuralHeading(r.text)?[r.text]:explicitMaterialSegments(r.text);
+   parts.forEach((part,index)=>segments.push({text:part,sourceLine:r.sourceLine,sourceSegment:index+1,sourceSegmentCount:parts.length}));
+ });
+ const rows=segments.map((r,i)=>{
    const kind=isStructuralHeading(r.text)?'structural':'requirement';
    const category=kind==='structural'?'uncertain':classifyRequirement(r.text);
    const processSubtype=category==='deadline'?deadlinePurpose(r.text):null;
-   return {id:i+1,text:r.text,sourceLine:r.sourceLine,kind,category,processSubtype,evidence:kind==='structural'?'context':'unknown',question:kind==='structural'?'Bevarad källrubrik – ingen evidensbedömning görs på rubriken.':evidenceQuestion(r.text,category),flags:kind==='structural'?[]:structureFlags(r.text)};
+   return {id:i+1,text:r.text,sourceLine:r.sourceLine,sourceSegment:r.sourceSegment,sourceSegmentCount:r.sourceSegmentCount,kind,category,processSubtype,evidence:kind==='structural'?'context':'unknown',question:kind==='structural'?'Bevarad källrubrik – ingen evidensbedömning görs på rubriken.':evidenceQuestion(r.text,category),flags:kind==='structural'?[]:structureFlags(r.text)};
  });
  return applyCrossRowFlags(rows);
 }
