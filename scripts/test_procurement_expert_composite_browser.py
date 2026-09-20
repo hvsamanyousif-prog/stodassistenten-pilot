@@ -99,6 +99,12 @@ CASES = [
         'expect_composite': True,
     },
     {
+        'id': 'single-clause-reference-plus-commercial-price-obligation-stays-fail-closed',
+        'text': 'Leverantören ska ha två referensuppdrag och ange ett fast pris i prisbilaga 6.',
+        'category': 'commercial',
+        'expect_composite': True,
+    },
+    {
         'id': 'descriptive-second-certificate-does-not-fabricate-cardinality',
         'text': 'Leverantören ska ha ISO 9001-certifikat och information om ISO 14001-certifikat används endast som bakgrund.',
         'category': 'qualification',
@@ -138,6 +144,12 @@ CASES = [
         'id': 'descriptive-work-environment-outside-normative-clause-does-not-fabricate-composite',
         'text': 'Leverantören ska ha två referensuppdrag; arbetsmiljöplanen under avtalstiden beskrivs endast som bakgrund.',
         'category': 'contract',
+        'expect_composite': False,
+    },
+    {
+        'id': 'descriptive-commercial-price-does-not-fabricate-composite',
+        'text': 'Leverantören ska ha två referensuppdrag och information om fast pris i prisbilaga 6 används endast som bakgrund.',
+        'category': 'commercial',
         'expect_composite': False,
     },
     {
