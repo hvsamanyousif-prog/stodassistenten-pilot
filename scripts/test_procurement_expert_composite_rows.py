@@ -117,6 +117,33 @@ for(const [caseIndex,[text,expectedCount]] of repeatedModalBoundaryCases.entries
   assert.ok(p.summarize(rows).uncertain.some(r=>r.id===rows[1].id),`repeated-modal segmentation case ${caseIndex+1}: second sibling must remain uncertain`);
 }
 
+// Third bounded semantic-segmentation contract: explicit same-line list markers
+// are safe boundaries only when every item independently carries a material
+// signal. The item text itself is preserved; no inherited/synthetic modal text
+// is invented. This targets pasted PDF/DOCX lists that lost their line breaks.
+const enumeratedBoundaryCases=[
+  ['a) Leverantören ska ha ansvarsförsäkring b) Leverantören ska ha ISO 9001-certifikat.',2],
+  ['1) Pris ska anges i bilaga 6 2) Sista anbudsdag är 2026-10-30 klockan 23:59.',2]
+];
+for(const [caseIndex,[text,expectedCount]] of enumeratedBoundaryCases.entries()){
+  const rows=p.splitRequirements(text);
+  assert.equal(rows.length,expectedCount,`enumerated segmentation case ${caseIndex+1}: explicit material list items must become separate review rows`);
+  rows.forEach((row,index)=>{
+    assert.equal(row.sourceLine,1,`enumerated segmentation case ${caseIndex+1}: physical source line must stay traceable`);
+    assert.equal(row.sourceSegment,index+1,`enumerated segmentation case ${caseIndex+1}: source segment index must be stable`);
+    assert.equal(row.sourceSegmentCount,expectedCount,`enumerated segmentation case ${caseIndex+1}: source segment count must be explicit`);
+    assert.ok(!row.flags.some(f=>f.code==='multi_requirement_line'),`enumerated segmentation case ${caseIndex+1}: already-separated list item retained composite warning`);
+  });
+  rows[0].evidence='yes';
+  assert.ok(p.prioritizeReviewRows(rows).some(r=>r.id===rows[1].id),`enumerated segmentation case ${caseIndex+1}: evidence on first item must not hide second`);
+  assert.ok(p.summarize(rows).uncertain.some(r=>r.id===rows[1].id),`enumerated segmentation case ${caseIndex+1}: second item must remain uncertain`);
+}
+
+const relationBoundEnumerated=p.splitRequirements('1) Leverantören ska ha ansvarsförsäkring 2) alternativt ska leverantören ha likvärdigt försäkringsskydd.');
+assert.equal(relationBoundEnumerated.length,1,'enumerated alternative must stay relation-bound and unsplit');
+assert.ok(relationBoundEnumerated[0].flags.some(f=>f.code==='conditional_or_exception'),'enumerated alternative must retain relation warning');
+assert.ok(relationBoundEnumerated[0].flags.some(f=>f.code==='multi_requirement_line'),'enumerated alternative must remain fail-closed');
+
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
 assert.ok(!simple.flags.some(f=>f.code==='multi_requirement_line'),'single material requirement must not fabricate composite risk');
 
@@ -178,7 +205,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + 20 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 21 contrastive controls passed`);
 '''
 
 
