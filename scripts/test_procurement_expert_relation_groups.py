@@ -95,6 +95,14 @@ assert.ok(pairedExceptionCrossLine[1].flags.some(f=>f.code==='conditional_or_exc
 pairedExceptionCrossLine.forEach(r=>{r.evidence='yes';});
 assert.equal(p.summarize(pairedExceptionCrossLine).uncertain.length,2,'Undantag från kravet på: evidence=yes must not hide a materially linked exception');
 
+const exceptiveForutomCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nFörutom när ett likvärdigt försäkringsbevis godtas gäller kravet på ansvarsförsäkring.');
+assert.equal(exceptiveForutomCrossLine.length,2,'exceptive Förutom cross-line relation must preserve two source rows');
+assert.deepEqual(exceptiveForutomCrossLine.map(r=>r.sourceLine),[1,2],'exceptive Förutom relation must preserve physical source positions');
+assert.ok(exceptiveForutomCrossLine.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'exceptive Förutom with shared material family must retain two-sided relation warning');
+assert.ok(exceptiveForutomCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'exceptive Förutom right row must retain its own source-risk warning');
+exceptiveForutomCrossLine.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(exceptiveForutomCrossLine).uncertain.length,2,'exceptive Förutom relation must remain uncertain after manual evidence marks');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
@@ -164,7 +172,7 @@ for(const [label,rightText] of standaloneFormalCrossLine){
   assert.ok(rows[1].flags.some(f=>f.code==='conditional_or_exception'),`${label}: right formal conditional row must retain its own source-risk warning`);
 }
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+4} cross-line relation fixtures + ${standaloneFormalCrossLine.length+7} negative controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+5} cross-line relation fixtures + ${standaloneFormalCrossLine.length+7} negative controls passed`);
 '''
 
 
