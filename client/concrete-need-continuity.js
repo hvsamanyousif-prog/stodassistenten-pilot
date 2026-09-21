@@ -62,6 +62,11 @@ function genderedPartnerPronounMatches(text,contextText){
  return /\bhan\b/i.test(value);
 }
 
+function introducesInterveningSwedishPersonReference(text){
+ const value=String(text||'');
+ return /\b(?:hans|hennes|hens)\s+(?:mamma|mor|pappa|far|förälder|syster|bror|son|dotter|barn|partner|sambo|make|maka|vän|väninna|kollega|chef|läkare|handläggare)\b/i.test(value);
+}
+
 function pronounMatchesTarget(text,target,contextText=''){
  const value=String(text||'');
  const subject=RELATIVE_SUBJECTS.find(item=>item.key===target);
@@ -89,16 +94,23 @@ function detectRelativeNeeds(text){
  const parts=value.split(/(?:[.!?؟;\n]+|\bmen\b|لكن|اما|ولی)/i).filter(part=>part.trim());
  const needs=[];
  let established=false;
+ let partnerPronounBlocked=false;
  for(const part of parts){
   const partKeys=relativeSubjectKeys(part);
   const helperSelfNeed=isHelperSelfNeed(part);
   if(partKeys.includes(target)){
    established=true;
+   partnerPronounBlocked=false;
    if(helperSelfNeed)needs.push(...beneficiaryNeedsBeforeHelperSelf(part,target,value));
    else needs.push(...detectNeeds(part));
    continue;
   }
   if(!established)continue;
+  if(target==='partner'&&introducesInterveningSwedishPersonReference(part)){
+   partnerPronounBlocked=true;
+   continue;
+  }
+  if(target==='partner'&&partnerPronounBlocked)continue;
   if(pronounMatchesTarget(part,target,value)){
    if(helperSelfNeed)needs.push(...beneficiaryNeedsBeforeHelperSelf(part,target,value));
    else needs.push(...detectNeeds(part));
@@ -247,6 +259,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.11',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.12',page});
 }
 })(window);
