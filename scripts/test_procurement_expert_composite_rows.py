@@ -116,6 +116,14 @@ repeatedModalUsageConditional[0].evidence='yes';
 assert.ok(p.prioritizeReviewRows(repeatedModalUsageConditional).some(r=>r.id===repeatedModalUsageConditional[0].id),'evidence=yes must not hide repeated-modal usage conditional uncertainty');
 assert.equal(p.summarize(repeatedModalUsageConditional).uncertain.length,1,'repeated-modal usage conditional row must remain uncertain after evidence=yes');
 
+const repeatedModalWhenConditional=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och när underleverantör används ska underleverantören ha ansvarsförsäkring.');
+assert.equal(repeatedModalWhenConditional.length,1,'repeated-modal when conditional sibling must stay relation-bound and unsplit');
+assert.ok(repeatedModalWhenConditional[0].flags.some(f=>f.code==='conditional_or_exception'),'repeated-modal when conditional sibling must retain a visible relation warning');
+assert.ok(repeatedModalWhenConditional[0].flags.some(f=>f.code==='multi_requirement_line'),'repeated-modal when conditional sibling must remain fail-closed');
+repeatedModalWhenConditional[0].evidence='yes';
+assert.ok(p.prioritizeReviewRows(repeatedModalWhenConditional).some(r=>r.id===repeatedModalWhenConditional[0].id),'evidence=yes must not hide repeated-modal when conditional uncertainty');
+assert.equal(p.summarize(repeatedModalWhenConditional).uncertain.length,1,'repeated-modal when conditional row must remain uncertain after evidence=yes');
+
 // Second bounded semantic-segmentation contract: a coordinating conjunction may
 // become a safe boundary only when the right-hand sibling carries its own
 // explicit normative modal and both resulting clauses independently carry a
