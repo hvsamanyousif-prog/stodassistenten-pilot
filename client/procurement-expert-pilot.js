@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.37';
+const APP_VERSION='procurement-expert-0.2.38';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -313,6 +313,11 @@ function addFlag(row,code,label){
  if(!row.flags)row.flags=[];
  if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
 }
+function crossLineRelationPair(left,right){
+ if(!left||!right||left.kind==='structural'||right.kind==='structural')return false;
+ if(!Number.isInteger(left.sourceLine)||!Number.isInteger(right.sourceLine)||right.sourceLine!==left.sourceLine+1)return false;
+ return /\b(?:och|samt|eller)\s*$/.test(normalized(left.text))&&relationLeadingGroup(right.text,true);
+}
 function lotScope(line){
  const match=normalized(line).match(/\b(?:delområde|anbudsområde)\s+([a-zåäö0-9]+)\b/);
  return match?`named:${match[1]}`:'unscoped';
@@ -339,6 +344,13 @@ function commercialValueSignature(line){
 }
 function applyCrossRowFlags(rows){
  const actionable=rows.filter(r=>r.kind!=='structural');
+ const crossLineLabel='Källraderna kan höra ihop över radbrytningen – behandla inte radgränsen som bevis för två oberoende krav. Kontrollera båda raderna tillsammans mot originalunderlaget.';
+ for(let i=0;i<actionable.length-1;i++){
+   const left=actionable[i],right=actionable[i+1];
+   if(!crossLineRelationPair(left,right))continue;
+   addFlag(left,'cross_line_relation',crossLineLabel);
+   addFlag(right,'cross_line_relation',crossLineLabel);
+ }
  const deadlineGroups={};
  actionable.filter(r=>r.category==='deadline').forEach(r=>{
    const purpose=r.processSubtype||deadlinePurpose(r.text);
