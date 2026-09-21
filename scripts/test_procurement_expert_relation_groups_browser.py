@@ -83,6 +83,22 @@ CROSS_LINE_CASES = [
         'id': 'cross-line-semicolon-for-det-fall-remains-linked',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nför det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
     },
+    {
+        'id': 'cross-line-semicolon-i-de-fall-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-forutsatt-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutsatt att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-no-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
 ]
 
 NEGATIVE_CONTROLS = [
@@ -120,6 +136,26 @@ NEGATIVE_CONTROLS = [
     {
         'id': 'independent-usage-conditional-semicolon-cross-line-stays-independent',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nNär e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-i-de-fall-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI de fall e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-forutsatt-att-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutsatt att anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-for-det-fall-att-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall att e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-for-det-fall-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall e-faktura används ska fakturan följa Peppol BIS.',
         'right_conditional': True,
     },
 ]
