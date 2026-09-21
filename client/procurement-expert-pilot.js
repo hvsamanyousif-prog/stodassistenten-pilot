@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.42';
+const APP_VERSION='procurement-expert-0.2.43';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -250,7 +250,7 @@ function enumeratedMaterialSegments(line){
  const markerPattern=/(?:^|\s)(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s+/gi;
  const markers=[...raw.matchAll(markerPattern)];
  if(markers.length<2||markers[0].index!==0)return [raw];
- const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?markers[index+1].index:raw.length).trim()).filter(Boolean);
+ const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?marker.index:raw.length).trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  const relationBound=parts.slice(1).some(part=>relationLeadingGroup(normalized(part).replace(/^(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s*/,''),true));
  return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
@@ -313,6 +313,24 @@ function addFlag(row,code,label){
  if(!row.flags)row.flags=[];
  if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
 }
+function formalCrossLineCondition(part){
+ return /^(?:i de fall\b|förutsatt att\b|för det fall(?: att)?\b)/.test(normalized(part));
+}
+function sharesCrossLineMaterialFamily(leftText,rightText){
+ const left=normalized(leftText),right=normalized(rightText);
+ const families=[
+   /\b(?:ansvarsförsäkring|försäkring)\b/,
+   /\b(?:certifikat|certifiering|certifierad|iso\s*\d{3,5})\b/,
+   /\breferens(?:uppdrag|er)?\b/,
+   /\b(?:omsättning|ekonomisk|finansiell)\b/,
+   /\b(?:kvalitetsledningssystem|miljöledningssystem|ledningssystem)\b/,
+   /\b(?:behörighet|behörig|bas-p|bas-u)\b/,
+   /\b(?:verktyg|maskiner?|utrustning)\b/,
+   /\b(?:arbetsmiljöplan|arbetsmiljökrav|säkerhetsföreskrifter)\b/,
+   /\b(?:fast pris|timpris|anbudspris|prisbilaga)\b/
+ ];
+ return families.some(pattern=>pattern.test(left)&&pattern.test(right));
+}
 function crossLineRelationPair(left,right){
  if(!left||!right||left.kind==='structural'||right.kind==='structural')return false;
  if(!Number.isInteger(left.sourceLine)||!Number.isInteger(right.sourceLine)||right.sourceLine!==left.sourceLine+1)return false;
@@ -323,7 +341,9 @@ function crossLineRelationPair(left,right){
  const semicolonContinuation=/;\s*$/.test(leftText);
  if(!semicolonContinuation)return false;
  const standaloneOwnConditional=(/^om\b/.test(rightText)&&!/^om\s+inte\b/.test(rightText))||/^endast om\b/.test(rightText)||relationLeadingUsageEvent(rightText);
- return !standaloneOwnConditional&&relationLeadingGroup(right.text,true);
+ if(standaloneOwnConditional)return false;
+ if(formalCrossLineCondition(rightText))return sharesCrossLineMaterialFamily(left.text,right.text);
+ return relationLeadingGroup(right.text,true);
 }
 function lotScope(line){
  const match=normalized(line).match(/\b(?:delområde|anbudsområde)\s+([a-zåäö0-9]+)\b/);
