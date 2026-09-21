@@ -250,7 +250,7 @@ function enumeratedMaterialSegments(line){
  const markerPattern=/(?:^|\s)(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s+/gi;
  const markers=[...raw.matchAll(markerPattern)];
  if(markers.length<2||markers[0].index!==0)return [raw];
- const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?marker.index:raw.length).trim()).filter(Boolean);
+ const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?markers[index+1].index:raw.length).trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  const relationBound=parts.slice(1).some(part=>relationLeadingGroup(normalized(part).replace(/^(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s*/,''),true));
  return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
