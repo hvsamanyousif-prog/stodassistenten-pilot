@@ -96,6 +96,18 @@ for(const [caseIndex,text] of relationalBoundaryCases.entries()){
   assert.equal(p.summarize(rows).uncertain.length,1,`relational segmentation case ${caseIndex+1}: relational row must remain uncertain`);
 }
 
+// Relation preservation must also hold on the repeated-modal conjunction path.
+// A right-hand explicit modal is not an independent sibling when it begins with
+// a bounded condition; otherwise the repeated-modal splitter would erase the
+// source relation and expose a falsely independent evidence control.
+const repeatedModalConditional=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och om underleverantör används ska underleverantören ha ansvarsförsäkring.');
+assert.equal(repeatedModalConditional.length,1,'repeated-modal conditional sibling must stay relation-bound and unsplit');
+assert.ok(repeatedModalConditional[0].flags.some(f=>f.code==='conditional_or_exception'),'repeated-modal conditional sibling must retain a visible relation warning');
+assert.ok(repeatedModalConditional[0].flags.some(f=>f.code==='multi_requirement_line'),'repeated-modal conditional sibling must remain fail-closed');
+repeatedModalConditional[0].evidence='yes';
+assert.ok(p.prioritizeReviewRows(repeatedModalConditional).some(r=>r.id===repeatedModalConditional[0].id),'evidence=yes must not hide repeated-modal conditional uncertainty');
+assert.equal(p.summarize(repeatedModalConditional).uncertain.length,1,'repeated-modal conditional row must remain uncertain after evidence=yes');
+
 // Second bounded semantic-segmentation contract: a coordinating conjunction may
 // become a safe boundary only when the right-hand sibling carries its own
 // explicit normative modal and both resulting clauses independently carry a
@@ -231,7 +243,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 25 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 26 contrastive controls passed`);
 '''
 
 
