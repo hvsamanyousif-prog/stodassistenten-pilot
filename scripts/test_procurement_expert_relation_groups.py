@@ -65,6 +65,7 @@ assert.equal(p.summarize(crossLinePunctuationRelation).uncertain.length,2,'manua
 
 const pairedFormalCrossLine=[
   ['I de fall','I de fall underleverantör används ska underleverantören ha ansvarsförsäkring.'],
+  ['I förekommande fall','I förekommande fall underleverantör används ska underleverantören ha ansvarsförsäkring.'],
   ['Förutsatt att','Förutsatt att underleverantör används ska underleverantören ha ansvarsförsäkring.'],
   ['För det fall att','För det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.'],
   ['För det fall','För det fall underleverantör används ska underleverantören ha ansvarsförsäkring.'],
@@ -108,6 +109,7 @@ assert.ok(independentUsageConditionalCrossLine[1].flags.some(f=>f.code==='condit
 
 const standaloneFormalCrossLine=[
   ['I de fall','I de fall e-faktura används ska fakturan följa Peppol BIS.'],
+  ['I förekommande fall','I förekommande fall e-faktura används ska fakturan följa Peppol BIS.'],
   ['Förutsatt att','Förutsatt att anbudet lämnas elektroniskt ska filformatet vara PDF.'],
   ['För det fall att','För det fall att e-faktura används ska fakturan följa Peppol BIS.'],
   ['För det fall','För det fall e-faktura används ska fakturan följa Peppol BIS.'],
