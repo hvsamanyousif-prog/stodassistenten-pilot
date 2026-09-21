@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.38';
+const APP_VERSION='procurement-expert-0.2.39';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -316,7 +316,10 @@ function addFlag(row,code,label){
 function crossLineRelationPair(left,right){
  if(!left||!right||left.kind==='structural'||right.kind==='structural')return false;
  if(!Number.isInteger(left.sourceLine)||!Number.isInteger(right.sourceLine)||right.sourceLine!==left.sourceLine+1)return false;
- return /\b(?:och|samt|eller)\s*$/.test(normalized(left.text))&&relationLeadingGroup(right.text,true);
+ const leftText=normalized(left.text);
+ const explicitContinuation=/\b(?:och|samt|eller)\s*$/.test(leftText);
+ const semicolonContinuation=/;\s*$/.test(leftText);
+ return (explicitContinuation||semicolonContinuation)&&relationLeadingGroup(right.text,true);
 }
 function lotScope(line){
  const match=normalized(line).match(/\b(?:delområde|anbudsområde)\s+([a-zåäö0-9]+)\b/);
