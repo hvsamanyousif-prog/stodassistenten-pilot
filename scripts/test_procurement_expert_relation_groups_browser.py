@@ -49,6 +49,18 @@ RELATION_CASES = [
         'text': '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
     },
     {
+        'id': 'repeated-modal-nar-aberopas-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'semicolon-nar-aberopas-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'numbered-nar-aberopas-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
         'id': 'repeated-modal-annars-stays-bound',
         'text': 'Leverantören ska ha ansvarsförsäkring och annars ska leverantören ha ISO 9001-certifikat.',
     },
