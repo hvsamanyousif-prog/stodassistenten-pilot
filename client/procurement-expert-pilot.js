@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.41';
+const APP_VERSION='procurement-expert-0.2.42';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -322,7 +322,7 @@ function crossLineRelationPair(left,right){
  if(explicitContinuation)return relationLeadingGroup(right.text,true);
  const semicolonContinuation=/;\s*$/.test(leftText);
  if(!semicolonContinuation)return false;
- const standaloneOwnConditional=(/^om\b/.test(rightText)&&!/^om\s+inte\b/.test(rightText))||/^endast om\b/.test(rightText);
+ const standaloneOwnConditional=(/^om\b/.test(rightText)&&!/^om\s+inte\b/.test(rightText))||/^endast om\b/.test(rightText)||relationLeadingUsageEvent(rightText);
  return !standaloneOwnConditional&&relationLeadingGroup(right.text,true);
 }
 function lotScope(line){
