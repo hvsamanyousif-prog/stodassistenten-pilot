@@ -68,6 +68,32 @@ CASES = [
         "expect_calm_after": True,
         "expect_uncertain_count": 0,
     },
+    {
+        "id": "same-family-med-undantag-for-remains-linked",
+        "text": "\n".join([
+            "Leverantören ska ha ansvarsförsäkring;",
+            "Med undantag för ansvarsförsäkring som godtas som likvärdig gäller försäkringskravet enligt underlaget.",
+        ]),
+        "evidence_ids": ["1", "2"],
+        "required_before": ["källraderna kan höra ihop", "villkor eller undantag", "källa rad 1", "källa rad 2"],
+        "required_after": ["källraderna kan höra ihop", "villkor eller undantag", "källa rad 1", "källa rad 2"],
+        "forbidden_after": ["alla kravrader är genomgångna av dig"],
+        "expect_risk_intro": True,
+        "expect_uncertain_count": 2,
+    },
+    {
+        "id": "unrelated-med-undantag-for-does-not-contaminate-left-row",
+        "text": "\n".join([
+            "Leverantören ska ha ansvarsförsäkring;",
+            "Med undantag för e-faktura får fakturan skickas som PDF vid betalning med betalkort.",
+        ]),
+        "evidence_ids": ["1"],
+        "required_before": ["villkor eller undantag", "källa rad 1", "källa rad 2"],
+        "required_after": ["villkor eller undantag", "källa rad 2"],
+        "forbidden_after": ["källa rad 1", "källraderna kan höra ihop"],
+        "expect_risk_intro": True,
+        "expect_uncertain_count": 1,
+    },
 ]
 
 
