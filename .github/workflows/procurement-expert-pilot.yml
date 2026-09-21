@@ -189,6 +189,14 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_procurement_expert_composite_browser.py . procurement-composite-webkit.json
+      - name: Relation-group source-risk — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_procurement_expert_relation_groups_browser.py . procurement-relation-groups-chromium.json
+      - name: Relation-group source-risk — Playwright WebKit
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_procurement_expert_relation_groups_browser.py . procurement-relation-groups-webkit.json
       - name: Offline Chromium interactions (no live storage claim)
         env:
           CHROMIUM_PATH: /nonexistent/use-playwright-installed-browser
@@ -233,6 +241,8 @@ jobs:
             procurement-currency-webkit.json
             procurement-composite-chromium.json
             procurement-composite-webkit.json
+            procurement-relation-groups-chromium.json
+            procurement-relation-groups-webkit.json
             procurement-browser-audit.json
             procurement-quality-chromium.json
             procurement-quality-webkit.json
