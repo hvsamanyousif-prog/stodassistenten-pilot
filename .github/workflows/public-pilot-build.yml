@@ -19,6 +19,7 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
   pull_request:
@@ -39,6 +40,7 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
 
@@ -97,6 +99,18 @@ jobs:
           BROWSER_ENGINE: webkit
           EVIDENCE_PATH: assistance-source-boundary-webkit.json
         run: python scripts/test_assistance_focus_source_boundary_browser.py
+      - name: Assistance unsure-target source-boundary holdout — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: assistance-unsure-source-boundary-chromium.json
+        run: python scripts/test_assistance_focus_unsure_source_boundary_browser.py
+      - name: Assistance unsure-target source-boundary holdout — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: assistance-unsure-source-boundary-webkit.json
+        run: python scripts/test_assistance_focus_unsure_source_boundary_browser.py
       - name: Preserve assistance source-boundary evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -105,4 +119,6 @@ jobs:
           path: |
             assistance-source-boundary-chromium.json
             assistance-source-boundary-webkit.json
+            assistance-unsure-source-boundary-chromium.json
+            assistance-unsure-source-boundary-webkit.json
           if-no-files-found: warn
