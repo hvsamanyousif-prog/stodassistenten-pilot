@@ -82,7 +82,9 @@ const relationalBoundaryCases=[
   'Anbudet ska lämnas elektroniskt; alternativt ska anbudet lämnas enligt reservrutinen.',
   'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.',
   'Leverantören ska antingen ha ISO 9001-certifikat; eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.',
-  'Leverantören ska antingen ha ISO 9001-certifikat. Eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.'
+  'Leverantören ska antingen ha ISO 9001-certifikat. Eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.',
+  'Leverantören ska ha ansvarsförsäkring; i annat fall ska leverantören ha ISO 9001-certifikat.',
+  'Leverantören ska ha ansvarsförsäkring. I annat fall ska leverantören ha ISO 9001-certifikat.'
 ];
 for(const [caseIndex,text] of relationalBoundaryCases.entries()){
   const rows=p.splitRequirements(text);
@@ -123,6 +125,14 @@ assert.ok(repeatedModalWhenConditional[0].flags.some(f=>f.code==='multi_requirem
 repeatedModalWhenConditional[0].evidence='yes';
 assert.ok(p.prioritizeReviewRows(repeatedModalWhenConditional).some(r=>r.id===repeatedModalWhenConditional[0].id),'evidence=yes must not hide repeated-modal when conditional uncertainty');
 assert.equal(p.summarize(repeatedModalWhenConditional).uncertain.length,1,'repeated-modal when conditional row must remain uncertain after evidence=yes');
+
+const repeatedModalOtherwise=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och i annat fall ska leverantören ha ISO 9001-certifikat.');
+assert.equal(repeatedModalOtherwise.length,1,'repeated-modal otherwise sibling must stay relation-bound and unsplit');
+assert.ok(repeatedModalOtherwise[0].flags.some(f=>f.code==='conditional_or_exception'),'repeated-modal otherwise sibling must retain a visible relation warning');
+assert.ok(repeatedModalOtherwise[0].flags.some(f=>f.code==='multi_requirement_line'),'repeated-modal otherwise sibling must remain fail-closed');
+repeatedModalOtherwise[0].evidence='yes';
+assert.ok(p.prioritizeReviewRows(repeatedModalOtherwise).some(r=>r.id===repeatedModalOtherwise[0].id),'evidence=yes must not hide repeated-modal otherwise uncertainty');
+assert.equal(p.summarize(repeatedModalOtherwise).uncertain.length,1,'repeated-modal otherwise row must remain uncertain after evidence=yes');
 
 // Second bounded semantic-segmentation contract: a coordinating conjunction may
 // become a safe boundary only when the right-hand sibling carries its own
@@ -259,7 +269,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 26 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 27 contrastive controls passed`);
 '''
 
 
