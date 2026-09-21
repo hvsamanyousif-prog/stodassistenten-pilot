@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.32';
+const APP_VERSION='procurement-expert-0.2.33';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -231,13 +231,17 @@ function relationLeadingUsageEvent(part){
  const t=normalized(part);
  return /^när\b[^.;]{0,80}\b(?:används|anlitas)\b/.test(t);
 }
+const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b|vid användning av\b)/;
+function relationLeadingGroup(part,bindStandaloneOr=false){
+ const t=normalized(part);
+ return RELATION_LEADING.test(t)||(bindStandaloneOr&&/^eller\b/.test(t))||relationLeadingUsageEvent(t);
+}
 function repeatedModalMaterialSegments(line){
  const raw=String(line||'').trim();
  if(!raw)return [];
  const parts=raw.split(/\s+(?:och|samt)\s+(?=[^.;]{0,100}\b(?:ska|skall|måste|krävs)\b)/i).map(part=>part.trim()).filter(Boolean);
  if(parts.length<2)return [raw];
- const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|eller\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b|vid användning av\b)/;
- if(parts.slice(1).some(part=>relationalStart.test(normalized(part))||relationLeadingUsageEvent(part)))return [raw];
+ if(parts.slice(1).some(part=>relationLeadingGroup(part,true)))return [raw];
  return parts.every(repeatedModalMaterialSignal)?parts:[raw];
 }
 function enumeratedMaterialSegments(line){
@@ -248,8 +252,7 @@ function enumeratedMaterialSegments(line){
  if(markers.length<2||markers[0].index!==0)return [raw];
  const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?markers[index+1].index:raw.length).trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
- const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|eller\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
- const relationBound=parts.slice(1).some(part=>relationalStart.test(normalized(part).replace(/^(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s*/,'')));
+ const relationBound=parts.slice(1).some(part=>relationLeadingGroup(normalized(part).replace(/^(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s*/,''),true));
  return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
 }
 function explicitMaterialSegments(line){
@@ -258,10 +261,9 @@ function explicitMaterialSegments(line){
  const parts=raw.split(/(?:(?<=[.!?])\s+(?=[A-ZÅÄÖ0-9])|;\s*)/).map(part=>part.trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
  if(parts.length>=2){
-   const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
    const relationBound=parts.slice(1).some((part,index)=>{
      const t=normalized(part);
-     if(relationalStart.test(t))return true;
+     if(relationLeadingGroup(t,false))return true;
      if(!/^eller\b/.test(t))return false;
      return /\bantingen\b/.test(normalized(parts.slice(0,index+1).join(' ')));
    });
@@ -281,7 +283,7 @@ function structureFlags(line){
  const boundedConditionalOm=/^om\b/.test(t)||/\b(?:och|samt)\s+om\b/.test(t)||/[.;]\s*om\b/.test(t);
  const boundedUsageConditional=/^vid användning av\b/.test(t)||/\b(?:och|samt)\s+vid användning av\b/.test(t)||/[.;]\s*vid användning av\b/.test(t);
  const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}\b(?:används|anlitas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}\b(?:används|anlitas)\b/.test(t);
- if(/\b(men|dock|förutsatt att|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
+ if(/\b(men|dock|förutsatt att|för det fall(?: att)?|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
  if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
