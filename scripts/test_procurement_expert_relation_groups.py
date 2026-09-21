@@ -16,12 +16,15 @@ const relationBoundCases=[
   'Leverantören ska ha ansvarsförsäkring; för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
   'Leverantören ska ha ansvarsförsäkring. För det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
   '1) Leverantören ska ha ansvarsförsäkring 2) för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
-  '(1) Leverantören ska ha ansvarsförsäkring (2) för det fall underleverantör används ska underleverantören ha ansvarsförsäkring.'
+  '(1) Leverantören ska ha ansvarsförsäkring (2) för det fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+  'Leverantören ska ha ansvarsförsäkring och i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+  'Leverantören ska ha ansvarsförsäkring; i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+  '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.'
 ];
 
 for(const [index,text] of relationBoundCases.entries()){
   const rows=p.splitRequirements(text);
-  assert.equal(rows.length,1,`relation-group case ${index+1}: för det fall (att) must stay relation-bound`);
+  assert.equal(rows.length,1,`relation-group case ${index+1}: formal condition must stay relation-bound`);
   const row=rows[0];
   assert.equal(row.sourceLine,1,`relation-group case ${index+1}: original source line must remain traceable`);
   assert.ok(row.flags.some(f=>f.code==='conditional_or_exception'),`relation-group case ${index+1}: relation warning must remain visible`);
