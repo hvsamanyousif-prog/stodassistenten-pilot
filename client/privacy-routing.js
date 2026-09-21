@@ -404,7 +404,7 @@
     if(focus==='property_accessibility') return 'property';
     if(url.pathname.endsWith('company-pilot.html')) return 'company';
     const actor=safeToken(url.searchParams.get('actor_type'));
-    return {employee:'work',student:'study',association:'association',property_actor:'property',private_person:'economy',relative:'relative',other:'general'}[actor]||'general';
+    return {employee:'work',student:'study',association:'association',property_actor:'property',private_person:'economy',relative:'general',other:'general'}[actor]||'general';
   }
   function preserveConcreteFundingIntent(url){
     const text=composer?composer.value.trim():'';
