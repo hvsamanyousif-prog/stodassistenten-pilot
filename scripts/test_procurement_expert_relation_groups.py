@@ -43,10 +43,16 @@ for(const [index,text] of relationBoundCases.entries()){
 const benignTemporal=p.splitRequirements('Leverantören ska ha ansvarsförsäkring när avtalet börjar och leverantören ska ha ISO 9001-certifikat.');
 assert.equal(benignTemporal.length,2,'ordinary temporal modifier must not disable safe repeated-modal segmentation');
 
+const descriptiveWhenUsed=p.splitRequirements('Leverantören ska i säkerhetsbeskrivningen redovisa när systemet används i drift.');
+assert.equal(descriptiveWhenUsed.length,1,'descriptive when-clause should remain one ordinary requirement row');
+assert.ok(!descriptiveWhenUsed[0].flags.some(f=>f.code==='conditional_or_exception'),'descriptive when-clause must not be misclassified as a condition or exception');
+descriptiveWhenUsed[0].evidence='yes';
+assert.equal(p.summarize(descriptiveWhenUsed).uncertain.length,0,'reviewed ordinary descriptive when-clause must not remain permanently uncertain');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 2 negative controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 3 negative controls passed`);
 '''
 
 
