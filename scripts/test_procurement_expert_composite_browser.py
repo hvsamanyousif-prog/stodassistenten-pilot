@@ -22,11 +22,11 @@ VIEWPORTS = [
 
 # Explicit sentence/semicolon boundaries, tightly bounded conjunctions whose
 # right-hand sibling carries its own normative modal, and explicit flattened
-# numbered/lettered/bullet list markers are semantic-segmentation steps. They
-# must create independent evidence controls while preserving the same physical
-# source line. Implicit shared-modal conjunctions, relation-bound punctuation
-# or list siblings, and ambiguous repeated-modal prose remain one fail-closed
-# composite row.
+# numbered/lettered/bullet/parenthesized list markers are semantic-segmentation
+# steps. They must create independent evidence controls while preserving the
+# same physical source line. Implicit shared-modal conjunctions, relation-bound
+# punctuation or list siblings, and ambiguous repeated-modal prose remain one
+# fail-closed composite row.
 CASES = [
     {
         'id':'four-explicit-material-clauses-segment-independently',
@@ -98,8 +98,23 @@ CASES = [
         'expect_composite':False,
         'segmented':True,
     },
+    {
+        'id':'same-line-parenthesized-lettered-list-segments-independently',
+        'text':'(a) Leverantören ska ha ansvarsförsäkring (b) Leverantören ska ha ISO 9001-certifikat.',
+        'expected_rows':2,
+        'expect_composite':False,
+        'segmented':True,
+    },
+    {
+        'id':'same-line-parenthesized-numbered-list-segments-independently',
+        'text':'(1) Pris ska anges i bilaga 6 (2) Sista anbudsdag är 2026-10-30 klockan 23:59.',
+        'expected_rows':2,
+        'expect_composite':False,
+        'segmented':True,
+    },
     {'id':'same-line-numbered-alternative-stays-relational-fail-closed','text':'1) Leverantören ska ha ansvarsförsäkring 2) alternativt ska leverantören ha likvärdigt försäkringsskydd.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'same-line-bullet-alternative-stays-relational-fail-closed','text':'• Leverantören ska ha ansvarsförsäkring • alternativt ska leverantören ha likvärdigt försäkringsskydd.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
+    {'id':'same-line-parenthesized-alternative-stays-relational-fail-closed','text':'(1) Leverantören ska ha ansvarsförsäkring (2) alternativt ska leverantören ha likvärdigt försäkringsskydd.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'semicolon-alternative-stays-relational-fail-closed','text':'Anbudet ska lämnas elektroniskt; alternativt ska anbudet lämnas enligt reservrutinen.','category':'mandatory','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'sentence-exception-stays-relational-fail-closed','text':'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'shared-modal-question-plus-bid-deadline-stays-fail-closed','text':'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.','category':'deadline','expected_rows':1,'expect_composite':True},
