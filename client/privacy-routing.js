@@ -353,7 +353,7 @@
     const intent=intents[0]||null;
     if(!intent) return false;
     const copy=FUNDING_COPY[lang];
-    const actor=resolvedFundingActor(text)||(helperFundingScope(text)?'relative':null);
+    const actor=helperFundingScope(text)?'relative':resolvedFundingActor(text);
     if(hasConcreteNeed(text)&&actor!=='relative') return false;
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
@@ -404,7 +404,7 @@
     if(focus==='property_accessibility') return 'property';
     if(url.pathname.endsWith('company-pilot.html')) return 'company';
     const actor=safeToken(url.searchParams.get('actor_type'));
-    return {employee:'work',student:'study',association:'association',property_actor:'property',private_person:'economy',relative:'general',other:'general'}[actor]||'general';
+    return {employee:'work',student:'study',association:'association',property_actor:'property',private_person:'economy',relative:'relative',other:'general'}[actor]||'general';
   }
   function preserveConcreteFundingIntent(url){
     const text=composer?composer.value.trim():'';
