@@ -117,6 +117,11 @@ NEGATIVE_CONTROLS = [
         'text': 'Leverantören ska ha ansvarsförsäkring;\nEndast om anbudet lämnas elektroniskt ska filformatet vara PDF.',
         'right_conditional': True,
     },
+    {
+        'id': 'independent-usage-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nNär e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
 ]
 
 
