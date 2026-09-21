@@ -66,6 +66,8 @@ jobs:
         run: python scripts/test_procurement_expert_feedback_semantics.py
       - name: Composite requirement-row contracts
         run: python scripts/test_procurement_expert_composite_rows.py
+      - name: Relation-group segmentation contracts
+        run: python scripts/test_procurement_expert_relation_groups.py
       - name: Commercial currency version contracts
         run: python scripts/test_procurement_expert_currency_versions.py
       - name: Source/link ingress boundary
