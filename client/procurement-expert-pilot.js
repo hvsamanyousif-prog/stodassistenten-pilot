@@ -17,7 +17,7 @@ const SCORE_DIMS=[
  ['false_confidence','Tydlig osäkerhet']
 ];
 const state={sector:null,requirements:[],scores:{},sending:false,feedbackSubmitted:false,feedbackEpoch:0,controller:null};
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
 function answerPublicationTiming(line){
  const t=normalized(line);
