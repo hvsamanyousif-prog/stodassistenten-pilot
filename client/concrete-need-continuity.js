@@ -64,7 +64,7 @@ function genderedPartnerPronounMatches(text,contextText){
 
 function introducesInterveningSwedishPersonReference(text){
  const value=String(text||'');
- return /\b(?:hans|hennes|hens)\s+(?:mamma|mor|pappa|far|förälder|syster|bror|son|dotter|barn|partner|sambo|make|maka|vän|väninna|kollega|chef|läkare|handläggare)\b/i.test(value);
+ return /\b(?:(?:hans|hennes|hens)|(?:min|mitt|mina))\s+(?:mamma|mor|pappa|far|förälder|syster|bror|son|dotter|barn|partner|sambo|make|maka|vän|väninna|kollega|chef|läkare|handläggare)\b/i.test(value);
 }
 
 function pronounMatchesTarget(text,target,contextText=''){
@@ -259,6 +259,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.12',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.13',page});
 }
 })(window);
