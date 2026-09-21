@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Holdout browser regression for unknown adult/child assistance source truth.
+
+This reuses the registered assistance browser harness but restricts it to the
+`Vet inte / vill börja brett` family. The user may remain unsure about whether
+the helped person should follow the adult or child route, but the product must
+not hide the common LSS condition or the fact that target-specific conditions
+remain unresolved. Both relevant Försäkringskassan source paths must stay
+reachable. This is browser/source-boundary evidence only.
+"""
+
+from __future__ import annotations
+
+import test_assistance_focus_source_boundary_browser as base
+
+
+base.CASES = [
+    {
+        "id": "sv-unsure-who-source-boundary",
+        "lang": "sv",
+        "who": "Vet inte / vill börja brett",
+        "need": "Ja – hygien, toalett, måltider, på- och avklädning, kommunikation, andning eller löpande medicinskt stöd",
+        "extent": "Kan vara mer än 20 timmar för grundläggande behov",
+        "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
+        "tokens": ("LSS", "vuxen", "barn", "inte fastställt"),
+    },
+    {
+        "id": "ar-unsure-who-source-boundary",
+        "lang": "ar",
+        "who": "لا أعرف / أريد البدء بشكل عام",
+        "need": "نعم – النظافة أو المرحاض أو الوجبات أو اللباس أو التواصل أو التنفس أو دعم طبي مستمر",
+        "extent": "قد تتجاوز 20 ساعة للاحتياجات الأساسية",
+        "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
+        "tokens": ("LSS", "بالغ", "طفل", "لم يحدد"),
+    },
+    {
+        "id": "fa-unsure-who-source-boundary",
+        "lang": "fa",
+        "who": "نمی‌دانم / گسترده شروع می‌کنم",
+        "need": "بله – بهداشت، توالت، غذا، لباس، ارتباط، تنفس یا حمایت پزشکی مستمر",
+        "extent": "ممکن است بیش از ۲۰ ساعت برای نیازهای اساسی باشد",
+        "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
+        "tokens": ("LSS", "بزرگسال", "کودک", "مشخص نکرده"),
+    },
+]
+
+
+_original_run_case = base.run_case
+
+
+def run_case(browser, base_url: str, case: dict, width: int) -> dict:
+    # The base harness validates language, interaction, no guarantee language,
+    # no horizontal overflow and one controlling source. This holdout requires
+    # both target-specific source paths because the user explicitly chose an
+    # unknown target.
+    first_source_case = dict(case)
+    first_source_case["source"] = case["sources"][0]
+    result = _original_run_case(browser, base_url, first_source_case, width)
+
+    page = browser.new_page(viewport={"width": width, "height": 900})
+    page.set_default_timeout(5000)
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(
+            f"{base_url}/person-pilot.html?actor_type=private_person&focus=assistance&lang={case['lang']}",
+            wait_until="load",
+        )
+        page.get_by_role("button", name=case["who"], exact=True).click()
+        page.get_by_role("button", name=case["need"], exact=True).click()
+        page.get_by_role("button", name=case["extent"], exact=True).click()
+        base.require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
+        for source_url in case["sources"]:
+            base.require(
+                page.locator(f'a[href="{source_url}"]').count() >= 1,
+                f"{case['id']}@{width}: target-specific source missing: {source_url}",
+            )
+        text = page.locator("body").inner_text()
+        for token in case["tokens"]:
+            base.require(token in text, f"{case['id']}@{width}: missing unsure-source token {token!r}")
+        base.require(
+            page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
+            f"{case['id']}@{width}: horizontal overflow",
+        )
+        result["sources"] = list(case["sources"])
+        return result
+    finally:
+        page.close()
+
+
+base.run_case = run_case
+
+
+if __name__ == "__main__":
+    raise SystemExit(base.main())
