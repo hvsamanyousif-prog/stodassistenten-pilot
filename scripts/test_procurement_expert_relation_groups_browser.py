@@ -48,6 +48,18 @@ RELATION_CASES = [
         'id': 'numbered-i-de-fall-stays-bound',
         'text': '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
     },
+    {
+        'id': 'repeated-modal-annars-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och annars ska leverantören ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'semicolon-annars-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; annars ska leverantören ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'numbered-annars-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) annars ska leverantören ha ISO 9001-certifikat.',
+    },
 ]
 
 NEGATIVE_CONTROLS = [
