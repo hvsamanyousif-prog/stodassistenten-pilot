@@ -36,6 +36,18 @@ RELATION_CASES = [
         'id': 'numbered-for-det-fall-stays-bound',
         'text': '1) Leverantören ska ha ansvarsförsäkring 2) för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
     },
+    {
+        'id': 'repeated-modal-i-de-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'semicolon-i-de-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'numbered-i-de-fall-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
 ]
 
 NEGATIVE_CONTROLS = [
