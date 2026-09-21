@@ -108,6 +108,8 @@ def run_negative_control(page, case):
     check(page.locator('[data-ev]').count() == 2, f"{case['id']}: safe independent requirements were swallowed into one group")
     overview = page.locator('#priorityOverview').inner_text().lower()
     check('flera materiella krav' not in overview, f"{case['id']}: safely segmented rows retained composite warning")
+    page.locator('#openReviewBtn').click()
+    expect(page.locator('#requirements')).to_be_visible()
     page.locator('[data-ev="1"]').select_option('yes')
     check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
 
