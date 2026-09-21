@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.45';
+const APP_VERSION='procurement-expert-0.2.46';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -316,6 +316,10 @@ function addFlag(row,code,label){
 function formalCrossLineCondition(part){
  return /^(?:i de fall\b|i förekommande fall\b|förutsatt att\b|för det fall(?: att)?\b|under förutsättning att\b)/.test(normalized(part));
 }
+function materialBoundCrossLineCondition(part){
+ const t=normalized(part);
+ return formalCrossLineCondition(t)||/^vid användning av\b/.test(t);
+}
 function sharesCrossLineMaterialFamily(leftText,rightText){
  const left=normalized(leftText),right=normalized(rightText);
  const families=[
@@ -342,7 +346,7 @@ function crossLineRelationPair(left,right){
  if(!semicolonContinuation)return false;
  const standaloneOwnConditional=(/^om\b/.test(rightText)&&!/^om\s+inte\b/.test(rightText))||/^endast om\b/.test(rightText)||relationLeadingUsageEvent(rightText);
  if(standaloneOwnConditional)return false;
- if(formalCrossLineCondition(rightText))return sharesCrossLineMaterialFamily(left.text,right.text);
+ if(materialBoundCrossLineCondition(rightText))return sharesCrossLineMaterialFamily(left.text,right.text);
  return relationLeadingGroup(right.text,true);
 }
 function lotScope(line){
