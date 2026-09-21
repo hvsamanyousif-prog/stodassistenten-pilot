@@ -80,6 +80,13 @@ for(const [label,rightText] of pairedFormalCrossLine){
   assert.equal(p.summarize(rows).uncertain.length,2,`${label}: evidence=yes must not hide a materially linked formal relation`);
 }
 
+const pairedUsageCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nVid användning av underleverantör ska underleverantören ha ansvarsförsäkring.');
+assert.equal(pairedUsageCrossLine.length,2,'Vid användning av: materially linked cross-line condition must preserve two source rows');
+assert.deepEqual(pairedUsageCrossLine.map(r=>r.sourceLine),[1,2],'Vid användning av: materially linked condition must preserve source positions');
+assert.ok(pairedUsageCrossLine.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'Vid användning av: same-family condition must retain two-sided relation warning');
+pairedUsageCrossLine.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(pairedUsageCrossLine).uncertain.length,2,'Vid användning av: evidence=yes must not hide a materially linked relation');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
@@ -107,6 +114,14 @@ independentUsageConditionalCrossLine[0].evidence='yes';
 assert.ok(!p.prioritizeReviewRows(independentUsageConditionalCrossLine).some(r=>r.id===independentUsageConditionalCrossLine[0].id),'reviewed independent left row must leave priority review when only the right row has its own usage condition');
 assert.ok(independentUsageConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right standalone usage-conditional row must retain its own source-risk warning');
 
+const independentVidUsageCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nVid användning av e-faktura ska fakturan följa Peppol BIS.');
+assert.equal(independentVidUsageCrossLine.length,2,'Vid användning av: independent semicolon/newline condition must remain two source-traceable rows');
+assert.deepEqual(independentVidUsageCrossLine.map(r=>r.sourceLine),[1,2],'Vid användning av: independent condition must preserve physical source positions');
+assert.ok(independentVidUsageCrossLine.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'Vid användning av: unrelated standalone condition must not create false two-sided dependency');
+independentVidUsageCrossLine[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentVidUsageCrossLine).some(r=>r.id===independentVidUsageCrossLine[0].id),'Vid användning av: reviewed independent left row must leave priority review');
+assert.ok(independentVidUsageCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'Vid användning av: right standalone condition must retain its own source-risk warning');
+
 const standaloneFormalCrossLine=[
   ['I de fall','I de fall e-faktura används ska fakturan följa Peppol BIS.'],
   ['I förekommande fall','I förekommande fall e-faktura används ska fakturan följa Peppol BIS.'],
@@ -125,7 +140,7 @@ for(const [label,rightText] of standaloneFormalCrossLine){
   assert.ok(rows[1].flags.some(f=>f.code==='conditional_or_exception'),`${label}: right formal conditional row must retain its own source-risk warning`);
 }
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+2} cross-line relation fixtures + ${standaloneFormalCrossLine.length+4} negative controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+3} cross-line relation fixtures + ${standaloneFormalCrossLine.length+5} negative controls passed`);
 '''
 
 
