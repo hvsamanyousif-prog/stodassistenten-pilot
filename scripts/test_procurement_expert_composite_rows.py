@@ -158,6 +158,16 @@ assert.equal(relationBoundParenthesized.length,1,'parenthesized enumerated alter
 assert.ok(relationBoundParenthesized[0].flags.some(f=>f.code==='conditional_or_exception'),'parenthesized enumerated alternative must retain relation warning');
 assert.ok(relationBoundParenthesized[0].flags.some(f=>f.code==='multi_requirement_line'),'parenthesized enumerated alternative must remain fail-closed');
 
+const eitherOrEnumerated=p.splitRequirements('1) Leverantören ska antingen ha ISO 9001-certifikat 2) eller visa ett likvärdigt certifikat.');
+assert.equal(eitherOrEnumerated.length,1,'enumerated either/or relation must stay relation-bound and unsplit');
+assert.ok(eitherOrEnumerated[0].flags.some(f=>f.code==='conditional_or_exception'),'enumerated either/or relation must retain relation warning');
+assert.ok(eitherOrEnumerated[0].flags.some(f=>f.code==='multi_requirement_line'),'enumerated either/or relation must remain fail-closed');
+
+const eitherOrParenthesized=p.splitRequirements('(1) Leverantören ska antingen ha ISO 9001-certifikat (2) eller visa ett likvärdigt certifikat.');
+assert.equal(eitherOrParenthesized.length,1,'parenthesized either/or relation must stay relation-bound and unsplit');
+assert.ok(eitherOrParenthesized[0].flags.some(f=>f.code==='conditional_or_exception'),'parenthesized either/or relation must retain relation warning');
+assert.ok(eitherOrParenthesized[0].flags.some(f=>f.code==='multi_requirement_line'),'parenthesized either/or relation must remain fail-closed');
+
 const simple=p.splitRequirements('Leverantören ska ha ansvarsförsäkring.')[0];
 assert.ok(!simple.flags.some(f=>f.code==='multi_requirement_line'),'single material requirement must not fabricate composite risk');
 
@@ -219,7 +229,7 @@ assert.ok(!narrative.flags.some(f=>f.code==='multi_requirement_line'),'non-norma
 const semicolonNarrative=p.splitRequirements('Leverantören beskriver organisationen; informationen används som bakgrund.')[0];
 assert.ok(!semicolonNarrative.flags.some(f=>f.code==='multi_requirement_line'),'non-normative semicolon prose must not fabricate composite risk');
 
-console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 23 contrastive controls passed`);
+console.log(`Composite requirement-row contracts: ${cases.length} conjunction-bound composite fixtures + ${explicitBoundaryCases.length} explicit-boundary segmentation fixtures + ${relationalBoundaryCases.length} relational-boundary controls + ${repeatedModalBoundaryCases.length} repeated-modal segmentation fixtures + ${enumeratedBoundaryCases.length} enumerated-list segmentation fixtures + 25 contrastive controls passed`);
 '''
 
 
