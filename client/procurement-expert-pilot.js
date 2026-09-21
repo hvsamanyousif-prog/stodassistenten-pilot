@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.24';
+const APP_VERSION='procurement-expert-0.2.25';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -241,7 +241,7 @@ function enumeratedMaterialSegments(line){
  if(markers.length<2||markers[0].index!==0)return [raw];
  const parts=markers.map((marker,index)=>raw.slice(marker.index,index+1<markers.length?markers[index+1].index:raw.length).trim()).filter(Boolean);
  const material=/\b(?:ska|skall|måste|krävs)\b|\bobligatorisk\b|sista anbudsdag|anbud.*tillhanda|frågor?.*(?:senast|sista dag)|giltighetstid för anbud|tilldelningskriter|utvärder|\bmervärde\b|\bpoäng\b|anbudspris|prisbilaga|timpris|fast pris|referensuppdrag|ansvarsförsäkring|certifikat|behörighet/;
- const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|i förekommande fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
+ const relationalStart=/^(?:men\b|dock\b|förutsatt att\b|om\b|undantag\b|alternativt\b|eller\b|i förekommande fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b)/;
  const relationBound=parts.slice(1).some(part=>relationalStart.test(normalized(part).replace(/^(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s*/,'')));
  return parts.every(part=>material.test(normalized(part)))&&!relationBound?parts:[raw];
 }
