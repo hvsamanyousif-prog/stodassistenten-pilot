@@ -74,7 +74,15 @@ independentConditionalCrossLine[0].evidence='yes';
 assert.ok(!p.prioritizeReviewRows(independentConditionalCrossLine).some(r=>r.id===independentConditionalCrossLine[0].id),'reviewed independent left row must be able to leave priority review');
 assert.ok(independentConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right conditional row must retain its own source-risk warning');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 6 negative/cross-line controls passed`);
+const independentExclusiveConditionalCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nEndast om anbudet lämnas elektroniskt ska filformatet vara PDF.');
+assert.equal(independentExclusiveConditionalCrossLine.length,2,'independent exclusive conditional cross-line requirements must remain two source-traceable rows');
+assert.deepEqual(independentExclusiveConditionalCrossLine.map(r=>r.sourceLine),[1,2],'independent exclusive conditional cross-line case must preserve physical source positions');
+assert.ok(independentExclusiveConditionalCrossLine.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'semicolon plus standalone Endast om next row must not create false two-sided dependency');
+independentExclusiveConditionalCrossLine[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentExclusiveConditionalCrossLine).some(r=>r.id===independentExclusiveConditionalCrossLine[0].id),'reviewed independent left row must leave priority review when only the right row has an Endast om condition');
+assert.ok(independentExclusiveConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right Endast om row must retain its own source-risk warning');
+
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 7 negative/cross-line controls passed`);
 '''
 
 
