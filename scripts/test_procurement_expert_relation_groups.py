@@ -67,7 +67,8 @@ const pairedFormalCrossLine=[
   ['I de fall','I de fall underleverantör används ska underleverantören ha ansvarsförsäkring.'],
   ['Förutsatt att','Förutsatt att underleverantör används ska underleverantören ha ansvarsförsäkring.'],
   ['För det fall att','För det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.'],
-  ['För det fall','För det fall underleverantör används ska underleverantören ha ansvarsförsäkring.']
+  ['För det fall','För det fall underleverantör används ska underleverantören ha ansvarsförsäkring.'],
+  ['Under förutsättning att','Under förutsättning att underleverantör används ska underleverantören ha ansvarsförsäkring.']
 ];
 for(const [label,rightText] of pairedFormalCrossLine){
   const rows=p.splitRequirements(`Leverantören ska ha ansvarsförsäkring;\n${rightText}`);
@@ -109,7 +110,8 @@ const standaloneFormalCrossLine=[
   ['I de fall','I de fall e-faktura används ska fakturan följa Peppol BIS.'],
   ['Förutsatt att','Förutsatt att anbudet lämnas elektroniskt ska filformatet vara PDF.'],
   ['För det fall att','För det fall att e-faktura används ska fakturan följa Peppol BIS.'],
-  ['För det fall','För det fall e-faktura används ska fakturan följa Peppol BIS.']
+  ['För det fall','För det fall e-faktura används ska fakturan följa Peppol BIS.'],
+  ['Under förutsättning att','Under förutsättning att anbudet lämnas elektroniskt ska filformatet vara PDF.']
 ];
 for(const [label,rightText] of standaloneFormalCrossLine){
   const rows=p.splitRequirements(`Leverantören ska ha ansvarsförsäkring;\n${rightText}`);
