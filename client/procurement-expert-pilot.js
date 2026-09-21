@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.49';
+const APP_VERSION='procurement-expert-0.2.50';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -328,7 +328,7 @@ function formalCrossLineCondition(part){
 }
 function materialBoundCrossLineCondition(part){
  const t=normalized(part);
- return formalCrossLineCondition(t)||/^vid användning av\b/.test(t)||/^undantag från kravet på(?:\s|$)/.test(t);
+ return formalCrossLineCondition(t)||/^vid användning av\b/.test(t)||/^undantag från kravet på(?:\s|$)/.test(t)||/^med undantag för(?:\s|$)/.test(t);
 }
 function sharesCrossLineMaterialFamily(leftText,rightText){
  const left=normalized(leftText),right=normalized(rightText);
