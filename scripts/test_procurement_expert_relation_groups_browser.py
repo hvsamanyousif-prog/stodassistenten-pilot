@@ -83,6 +83,11 @@ NEGATIVE_CONTROLS = [
         'id': 'independent-punctuation-still-segments',
         'text': 'Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.',
     },
+    {
+        'id': 'descriptive-when-used-is-not-source-risk',
+        'text': 'Leverantören ska i säkerhetsbeskrivningen redovisa när systemet används i drift.',
+        'single': True,
+    },
 ]
 
 
@@ -141,13 +146,20 @@ def run_relation_case(page, case):
 
 def run_negative_control(page, case):
     start_case(page, case['text'])
-    check(page.locator('[data-ev]').count() == 2, f"{case['id']}: safe independent requirements were swallowed into one group")
+    expected_controls = 1 if case.get('single') else 2
+    check(page.locator('[data-ev]').count() == expected_controls, f"{case['id']}: safe ordinary requirement structure was mis-segmented")
     overview = page.locator('#priorityOverview').inner_text().lower()
-    check('flera materiella krav' not in overview, f"{case['id']}: safely segmented rows retained composite warning")
+    check('villkor eller undantag' not in overview, f"{case['id']}: ordinary content received a false relation warning")
+    check('flera materiella krav' not in overview, f"{case['id']}: safely segmented/ordinary rows retained composite warning")
     page.locator('#openReviewBtn').click()
     expect(page.locator('#requirements')).to_be_visible()
     page.locator('[data-ev="1"]').select_option('yes')
-    check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
+    if case.get('single'):
+        after = page.locator('#priorityOverview').inner_text().lower()
+        check('villkor eller undantag' not in after, f"{case['id']}: false relation warning remained after review")
+        check('alla kravrader är genomgångna av dig' in after, f"{case['id']}: reviewed ordinary requirement remained falsely blocked")
+    else:
+        check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
 
 
 def run_case(page, case, relation):
