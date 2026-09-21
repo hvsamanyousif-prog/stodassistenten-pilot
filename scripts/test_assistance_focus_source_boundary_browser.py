@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Browser regression for primary-source boundaries in the shared assistance journey.
 
-The test verifies that a user who reaches the Försäkringskassan path is shown
-material source conditions that this three-question pilot has not established.
-It does not determine eligibility, persist a case, or claim physical-device proof.
+The test starts from the built person journey reached by the shared start-page
+assistance route and verifies that a Försäkringskassan path exposes material
+source conditions that this three-question pilot has not established. It does
+not determine eligibility, persist a case, or claim physical-device proof.
 """
 
 from __future__ import annotations
@@ -110,10 +111,14 @@ def serve_site(site: Path):
 
 def run_case(browser, base_url: str, case: dict, width: int) -> dict:
     page = browser.new_page(viewport={"width": width, "height": 900})
+    page.set_default_timeout(5000)
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(f"{base_url}/index.html?lang={case['lang']}&focus=assistance", wait_until="load")
+        page.goto(
+            f"{base_url}/person-pilot.html?actor_type=private_person&focus=assistance&lang={case['lang']}",
+            wait_until="load",
+        )
         page.get_by_role("button", name=case["who"], exact=True).click()
         page.get_by_role("button", name=case["need"], exact=True).click()
         page.get_by_role("button", name=case["extent"], exact=True).click()
