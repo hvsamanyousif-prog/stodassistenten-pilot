@@ -229,7 +229,7 @@ function repeatedModalMaterialSignal(part){
 }
 function relationLeadingUsageEvent(part){
  const t=normalized(part);
- return /^när\b[^.;]{0,80}\b(?:används|anlitas|åberopas)\b/.test(t);
+ return /^när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t);
 }
 const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i de fall\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b|vid användning av\b)/;
 function relationLeadingGroup(part,bindStandaloneOr=false){
@@ -282,7 +282,7 @@ function structureFlags(line){
  if(/\bbilaga\b|\bappendix\b|\bannex\b/.test(t))flags.push({code:'attachment_reference',label:'Bilagehänvisning – bilagans innehåll är inte analyserat här.'});
  const boundedConditionalOm=/^om\b/.test(t)||/\b(?:och|samt)\s+om\b/.test(t)||/[.;]\s*om\b/.test(t);
  const boundedUsageConditional=/^vid användning av\b/.test(t)||/\b(?:och|samt)\s+vid användning av\b/.test(t)||/[.;]\s*vid användning av\b/.test(t);
- const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}\b(?:används|anlitas|åberopas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}\b(?:används|anlitas|åberopas)\b/.test(t);
+ const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t);
  if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom|annars)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
