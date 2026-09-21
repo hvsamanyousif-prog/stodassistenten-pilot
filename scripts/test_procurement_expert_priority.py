@@ -66,6 +66,21 @@ const attachmentPriority=p.prioritizeReviewRows(attachmentRows);
 assert.equal(attachmentPriority.length,1);
 assert.ok(attachmentPriority[0].flags.some(f=>f.code==='attachment_reference'));
 console.log('PASS unresolved attachment risk remains prioritized after manual evidence marking');
+
+const linkedExceptionRows=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nMed undantag för ansvarsförsäkring som godtas som likvärdig gäller försäkringskravet enligt underlaget.');
+assert.equal(linkedExceptionRows.length,2);
+assert.ok(linkedExceptionRows.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'same-family Med undantag för must remain linked across a physical line break');
+assert.ok(linkedExceptionRows[1].flags.some(f=>f.code==='conditional_or_exception'),'right exception row must retain visible source risk');
+linkedExceptionRows.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(linkedExceptionRows).uncertain.length,2,'same-family exception must remain uncertain after manual evidence marks');
+
+const independentExceptionRows=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nMed undantag för e-faktura får fakturan skickas som PDF vid betalning med betalkort.');
+assert.equal(independentExceptionRows.length,2);
+assert.ok(independentExceptionRows.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'unrelated Med undantag för must not contaminate the previous source row');
+independentExceptionRows[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentExceptionRows).some(r=>r.id===independentExceptionRows[0].id),'reviewed unrelated left row must leave priority review');
+assert.ok(independentExceptionRows[1].flags.some(f=>f.code==='conditional_or_exception'),'independent right exception row must keep its own warning');
+console.log('PASS cross-line Med undantag för requires material continuity before linking both source rows');
 '''
     subprocess.run(['node', '-e', node_test], cwd=ROOT, check=True)
     print('procurement priority regression: OK')
