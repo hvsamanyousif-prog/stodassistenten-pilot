@@ -79,6 +79,10 @@ CROSS_LINE_CASES = [
         'id': 'cross-line-nar-aberopas-remains-linked',
         'text': 'Leverantören ska ha ansvarsförsäkring och\nnär underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
     },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nför det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
 ]
 
 NEGATIVE_CONTROLS = [
@@ -98,6 +102,10 @@ NEGATIVE_CONTROLS = [
     {
         'id': 'independent-cross-line-stays-independent',
         'text': 'Leverantören ska ha ansvarsförsäkring.\nLeverantören ska ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'independent-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nLeverantören ska ha ISO 9001-certifikat.',
     },
 ]
 
