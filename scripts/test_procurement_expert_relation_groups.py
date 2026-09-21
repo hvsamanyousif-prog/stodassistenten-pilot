@@ -20,6 +20,9 @@ const relationBoundCases=[
   'Leverantören ska ha ansvarsförsäkring och i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
   'Leverantören ska ha ansvarsförsäkring; i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
   '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+  'Leverantören ska ha ansvarsförsäkring och när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+  'Leverantören ska ha ansvarsförsäkring; när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+  '1) Leverantören ska ha ansvarsförsäkring 2) när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
   'Leverantören ska ha ansvarsförsäkring och annars ska leverantören ha ISO 9001-certifikat.',
   'Leverantören ska ha ansvarsförsäkring; annars ska leverantören ha ISO 9001-certifikat.',
   '1) Leverantören ska ha ansvarsförsäkring 2) annars ska leverantören ha ISO 9001-certifikat.'
