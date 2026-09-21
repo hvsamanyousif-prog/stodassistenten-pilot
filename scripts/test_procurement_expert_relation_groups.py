@@ -82,7 +82,15 @@ independentExclusiveConditionalCrossLine[0].evidence='yes';
 assert.ok(!p.prioritizeReviewRows(independentExclusiveConditionalCrossLine).some(r=>r.id===independentExclusiveConditionalCrossLine[0].id),'reviewed independent left row must leave priority review when only the right row has an Endast om condition');
 assert.ok(independentExclusiveConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right Endast om row must retain its own source-risk warning');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 7 negative/cross-line controls passed`);
+const independentUsageConditionalCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nNär e-faktura används ska fakturan följa Peppol BIS.');
+assert.equal(independentUsageConditionalCrossLine.length,2,'standalone usage-conditional cross-line requirements must remain two source-traceable rows');
+assert.deepEqual(independentUsageConditionalCrossLine.map(r=>r.sourceLine),[1,2],'standalone usage-conditional cross-line case must preserve physical source positions');
+assert.ok(independentUsageConditionalCrossLine.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'semicolon plus standalone När ... används next row must not create false two-sided dependency');
+independentUsageConditionalCrossLine[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentUsageConditionalCrossLine).some(r=>r.id===independentUsageConditionalCrossLine[0].id),'reviewed independent left row must leave priority review when only the right row has its own usage condition');
+assert.ok(independentUsageConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right standalone usage-conditional row must retain its own source-risk warning');
+
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 8 negative/cross-line controls passed`);
 '''
 
 
