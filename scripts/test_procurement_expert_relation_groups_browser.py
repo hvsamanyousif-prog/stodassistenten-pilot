@@ -107,6 +107,11 @@ NEGATIVE_CONTROLS = [
         'id': 'independent-semicolon-cross-line-stays-independent',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nLeverantören ska ha ISO 9001-certifikat.',
     },
+    {
+        'id': 'independent-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nOm anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
 ]
 
 
@@ -184,16 +189,23 @@ def run_negative_control(page, case):
     expected_controls = 1 if case.get('single') else 2
     check(page.locator('[data-ev]').count() == expected_controls, f"{case['id']}: safe ordinary requirement structure was mis-segmented")
     overview = page.locator('#priorityOverview').inner_text().lower()
-    check('villkor eller undantag' not in overview, f"{case['id']}: ordinary content received a false relation warning")
+    if case.get('right_conditional'):
+        check('villkor eller undantag' in overview, f"{case['id']}: right row must keep its own conditional warning")
+    else:
+        check('villkor eller undantag' not in overview, f"{case['id']}: ordinary content received a false relation warning")
     check('radbrytningen' not in overview, f"{case['id']}: independent rows received a false cross-line warning")
     check('flera materiella krav' not in overview, f"{case['id']}: safely segmented/ordinary rows retained composite warning")
     page.locator('#openReviewBtn').click()
     expect(page.locator('#requirements')).to_be_visible()
     page.locator('[data-ev="1"]').select_option('yes')
+    after = page.locator('#priorityOverview').inner_text().lower()
     if case.get('single'):
-        after = page.locator('#priorityOverview').inner_text().lower()
         check('villkor eller undantag' not in after, f"{case['id']}: false relation warning remained after review")
         check('alla kravrader är genomgångna av dig' in after, f"{case['id']}: reviewed ordinary requirement remained falsely blocked")
+    elif case.get('right_conditional'):
+        check('källa rad 1' not in after, f"{case['id']}: reviewed independent left row remained falsely prioritized")
+        check('källa rad 2' in after, f"{case['id']}: right conditional row disappeared from priority review")
+        check('villkor eller undantag' in after, f"{case['id']}: right conditional warning disappeared after left-row review")
     else:
         check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
 
