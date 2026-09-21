@@ -71,6 +71,13 @@ CASES = [
         'segmented':True,
     },
     {
+        'id':'repeated-modal-ordinary-vid-context-still-segments-independently',
+        'text':'Leverantören ska ha ansvarsförsäkring och leverantören ska ha ISO 9001-certifikat vid avtalsstart.',
+        'expected_rows':2,
+        'expect_composite':False,
+        'segmented':True,
+    },
+    {
         'id':'same-line-lettered-list-segments-independently',
         'text':'a) Leverantören ska ha ansvarsförsäkring b) Leverantören ska ha ISO 9001-certifikat.',
         'expected_rows':2,
@@ -122,6 +129,7 @@ CASES = [
     {'id':'semicolon-either-or-stays-relational-fail-closed','text':'Leverantören ska antingen ha ISO 9001-certifikat; eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'sentence-either-or-stays-relational-fail-closed','text':'Leverantören ska antingen ha ISO 9001-certifikat. Eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'repeated-modal-conditional-stays-relational-fail-closed','text':'Leverantören ska ha ansvarsförsäkring och om underleverantör används ska underleverantören ha ansvarsförsäkring.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
+    {'id':'repeated-modal-usage-conditional-stays-relational-fail-closed','text':'Leverantören ska ha ansvarsförsäkring och vid användning av underleverantör ska underleverantören ha ansvarsförsäkring.','category':'qualification','expected_rows':1,'expect_composite':True,'expect_relation':'villkor eller undantag'},
     {'id':'shared-modal-question-plus-bid-deadline-stays-fail-closed','text':'Frågor ska lämnas senast den 20 oktober och anbud senast den 31 oktober.','category':'deadline','expected_rows':1,'expect_composite':True},
     {'id':'shared-modal-participation-application-plus-bid-deadline-stays-fail-closed','text':'Anbudsansökan ska lämnas senast den 10 oktober och anbud senast den 31 oktober.','category':'deadline','expected_rows':1,'expect_composite':True},
     {'id':'single-clause-insurance-plus-certificate-stays-fail-closed','text':'Leverantören ska ha ansvarsförsäkring och ISO 9001-certifikat.','category':'qualification','expected_rows':1,'expect_composite':True},
