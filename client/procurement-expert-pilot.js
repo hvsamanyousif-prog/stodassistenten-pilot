@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.34';
+const APP_VERSION='procurement-expert-0.2.35';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -283,7 +283,7 @@ function structureFlags(line){
  const boundedConditionalOm=/^om\b/.test(t)||/\b(?:och|samt)\s+om\b/.test(t)||/[.;]\s*om\b/.test(t);
  const boundedUsageConditional=/^vid användning av\b/.test(t)||/\b(?:och|samt)\s+vid användning av\b/.test(t)||/[.;]\s*vid användning av\b/.test(t);
  const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}\b(?:används|anlitas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}\b(?:används|anlitas)\b/.test(t);
- if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
+ if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom|annars)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
  if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
