@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.48';
+const APP_VERSION='procurement-expert-0.2.49';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -17,7 +17,7 @@ const SCORE_DIMS=[
  ['false_confidence','Tydlig osäkerhet']
 ];
 const state={sector:null,requirements:[],scores:{},sending:false,feedbackSubmitted:false,feedbackEpoch:0,controller:null};
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));}
 function normalized(line){return String(line||'').toLowerCase().replace(/\s+/g,' ').trim();}
 function answerPublicationTiming(line){
  const t=normalized(line);
@@ -231,10 +231,18 @@ function relationLeadingUsageEvent(part){
  const t=normalized(part);
  return /^när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t);
 }
-const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i de fall\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|förutom\b|annars\b|vid användning av\b)/;
+function forutomUsage(part){
+ const t=normalized(part);
+ if(!/^förutom\b/.test(t))return 'none';
+ if(/^förutom\s+(?:när|om|vid|i de fall|i förekommande fall|för det fall(?: att)?|under förutsättning att)\b/.test(t))return 'exceptive';
+ if(/^förutom\s+[^.;]{1,80}\s+(?:ska|skall|måste|kan|får)\s+(?:leverantören|leverantör|anbudsgivaren|anbudsgivare)\b/.test(t))return 'additive';
+ return 'ambiguous';
+}
+const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i de fall\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|annars\b|vid användning av\b)/;
 function relationLeadingGroup(part,bindStandaloneOr=false){
  const t=normalized(part);
- return RELATION_LEADING.test(t)||(bindStandaloneOr&&/^eller\b/.test(t))||relationLeadingUsageEvent(t);
+ const forutomKind=forutomUsage(t);
+ return RELATION_LEADING.test(t)||(forutomKind==='exceptive'||forutomKind==='ambiguous')||(bindStandaloneOr&&/^eller\b/.test(t))||relationLeadingUsageEvent(t);
 }
 function repeatedModalMaterialSegments(line){
  const raw=String(line||'').trim();
@@ -283,7 +291,9 @@ function structureFlags(line){
  const boundedConditionalOm=/^om\b/.test(t)||/\b(?:och|samt)\s+om\b/.test(t)||/[.;]\s*om\b/.test(t);
  const boundedUsageConditional=/^vid användning av\b/.test(t)||/\b(?:och|samt)\s+vid användning av\b/.test(t)||/[.;]\s*vid användning av\b/.test(t);
  const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t)||/(?:^|\s)(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s+när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t);
- if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|förutom|annars)\b/.test(t)||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
+ const forutomKind=forutomUsage(t);
+ const boundedForutomRisk=forutomKind==='exceptive'||forutomKind==='ambiguous';
+ if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|annars)\b/.test(t)||boundedForutomRisk||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
  if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
@@ -346,6 +356,9 @@ function crossLineRelationPair(left,right){
  if(!semicolonContinuation)return false;
  const standaloneOwnConditional=(/^om\b/.test(rightText)&&!/^om\s+inte\b/.test(rightText))||/^endast om\b/.test(rightText)||relationLeadingUsageEvent(rightText);
  if(standaloneOwnConditional)return false;
+ const forutomKind=forutomUsage(rightText);
+ if(forutomKind==='additive')return false;
+ if(forutomKind==='exceptive'||forutomKind==='ambiguous')return sharesCrossLineMaterialFamily(left.text,right.text);
  if(materialBoundCrossLineCondition(rightText))return sharesCrossLineMaterialFamily(left.text,right.text);
  return relationLeadingGroup(right.text,true);
 }
