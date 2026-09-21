@@ -115,6 +115,11 @@ CROSS_LINE_CASES = [
         'id': 'cross-line-semicolon-undantag-fran-kravet-remains-linked',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på ansvarsförsäkring gäller om leverantören kan visa likvärdig försäkring.',
     },
+    {
+        'id': 'cross-line-semicolon-forutom-exceptive-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutom när ett likvärdigt försäkringsbevis godtas gäller kravet på ansvarsförsäkring.',
+        'right_conditional': True,
+    },
 ]
 
 NEGATIVE_CONTROLS = [
@@ -163,6 +168,10 @@ NEGATIVE_CONTROLS = [
         'id': 'independent-undantag-fran-kravet-semicolon-cross-line-stays-independent',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på e-faktura gäller vid betalning med betalkort.',
         'right_conditional': True,
+    },
+    {
+        'id': 'additive-forutom-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutom e-faktura ska leverantören kunna skicka pappersfaktura vid behov.',
     },
     {
         'id': 'independent-i-de-fall-semicolon-cross-line-stays-independent',
@@ -259,6 +268,8 @@ def run_cross_line_case(page, case):
     page.locator('#openReviewBtn').click()
     full_review = page.locator('#requirements').inner_text().lower()
     check(full_review.count('radbrytningen') >= 2, f"{case['id']}: both review rows must carry cross-line warning")
+    if case.get('right_conditional'):
+        check('villkor eller undantag' in full_review, f"{case['id']}: exceptive right row must retain its own conditional warning")
     page.locator('[data-ev="1"]').select_option('yes')
     page.locator('[data-ev="2"]').select_option('yes')
     after = page.locator('#priorityOverview').inner_text().lower()
