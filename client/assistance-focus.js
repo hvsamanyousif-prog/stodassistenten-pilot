@@ -30,7 +30,7 @@
       broadTitle:'از شهرداری شروع کن و نوع حمایت مناسب را روشن کن',broadWhy:'اگر کمک بیشتر مربوط به نیازهای دیگر روزمره است یا معلوم نیست نیاز اساسی محسوب می‌شود، با بخش LSS/حمایت شهرداری محل سکونت شروع کن. محصول درباره حق دریافت حمایت تصمیم نمی‌گیرد.'
     }
   };
-  const currentLang=()=>assistanceCopy[document.documentElement.lang]?document.documentElement.lang:'sv';
+  const currentLang=()=>assistanceCopy[lang]?lang:'sv';
   const baseFlow=flow;
   const baseGetRows=getRows;
   const baseResults=results;
