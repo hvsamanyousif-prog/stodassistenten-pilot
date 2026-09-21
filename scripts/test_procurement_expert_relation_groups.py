@@ -87,6 +87,14 @@ assert.ok(pairedUsageCrossLine.every(r=>r.flags.some(f=>f.code==='cross_line_rel
 pairedUsageCrossLine.forEach(r=>{r.evidence='yes';});
 assert.equal(p.summarize(pairedUsageCrossLine).uncertain.length,2,'Vid användning av: evidence=yes must not hide a materially linked relation');
 
+const pairedExceptionCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på ansvarsförsäkring gäller om leverantören kan visa likvärdig försäkring.');
+assert.equal(pairedExceptionCrossLine.length,2,'Undantag från kravet på: materially linked exception must preserve two source rows');
+assert.deepEqual(pairedExceptionCrossLine.map(r=>r.sourceLine),[1,2],'Undantag från kravet på: materially linked exception must preserve source positions');
+assert.ok(pairedExceptionCrossLine.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'Undantag från kravet på: same-family exception must retain two-sided relation warning');
+assert.ok(pairedExceptionCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'Undantag från kravet på: right exception row must retain its own source-risk warning');
+pairedExceptionCrossLine.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(pairedExceptionCrossLine).uncertain.length,2,'Undantag från kravet på: evidence=yes must not hide a materially linked exception');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
@@ -122,6 +130,14 @@ independentVidUsageCrossLine[0].evidence='yes';
 assert.ok(!p.prioritizeReviewRows(independentVidUsageCrossLine).some(r=>r.id===independentVidUsageCrossLine[0].id),'Vid användning av: reviewed independent left row must leave priority review');
 assert.ok(independentVidUsageCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'Vid användning av: right standalone condition must retain its own source-risk warning');
 
+const independentExceptionCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på e-faktura gäller vid betalning med betalkort.');
+assert.equal(independentExceptionCrossLine.length,2,'Undantag från kravet på: unrelated exception must remain two source-traceable rows');
+assert.deepEqual(independentExceptionCrossLine.map(r=>r.sourceLine),[1,2],'Undantag från kravet på: unrelated exception must preserve physical source positions');
+assert.ok(independentExceptionCrossLine.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'Undantag från kravet på: unrelated standalone exception must not create false two-sided dependency');
+independentExceptionCrossLine[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentExceptionCrossLine).some(r=>r.id===independentExceptionCrossLine[0].id),'Undantag från kravet på: reviewed independent left row must leave priority review');
+assert.ok(independentExceptionCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'Undantag från kravet på: right exception row must retain its own source-risk warning');
+
 const standaloneFormalCrossLine=[
   ['I de fall','I de fall e-faktura används ska fakturan följa Peppol BIS.'],
   ['I förekommande fall','I förekommande fall e-faktura används ska fakturan följa Peppol BIS.'],
@@ -140,7 +156,7 @@ for(const [label,rightText] of standaloneFormalCrossLine){
   assert.ok(rows[1].flags.some(f=>f.code==='conditional_or_exception'),`${label}: right formal conditional row must retain its own source-risk warning`);
 }
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+3} cross-line relation fixtures + ${standaloneFormalCrossLine.length+5} negative controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} same-line relation fixtures + ${pairedFormalCrossLine.length+4} cross-line relation fixtures + ${standaloneFormalCrossLine.length+6} negative controls passed`);
 '''
 
 
