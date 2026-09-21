@@ -56,10 +56,17 @@ assert.ok(crossLineRelation.every(r=>r.flags.some(f=>f.code==='cross_line_relati
 crossLineRelation.forEach(r=>{r.evidence='yes';});
 assert.equal(p.summarize(crossLineRelation).uncertain.length,2,'manual evidence marks must not hide cross-line relation uncertainty');
 
+const crossLinePunctuationRelation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nför det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.');
+assert.equal(crossLinePunctuationRelation.length,2,'physical source lines separated after relation punctuation must remain traceable as two rows');
+assert.deepEqual(crossLinePunctuationRelation.map(r=>r.sourceLine),[1,2],'punctuation cross-line relation must preserve both physical source lines');
+assert.ok(crossLinePunctuationRelation.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'same semantic relation must stay visible when extraction moves the relation-leading clause to the next physical line after punctuation');
+crossLinePunctuationRelation.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(crossLinePunctuationRelation).uncertain.length,2,'manual evidence marks must not hide punctuation cross-line relation uncertainty');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 4 negative/cross-line controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 5 negative/cross-line controls passed`);
 '''
 
 
