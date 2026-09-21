@@ -74,6 +74,13 @@ RELATION_CASES = [
     },
 ]
 
+CROSS_LINE_CASES = [
+    {
+        'id': 'cross-line-nar-aberopas-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring och\nnär underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+]
+
 NEGATIVE_CONTROLS = [
     {
         'id': 'ordinary-temporal-context-still-segments',
@@ -87,6 +94,10 @@ NEGATIVE_CONTROLS = [
         'id': 'descriptive-when-used-is-not-source-risk',
         'text': 'Leverantören ska i säkerhetsbeskrivningen redovisa när systemet används i drift.',
         'single': True,
+    },
+    {
+        'id': 'independent-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring.\nLeverantören ska ha ISO 9001-certifikat.',
     },
 ]
 
@@ -144,12 +155,29 @@ def run_relation_case(page, case):
     check('alla kravrader är genomgångna av dig' not in after, f"{case['id']}: false calm completion after evidence=yes")
 
 
+def run_cross_line_case(page, case):
+    start_case(page, case['text'])
+    check(page.locator('[data-ev]').count() == 2, f"{case['id']}: physical source lines were not preserved as two review rows")
+    overview = page.locator('#priorityOverview').inner_text().lower()
+    check('radbrytningen' in overview, f"{case['id']}: cross-line semantic warning missing")
+    check('källa rad 1' in overview and 'källa rad 2' in overview, f"{case['id']}: both physical source-line traces must remain visible")
+    page.locator('#openReviewBtn').click()
+    full_review = page.locator('#requirements').inner_text().lower()
+    check(full_review.count('radbrytningen') >= 2, f"{case['id']}: both review rows must carry cross-line warning")
+    page.locator('[data-ev="1"]').select_option('yes')
+    page.locator('[data-ev="2"]').select_option('yes')
+    after = page.locator('#priorityOverview').inner_text().lower()
+    check('radbrytningen' in after, f"{case['id']}: evidence=yes hid cross-line uncertainty")
+    check('alla kravrader är genomgångna av dig' not in after, f"{case['id']}: false calm completion after reviewing both cross-line rows")
+
+
 def run_negative_control(page, case):
     start_case(page, case['text'])
     expected_controls = 1 if case.get('single') else 2
     check(page.locator('[data-ev]').count() == expected_controls, f"{case['id']}: safe ordinary requirement structure was mis-segmented")
     overview = page.locator('#priorityOverview').inner_text().lower()
     check('villkor eller undantag' not in overview, f"{case['id']}: ordinary content received a false relation warning")
+    check('radbrytningen' not in overview, f"{case['id']}: independent rows received a false cross-line warning")
     check('flera materiella krav' not in overview, f"{case['id']}: safely segmented/ordinary rows retained composite warning")
     page.locator('#openReviewBtn').click()
     expect(page.locator('#requirements')).to_be_visible()
@@ -162,9 +190,11 @@ def run_negative_control(page, case):
         check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
 
 
-def run_case(page, case, relation):
-    if relation:
+def run_case(page, case, kind):
+    if kind == 'relation':
         run_relation_case(page, case)
+    elif kind == 'cross_line':
+        run_cross_line_case(page, case)
     else:
         run_negative_control(page, case)
     sizes = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')
@@ -174,7 +204,11 @@ def run_case(page, case, relation):
 results = []
 browser_version = None
 harness_error = None
-all_cases = [(case, True) for case in RELATION_CASES] + [(case, False) for case in NEGATIVE_CONTROLS]
+all_cases = (
+    [(case, 'relation') for case in RELATION_CASES]
+    + [(case, 'cross_line') for case in CROSS_LINE_CASES]
+    + [(case, 'negative') for case in NEGATIVE_CONTROLS]
+)
 expected_runs = len(VIEWPORTS) * len(all_cases)
 try:
     with sync_playwright() as p:
@@ -185,14 +219,14 @@ try:
         browser_version = browser.version
         try:
             for viewport in VIEWPORTS:
-                for case, relation in all_cases:
+                for case, kind in all_cases:
                     context = None
                     try:
                         context = browser.new_context(viewport=viewport, reduced_motion='reduce')
                         page = context.new_page()
                         page.set_default_timeout(3000)
                         unexpected, errors = install_offline(page, context)
-                        run_case(page, case, relation)
+                        run_case(page, case, kind)
                         check(not errors, 'JavaScript errors: ' + str(errors))
                         check(not unexpected, 'Unexpected external requests: ' + str(unexpected))
                         results.append({'case': case['id'], 'width': viewport['width'], 'status': 'PASS'})
@@ -214,6 +248,7 @@ report = {
     'browser_version': browser_version,
     'viewports': [v['width'] for v in VIEWPORTS],
     'relation_case_count': len(RELATION_CASES),
+    'cross_line_case_count': len(CROSS_LINE_CASES),
     'negative_control_count': len(NEGATIVE_CONTROLS),
     'expected_runs': expected_runs,
     'executed_runs': len(results),
@@ -226,6 +261,6 @@ report = {
     'results': results,
 }
 OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-print(json.dumps({k: report[k] for k in ('engine','browser_version','relation_case_count','negative_control_count','expected_runs','executed_runs','passed','failed','harness_error')}, ensure_ascii=False))
+print(json.dumps({k: report[k] for k in ('engine','browser_version','relation_case_count','cross_line_case_count','negative_control_count','expected_runs','executed_runs','passed','failed','harness_error')}, ensure_ascii=False))
 if harness_error or len(results) != expected_runs or failed:
     raise SystemExit(1)
