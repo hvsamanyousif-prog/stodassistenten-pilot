@@ -107,6 +107,10 @@ CROSS_LINE_CASES = [
         'id': 'cross-line-semicolon-under-forutsattning-att-remains-linked',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nUnder förutsättning att underleverantör används ska underleverantören ha ansvarsförsäkring.',
     },
+    {
+        'id': 'cross-line-semicolon-vid-anvandning-av-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nVid användning av underleverantör ska underleverantören ha ansvarsförsäkring.',
+    },
 ]
 
 NEGATIVE_CONTROLS = [
@@ -144,6 +148,11 @@ NEGATIVE_CONTROLS = [
     {
         'id': 'independent-usage-conditional-semicolon-cross-line-stays-independent',
         'text': 'Leverantören ska ha ansvarsförsäkring;\nNär e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-vid-anvandning-av-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nVid användning av e-faktura ska fakturan följa Peppol BIS.',
         'right_conditional': True,
     },
     {
