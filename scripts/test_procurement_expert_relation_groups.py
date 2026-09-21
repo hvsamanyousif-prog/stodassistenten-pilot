@@ -66,7 +66,15 @@ assert.equal(p.summarize(crossLinePunctuationRelation).uncertain.length,2,'manua
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 5 negative/cross-line controls passed`);
+const independentConditionalCrossLine=p.splitRequirements('Leverantören ska ha ansvarsförsäkring;\nOm anbudet lämnas elektroniskt ska filformatet vara PDF.');
+assert.equal(independentConditionalCrossLine.length,2,'independent semicolon/newline requirements must remain two source-traceable rows');
+assert.deepEqual(independentConditionalCrossLine.map(r=>r.sourceLine),[1,2],'independent conditional cross-line case must preserve physical source positions');
+assert.ok(independentConditionalCrossLine.every(r=>!r.flags.some(f=>f.code==='cross_line_relation')),'semicolon plus a separately applicable conditional next row must not create false two-sided dependency');
+independentConditionalCrossLine[0].evidence='yes';
+assert.ok(!p.prioritizeReviewRows(independentConditionalCrossLine).some(r=>r.id===independentConditionalCrossLine[0].id),'reviewed independent left row must be able to leave priority review');
+assert.ok(independentConditionalCrossLine[1].flags.some(f=>f.code==='conditional_or_exception'),'right conditional row must retain its own source-risk warning');
+
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 6 negative/cross-line controls passed`);
 '''
 
 
