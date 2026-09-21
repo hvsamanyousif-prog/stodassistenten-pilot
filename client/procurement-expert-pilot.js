@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const APP_VERSION='procurement-expert-0.2.26';
+const APP_VERSION='procurement-expert-0.2.27';
 const FEEDBACK_ENDPOINT='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
 const CATEGORIES=['exclusion','qualification','mandatory','award','contract','commercial','deadline','uncertain'];
 const LABELS={exclusion:'Uteslutningsgrund',qualification:'Kvalificeringskrav',mandatory:'Obligatoriskt/ska-krav',award:'Tilldelningskriterium',contract:'Avtals-/utförandevillkor',commercial:'Pris/kommersiellt',deadline:'Datum och process',uncertain:'Osäker – kontrollera källa'};
@@ -136,7 +136,7 @@ function classifyRequirement(line){
  if(/prisbilaga|anbudspris|timpris|fast pris|mängdförteckning|ersättning|indexreglering(?:sprincip)?|prisjustering(?:sprincip)?/.test(t))return 'commercial';
  if(/avtalstid|kontraktsvillkor|särskilda kontraktsvillkor|under avtalstiden|vite|utförandevillkor|leveransvillkor/.test(t))return 'contract';
  if(/uteslutningsgrund|uteslutas|brott enligt|obetalda skatter|socialförsäkringsavgifter/.test(t))return 'exclusion';
- if(/ekonomisk (och )?finansiell ställning|omsättning|referensuppdrag|teknisk och yrkesmässig kapacitet|kvalificeringskrav|anbudsgivaren ska ha|leverantören ska ha|åberopa.*kapacitet/.test(t))return 'qualification';
+ if(/ekonomisk (och )?finansiell ställning|omsättning|referensuppdrag|teknisk och yrkesmässig kapacitet|kvalificeringskrav|anbudsgivaren ska (?:antingen )?ha|leverantören ska (?:antingen )?ha|åberopa.*kapacitet/.test(t))return 'qualification';
  if(/\bska\b|\bmåste\b|obligatorisk|skall|krävs|krav på/.test(t))return 'mandatory';
  return 'uncertain';
 }
