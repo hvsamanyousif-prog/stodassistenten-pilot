@@ -80,7 +80,9 @@ for(const [caseIndex,[text,expectedCount]] of explicitBoundaryCases.entries()){
 // two apparently cumulative obligations.
 const relationalBoundaryCases=[
   'Anbudet ska lämnas elektroniskt; alternativt ska anbudet lämnas enligt reservrutinen.',
-  'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.'
+  'Leverantören ska ha ansvarsförsäkring. Om inte beställaren skriftligen medger annat ska särskilt intyg lämnas.',
+  'Leverantören ska antingen ha ISO 9001-certifikat; eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.',
+  'Leverantören ska antingen ha ISO 9001-certifikat. Eller ska leverantören visa ett likvärdigt kvalitetssäkringssystem.'
 ];
 for(const [caseIndex,text] of relationalBoundaryCases.entries()){
   const rows=p.splitRequirements(text);
