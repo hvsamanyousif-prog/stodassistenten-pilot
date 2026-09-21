@@ -49,10 +49,17 @@ assert.ok(!descriptiveWhenUsed[0].flags.some(f=>f.code==='conditional_or_excepti
 descriptiveWhenUsed[0].evidence='yes';
 assert.equal(p.summarize(descriptiveWhenUsed).uncertain.length,0,'reviewed ordinary descriptive when-clause must not remain permanently uncertain');
 
+const crossLineRelation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring och\nnär underleverantör åberopas ska underleverantören ha ansvarsförsäkring.');
+assert.equal(crossLineRelation.length,2,'physical line boundary may remain two review rows when source tracing is preserved');
+assert.deepEqual(crossLineRelation.map(r=>r.sourceLine),[1,2],'cross-line relation must preserve both physical source lines');
+assert.ok(crossLineRelation.every(r=>r.flags.some(f=>f.code==='cross_line_relation')),'both source rows must visibly disclose that the physical line boundary is not semantic independence');
+crossLineRelation.forEach(r=>{r.evidence='yes';});
+assert.equal(p.summarize(crossLineRelation).uncertain.length,2,'manual evidence marks must not hide cross-line relation uncertainty');
+
 const independentPunctuation=p.splitRequirements('Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.');
 assert.equal(independentPunctuation.length,2,'independent explicit punctuation boundary must remain safely segmented');
 
-console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 3 negative controls passed`);
+console.log(`Relation-group contracts: ${relationBoundCases.length} relation-bound fixtures + 4 negative/cross-line controls passed`);
 '''
 
 
