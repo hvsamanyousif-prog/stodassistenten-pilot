@@ -112,6 +112,11 @@ NEGATIVE_CONTROLS = [
         'text': 'Leverantören ska ha ansvarsförsäkring;\nOm anbudet lämnas elektroniskt ska filformatet vara PDF.',
         'right_conditional': True,
     },
+    {
+        'id': 'independent-exclusive-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nEndast om anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
 ]
 
 
