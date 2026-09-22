@@ -209,9 +209,19 @@
       const completedReceipt=/(?:\bjag\s+)?har\s+(?:jag\s+)?redan\s+fått\s+(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
       return completedReceipt||(pastMarker&&(receipt||historicalApplication));
     }
+    if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
+    if(lang==='ar'){
+      const existingLoan=/(?:^|[^\p{L}\p{N}])لدي\s+قرض(?=$|[^\p{L}\p{N}])/u.test(x);
+      const repayment=/(?:^|[^\p{L}\p{N}])(?:أسدد|اسدد)\s+(?:القرض|قرض)(?=$|[^\p{L}\p{N}])/u.test(x);
+      return existingLoan&&repayment;
+    }
+    if(lang==='fa'){
+      const existingLoan=/(?:^|[^\p{L}\p{N}])وام\s+دارم(?=$|[^\p{L}\p{N}])/u.test(x);
+      const repayment=/(?:^|[^\p{L}\p{N}])(?:در\s+حال\s+)?بازپرداخت(?:\s+آن)?\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x);
+      return existingLoan&&repayment;
+    }
     if(lang!=='sv') return false;
     const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
-    if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
     if(explicitApplication) return false;
     const historicalLoan=pastMarker&&/(?:\bjag\s+)?(?:hade|tog|fick|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x);
