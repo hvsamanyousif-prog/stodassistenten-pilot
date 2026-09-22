@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Browser regression for explicit Swedish funding-type negation.
+"""Browser regression for explicit funding-type negation across pilot languages.
 
 A user who explicitly rejects one funding type and independently asks for
 another must not be forced through a redundant funding-type clarification.
@@ -28,19 +28,62 @@ from playwright.sync_api import sync_playwright
 SCENARIOS = [
     {
         "id": "sv-student-no-loan-only-scholarship",
+        "lang": "sv",
         "text": "Jag är student och söker inget lån, bara stipendium.",
         "expect_intent": "scholarship",
         "reject_intent": "loan",
     },
     {
         "id": "sv-student-no-scholarship-only-loan",
+        "lang": "sv",
         "text": "Jag är student och söker inget stipendium, bara lån.",
         "expect_intent": "loan",
         "reject_intent": "scholarship",
     },
     {
         "id": "sv-student-loan-and-scholarship-control",
+        "lang": "sv",
         "text": "Jag är student och söker lån och stipendium.",
+        "expect_clarification": True,
+    },
+    {
+        "id": "ar-student-no-loan-only-scholarship",
+        "lang": "ar",
+        "text": "أنا طالب ولا أريد قرضا فقط منحة دراسية.",
+        "expect_intent": "scholarship",
+        "reject_intent": "loan",
+    },
+    {
+        "id": "ar-student-no-scholarship-only-loan",
+        "lang": "ar",
+        "text": "أنا طالب ولا أريد منحة دراسية فقط قرضا.",
+        "expect_intent": "loan",
+        "reject_intent": "scholarship",
+    },
+    {
+        "id": "ar-student-loan-and-scholarship-control",
+        "lang": "ar",
+        "text": "أنا طالب وأبحث عن قرض ومنحة دراسية.",
+        "expect_clarification": True,
+    },
+    {
+        "id": "fa-student-no-loan-only-scholarship",
+        "lang": "fa",
+        "text": "من دانشجو هستم وام نمی‌خواهم فقط بورسیه.",
+        "expect_intent": "scholarship",
+        "reject_intent": "loan",
+    },
+    {
+        "id": "fa-student-no-scholarship-only-loan",
+        "lang": "fa",
+        "text": "من دانشجو هستم بورسیه نمی‌خواهم فقط وام.",
+        "expect_intent": "loan",
+        "reject_intent": "scholarship",
+    },
+    {
+        "id": "fa-student-loan-and-scholarship-control",
+        "lang": "fa",
+        "text": "من دانشجو هستم وام و بورسیه می‌خواهم.",
         "expect_clarification": True,
     },
 ]
@@ -81,7 +124,8 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(f"{base_url}/index.html?lang=sv", wait_until="load")
+        lang = scenario.get("lang", "sv")
+        page.goto(f"{base_url}/index.html?lang={lang}", wait_until="load")
         page.locator("#situation").fill(scenario["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
@@ -104,7 +148,7 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
         require(all(scenario["text"] not in href and "situation=" not in href and "q=" not in href for href in hrefs), f"{case_id}: raw situation leaked into route")
         require(not page_errors, f"{case_id}: JavaScript error(s): {page_errors}")
         require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case_id}: horizontal overflow")
-        return {"id": case_id, "status": "passed", "width": width, "hrefs": hrefs}
+        return {"id": case_id, "status": "passed", "width": width, "lang": lang, "hrefs": hrefs}
     finally:
         page.close()
 
