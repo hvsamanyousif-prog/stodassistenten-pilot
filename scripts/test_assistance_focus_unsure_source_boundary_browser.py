@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""Holdout browser regression for unknown adult/child assistance source truth.
+"""Holdout browser regressions for unknown-target assistance source truth.
 
-This reuses the registered assistance browser harness but restricts it to the
-`Vet inte / vill börja brett` family. The user may remain unsure about whether
-the helped person should follow the adult or child route, but the product must
-not hide the common LSS condition or the fact that target-specific conditions
-remain unresolved. Both relevant Försäkringskassan source paths must stay
-reachable. This is browser/source-boundary evidence only.
+This reuses the registered assistance browser harness and keeps two bounded
+families under test:
+1. `Vet inte / vill börja brett` must keep both adult and child source paths
+   reachable when the user describes basic assistance needs.
+2. If the user instead says the help is mainly *other* everyday help, the
+   journey must not ask the now-irrelevant weekly extent question before
+   showing the broad municipal next step.
+
+These are browser/source-journey checks only. They do not determine
+eligibility, prove persistence, human comprehension or physical-device use.
 """
 
 from __future__ import annotations
@@ -42,6 +46,33 @@ base.CASES = [
         "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
         "tokens": ("LSS", "بزرگسال", "کودک", "مشخص نکرده"),
     },
+    {
+        "id": "sv-other-help-skips-extent",
+        "lang": "sv",
+        "who": "Vet inte / vill börja brett",
+        "need": "Nej – främst annan hjälp i vardagen",
+        "skip_extent": True,
+        "extent_prompt": "Ungefär hur omfattande tror du hjälpen är under en vanlig vecka?",
+        "result_token": "Börja med kommunen och reda ut vilken stödform som passar",
+    },
+    {
+        "id": "ar-other-help-skips-extent",
+        "lang": "ar",
+        "who": "لا أعرف / أريد البدء بشكل عام",
+        "need": "لا – أساساً مساعدة أخرى في الحياة اليومية",
+        "skip_extent": True,
+        "extent_prompt": "تقريباً ما حجم المساعدة في أسبوع عادي؟",
+        "result_token": "ابدأ بالبلدية وحدد نوع الدعم المناسب",
+    },
+    {
+        "id": "fa-other-help-skips-extent",
+        "lang": "fa",
+        "who": "نمی‌دانم / گسترده شروع می‌کنم",
+        "need": "نه – بیشتر کمک دیگری در زندگی روزمره است",
+        "skip_extent": True,
+        "extent_prompt": "تقریباً کمک در یک هفته معمولی چقدر است؟",
+        "result_token": "از شهرداری شروع کن و نوع حمایت مناسب را روشن کن",
+    },
 ]
 
 
@@ -49,6 +80,36 @@ _original_run_case = base.run_case
 
 
 def run_case(browser, base_url: str, case: dict, width: int) -> dict:
+    if case.get("skip_extent"):
+        page = browser.new_page(viewport={"width": width, "height": 900})
+        page.set_default_timeout(5000)
+        page_errors: list[str] = []
+        page.on("pageerror", lambda error: page_errors.append(str(error)))
+        try:
+            page.goto(
+                f"{base_url}/person-pilot.html?actor_type=private_person&focus=assistance&lang={case['lang']}",
+                wait_until="load",
+            )
+            page.get_by_role("button", name=case["who"], exact=True).click()
+            page.get_by_role("button", name=case["need"], exact=True).click()
+            base.require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
+            text = page.locator("body").inner_text()
+            base.require(
+                case["extent_prompt"] not in text,
+                f"{case['id']}@{width}: irrelevant weekly-extent question still rendered",
+            )
+            base.require(
+                case["result_token"] in text,
+                f"{case['id']}@{width}: broad municipal next step not rendered directly",
+            )
+            base.require(
+                page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
+                f"{case['id']}@{width}: horizontal overflow",
+            )
+            return {"id": case["id"], "width": width, "status": "passed", "path": "other-help-direct-result"}
+        finally:
+            page.close()
+
     # The base harness validates language, interaction, no guarantee language,
     # no horizontal overflow and one controlling source. This holdout requires
     # both target-specific source paths because the user explicitly chose an
