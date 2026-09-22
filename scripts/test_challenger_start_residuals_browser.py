@@ -58,6 +58,22 @@ CASES = [
         "expect_rtl": True,
     },
     {
+        "id": "ar-not-company-owner-explicit-private-person",
+        "lang": "ar",
+        "text": "لست صاحب شركة، أنا فرد.",
+        "expect_first": "actor_type=private_person",
+        "reject": "actor_type=company",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-not-company-owner-explicit-private-person",
+        "lang": "fa",
+        "text": "من صاحب شرکت نیستم؛ فرد هستم.",
+        "expect_first": "actor_type=private_person",
+        "reject": "actor_type=company",
+        "expect_rtl": True,
+    },
+    {
         "id": "ar-company-positive-control",
         "lang": "ar",
         "text": "لدي شركة وأريد فهم مناقصة عامة.",
