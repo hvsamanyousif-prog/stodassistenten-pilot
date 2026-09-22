@@ -42,6 +42,13 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-helper-mother-no-possessive",
+        "lang": "sv",
+        "text": "Jag hjälper mamma som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
         "id": "sv-vague-money-to-apply-for",
         "lang": "sv",
         "text": "pengar att söka",
