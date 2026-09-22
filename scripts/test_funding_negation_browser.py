@@ -3,9 +3,10 @@
 
 A user who explicitly rejects one funding type and independently asks for
 another must not be forced through a redundant funding-type clarification.
-The negative type must not leak into the bounded handoff. This is browser/DOM
-routing evidence only; it is not eligibility, live-opportunity, storage or
-human-comprehension evidence.
+The negative type must not leak into the bounded handoff. Helper journeys also
+protect target ownership: rejecting a funding type must not erase an explicitly
+stated helped person's concrete need. This is browser/DOM routing evidence only;
+it is not eligibility, live-opportunity, storage or human-comprehension evidence.
 """
 
 from __future__ import annotations
@@ -86,6 +87,30 @@ SCENARIOS = [
         "text": "من دانشجو هستم وام و بورسیه می‌خواهم.",
         "expect_clarification": True,
     },
+    {
+        "id": "sv-helper-sister-no-scholarship-rent",
+        "lang": "sv",
+        "text": "Jag hjälper min syster. Hon behöver inte stipendium, hon behöver hjälp med hyran.",
+        "expect_actor": "relative",
+        "reject_intent": "scholarship",
+        "expect_no_intent": True,
+        "expect_need_context": "housing",
+    },
+    {
+        "id": "sv-helper-sister-scholarship-control",
+        "lang": "sv",
+        "text": "Jag hjälper min syster. Hon behöver stipendium.",
+        "expect_actor": "relative",
+        "expect_intent": "scholarship",
+    },
+    {
+        "id": "sv-helper-sister-rent-plus-scholarship-control",
+        "lang": "sv",
+        "text": "Jag hjälper min syster. Hon behöver hjälp med hyran och söker stipendium.",
+        "expect_actor": "relative",
+        "expect_intent": "scholarship",
+        "expect_need_context": "housing",
+    },
 ]
 WIDTHS = (390, 1280)
 
@@ -130,20 +155,37 @@ def run_case(browser, base_url: str, scenario: dict, width: int) -> dict:
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
         require(results.is_visible(), f"{case_id}: results did not become visible")
-        require(results.locator('[data-funding-question="true"]').count() == 0, f"{case_id}: known student triggered an actor question")
+        require(results.locator('[data-funding-question="true"]').count() == 0, f"{case_id}: known actor triggered an actor question")
 
         intent_questions = results.locator('[data-funding-intent-question="true"]')
         hrefs = results.locator("a[href]").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         if scenario.get("expect_clarification"):
             require(intent_questions.count() == 1, f"{case_id}: genuinely mixed funding request did not ask one type-changing question")
             require(results.locator("a[data-funding-actor]").count() == 0, f"{case_id}: mixed funding request was silently routed")
+        elif scenario.get("expect_no_intent"):
+            require(intent_questions.count() == 0, f"{case_id}: explicit rejection caused a funding-type clarification")
+            reject = scenario["reject_intent"]
+            require(all(f"funding_intent={reject}" not in href for href in hrefs), f"{case_id}: explicitly rejected funding type leaked into a route")
+            actor = scenario.get("expect_actor", "student")
+            route = results.locator(f'a[href*="actor_type={actor}"]')
+            require(route.count() >= 1, f"{case_id}: helped-person ownership was not preserved in the next route")
+            need_context = scenario.get("expect_need_context")
+            if need_context:
+                actor_hrefs = route.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+                require(any(f"need_context={need_context}" in href for href in actor_hrefs), f"{case_id}: concrete helped-person need was not preserved in the bounded handoff")
         else:
             require(intent_questions.count() == 0, f"{case_id}: explicit rejection still caused a redundant funding-type clarification")
             intent = scenario["expect_intent"]
-            route = results.locator(f'a[href*="actor_type=student"][data-funding-intent="{intent}"]')
-            require(route.count() >= 1, f"{case_id}: affirmed funding type was not preserved for the known student")
-            reject = scenario["reject_intent"]
-            require(all(f"funding_intent={reject}" not in href for href in hrefs), f"{case_id}: explicitly rejected funding type leaked into a route")
+            actor = scenario.get("expect_actor", "student")
+            route = results.locator(f'a[href*="actor_type={actor}"][data-funding-intent="{intent}"]')
+            require(route.count() >= 1, f"{case_id}: affirmed funding type was not preserved for the known actor")
+            reject = scenario.get("reject_intent")
+            if reject:
+                require(all(f"funding_intent={reject}" not in href for href in hrefs), f"{case_id}: explicitly rejected funding type leaked into a route")
+            need_context = scenario.get("expect_need_context")
+            if need_context:
+                actor_hrefs = route.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+                require(any(f"need_context={need_context}" in href for href in actor_hrefs), f"{case_id}: affirmed helper funding route lost the helped person's concrete need")
 
         require(all(scenario["text"] not in href and "situation=" not in href and "q=" not in href for href in hrefs), f"{case_id}: raw situation leaked into route")
         require(not page_errors, f"{case_id}: JavaScript error(s): {page_errors}")
