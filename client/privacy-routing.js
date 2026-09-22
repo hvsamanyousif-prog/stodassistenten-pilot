@@ -197,15 +197,20 @@
     return [...matches].some(match=>pattern.test(match[1]));
   }
   function fundingPatternHistoricalReceipt(clause,pattern){
-    if(currentLang()!=='sv') return false;
+    const lang=currentLang();
     const x=lower(clause);
-    const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
     if(pattern===FUNDING_INTENT_PATTERNS[0][1]){
+      if(lang==='ar') return /(?:^|[^\p{L}\p{N}])لقد\s+حصلت\s+بالفعل\s+على\s+(?:منحة|منح\s+دراسية)(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(lang==='fa') return /(?:^|[^\p{L}\p{N}])من\s+قبلاً\s+بورسیه\s+گرفته(?:‌|\s)?ام(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(lang!=='sv') return false;
+      const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
       const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
       const historicalApplication=/(?:\bjag\s+)?sökte\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
       const completedReceipt=/(?:\bjag\s+)?har\s+(?:jag\s+)?redan\s+fått\s+(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
       return completedReceipt||(pastMarker&&(receipt||historicalApplication));
     }
+    if(lang!=='sv') return false;
+    const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
     if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
     if(explicitApplication) return false;
