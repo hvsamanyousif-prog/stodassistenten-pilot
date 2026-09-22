@@ -200,8 +200,8 @@
     const lang=currentLang();
     const x=lower(clause);
     if(pattern===FUNDING_INTENT_PATTERNS[0][1]){
-      if(lang==='ar') return /(?:^|[^\p{L}\p{N}])لقد\s+حصلت\s+بالفعل\s+على\s+(?:منحة|منح\s+دراسية)(?=$|[^\p{L}\p{N}])/u.test(x);
-      if(lang==='fa') return /(?:^|[^\p{L}\p{N}])من\s+قبلاً\s+بورسیه\s+گرفته(?:‌|\s)?ام(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(lang==='ar') return /(?:^|[^\p{L}\p{N}])(?:لقد\s+حصلت\s+بالفعل\s+على\s+(?:منحة|منح\s+دراسية)|حصلت\s+على\s+(?:منحة|منح\s+دراسية)[^.!؟،؛;\n]{0,40}العام\s+الماضي)(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(lang==='fa') return /(?:^|[^\p{L}\p{N}])(?:من\s+قبلاً\s+بورسیه\s+گرفته(?:‌|\s)?ام|سال\s+گذشته[^.!؟،؛;\n]{0,40}بورسیه\s+گرفتم)(?=$|[^\p{L}\p{N}])/u.test(x);
       if(lang!=='sv') return false;
       const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
       const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
