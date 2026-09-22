@@ -240,7 +240,7 @@ def run_start_route_case(browser, base_url: str, case: dict, width: int) -> dict
         for forbidden in ("q=", "story=", "situation=", "diagnosis=", "personnummer=", "address=", "hours="):
             require(forbidden not in href, f"{case['id']}@{width}: raw/sensitive story field leaked into route: {forbidden}")
         route.click()
-        page.wait_for_load_state("load")
+        page.wait_for_url("**/person-pilot.html?**", wait_until="load")
         body = page.locator("body").inner_text()
         require("garanter" not in body.lower(), f"{case['id']}@{width}: guarantee language rendered")
         require(page.locator(f'a[href="{ADULT_SOURCE}"]').count() >= 1, f"{case['id']}@{width}: primary assistance source missing")
