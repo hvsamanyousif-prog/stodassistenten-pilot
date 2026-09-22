@@ -49,6 +49,13 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-help-out-association-funding-stays-association",
+        "lang": "sv",
+        "text": "Jag hjälper till i vår förening och söker bidrag.",
+        "expect_first": "actor_type=association",
+        "reject": "actor_type=relative",
+    },
+    {
         "id": "sv-vague-money-to-apply-for",
         "lang": "sv",
         "text": "pengar att söka",
