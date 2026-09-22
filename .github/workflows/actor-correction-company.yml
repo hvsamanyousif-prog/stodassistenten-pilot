@@ -10,6 +10,7 @@ on:
       - 'scripts/test_actor_correction_company_browser.py'
       - 'scripts/test_actor_target_scope_browser.py'
       - 'scripts/test_actor_positive_target_scope_browser.py'
+      - 'scripts/test_challenger_start_residuals_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -21,6 +22,7 @@ on:
       - 'scripts/test_actor_correction_company_browser.py'
       - 'scripts/test_actor_target_scope_browser.py'
       - 'scripts/test_actor_positive_target_scope_browser.py'
+      - 'scripts/test_challenger_start_residuals_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -58,6 +60,18 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-webkit.json
+      - name: Challenger start residuals — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: challenger-start-residuals-chromium.json
+        run: python scripts/test_challenger_start_residuals_browser.py
+      - name: Challenger start residuals — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: challenger-start-residuals-webkit.json
+        run: python scripts/test_challenger_start_residuals_browser.py
       - name: Preserve company actor-correction evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -68,5 +82,7 @@ jobs:
             actor-correction-company-webkit.json
             actor-positive-target-chromium.json
             actor-positive-target-webkit.json
+            challenger-start-residuals-chromium.json
+            challenger-start-residuals-webkit.json
           if-no-files-found: warn
           retention-days: 14
