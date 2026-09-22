@@ -55,6 +55,20 @@ CASES = [
         "reject_intent": "funding_intent=",
     },
     {
+        "id": "fond-workplace-is-not-funding",
+        "text": "Jag arbetar på en fond och behöver hjälp med hyran.",
+        "expect_question": False,
+        "reject_intent": "funding_intent=",
+    },
+    {
+        "id": "fonder-att-soka-remains-funding",
+        "text": "Jag har hög hyra och söker fonder att söka.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "expect_need": "need_context=housing",
+    },
+    {
         "id": "funding-rent-car-is-not-concrete-housing",
         "text": "Jag söker bidrag och behöver hyra en bil.",
         "expect_question": True,
