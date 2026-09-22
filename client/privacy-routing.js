@@ -208,7 +208,7 @@
     const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
     if(explicitApplication) return false;
     const historicalLoan=pastMarker&&/(?:\bjag\s+)?(?:hade|tog|fick|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x);
-    const repayment=/(?:\bjag\s+)?(?:har|hade)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x)&&/\b(?:återbetal(?:a|ning(?:en)?)?|betala\s+tillbaka|amorter(?:a|ing(?:en)?)?|skuld(?:en)?)\b/u.test(x);
+    const repayment=/(?:\bjag\s+)?(?:har|hade)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x)&&/(?:^|[^\p{L}\p{N}])(?:återbetal(?:a|ning(?:en)?)?|betala\s+tillbaka|amorter(?:a|ing(?:en)?)?|skuld(?:en)?)(?=$|[^\p{L}\p{N}])/u.test(x);
     return historicalLoan||repayment;
   }
   function fundingPatternNegated(clause,pattern){
