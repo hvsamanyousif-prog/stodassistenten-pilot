@@ -211,14 +211,20 @@
     }
     if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     if(lang==='ar'){
+      const explicitApplication=/(?:^|[^\p{L}\p{N}])(?:أبحث|ابحث)\s+عن\s+قرض(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(explicitApplication) return false;
       const existingLoan=/(?:^|[^\p{L}\p{N}])لدي\s+قرض(?=$|[^\p{L}\p{N}])/u.test(x);
       const repayment=/(?:^|[^\p{L}\p{N}])(?:و)?(?:أسدد|اسدد)\s+(?:القرض|قرض)(?=$|[^\p{L}\p{N}])/u.test(x);
-      return existingLoan&&repayment;
+      const historicalLoan=/(?:^|[^\p{L}\p{N}])كان\s+لدي\s+قرض(?:\s+دراسي)?[^.!؟،؛;\n]{0,24}العام\s+الماضي(?=$|[^\p{L}\p{N}])/u.test(x);
+      return historicalLoan||(existingLoan&&repayment);
     }
     if(lang==='fa'){
+      const explicitApplication=/(?:^|[^\p{L}\p{N}])دنبال\s+وام\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x);
+      if(explicitApplication) return false;
       const existingLoan=/(?:^|[^\p{L}\p{N}])وام\s+دارم(?=$|[^\p{L}\p{N}])/u.test(x);
       const repayment=/(?:^|[^\p{L}\p{N}])(?:در\s+حال\s+)?بازپرداخت(?:\s+آن)?\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x);
-      return existingLoan&&repayment;
+      const historicalLoan=/(?:^|[^\p{L}\p{N}])سال\s+گذشته\s+وام(?:\s+دانشجویی)?\s+داشتم(?=$|[^\p{L}\p{N}])/u.test(x);
+      return historicalLoan||(existingLoan&&repayment);
     }
     if(lang!=='sv') return false;
     const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
