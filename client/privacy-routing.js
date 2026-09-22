@@ -198,12 +198,13 @@
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='ar'){
-      const matches=x.matchAll(/(?:^|[\s،])(?:أنا\s+)?لا\s+أحتاج(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
+      const matches=x.matchAll(/(?:^|[\s،])(?:(?:أنا\s+)?لا\s+أحتاج|(?:هو\s+لا\s+يحتاج|هي\s+لا\s+تحتاج))(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='fa'){
-      const matches=x.matchAll(/(?:^|[\s،])(?:من\s+)?(?:به\s+)?((?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه))\s+نیاز\s+ندارم(?=$|[\s،.!؟؛;])/gu);
-      return [...matches].some(match=>pattern.test(match[1]));
+      const selfMatches=x.matchAll(/(?:^|[\s،])(?:من\s+)?(?:به\s+)?((?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه))\s+نیاز\s+ندارم(?=$|[\s،.!؟؛;])/gu);
+      const targetMatches=x.matchAll(/(?:^|[\s،])او\s+(?:به\s+)?((?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه))\s+نیاز\s+ندارد(?=$|[\s،.!؟؛;])/gu);
+      return [...selfMatches,...targetMatches].some(match=>pattern.test(match[1]));
     }
     return false;
   }
