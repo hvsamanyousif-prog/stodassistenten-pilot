@@ -184,8 +184,14 @@
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
+  function fundingPatternDeterminerNegated(clause,pattern){
+    if(currentLang()!=='sv') return false;
+    const x=lower(clause);
+    const matches=x.matchAll(/\b(?:inget|ingen|inga)\s+(stipen[\p{L}]*|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
+    return [...matches].some(match=>pattern.test(match[1]));
+  }
   function hasAffirmedFundingMention(text,pattern){
-    return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause));
+    return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause)&&!fundingPatternDeterminerNegated(clause,pattern));
   }
   function affirmedFundingIntents(text){
     const x=lower(text);
