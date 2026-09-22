@@ -191,10 +191,21 @@
     return [...matches].some(match=>pattern.test(match[1]));
   }
   function fundingPatternModalNegated(clause,pattern){
-    if(currentLang()!=='sv') return false;
+    const lang=currentLang();
     const x=lower(clause);
-    const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+((?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
-    return [...matches].some(match=>pattern.test(match[1]));
+    if(lang==='sv'){
+      const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+((?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
+      return [...matches].some(match=>pattern.test(match[1]));
+    }
+    if(lang==='ar'){
+      const matches=x.matchAll(/(?:^|[\s،])(?:أنا\s+)?لا\s+أحتاج(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
+      return [...matches].some(match=>pattern.test(match[1]));
+    }
+    if(lang==='fa'){
+      const matches=x.matchAll(/(?:^|[\s،])(?:من\s+)?(?:به\s+)?((?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه))\s+نیاز\s+ندارم(?=$|[\s،.!؟؛;])/gu);
+      return [...matches].some(match=>pattern.test(match[1]));
+    }
+    return false;
   }
   function fundingPatternHistoricalReceipt(clause,pattern){
     const lang=currentLang();
