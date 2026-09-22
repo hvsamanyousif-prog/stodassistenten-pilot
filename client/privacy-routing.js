@@ -212,7 +212,7 @@
     if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     if(lang==='ar'){
       const existingLoan=/(?:^|[^\p{L}\p{N}])لدي\s+قرض(?=$|[^\p{L}\p{N}])/u.test(x);
-      const repayment=/(?:^|[^\p{L}\p{N}])(?:أسدد|اسدد)\s+(?:القرض|قرض)(?=$|[^\p{L}\p{N}])/u.test(x);
+      const repayment=/(?:^|[^\p{L}\p{N}])(?:و)?(?:أسدد|اسدد)\s+(?:القرض|قرض)(?=$|[^\p{L}\p{N}])/u.test(x);
       return existingLoan&&repayment;
     }
     if(lang==='fa'){
