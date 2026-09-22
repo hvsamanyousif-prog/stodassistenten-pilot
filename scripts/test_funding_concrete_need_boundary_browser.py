@@ -131,6 +131,14 @@ CASES = [
         "expect_need": "need_context=housing",
     },
     {
+        "id": "vilka-pengar-kan-jag-soka-is-funding",
+        "text": "Jag har hög hyra. Vilka pengar kan jag söka?",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=funding",
+        "expect_need": "need_context=housing",
+    },
+    {
         "id": "funding-rent-car-is-not-concrete-housing",
         "text": "Jag söker bidrag och behöver hyra en bil.",
         "expect_question": True,
