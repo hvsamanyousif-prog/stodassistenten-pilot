@@ -12,7 +12,7 @@
   const ASSISTANCE_URL='https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna';
   const FEEDBACK_URL='https://lldhnsixeyxdcxejdwmq.supabase.co/functions/v1/pilot-feedback';
   const OLDER_CONTEXT=/äldreomsorg|\bäldre\b|\bpensionär\b|\bsenior\b|\bgammal\b|jag\s+är\s+(?:6[5-9]|[7-9]\d|1[01]\d)(?:\s+år)?|كبير\s*السن|مسن|سالمند/i;
-  const DISABILITY_CONTEXT=/funktionsnedsättning|funktionshinder|npf|autism|adhd|psykisk\s+ohälsa|kognitiv|intellektuell|محدود(?:ية|يات)|إعاقة|توحد|اضطراب\s*فرط\s*الحركة|سلامت\s*روان|معلولیت|ناتوانی|اوتیسم|بیش.?فعالی/i;
+  const DISABILITY_CONTEXT=/funktionsnedsättning|funktionshinder|npf|autism|adhd|psykisk\s+ohälsa|kognitiv|intellektuell|محدود(?:ية|يات)|إعاق(?:ة|تي|ته|تها)|توحد|اضطراب\s*فرط\s*الحركة|سلامت\s*روان|معلولیت|ناتوانی|اوتیسم|بیش.?فعالی/i;
   const HOME_CONTEXT=/boendestöd|hemtjänst|trygghetslarm|hjälp\s+hemma|stöd\s+hemma|klara\s+vardagen|struktur\s+(?:i\s+)?vardagen|personlig\s+assistans|assistansersättning|مساعدة\s*في\s*المنزل|في\s*المنزل.*مساعدة|دعم\s*في\s*المنزل|إنذار\s*الأمان|مساعدة\s*شخصية|کمک\s*در\s*خانه|در\s*خانه.*کمک|حمایت\s*در\s*خانه|هشدار\s*ایمنی|کمک\s*شخصی/i;
   const BOENDESTOD=/boendestöd|دعم\s*سكني|حمایت\s*زندگی/i;
   const STRUCTURE=/boendestöd|struktur|planera|rutiner|myndighetskontakt|sociala\s+kontakter|دعم\s*سكني|تنظيم|روتين|برنامه.?ریزی|روال/i;
