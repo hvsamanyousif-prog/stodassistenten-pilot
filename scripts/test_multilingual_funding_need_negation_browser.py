@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Browser regression for bounded Arabic/Persian need-based funding negation.
 
-An explicit statement that the user does not need a funding type must not become
-positive structured funding intent. A separately stated current need must survive,
-and an independently affirmative funding type must remain positive. This is a
-bounded browser/routing regression, not general NLU or eligibility evidence.
+An explicit statement that the user or helped target does not need a funding type
+must not become positive structured funding intent. A separately stated current
+need or independently affirmative funding type must survive. This is a bounded
+browser/routing regression, not general NLU or eligibility evidence.
 """
 
 from __future__ import annotations
@@ -27,6 +27,7 @@ CASES = [
         "id": "ar-need-no-loan-preserves-housing",
         "lang": "ar",
         "text": "أنا لا أحتاج قرضًا. الآن لدي إيجار مرتفع.",
+        "expect_actor": "private_person",
         "expect_intent": None,
         "expect_need": "need_context=housing",
     },
@@ -34,6 +35,7 @@ CASES = [
         "id": "fa-need-no-loan-preserves-housing",
         "lang": "fa",
         "text": "من به وام نیاز ندارم. الان اجاره بالایی دارم.",
+        "expect_actor": "private_person",
         "expect_intent": None,
         "expect_need": "need_context=housing",
     },
@@ -41,6 +43,7 @@ CASES = [
         "id": "ar-rejected-loan-positive-scholarship",
         "lang": "ar",
         "text": "لا أحتاج قرضًا، بل أبحث عن منحة. الآن لدي إيجار مرتفع.",
+        "expect_actor": "private_person",
         "expect_intent": "funding_intent=scholarship",
         "expect_need": "need_context=housing",
     },
@@ -48,13 +51,31 @@ CASES = [
         "id": "fa-rejected-loan-positive-scholarship",
         "lang": "fa",
         "text": "من به وام نیاز ندارم، بلکه دنبال بورسیه هستم. الان اجاره بالایی دارم.",
+        "expect_actor": "private_person",
         "expect_intent": "funding_intent=scholarship",
         "expect_need": "need_context=housing",
+    },
+    {
+        "id": "ar-helper-target-rejected-loan-positive-scholarship",
+        "lang": "ar",
+        "text": "أنا أساعد أختي. هي لا تحتاج إلى قرض، لكنها تبحث عن منحة.",
+        "expect_actor": "relative",
+        "expect_intent": "funding_intent=scholarship",
+        "expect_need": None,
+    },
+    {
+        "id": "fa-helper-target-rejected-loan-positive-scholarship",
+        "lang": "fa",
+        "text": "من به خواهرم کمک می‌کنم. او به وام نیاز ندارد، اما دنبال بورسیه است.",
+        "expect_actor": "relative",
+        "expect_intent": "funding_intent=scholarship",
+        "expect_need": None,
     },
     {
         "id": "ar-current-loan-search-remains-positive",
         "lang": "ar",
         "text": "أبحث عن قرض. الآن لدي إيجار مرتفع.",
+        "expect_actor": "private_person",
         "expect_intent": "funding_intent=loan",
         "expect_need": "need_context=housing",
     },
@@ -62,6 +83,7 @@ CASES = [
         "id": "fa-current-loan-search-remains-positive",
         "lang": "fa",
         "text": "دنبال وام هستم. الان اجاره بالایی دارم.",
+        "expect_actor": "private_person",
         "expect_intent": "funding_intent=loan",
         "expect_need": "need_context=housing",
     },
@@ -112,8 +134,9 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         require(links.count() >= 1, f"{case['id']}@{width}: no route rendered")
         hrefs = links.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
         first_href = hrefs[0]
-        require("actor_type=private_person" in first_href, f"{case['id']}@{width}: private-person route missing: {first_href!r}")
-        require(case["expect_need"] in first_href, f"{case['id']}@{width}: current housing need missing: {first_href!r}")
+        require(f"actor_type={case['expect_actor']}" in first_href, f"{case['id']}@{width}: expected actor route missing: {first_href!r}")
+        if case["expect_need"]:
+            require(case["expect_need"] in first_href, f"{case['id']}@{width}: current need missing: {first_href!r}")
         if case["expect_intent"]:
             require(case["expect_intent"] in first_href, f"{case['id']}@{width}: expected funding intent missing: {first_href!r}")
         else:
