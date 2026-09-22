@@ -49,6 +49,13 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-help-out-mother-vision-stays-relative",
+        "lang": "sv",
+        "text": "Jag hjälper till hemma hos min mamma som ser dåligt.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
         "id": "sv-help-out-association-funding-stays-association",
         "lang": "sv",
         "text": "Jag hjälper till i vår förening och söker bidrag.",
