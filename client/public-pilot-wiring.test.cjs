@@ -90,6 +90,16 @@ function sourceDisabledSurface() {
   assert.match(wiring.fallbackHtml("unknown"), /Stödmatchningen kunde inte laddas säkert/);
 })();
 
+(function testDisabilityFocusedModuleKeepsDomOwnershipAfterCapabilityLoad() {
+  assert.equal(
+    wiring.focusedModuleOwnsDom({ location: { search: "?focus=disability_home_support&support_need=personal_assistance" } }),
+    true,
+  );
+  assert.equal(wiring.focusedModuleOwnsDom({ location: { search: "?focus=assistance" } }), false);
+  assert.equal(wiring.focusedModuleOwnsDom({ location: { search: "" } }), false);
+  assert.equal(wiring.focusedModuleOwnsDom({}), false);
+})();
+
 (function testMissingBrowserDependenciesFailClosed() {
   assert.deepEqual(wiring.wireBrowser({}), {
     wired: false,
