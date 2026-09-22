@@ -203,7 +203,8 @@
     if(pattern===FUNDING_INTENT_PATTERNS[0][1]){
       const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
       const historicalApplication=/(?:\bjag\s+)?sökte\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
-      return pastMarker&&(receipt||historicalApplication);
+      const completedReceipt=/(?:\bjag\s+)?har\s+(?:jag\s+)?redan\s+fått\s+(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
+      return completedReceipt||(pastMarker&&(receipt||historicalApplication));
     }
     if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
