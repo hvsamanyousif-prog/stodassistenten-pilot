@@ -13,7 +13,9 @@ The same built-site regression also protects a bounded problem-first route for
 the LSS 9 a § harm-prevention basic-need family. A natural-language need to
 prevent physical harm, when paired with psychological-disability context, must
 reach the existing disability/assistance path without requiring the user to
-know the support name. Generic fear/safety wording without disability context
+know the support name. An explicit denial of that harm risk must not become
+positive statutory evidence and must leave a separately stated structure need
+route-authoritative. Generic fear/safety wording without disability context
 must not be auto-routed to statutory assistance. Only a coarse route signal may
 cross the start-page handoff; the raw story must not be put in the URL.
 
@@ -38,6 +40,7 @@ from playwright.sync_api import sync_playwright
 
 ADULT_SOURCE = "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-vuxna"
 CHILD_SOURCE = "https://www.forsakringskassan.se/privatperson/vuxen-med-funktionsnedsattning/assistansersattning/assistansersattning-for-barn"
+SOCIALSTYRELSEN_SOURCE = "https://www.socialstyrelsen.se/statistik-och-data/statistik/alla-statistikamnen/socialtjanstinsatser-till-personer-med-funktionsnedsattning/"
 
 CASES = [
     {
@@ -108,18 +111,48 @@ START_ROUTE_CASES = [
         "lang": "sv",
         "text": "På grund av min psykiska funktionsnedsättning behöver jag hjälp för att inte skada mig själv eller andra. Jag vet inte vad stödet heter.",
         "should_route": True,
+        "expected_need": "personal_assistance",
+        "source": ADULT_SOURCE,
     },
     {
         "id": "ar-harm-prevention-disability-route",
         "lang": "ar",
         "text": "بسبب إعاقتي النفسية أحتاج إلى مساعدة حتى لا أؤذي نفسي أو الآخرين. لا أعرف اسم الدعم.",
         "should_route": True,
+        "expected_need": "personal_assistance",
+        "source": ADULT_SOURCE,
     },
     {
         "id": "fa-harm-prevention-disability-route",
         "lang": "fa",
         "text": "به دلیل معلولیت روانی‌ام به کمک نیاز دارم تا به خودم یا دیگران آسیب نزنم. اسم این حمایت را نمی‌دانم.",
         "should_route": True,
+        "expected_need": "personal_assistance",
+        "source": ADULT_SOURCE,
+    },
+    {
+        "id": "sv-denied-harm-keeps-structure-route",
+        "lang": "sv",
+        "text": "Jag har psykisk funktionsnedsättning men det finns ingen risk för fysisk skada. Jag behöver bara hjälp att planera vardagen.",
+        "should_route": True,
+        "expected_need": "structure",
+        "source": SOCIALSTYRELSEN_SOURCE,
+    },
+    {
+        "id": "ar-denied-harm-keeps-structure-route",
+        "lang": "ar",
+        "text": "لدي إعاقة نفسية لكن لا يوجد خطر ضرر جسدي. أحتاج فقط إلى مساعدة في تنظيم حياتي اليومية.",
+        "should_route": True,
+        "expected_need": "structure",
+        "source": SOCIALSTYRELSEN_SOURCE,
+    },
+    {
+        "id": "fa-denied-harm-keeps-structure-route",
+        "lang": "fa",
+        "text": "معلولیت روانی دارم اما هیچ خطری برای آسیب به خودم وجود ندارد. فقط برای برنامه‌ریزی زندگی روزمره به کمک نیاز دارم.",
+        "should_route": True,
+        "expected_need": "structure",
+        "source": SOCIALSTYRELSEN_SOURCE,
     },
     {
         "id": "sv-generic-safety-no-statutory-route",
@@ -233,22 +266,25 @@ def run_start_route_case(browser, base_url: str, case: dict, width: int) -> dict
             require(route.count() == 0, f"{case['id']}@{width}: generic safety text was auto-routed to statutory assistance")
             return {"id": case["id"], "width": width, "status": "passed", "route": "absent"}
 
-        require(route.count() == 1, f"{case['id']}@{width}: bounded disability/harm-prevention route missing")
+        expected_need = case["expected_need"]
+        require(route.count() == 1, f"{case['id']}@{width}: bounded disability route missing")
         href = route.get_attribute("href") or ""
         require("focus=disability_home_support" in href, f"{case['id']}@{width}: wrong focus in route")
-        require("support_need=personal_assistance" in href, f"{case['id']}@{width}: coarse assistance need signal missing")
+        require(f"support_need={expected_need}" in href, f"{case['id']}@{width}: expected coarse need signal {expected_need!r} missing")
         for forbidden in ("q=", "story=", "situation=", "diagnosis=", "personnummer=", "address=", "hours="):
             require(forbidden not in href, f"{case['id']}@{width}: raw/sensitive story field leaked into route: {forbidden}")
         route.click()
         page.wait_for_url("**/person-pilot.html?**", wait_until="load")
         body = page.locator("body").inner_text()
         require("garanter" not in body.lower(), f"{case['id']}@{width}: guarantee language rendered")
-        require(page.locator(f'a[href="{ADULT_SOURCE}"]').count() >= 1, f"{case['id']}@{width}: primary assistance source missing")
+        source = case.get("source")
+        if source:
+            require(page.locator(f'a[href="{source}"]').count() >= 1, f"{case['id']}@{width}: expected primary source missing")
         require(
             page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
             f"{case['id']}@{width}: horizontal overflow",
         )
-        return {"id": case["id"], "width": width, "status": "passed", "route": href}
+        return {"id": case["id"], "width": width, "status": "passed", "route": href, "expected_need": expected_need}
     finally:
         page.close()
 
