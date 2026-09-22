@@ -172,7 +172,7 @@
   }
   function lower(value){return String(value||'').toLocaleLowerCase()}
   function fundingClauses(text){
-    return lower(text).split(/[,.!?;،؛؟\n]+|\s+(?:utan|men|بل|لكن|بلکه|اما)\s+/u).map(part=>part.trim()).filter(Boolean);
+    return lower(text).split(/[,.!?;،؛؟\n]+|\s+(?:utan|men|بل|لكن|بلکه|اما|فقط)\s+/u).map(part=>part.trim()).filter(Boolean);
   }
   function fundingClauseNegated(clause){
     const x=lower(clause);
