@@ -22,6 +22,19 @@ for (const text of [harmPreventionSv, harmPreventionAr, harmPreventionFa]) {
   assert.equal(guidance.detectNeed(text), 'personal_assistance');
 }
 
+// Explicit denial of the harm-risk fact must not become positive evidence for
+// the harm-prevention basic-need family. A separately stated concrete need for
+// daily structure must remain route-authoritative in the same product.
+const deniedHarmWithStructure = [
+  'Jag har psykisk funktionsnedsättning men det finns ingen risk för fysisk skada. Jag behöver bara hjälp att planera vardagen.',
+  'لدي إعاقة نفسية لكن لا يوجد خطر ضرر جسدي. أحتاج فقط إلى مساعدة في تنظيم حياتي اليومية.',
+  'معلولیت روانی دارم اما هیچ خطری برای آسیب به خودم وجود ندارد. فقط برای برنامه‌ریزی زندگی روزمره به کمک نیاز دارم.',
+];
+for (const text of deniedHarmWithStructure) {
+  assert.equal(guidance.detect(text), true);
+  assert.equal(guidance.detectNeed(text), 'structure');
+}
+
 // Generic fear/safety wording without disability context must not be promoted
 // into a statutory-assistance route.
 assert.equal(guidance.detect('Jag är rädd att jag kan skada mig själv eller andra och behöver hjälp.'), false);
