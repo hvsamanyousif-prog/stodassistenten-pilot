@@ -32,6 +32,12 @@ CASES = [
         "expect_first": "actor_type=private_person",
         "reject": "actor_type=company",
     },
+    {
+        "id": "sv-helper-mother-vision-home-support",
+        "text": "Jag hjälper min mamma som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
 ]
 
 WIDTHS = (390, 1280)
