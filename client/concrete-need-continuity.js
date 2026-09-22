@@ -21,7 +21,7 @@ function parseNeedContext(value){
 }
 
 function withoutBoundedSwedishNegatedNeedMentions(text){
- return String(text||'').replace(/\bbehöver\s+inte\s+hjälp\s+med\s+(?:hyran|maten)\b/gi,' ');
+ return String(text||'').replace(/\bbehöver\s+(?:inte\s+hjälp|ingen\s+hjälp)\s+med\s+(?:hyran|maten)\b/gi,' ');
 }
 
 function detectNeeds(text){
@@ -265,6 +265,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.15',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.16',page});
 }
 })(window);
