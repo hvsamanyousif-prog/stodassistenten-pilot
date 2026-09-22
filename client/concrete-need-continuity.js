@@ -35,6 +35,7 @@ const RELATIVE_SUBJECTS=[
  {key:'mother',explicit:/(?:\bmin mamma\b|\bmin mor\b|أمي|والدتي|مادرم)/i,pronoun:/(?:\bhon\b|(?:^|\s)هي(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|زوجتي|زوجي|همسرم)/i,pronoun:/(?:\bhen\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
+ {key:'sibling',explicit:/(?:\bmin syster\b|\bmin bror\b|\bmitt syskon\b|أختي|أخي|خواهرم|برادرم)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'person',explicit:/(?:personen (?:som )?jag hjälper|jag hjälper (?:henne|honom)|(?:för|åt)\s+(?:henne|honom)|الشخص الذي (?:أنا )?أساعده|(?:بال)?نيابة عن(?: شخص|ها|ه)|فردی که (?:من )?کمک|برای او)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
 ];
 
@@ -129,7 +130,8 @@ function installSharedShell(){
   const url=new URL(anchor.href,root.location.href);
   const actor=url.searchParams.get('actor_type')||'';
   const intent=url.searchParams.get('funding_intent')||'';
-  if(!SUPPORTED_ACTORS.has(actor)||!FUNDING_INTENTS.has(intent))return;
+  const boundedRejectedHelper=actor==='relative'&&anchor.dataset.rejectedFundingHelper==='true';
+  if(!SUPPORTED_ACTORS.has(actor)||(!FUNDING_INTENTS.has(intent)&&!boundedRejectedHelper))return;
   const needs=actor==='relative'?detectRelativeNeeds(composer.value):detectNeeds(composer.value);
   if(needs.length)url.searchParams.set(NEED_PARAM,needs.join(','));
   else url.searchParams.delete(NEED_PARAM);
@@ -259,6 +261,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.13',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.14',page});
 }
 })(window);
