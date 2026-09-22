@@ -34,6 +34,11 @@ CASES = [
         "need_context": {"essential_costs"},
     },
     {
+        "id": "sv-helper-sister-no-help-housing-positive-food-scholarship",
+        "text": "Jag hjälper min syster. Hon behöver ingen hjälp med hyran, men hon behöver hjälp med maten och söker stipendium.",
+        "need_context": {"essential_costs"},
+    },
+    {
         "id": "sv-helper-sister-negated-food-positive-housing-scholarship",
         "text": "Jag hjälper min syster. Hon behöver inte hjälp med maten, hon har hög hyra och söker stipendium.",
         "need_context": {"housing"},
