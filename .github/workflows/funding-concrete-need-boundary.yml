@@ -10,6 +10,7 @@ on:
       - 'scripts/test_funding_concrete_need_boundary_browser.py'
       - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
       - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
+      - 'scripts/test_multilingual_funding_need_negation_browser.py'
       - 'scripts/test_relative_need_negation_browser.py'
       - '.github/workflows/funding-concrete-need-boundary.yml'
   push:
@@ -22,6 +23,7 @@ on:
       - 'scripts/test_funding_concrete_need_boundary_browser.py'
       - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
       - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
+      - 'scripts/test_multilingual_funding_need_negation_browser.py'
       - 'scripts/test_relative_need_negation_browser.py'
       - '.github/workflows/funding-concrete-need-boundary.yml'
 
@@ -76,6 +78,18 @@ jobs:
           BROWSER_ENGINE: webkit
           EVIDENCE_PATH: multilingual-past-scholarship-boundary-webkit.json
         run: python scripts/test_multilingual_past_scholarship_boundary_browser.py
+      - name: Funding need-negation boundary — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: multilingual-funding-need-negation-chromium.json
+        run: python scripts/test_multilingual_funding_need_negation_browser.py
+      - name: Funding need-negation boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: multilingual-funding-need-negation-webkit.json
+        run: python scripts/test_multilingual_funding_need_negation_browser.py
       - name: Relative need negation — Chromium
         if: always()
         env:
@@ -100,6 +114,8 @@ jobs:
             multilingual-existing-loan-boundary-webkit.json
             multilingual-past-scholarship-boundary-chromium.json
             multilingual-past-scholarship-boundary-webkit.json
+            multilingual-funding-need-negation-chromium.json
+            multilingual-funding-need-negation-webkit.json
             relative-need-negation-chromium.json
             relative-need-negation-webkit.json
           if-no-files-found: warn
