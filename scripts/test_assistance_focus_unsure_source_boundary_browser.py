@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Holdout browser regressions for unknown-target assistance source truth.
+"""Holdout browser regressions for assistance source truth and direct-result routing.
 
 This reuses the registered assistance browser harness and keeps two bounded
 families under test:
 1. `Vet inte / vill börja brett` must keep both adult and child source paths
    reachable when the user describes basic assistance needs.
 2. If the user instead says the help is mainly *other* everyday help, the
-   journey must not ask the now-irrelevant weekly extent question before
-   showing the broad municipal next step.
+   journey must not ask the now-irrelevant weekly extent question and the
+   municipal next action must be backed by the municipal/LSS authority source,
+   not by a Försäkringskassan assistansersättning source.
 
 These are browser/source-journey checks only. They do not determine
 eligibility, prove persistence, human comprehension or physical-device use.
@@ -16,6 +17,9 @@ eligibility, prove persistence, human comprehension or physical-device use.
 from __future__ import annotations
 
 import test_assistance_focus_source_boundary_browser as base
+
+
+MUNICIPAL_LSS_SOURCE = "https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/lag-1993387-om-stod-och-service-till-vissa_sfs-1993-387/"
 
 
 base.CASES = [
@@ -47,7 +51,25 @@ base.CASES = [
         "tokens": ("LSS", "بزرگسال", "کودک", "مشخص نکرده"),
     },
     {
-        "id": "sv-other-help-skips-extent",
+        "id": "sv-other-help-adult-source-role",
+        "lang": "sv",
+        "who": "En vuxen",
+        "need": "Nej – främst annan hjälp i vardagen",
+        "skip_extent": True,
+        "extent_prompt": "Ungefär hur omfattande tror du hjälpen är under en vanlig vecka?",
+        "result_token": "Börja med kommunen och reda ut vilken stödform som passar",
+    },
+    {
+        "id": "sv-other-help-child-source-role",
+        "lang": "sv",
+        "who": "Ett barn",
+        "need": "Nej – främst annan hjälp i vardagen",
+        "skip_extent": True,
+        "extent_prompt": "Ungefär hur omfattande tror du hjälpen är under en vanlig vecka?",
+        "result_token": "Börja med kommunen och reda ut vilken stödform som passar",
+    },
+    {
+        "id": "sv-other-help-unsure-source-role",
         "lang": "sv",
         "who": "Vet inte / vill börja brett",
         "need": "Nej – främst annan hjälp i vardagen",
@@ -56,7 +78,25 @@ base.CASES = [
         "result_token": "Börja med kommunen och reda ut vilken stödform som passar",
     },
     {
-        "id": "ar-other-help-skips-extent",
+        "id": "ar-other-help-adult-source-role",
+        "lang": "ar",
+        "who": "شخص بالغ",
+        "need": "لا – أساساً مساعدة أخرى في الحياة اليومية",
+        "skip_extent": True,
+        "extent_prompt": "تقريباً ما حجم المساعدة في أسبوع عادي؟",
+        "result_token": "ابدأ بالبلدية وحدد نوع الدعم المناسب",
+    },
+    {
+        "id": "ar-other-help-child-source-role",
+        "lang": "ar",
+        "who": "طفل",
+        "need": "لا – أساساً مساعدة أخرى في الحياة اليومية",
+        "skip_extent": True,
+        "extent_prompt": "تقريباً ما حجم المساعدة في أسبوع عادي؟",
+        "result_token": "ابدأ بالبلدية وحدد نوع الدعم المناسب",
+    },
+    {
+        "id": "ar-other-help-unsure-source-role",
         "lang": "ar",
         "who": "لا أعرف / أريد البدء بشكل عام",
         "need": "لا – أساساً مساعدة أخرى في الحياة اليومية",
@@ -65,7 +105,25 @@ base.CASES = [
         "result_token": "ابدأ بالبلدية وحدد نوع الدعم المناسب",
     },
     {
-        "id": "fa-other-help-skips-extent",
+        "id": "fa-other-help-adult-source-role",
+        "lang": "fa",
+        "who": "یک بزرگسال",
+        "need": "نه – بیشتر کمک دیگری در زندگی روزمره است",
+        "skip_extent": True,
+        "extent_prompt": "تقریباً کمک در یک هفته معمولی چقدر است؟",
+        "result_token": "از شهرداری شروع کن و نوع حمایت مناسب را روشن کن",
+    },
+    {
+        "id": "fa-other-help-child-source-role",
+        "lang": "fa",
+        "who": "یک کودک",
+        "need": "نه – بیشتر کمک دیگری در زندگی روزمره است",
+        "skip_extent": True,
+        "extent_prompt": "تقریباً کمک در یک هفته معمولی چقدر است؟",
+        "result_token": "از شهرداری شروع کن و نوع حمایت مناسب را روشن کن",
+    },
+    {
+        "id": "fa-other-help-unsure-source-role",
         "lang": "fa",
         "who": "نمی‌دانم / گسترده شروع می‌کنم",
         "need": "نه – بیشتر کمک دیگری در زندگی روزمره است",
@@ -103,10 +161,25 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
                 f"{case['id']}@{width}: broad municipal next step not rendered directly",
             )
             base.require(
+                page.locator(f'a[href="{MUNICIPAL_LSS_SOURCE}"]').count() >= 1,
+                f"{case['id']}@{width}: municipal/LSS authority source missing",
+            )
+            for fk_source in (base.ADULT_SOURCE, base.CHILD_SOURCE):
+                base.require(
+                    page.locator(f'a[href="{fk_source}"]').count() == 0,
+                    f"{case['id']}@{width}: Försäkringskassan assistansersättning source still controls broad municipal result",
+                )
+            base.require(
                 page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
                 f"{case['id']}@{width}: horizontal overflow",
             )
-            return {"id": case["id"], "width": width, "status": "passed", "path": "other-help-direct-result"}
+            return {
+                "id": case["id"],
+                "width": width,
+                "status": "passed",
+                "path": "other-help-direct-result",
+                "source": MUNICIPAL_LSS_SOURCE,
+            }
         finally:
             page.close()
 
