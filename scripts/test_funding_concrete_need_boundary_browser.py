@@ -70,6 +70,14 @@ CASES = [
         "reject_intent": "funding_intent=",
     },
     {
+        "id": "past-stipendium-application-is-not-current-intent",
+        "text": "Förra året sökte jag stipendium. Nu har jag hög hyra.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_need": "need_context=housing",
+        "reject_intent": "funding_intent=",
+    },
+    {
         "id": "past-student-loan-is-not-current-application-intent",
         "text": "Förra året hade jag studielån. Nu har jag hög hyra.",
         "expect_question": False,
