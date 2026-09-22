@@ -70,6 +70,27 @@ CASES = [
         "reject_intent": "funding_intent=",
     },
     {
+        "id": "past-student-loan-is-not-current-application-intent",
+        "text": "Förra året hade jag studielån. Nu har jag hög hyra.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_need": "need_context=housing",
+        "reject_intent": "funding_intent=",
+    },
+    {
+        "id": "explicit-student-loan-application-remains-loan-intent",
+        "text": "Jag söker studielån för mina studier.",
+        "expect_question": True,
+        "expect_first": "actor_type=private_person",
+        "expect_intent": "funding_intent=loan",
+    },
+    {
+        "id": "existing-student-loan-repayment-is-not-new-application-intent",
+        "text": "Jag har studielån och behöver hjälp med återbetalningen.",
+        "expect_question": False,
+        "reject_intent": "funding_intent=",
+    },
+    {
         "id": "fonder-att-soka-remains-funding",
         "text": "Jag har hög hyra och söker fonder att söka.",
         "expect_question": False,
