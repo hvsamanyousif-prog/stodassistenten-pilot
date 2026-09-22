@@ -163,7 +163,7 @@
   const FUNDING_INTENT_PATTERNS=[
     ['scholarship',/(?:^|[^\p{L}\p{N}])(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)(?=$|[^\p{L}\p{N}])|منحة|منح\s+دراسية|بورسیه/u],
     ['loan',/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|(?:^|[^\p{L}\p{N}])وام(?=$|[^\p{L}\p{N}])/u],
-    ['funding',/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
+    ['funding',/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|(?:\bfond(?:er)?\b\s+att\s+sök|sök(?:a|er)?\s+(?:en\s+)?fond(?:er)?\b)|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
   ];
 
   function currentLang(){
