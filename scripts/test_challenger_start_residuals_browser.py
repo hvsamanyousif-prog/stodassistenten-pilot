@@ -26,6 +26,12 @@ CASES = [
         "expect_first": "actor_type=private_person",
         "reject": "actor_type=employee",
     },
+    {
+        "id": "sv-not-company-explicit-private-person",
+        "text": "Jag har inget företag, jag är privatperson.",
+        "expect_first": "actor_type=private_person",
+        "reject": "actor_type=company",
+    },
 ]
 
 WIDTHS = (390, 1280)
