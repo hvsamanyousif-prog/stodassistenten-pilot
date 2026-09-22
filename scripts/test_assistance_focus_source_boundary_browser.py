@@ -9,6 +9,14 @@ continuous basic-need category before the source boundary: sv/ar/fa must keep
 both the continuous-most-of-day condition and the serious life/physical-health
 risk condition visible before the user chooses that branch.
 
+The same built-site regression also protects a bounded problem-first route for
+the LSS 9 a § harm-prevention basic-need family. A natural-language need to
+prevent physical harm, when paired with psychological-disability context, must
+reach the existing disability/assistance path without requiring the user to
+know the support name. Generic fear/safety wording without disability context
+must not be auto-routed to statutory assistance. Only a coarse route signal may
+cross the start-page handoff; the raw story must not be put in the URL.
+
 It does not determine eligibility, persist a case, or claim physical-device
 proof.
 """
@@ -94,6 +102,45 @@ CASES = [
     },
 ]
 
+START_ROUTE_CASES = [
+    {
+        "id": "sv-harm-prevention-disability-route",
+        "lang": "sv",
+        "text": "På grund av min psykiska funktionsnedsättning behöver jag hjälp för att inte skada mig själv eller andra. Jag vet inte vad stödet heter.",
+        "should_route": True,
+    },
+    {
+        "id": "ar-harm-prevention-disability-route",
+        "lang": "ar",
+        "text": "بسبب إعاقتي النفسية أحتاج إلى مساعدة حتى لا أؤذي نفسي أو الآخرين. لا أعرف اسم الدعم.",
+        "should_route": True,
+    },
+    {
+        "id": "fa-harm-prevention-disability-route",
+        "lang": "fa",
+        "text": "به دلیل معلولیت روانی‌ام به کمک نیاز دارم تا به خودم یا دیگران آسیب نزنم. اسم این حمایت را نمی‌دانم.",
+        "should_route": True,
+    },
+    {
+        "id": "sv-generic-safety-no-statutory-route",
+        "lang": "sv",
+        "text": "Jag är rädd att jag kan skada mig själv eller andra och behöver hjälp.",
+        "should_route": False,
+    },
+    {
+        "id": "ar-generic-safety-no-statutory-route",
+        "lang": "ar",
+        "text": "أخاف أن أؤذي نفسي أو الآخرين وأحتاج إلى مساعدة.",
+        "should_route": False,
+    },
+    {
+        "id": "fa-generic-safety-no-statutory-route",
+        "lang": "fa",
+        "text": "می‌ترسم به خودم یا دیگران آسیب بزنم و کمک می‌خواهم.",
+        "should_route": False,
+    },
+]
+
 WIDTHS = (390, 1280)
 
 
@@ -170,22 +217,59 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         page.close()
 
 
+def run_start_route_case(browser, base_url: str, case: dict, width: int) -> dict:
+    page = browser.new_page(viewport={"width": width, "height": 900})
+    page.set_default_timeout(5000)
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(f"{base_url}/index.html?lang={case['lang']}", wait_until="load")
+        page.locator("#situation").fill(case["text"])
+        page.locator("#analyzeBtn").click()
+        page.wait_for_timeout(100)
+        require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
+        route = page.locator('[data-disability-home-support-route="true"]')
+        if not case["should_route"]:
+            require(route.count() == 0, f"{case['id']}@{width}: generic safety text was auto-routed to statutory assistance")
+            return {"id": case["id"], "width": width, "status": "passed", "route": "absent"}
+
+        require(route.count() == 1, f"{case['id']}@{width}: bounded disability/harm-prevention route missing")
+        href = route.get_attribute("href") or ""
+        require("focus=disability_home_support" in href, f"{case['id']}@{width}: wrong focus in route")
+        require("support_need=personal_assistance" in href, f"{case['id']}@{width}: coarse assistance need signal missing")
+        for forbidden in ("q=", "story=", "situation=", "diagnosis=", "personnummer=", "address=", "hours="):
+            require(forbidden not in href, f"{case['id']}@{width}: raw/sensitive story field leaked into route: {forbidden}")
+        route.click()
+        page.wait_for_load_state("load")
+        body = page.locator("body").inner_text()
+        require("garanter" not in body.lower(), f"{case['id']}@{width}: guarantee language rendered")
+        require(page.locator(f'a[href="{ADULT_SOURCE}"]').count() >= 1, f"{case['id']}@{width}: primary assistance source missing")
+        require(
+            page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
+            f"{case['id']}@{width}: horizontal overflow",
+        )
+        return {"id": case["id"], "width": width, "status": "passed", "route": href}
+    finally:
+        page.close()
+
+
 def main() -> int:
     root = Path(os.environ.get("REPO_ROOT", ".")).resolve()
     output = Path(os.environ.get("EVIDENCE_PATH", "assistance-source-boundary-evidence.json"))
     engine_name = os.environ.get("BROWSER_ENGINE", "chromium")
     require((root / "index.html").is_file(), f"index.html not found under {root}")
 
+    expected = (len(CASES) + len(START_ROUTE_CASES)) * len(WIDTHS)
     evidence = {
         "engine": engine_name,
-        "independent_semantic_cases": len(CASES),
+        "independent_semantic_cases": len(CASES) + len(START_ROUTE_CASES),
         "widths": list(WIDTHS),
-        "expected_checks": len(CASES) * len(WIDTHS),
+        "expected_checks": expected,
         "executed": 0,
         "passed": 0,
         "failed": 0,
         "results": [],
-        "claim_boundary": "browser/source-boundary and pre-branch semantic facts only; not eligibility, persistence, human comprehension, or physical-device evidence",
+        "claim_boundary": "browser/source-boundary and bounded problem-first routing only; not eligibility, persistence, human comprehension, or physical-device evidence",
     }
 
     with tempfile.TemporaryDirectory(prefix="stod-assistance-source-boundary-") as tmp:
@@ -199,6 +283,15 @@ def main() -> int:
                         evidence["executed"] += 1
                         try:
                             evidence["results"].append(run_case(browser, base_url, case, width))
+                            evidence["passed"] += 1
+                        except Exception as exc:
+                            evidence["failed"] += 1
+                            evidence["results"].append({"id": case["id"], "width": width, "status": "failed", "error": str(exc)})
+                for case in START_ROUTE_CASES:
+                    for width in WIDTHS:
+                        evidence["executed"] += 1
+                        try:
+                            evidence["results"].append(run_start_route_case(browser, base_url, case, width))
                             evidence["passed"] += 1
                         except Exception as exc:
                             evidence["failed"] += 1
