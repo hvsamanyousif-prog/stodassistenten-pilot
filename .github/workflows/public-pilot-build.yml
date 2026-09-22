@@ -19,6 +19,7 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
@@ -40,6 +41,7 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
@@ -99,6 +101,18 @@ jobs:
           BROWSER_ENGINE: webkit
           EVIDENCE_PATH: assistance-source-boundary-webkit.json
         run: python scripts/test_assistance_focus_source_boundary_browser.py
+      - name: Assistance negated harm-support holdout — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: assistance-harm-support-denial-chromium.json
+        run: python scripts/test_assistance_harm_support_denial_browser.py
+      - name: Assistance negated harm-support holdout — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: assistance-harm-support-denial-webkit.json
+        run: python scripts/test_assistance_harm_support_denial_browser.py
       - name: Assistance unsure-target source-boundary holdout — Chromium
         if: always()
         env:
@@ -119,6 +133,8 @@ jobs:
           path: |
             assistance-source-boundary-chromium.json
             assistance-source-boundary-webkit.json
+            assistance-harm-support-denial-chromium.json
+            assistance-harm-support-denial-webkit.json
             assistance-unsure-source-boundary-chromium.json
             assistance-unsure-source-boundary-webkit.json
           if-no-files-found: warn
