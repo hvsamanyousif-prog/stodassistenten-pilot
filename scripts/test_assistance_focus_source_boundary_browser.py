@@ -3,8 +3,14 @@
 
 The test starts from the built person journey reached by the shared start-page
 assistance route and verifies that a Försäkringskassan path exposes material
-source conditions that this three-question pilot has not established. It does
-not determine eligibility, persist a case, or claim physical-device proof.
+source conditions that this three-question pilot has not established. It also
+checks that the human-facing positive choice does not widen the medically
+continuous basic-need category before the source boundary: sv/ar/fa must keep
+both the continuous-most-of-day condition and the serious life/physical-health
+risk condition visible before the user chooses that branch.
+
+It does not determine eligibility, persist a case, or claim physical-device
+proof.
 """
 
 from __future__ import annotations
@@ -30,7 +36,8 @@ CASES = [
         "id": "sv-adult-source-boundary",
         "lang": "sv",
         "who": "En vuxen",
-        "need": "Ja – hygien, toalett, måltider, på- och avklädning, kommunikation, andning eller löpande medicinskt stöd",
+        "positive_prefix": "Ja –",
+        "need_facts": ("större delen av dygnet", "fara för liv", "allvarlig risk", "fysisk hälsa"),
         "extent": "Kan vara mer än 20 timmar för grundläggande behov",
         "source": ADULT_SOURCE,
         "tokens": ("LSS", "bo i Sverige", "66 år eller yngre", "inte fastställt"),
@@ -39,7 +46,8 @@ CASES = [
         "id": "sv-child-source-boundary",
         "lang": "sv",
         "who": "Ett barn",
-        "need": "Ja – hygien, toalett, måltider, på- och avklädning, kommunikation, andning eller löpande medicinskt stöd",
+        "positive_prefix": "Ja –",
+        "need_facts": ("större delen av dygnet", "fara för liv", "allvarlig risk", "fysisk hälsa"),
         "extent": "Kan vara mer än 20 timmar för grundläggande behov",
         "source": CHILD_SOURCE,
         "tokens": ("LSS", "barnet ska bo i Sverige", "föräldraavdrag", "0–17"),
@@ -48,7 +56,8 @@ CASES = [
         "id": "ar-adult-source-boundary",
         "lang": "ar",
         "who": "شخص بالغ",
-        "need": "نعم – النظافة أو المرحاض أو الوجبات أو اللباس أو التواصل أو التنفس أو دعم طبي مستمر",
+        "positive_prefix": "نعم –",
+        "need_facts": ("معظم اليوم", "خطر على الحياة", "خطير", "الصحة الجسدية"),
         "extent": "قد تتجاوز 20 ساعة للاحتياجات الأساسية",
         "source": ADULT_SOURCE,
         "tokens": ("LSS", "تقيم في السويد", "66", "لم يتحقق"),
@@ -57,7 +66,8 @@ CASES = [
         "id": "ar-child-source-boundary",
         "lang": "ar",
         "who": "طفل",
-        "need": "نعم – النظافة أو المرحاض أو الوجبات أو اللباس أو التواصل أو التنفس أو دعم طبي مستمر",
+        "positive_prefix": "نعم –",
+        "need_facts": ("معظم اليوم", "خطر على الحياة", "خطير", "الصحة الجسدية"),
         "extent": "قد تتجاوز 20 ساعة للاحتياجات الأساسية",
         "source": CHILD_SOURCE,
         "tokens": ("LSS", "الطفل يقيم في السويد", "foräldraavdrag", "0 إلى 17"),
@@ -66,7 +76,8 @@ CASES = [
         "id": "fa-adult-source-boundary",
         "lang": "fa",
         "who": "یک بزرگسال",
-        "need": "بله – بهداشت، توالت، غذا، لباس، ارتباط، تنفس یا حمایت پزشکی مستمر",
+        "positive_prefix": "بله –",
+        "need_facts": ("بیشتر ساعات شبانه‌روز", "خطر جانی", "جدی", "سلامت جسمی"),
         "extent": "ممکن است بیش از ۲۰ ساعت برای نیازهای اساسی باشد",
         "source": ADULT_SOURCE,
         "tokens": ("LSS", "در سوئد زندگی", "۶۶ سال یا کمتر", "احراز نکرده"),
@@ -75,7 +86,8 @@ CASES = [
         "id": "fa-child-source-boundary",
         "lang": "fa",
         "who": "یک کودک",
-        "need": "بله – بهداشت، توالت، غذا، لباس، ارتباط، تنفس یا حمایت پزشکی مستمر",
+        "positive_prefix": "بله –",
+        "need_facts": ("بیشتر ساعات شبانه‌روز", "خطر جانی", "جدی", "سلامت جسمی"),
         "extent": "ممکن است بیش از ۲۰ ساعت برای نیازهای اساسی باشد",
         "source": CHILD_SOURCE,
         "tokens": ("LSS", "کودک در سوئد زندگی", "foräldraavdrag", "۰ تا ۱۷"),
@@ -120,7 +132,14 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
             wait_until="load",
         )
         page.get_by_role("button", name=case["who"], exact=True).click()
-        page.get_by_role("button", name=case["need"], exact=True).click()
+
+        positive = page.get_by_role("button").filter(has_text=case["positive_prefix"])
+        require(positive.count() == 1, f"{case['id']}@{width}: expected one positive basic-needs choice")
+        positive_text = positive.inner_text()
+        for fact in case["need_facts"]:
+            require(fact in positive_text, f"{case['id']}@{width}: medical basic-need fact missing before branch: {fact!r}")
+        positive.click()
+
         page.get_by_role("button", name=case["extent"], exact=True).click()
 
         require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
@@ -135,7 +154,13 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
             page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
             f"{case['id']}@{width}: horizontal overflow",
         )
-        return {"id": case["id"], "width": width, "status": "passed", "source": case["source"]}
+        return {
+            "id": case["id"],
+            "width": width,
+            "status": "passed",
+            "source": case["source"],
+            "medical_need_facts": list(case["need_facts"]),
+        }
     finally:
         page.close()
 
@@ -155,7 +180,7 @@ def main() -> int:
         "passed": 0,
         "failed": 0,
         "results": [],
-        "claim_boundary": "browser/source-boundary only; not eligibility, persistence, human comprehension, or physical-device evidence",
+        "claim_boundary": "browser/source-boundary and pre-branch semantic facts only; not eligibility, persistence, human comprehension, or physical-device evidence",
     }
 
     with tempfile.TemporaryDirectory(prefix="stod-assistance-source-boundary-") as tmp:
