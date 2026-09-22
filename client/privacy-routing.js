@@ -161,7 +161,7 @@
   const FUNDING_INTENTS=new Set(['funding','scholarship','loan']);
   const FUNDING_DESTINATION_ACTORS=new Set(['private_person','student','employee','company','association','relative','property_actor']);
   const FUNDING_INTENT_PATTERNS=[
-    ['scholarship',/stipen|منحة|منح\s+دراسية|بورسیه/u],
+    ['scholarship',/(?:^|[^\p{L}\p{N}])(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)(?=$|[^\p{L}\p{N}])|منحة|منح\s+دراسية|بورسیه/u],
     ['loan',/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|(?:^|[^\p{L}\p{N}])وام(?=$|[^\p{L}\p{N}])/u],
     ['funding',/pengar\s+att\s+sök|sök(?:a|er)?\s+pengar|\bfond(?:er)?\b(?:\s+att\s+sök)?|bidrag\s+att\s+sök|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
   ];
@@ -179,7 +179,7 @@
     const sv=/\b(?:(?:sök(?:a|er)?|letar(?:\s+efter)?)\s+inte(?!\s+bara)|(?:vill|önskar)\s+inte(?!\s+bara)(?:\s+ha)?)\b/u.test(x);
     const ar=/(?:^|[\s])(?:و)?لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
-    const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
+    const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
     const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
@@ -187,13 +187,13 @@
   function fundingPatternDeterminerNegated(clause,pattern){
     if(currentLang()!=='sv') return false;
     const x=lower(clause);
-    const matches=x.matchAll(/\b(?:inget|ingen|inga)\s+(stipen[\p{L}]*|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
+    const matches=x.matchAll(/\b(?:inget|ingen|inga)\s+((?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
     return [...matches].some(match=>pattern.test(match[1]));
   }
   function fundingPatternModalNegated(clause,pattern){
     if(currentLang()!=='sv') return false;
     const x=lower(clause);
-    const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+(stipen[\p{L}]*|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
+    const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+((?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
     return [...matches].some(match=>pattern.test(match[1]));
   }
   function fundingPatternNegated(clause,pattern){
