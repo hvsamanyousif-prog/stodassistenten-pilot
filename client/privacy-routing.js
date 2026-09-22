@@ -312,7 +312,7 @@
   }
   function currentHelperRole(text){
     const x=lower(text);
-    const sv=/\bjag\s+hjälper(?!\s+inte\b)/u.test(x);
+    const sv=/\bjag\s+hjälper(?!\s+(?:inte|till)\b)/u.test(x);
     const ar=/(?:^|[^\p{L}\p{N}])أساعد(?=$|[^\p{L}\p{N}])/u.test(x.replace(/لم\s+أعد\s+أساعد|لا\s+أساعد/gu,' '));
     const fa=/کمک\s+می(?:‌|\s)?کنم/u.test(x);
     return sv||ar||fa;
