@@ -20,8 +20,12 @@ function parseNeedContext(value){
  return uniqueAllowed(String(value||'').split(','));
 }
 
+function withoutBoundedSwedishNegatedNeedMentions(text){
+ return String(text||'').replace(/\bbehöver\s+inte\s+hjälp\s+med\s+(?:hyran|maten)\b/gi,' ');
+}
+
 function detectNeeds(text){
- const value=String(text||'').toLocaleLowerCase();
+ const value=withoutBoundedSwedishNegatedNeedMentions(text).toLocaleLowerCase();
  const needs=[];
  const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(value);
  const essentialCosts=/(?:\bmat(?:en)?\b|livsmedel|läkemed|medicin|\b(?:elräkning(?:en|ar|arna)?|hushållsel|elkostnad(?:en|er|erna)?)\b|\bfood\b|medicine|دواء|طعام|(?:فاتورة|تكلفة|تكاليف)\s+الكهرباء|دارو|غذا|قبض\s+برق|هزینه(?:‌ی|ی)?\s*برق)/.test(value);
@@ -261,6 +265,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.14',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.15',page});
 }
 })(window);
