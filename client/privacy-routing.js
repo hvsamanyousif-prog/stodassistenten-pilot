@@ -190,8 +190,20 @@
     const matches=x.matchAll(/\b(?:inget|ingen|inga)\s+(stipen[\p{L}]*|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
     return [...matches].some(match=>pattern.test(match[1]));
   }
+  function fundingPatternModalNegated(clause,pattern){
+    if(currentLang()!=='sv') return false;
+    const x=lower(clause);
+    const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+(stipen[\p{L}]*|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
+    return [...matches].some(match=>pattern.test(match[1]));
+  }
+  function fundingPatternNegated(clause,pattern){
+    return fundingClauseNegated(clause)||fundingPatternDeterminerNegated(clause,pattern)||fundingPatternModalNegated(clause,pattern);
+  }
   function hasAffirmedFundingMention(text,pattern){
-    return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingClauseNegated(clause)&&!fundingPatternDeterminerNegated(clause,pattern));
+    return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingPatternNegated(clause,pattern));
+  }
+  function hasRejectedFundingMention(text){
+    return FUNDING_INTENT_PATTERNS.some(([_intent,pattern])=>fundingClauses(text).some(clause=>pattern.test(clause)&&fundingPatternNegated(clause,pattern)));
   }
   function affirmedFundingIntents(text){
     const x=lower(text);
@@ -347,6 +359,10 @@
     const safeIntent=FUNDING_INTENTS.has(intent)?intent:'funding';
     return `<a class="route" data-funding-actor="${actor}" data-funding-intent="${safeIntent}" href="${actorHref(actor,lang,safeIntent)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
   }
+  function rejectedFundingHelperRouteHtml(copy,lang){
+    const data=copy.actors.relative;
+    return `<a class="route" data-funding-actor="relative" data-rejected-funding-helper="true" href="${actorHref('relative',lang,null)}"><span><strong>${data[0]}</strong><small>${data[1]}</small></span><span class="arrow" aria-hidden="true">→</span></a>`;
+  }
   function renderFundingIntent(text){
     const intents=affirmedFundingIntents(text);
     const lang=currentLang();
@@ -370,9 +386,18 @@
     box.scrollIntoView({behavior:'smooth',block:'nearest'});
     return true;
   }
+  function renderRejectedFundingHelperNeed(text){
+    const lang=currentLang();
+    if(affirmedFundingIntents(text).length||!helperFundingScope(text)||!hasRejectedFundingMention(text)||!hasConcreteNeed(text)) return false;
+    const copy=FUNDING_COPY[lang];
+    box.innerHTML=`<div class="interpret">${copy.known}</div>${rejectedFundingHelperRouteHtml(copy,lang)}`;
+    box.hidden=false;
+    box.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return true;
+  }
   function interceptFunding(event){
     const text=composer?composer.value.trim():'';
-    if(!text||!renderFundingIntent(text)) return;
+    if(!text||!(renderFundingIntent(text)||renderRejectedFundingHelperNeed(text))) return;
     event.preventDefault();
     event.stopImmediatePropagation();
   }
