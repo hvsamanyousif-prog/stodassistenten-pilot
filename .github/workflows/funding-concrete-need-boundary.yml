@@ -8,6 +8,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_funding_concrete_need_boundary_browser.py'
       - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
+      - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
       - '.github/workflows/funding-concrete-need-boundary.yml'
   push:
     branches: ['main']
@@ -17,6 +18,7 @@ on:
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_funding_concrete_need_boundary_browser.py'
       - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
+      - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
       - '.github/workflows/funding-concrete-need-boundary.yml'
 
 permissions:
@@ -58,6 +60,18 @@ jobs:
           BROWSER_ENGINE: webkit
           EVIDENCE_PATH: multilingual-existing-loan-boundary-webkit.json
         run: python scripts/test_multilingual_existing_loan_boundary_browser.py
+      - name: Past-scholarship boundary — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: multilingual-past-scholarship-boundary-chromium.json
+        run: python scripts/test_multilingual_past_scholarship_boundary_browser.py
+      - name: Past-scholarship boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: multilingual-past-scholarship-boundary-webkit.json
+        run: python scripts/test_multilingual_past_scholarship_boundary_browser.py
       - name: Preserve funding concrete-need boundary evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -68,5 +82,7 @@ jobs:
             funding-concrete-need-boundary-webkit.json
             multilingual-existing-loan-boundary-chromium.json
             multilingual-existing-loan-boundary-webkit.json
+            multilingual-past-scholarship-boundary-chromium.json
+            multilingual-past-scholarship-boundary-webkit.json
           if-no-files-found: warn
           retention-days: 14
