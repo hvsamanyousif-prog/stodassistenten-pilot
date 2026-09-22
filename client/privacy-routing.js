@@ -177,7 +177,7 @@
   function fundingClauseNegated(clause){
     const x=lower(clause);
     const sv=/\b(?:(?:sök(?:a|er)?|letar(?:\s+efter)?)\s+inte(?!\s+bara)|(?:vill|önskar)\s+inte(?!\s+bara)(?:\s+ha)?)\b/u.test(x);
-    const ar=/(?:^|[\s])لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
+    const ar=/(?:^|[\s])(?:و)?لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:stipen[\p{L}]*|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
     const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
