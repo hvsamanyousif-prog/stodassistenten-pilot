@@ -42,6 +42,31 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-vague-money-to-apply-for",
+        "lang": "sv",
+        "text": "pengar att söka",
+        "expect_first": "actor_type=private_person",
+    },
+    {
+        "id": "sv-vague-apply-for-money",
+        "lang": "sv",
+        "text": "söka pengar",
+        "expect_first": "actor_type=private_person",
+    },
+    {
+        "id": "sv-vague-funds-to-apply-for",
+        "lang": "sv",
+        "text": "fonder att söka",
+        "expect_first": "actor_type=private_person",
+    },
+    {
+        "id": "sv-fondue-not-funding",
+        "lang": "sv",
+        "text": "Jag planerar en fonduekväll med vänner.",
+        "expect_first": "actor_type=other",
+        "reject": "actor_type=private_person",
+    },
+    {
         "id": "ar-not-company-explicit-private-person",
         "lang": "ar",
         "text": "ليس لدي شركة، أنا فرد.",
