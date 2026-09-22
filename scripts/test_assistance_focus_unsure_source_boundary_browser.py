@@ -27,7 +27,7 @@ base.CASES = [
         "id": "sv-unsure-who-source-boundary",
         "lang": "sv",
         "who": "Vet inte / vill börja brett",
-        "need": "Ja – hygien, toalett, måltider, på- och avklädning, kommunikation, andning eller löpande medicinskt stöd",
+        "need": "Ja – hygien, toalett, måltider, på- och avklädning, kommunikation, andning eller stöd som behövs löpande under större delen av dygnet på grund av ett medicinskt tillstånd som innebär fara för liv eller överhängande allvarlig risk för fysisk hälsa",
         "extent": "Kan vara mer än 20 timmar för grundläggande behov",
         "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
         "tokens": ("LSS", "vuxen", "barn", "inte fastställt"),
@@ -36,7 +36,7 @@ base.CASES = [
         "id": "ar-unsure-who-source-boundary",
         "lang": "ar",
         "who": "لا أعرف / أريد البدء بشكل عام",
-        "need": "نعم – النظافة أو المرحاض أو الوجبات أو اللباس أو التواصل أو التنفس أو دعم طبي مستمر",
+        "need": "نعم – النظافة أو المرحاض أو الوجبات أو اللباس أو التواصل أو التنفس، أو دعم يلزم بصورة متواصلة خلال معظم اليوم بسبب حالة طبية تنطوي على خطر على الحياة أو خطر وشيك وخطير على الصحة الجسدية",
         "extent": "قد تتجاوز 20 ساعة للاحتياجات الأساسية",
         "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
         "tokens": ("LSS", "بالغ", "طفل", "لم يحدد"),
@@ -45,7 +45,7 @@ base.CASES = [
         "id": "fa-unsure-who-source-boundary",
         "lang": "fa",
         "who": "نمی‌دانم / گسترده شروع می‌کنم",
-        "need": "بله – بهداشت، توالت، غذا، لباس، ارتباط، تنفس یا حمایت پزشکی مستمر",
+        "need": "بله – بهداشت، توالت، غذا، لباس، ارتباط، تنفس، یا حمایتی که به‌طور پیوسته در بیشتر ساعات شبانه‌روز به دلیل یک وضعیت پزشکی لازم است که خطر جانی یا خطر قریب‌الوقوع و جدی برای سلامت جسمی ایجاد می‌کند",
         "extent": "ممکن است بیش از ۲۰ ساعت برای نیازهای اساسی باشد",
         "sources": (base.ADULT_SOURCE, base.CHILD_SOURCE),
         "tokens": ("LSS", "بزرگسال", "کودک", "مشخص نکرده"),
@@ -183,10 +183,6 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         finally:
             page.close()
 
-    # The base harness validates language, interaction, no guarantee language,
-    # no horizontal overflow and one controlling source. This holdout requires
-    # both target-specific source paths because the user explicitly chose an
-    # unknown target.
     first_source_case = dict(case)
     first_source_case["source"] = case["sources"][0]
     result = _original_run_case(browser, base_url, first_source_case, width)
