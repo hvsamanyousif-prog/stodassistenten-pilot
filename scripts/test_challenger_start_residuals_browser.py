@@ -22,25 +22,87 @@ from playwright.sync_api import sync_playwright
 CASES = [
     {
         "id": "sv-not-unemployed-retired-low-pension",
+        "lang": "sv",
         "text": "Jag är inte arbetslös, jag är pensionär med för låg pension.",
         "expect_first": "actor_type=private_person",
         "reject": "actor_type=employee",
     },
     {
         "id": "sv-not-company-explicit-private-person",
+        "lang": "sv",
         "text": "Jag har inget företag, jag är privatperson.",
         "expect_first": "actor_type=private_person",
         "reject": "actor_type=company",
     },
     {
         "id": "sv-helper-mother-vision-home-support",
+        "lang": "sv",
         "text": "Jag hjälper min mamma som har svårt att se och klara sig hemma.",
         "expect_first": "actor_type=relative",
         "reject": "actor_type=private_person",
     },
+    {
+        "id": "ar-not-company-explicit-private-person",
+        "lang": "ar",
+        "text": "ليس لدي شركة، أنا فرد.",
+        "expect_first": "actor_type=private_person",
+        "reject": "actor_type=company",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-not-company-explicit-private-person",
+        "lang": "fa",
+        "text": "شرکت ندارم، من فرد هستم.",
+        "expect_first": "actor_type=private_person",
+        "reject": "actor_type=company",
+        "expect_rtl": True,
+    },
+    {
+        "id": "ar-company-positive-control",
+        "lang": "ar",
+        "text": "لدي شركة وأريد فهم مناقصة عامة.",
+        "expect_first": "actor_type=company",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-company-positive-control",
+        "lang": "fa",
+        "text": "شرکت دارم و می‌خواهم یک مناقصه عمومی را بفهمم.",
+        "expect_first": "actor_type=company",
+        "expect_rtl": True,
+    },
 ]
 
 WIDTHS = (390, 1280)
+
+
+def run_case(browser, base_url: str, case: dict, width: int) -> dict:
+    page = browser.new_page(viewport={"width": width, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        lang = case.get("lang", "sv")
+        page.goto(f"{base_url}/index.html?lang={lang}", wait_until="load")
+        page.locator("#situation").fill(case["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        base.require(results.is_visible(), f"{case['id']}@{width}: results not visible")
+        base.require(not page_errors, f"{case['id']}@{width}: JavaScript errors: {page_errors}")
+
+        links = results.locator("a.route")
+        base.require(links.count() >= 1, f"{case['id']}@{width}: no route rendered")
+        hrefs = links.evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+        first_href = hrefs[0]
+        base.require(case["expect_first"] in first_href, f"{case['id']}@{width}: first route {first_href!r} did not match {case['expect_first']!r}")
+        if case.get("reject"):
+            base.require(all(case["reject"] not in href for href in hrefs), f"{case['id']}@{width}: rejected route was rendered: {hrefs}")
+        base.require(all(case["text"] not in href for href in hrefs), f"{case['id']}@{width}: raw situation leaked into URL")
+        base.require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case['id']}@{width}: horizontal overflow")
+        if case.get("expect_rtl"):
+            base.require(page.locator("html").get_attribute("dir") == "rtl", f"{case['id']}@{width}: RTL direction missing")
+        return {"id": case["id"], "lang": lang, "width": width, "status": "passed", "first_href": first_href, "hrefs": hrefs}
+    finally:
+        page.close()
 
 
 def main() -> int:
@@ -70,12 +132,13 @@ def main() -> int:
                     for width in WIDTHS:
                         evidence["executed"] += 1
                         try:
-                            evidence["results"].append(base.run_case(browser, base_url, case, width))
+                            evidence["results"].append(run_case(browser, base_url, case, width))
                             evidence["passed"] += 1
                         except Exception as exc:
                             evidence["failed"] += 1
                             evidence["results"].append({
                                 "id": case["id"],
+                                "lang": case.get("lang", "sv"),
                                 "width": width,
                                 "status": "failed",
                                 "error": str(exc),
