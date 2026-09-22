@@ -196,8 +196,15 @@
     const matches=x.matchAll(/\bbehöver\s+inte(?!\s+bara)(?:\s+ha)?\s+((?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|studielån(?:et|en)?|lån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/gu);
     return [...matches].some(match=>pattern.test(match[1]));
   }
+  function fundingPatternHistoricalReceipt(clause,pattern){
+    if(currentLang()!=='sv'||pattern!==FUNDING_INTENT_PATTERNS[0][1]) return false;
+    const x=lower(clause);
+    const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
+    const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
+    return pastMarker&&receipt;
+  }
   function fundingPatternNegated(clause,pattern){
-    return fundingClauseNegated(clause)||fundingPatternDeterminerNegated(clause,pattern)||fundingPatternModalNegated(clause,pattern);
+    return fundingClauseNegated(clause)||fundingPatternDeterminerNegated(clause,pattern)||fundingPatternModalNegated(clause,pattern)||fundingPatternHistoricalReceipt(clause,pattern);
   }
   function hasAffirmedFundingMention(text,pattern){
     return fundingClauses(text).some(clause=>pattern.test(clause)&&!fundingPatternNegated(clause,pattern));
