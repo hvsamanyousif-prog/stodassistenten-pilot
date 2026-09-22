@@ -80,8 +80,8 @@ CASES = [
     {
         "id": "explicit-student-loan-application-remains-loan-intent",
         "text": "Jag söker studielån för mina studier.",
-        "expect_question": True,
-        "expect_first": "actor_type=private_person",
+        "expect_question": False,
+        "expect_first": "actor_type=student",
         "expect_intent": "funding_intent=loan",
     },
     {
