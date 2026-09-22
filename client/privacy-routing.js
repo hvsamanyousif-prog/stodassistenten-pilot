@@ -197,11 +197,19 @@
     return [...matches].some(match=>pattern.test(match[1]));
   }
   function fundingPatternHistoricalReceipt(clause,pattern){
-    if(currentLang()!=='sv'||pattern!==FUNDING_INTENT_PATTERNS[0][1]) return false;
+    if(currentLang()!=='sv') return false;
     const x=lower(clause);
     const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
-    const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
-    return pastMarker&&receipt;
+    if(pattern===FUNDING_INTENT_PATTERNS[0][1]){
+      const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
+      return pastMarker&&receipt;
+    }
+    if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
+    const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
+    if(explicitApplication) return false;
+    const historicalLoan=pastMarker&&/(?:\bjag\s+)?(?:hade|tog|fick|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x);
+    const repayment=/(?:\bjag\s+)?(?:har|hade)\s+(?:jag\s+)?(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b/u.test(x)&&/\b(?:återbetal(?:a|ning(?:en)?)?|betala\s+tillbaka|amorter(?:a|ing(?:en)?)?|skuld(?:en)?)\b/u.test(x);
+    return historicalLoan||repayment;
   }
   function fundingPatternNegated(clause,pattern){
     return fundingClauseNegated(clause)||fundingPatternDeterminerNegated(clause,pattern)||fundingPatternModalNegated(clause,pattern)||fundingPatternHistoricalReceipt(clause,pattern);
