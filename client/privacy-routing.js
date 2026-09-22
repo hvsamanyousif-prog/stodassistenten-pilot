@@ -454,6 +454,15 @@
     url.searchParams.set('funding_intent',intent);
     return true;
   }
+  function preserveBoundedPrivateHousingContext(url){
+    const text=composer?composer.value.trim():'';
+    if(!boundedHousingNeed(text)) return false;
+    if(!url.pathname.endsWith('person-pilot.html')) return false;
+    if(safeToken(url.searchParams.get('actor_type'))!=='private_person') return false;
+    if(url.searchParams.has('need_context')) return false;
+    url.searchParams.set('need_context','housing');
+    return true;
+  }
   function sanitizeAnchor(anchor){
     const url=new URL(anchor.href,location.href);
     const mode=safeToken(url.searchParams.get('mode'));
@@ -464,6 +473,7 @@
       url.searchParams.delete('q');
       changed=true;
     }
+    if(preserveBoundedPrivateHousingContext(url)) changed=true;
     if(preserveConcreteFundingIntent(url)) changed=true;
     if(changed) anchor.href=url.pathname.split('/').pop()+url.search;
     return routeKey(url);
