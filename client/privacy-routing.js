@@ -202,7 +202,8 @@
     const pastMarker=/\b(?:förra året|tidigare|förut)\b/u.test(x);
     if(pattern===FUNDING_INTENT_PATTERNS[0][1]){
       const receipt=/(?:\bjag\s+)?(?:fick|hade\s+fått|beviljades)\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
-      return pastMarker&&receipt;
+      const historicalApplication=/(?:\bjag\s+)?sökte\s+(?:jag\s+)?(?:ett\s+)?(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)\b/u.test(x);
+      return pastMarker&&(receipt||historicalApplication);
     }
     if(pattern!==FUNDING_INTENT_PATTERNS[1][1]) return false;
     const explicitApplication=/\b(?:sök(?:a|er)|ansök(?:a|er)(?:\s+om)?)\s+(?:ett\s+)?(?:studielån(?:et|en)?|lån(?:et|en)?)\b|\blåna\s+pengar\b/u.test(x);
