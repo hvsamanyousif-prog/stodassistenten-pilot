@@ -15,6 +15,7 @@ on:
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_shared_search_keyword_inventory_browser.py'
+      - 'scripts/test_funding_negation_browser.py'
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_funding_continuity_browser.py'
@@ -36,6 +37,7 @@ on:
       - 'scripts/test_procurement_expert_*.py'
       - 'scripts/test_shared_search_browser.py'
       - 'scripts/test_shared_search_keyword_inventory_browser.py'
+      - 'scripts/test_funding_negation_browser.py'
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_funding_continuity_browser.py'
@@ -109,6 +111,17 @@ jobs:
           BROWSER_ENGINE: webkit
           EVIDENCE_PATH: shared-search-keyword-inventory-webkit.json
         run: python scripts/test_shared_search_keyword_inventory_browser.py
+      - name: Explicit funding-type negation — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: funding-negation-chromium.json
+        run: python scripts/test_funding_negation_browser.py
+      - name: Explicit funding-type negation — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: funding-negation-webkit.json
+        run: python scripts/test_funding_negation_browser.py
       - name: Combined concrete need + funding intent — Chromium
         env:
           BROWSER_ENGINE: chromium
@@ -221,6 +234,8 @@ jobs:
             shared-search-webkit.json
             shared-search-keyword-inventory-chromium.json
             shared-search-keyword-inventory-webkit.json
+            funding-negation-chromium.json
+            funding-negation-webkit.json
             combined-need-funding-chromium.json
             combined-need-funding-webkit.json
             relative-pronoun-need-chromium.json
