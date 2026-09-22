@@ -50,7 +50,7 @@
 
   flow=function(){
     if(screen==='assist1') return q('assistWho',[['assistAdult','assist2','assistWho','adult'],['assistChild','assist2','assistWho','child'],['assistWhoUnsure','assist2','assistWho','unsure']],'home','1 / 3');
-    if(screen==='assist2') return q('assistNeed',[['assistBasic','assist3','assistNeed','basic'],['assistOther','assist3','assistNeed','other'],['assistNeedUnsure','assist3','assistNeed','unsure']],'assist1','2 / 3');
+    if(screen==='assist2') return q('assistNeed',[['assistBasic','assist3','assistNeed','basic'],['assistOther','assistR','assistNeed','other'],['assistNeedUnsure','assist3','assistNeed','unsure']],'assist1','2 / 3');
     if(screen==='assist3') return q('assistExtent',[['assistOver','assistR','assistExtent','over'],['assistUnder','assistR','assistExtent','under'],['assistExtentUnsure','assistR','assistExtent','unsure']],'assist2','3 / 3');
     return baseFlow();
   };
