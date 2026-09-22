@@ -4,7 +4,8 @@
 The shared start page must keep vague funding language in the funding handoff when
 near-miss words such as `synpunkt`, `standard` or object-rental `hyra`/Arabic-Persian rent
 lexemes are present, while preserving genuine concrete family/housing needs. Ordinary
-words that merely begin like a funding term must not fabricate funding intent.
+words that merely begin like a funding term, or a past funding receipt mentioned only as
+background, must not fabricate a current funding intent.
 This is browser/DOM/routing evidence only; it does not claim eligibility,
 persistence, model quality, or physical-device evidence.
 """
@@ -58,6 +59,14 @@ CASES = [
         "id": "fond-workplace-is-not-funding",
         "text": "Jag arbetar på en fond och behöver hjälp med hyran.",
         "expect_question": False,
+        "reject_intent": "funding_intent=",
+    },
+    {
+        "id": "past-stipendium-receipt-is-not-current-intent",
+        "text": "Förra året fick jag stipendium. Nu har jag hög hyra.",
+        "expect_question": False,
+        "expect_first": "actor_type=private_person",
+        "expect_need": "need_context=housing",
         "reject_intent": "funding_intent=",
     },
     {
