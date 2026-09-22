@@ -133,12 +133,15 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         )
         page.get_by_role("button", name=case["who"], exact=True).click()
 
-        positive = page.get_by_role("button").filter(has_text=case["positive_prefix"])
-        require(positive.count() == 1, f"{case['id']}@{width}: expected one positive basic-needs choice")
-        positive_text = positive.inner_text()
-        for fact in case["need_facts"]:
-            require(fact in positive_text, f"{case['id']}@{width}: medical basic-need fact missing before branch: {fact!r}")
-        positive.click()
+        if "positive_prefix" in case:
+            positive = page.get_by_role("button").filter(has_text=case["positive_prefix"])
+            require(positive.count() == 1, f"{case['id']}@{width}: expected one positive basic-needs choice")
+            positive_text = positive.inner_text()
+            for fact in case.get("need_facts", ()):
+                require(fact in positive_text, f"{case['id']}@{width}: medical basic-need fact missing before branch: {fact!r}")
+            positive.click()
+        else:
+            page.get_by_role("button", name=case["need"], exact=True).click()
 
         page.get_by_role("button", name=case["extent"], exact=True).click()
 
@@ -154,13 +157,15 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
             page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"),
             f"{case['id']}@{width}: horizontal overflow",
         )
-        return {
+        result = {
             "id": case["id"],
             "width": width,
             "status": "passed",
             "source": case["source"],
-            "medical_need_facts": list(case["need_facts"]),
         }
+        if case.get("need_facts"):
+            result["medical_need_facts"] = list(case["need_facts"])
+        return result
     finally:
         page.close()
 
