@@ -35,6 +35,19 @@ for (const text of deniedHarmWithStructure) {
   assert.equal(guidance.detectNeed(text), 'structure');
 }
 
+// Denying the need for harm-prevention support must also stay negative even
+// when the source-restricted phrase itself is present. A separate structure
+// need remains the bounded positive route.
+const deniedHarmSupportWithStructure = [
+  'Jag har psykisk funktionsnedsättning. Jag behöver inte stöd för att förebygga fysisk skada; jag behöver bara hjälp att planera vardagen.',
+  'لدي إعاقة نفسية. لا أحتاج إلى دعم لمنع ضرر جسدي؛ أحتاج فقط إلى مساعدة في تنظيم حياتي اليومية.',
+  'معلولیت روانی دارم. برای پیشگیری از آسیب به خودم کمک نمی‌خواهم؛ فقط برای برنامه‌ریزی زندگی روزمره به کمک نیاز دارم.',
+];
+for (const text of deniedHarmSupportWithStructure) {
+  assert.equal(guidance.detect(text), true);
+  assert.equal(guidance.detectNeed(text), 'structure');
+}
+
 // Generic fear/safety wording without disability context must not be promoted
 // into a statutory-assistance route.
 assert.equal(guidance.detect('Jag är rädd att jag kan skada mig själv eller andra och behöver hjälp.'), false);
