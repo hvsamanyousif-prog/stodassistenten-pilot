@@ -34,7 +34,7 @@
             },0);
           };
         }
-        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت'&&term!=='شركة').concat(['شرکت من','لدي شركة','لدينا شركة','شركتي','شركتنا','نحن شركة','أنا صاحب شركة']);
+        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت'&&term!=='شركة').concat(['شرکت من','لدي شركة','لدينا شركة','شركتي','شركتنا','نحن شركة','أنا صاحب شركة','أنا صاحبة شركة']);
         if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn'&&term!=='نظر').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
@@ -340,7 +340,7 @@
     const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي|طلبي[^.!؟\n]{0,80}(?:مالك العقار|جمعية سكنية))/u.test(x)||/(?:(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من|درخواست\s+من[^.!؟\n]{0,80}(?:مالک ساختمان|هیئت مدیره ساختمان))/u.test(x);
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
-    add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
+    add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|أنا صاحبة شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
