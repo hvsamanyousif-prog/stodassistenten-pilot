@@ -431,9 +431,8 @@
     return actors[0]||null;
   }
   function renderableFundingActor(text){
-    const previous=actorFromUrl();
     const clauseActor=affirmedFundingClauseActor(text);
-    if(!previous&&clauseActor) return clauseActor;
+    if(clauseActor) return clauseActor;
     return resolvedFundingActor(text);
   }
   function helperFundingScope(text){
