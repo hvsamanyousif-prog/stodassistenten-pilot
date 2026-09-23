@@ -4,7 +4,7 @@
   const existingExplicitHelperRole = explicitHelperRole;
   const boundedSwedishDirectSpouse = text => {
     const x = String(text || '').toLocaleLowerCase();
-    return /\bjag\s+hjälper\s+min\s+(?:sambo|make|maka)\b/u.test(x) && !/\bjag\s+hjälper\s+inte\b/u.test(x);
+    return /\bjag\s+hjälper\s+min\s+(?:sambo|make|maka|fru|man)\b/u.test(x) && !/\bjag\s+hjälper\s+inte\b/u.test(x);
   };
   const boundedSwedishHelpOutClosePerson = text => {
     const x = String(text || '').toLocaleLowerCase();
