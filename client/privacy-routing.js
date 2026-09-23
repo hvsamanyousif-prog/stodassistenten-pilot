@@ -9,7 +9,7 @@
   function associationSelfMembership(text){
     const x=String(text||'').toLocaleLowerCase();
     const sv=/\b(?:jag\s+(?:är\s+)?(?:medlem\s+i|med\s+i)\s+(?:en\s+)?(?:ideell\s+)?förening(?:en)?|vår\s+förening)\b/u.test(x);
-    const ar=/(?:^|[^\p{L}\p{N}])أنا\s+(?:أيضًا\s+)?عضو(?:ة|ًا|ا)?\s+في\s+(?:ال)?جمعية(?=$|[^\p{L}\p{N}])/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])(?:و)?أنا\s+(?:أيضًا\s+)?عضو(?:ة|ًا|ا)?\s+في\s+(?:ال)?جمعية(?=$|[^\p{L}\p{N}])/u.test(x);
     const fa=/(?:^|[^\p{L}\p{N}])من\s+(?:هم\s+)?عضو\s+انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
     return sv||ar||fa;
   }
