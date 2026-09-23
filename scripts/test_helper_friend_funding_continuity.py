@@ -36,6 +36,13 @@ MIXED_TARGET_CASES = [
     {"id": "sv-helper-own-food-sister-scholarship-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper min syster. Jag behöver hjälp med maten och hon söker stipendium."},
 ]
 
+ACTOR_TARGET_CASES = [
+    {"id": "sv-helper-then-association-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper min mamma. Vår förening söker bidrag.", "actor_type": "association", "data_actor": "association"},
+    {"id": "sv-helper-then-association-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper min mamma. Vår förening söker bidrag.", "actor_type": "association", "data_actor": "association"},
+    {"id": "sv-helper-mother-funding-control-390", "lang": "sv", "width": 390, "text": "Jag hjälper min mamma att söka bidrag.", "actor_type": "relative", "data_actor": "relative"},
+    {"id": "sv-helper-mother-funding-control-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper min mamma att söka bidrag.", "actor_type": "relative", "data_actor": "relative"},
+]
+
 
 def run_mixed_target_case(browser, base_url: str, case: dict) -> dict:
     page = browser.new_page(viewport={"width": case["width"], "height": 900})
@@ -68,11 +75,32 @@ def run_mixed_target_case(browser, base_url: str, case: dict) -> dict:
         page.close()
 
 
+def run_actor_target_case(browser, base_url: str, case: dict) -> dict:
+    page = browser.new_page(viewport={"width": case["width"], "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(relative.start_url(base_url, case["lang"]), wait_until="load")
+        page.locator("#situation").fill(case["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        shared.require(results.is_visible(), f"{case['id']}: results missing")
+        shared.require(results.locator('[data-funding-question="true"]').count() == 0, f"{case['id']}: explicit funding-clause actor caused a redundant actor question")
+        href = relative.assert_actor_route(results, case["id"], case["text"], case["actor_type"], case["data_actor"])
+        if case["data_actor"] != "relative":
+            shared.require(results.locator('a[data-funding-actor="relative"]').count() == 0, f"{case['id']}: helper context hijacked the later funding actor")
+        shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
+        shared.require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case['id']}: horizontal overflow")
+        return {"id": case["id"], "status": "passed", "lang": case["lang"], "width": case["width"], "href": href}
+    finally:
+        page.close()
+
+
 def main() -> int:
     root = Path(".").resolve()
     engine_name = os.environ.get("BROWSER_ENGINE", "chromium")
     output = Path(os.environ.get("EVIDENCE_PATH", f"helper-friend-funding-{engine_name}.json"))
-    evidence = {"engine": engine_name, "scenario_count": len(CASES) + len(MIXED_TARGET_CASES), "passed": 0, "failed": 0, "results": []}
+    evidence = {"engine": engine_name, "scenario_count": len(CASES) + len(MIXED_TARGET_CASES) + len(ACTOR_TARGET_CASES), "passed": 0, "failed": 0, "results": []}
 
     with tempfile.TemporaryDirectory(prefix="stod-helper-friend-") as tmp:
         site = Path(tmp) / "site"
@@ -90,6 +118,13 @@ def main() -> int:
                 for case in MIXED_TARGET_CASES:
                     try:
                         evidence["results"].append(run_mixed_target_case(browser, base_url, case))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+                for case in ACTOR_TARGET_CASES:
+                    try:
+                        evidence["results"].append(run_actor_target_case(browser, base_url, case))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
