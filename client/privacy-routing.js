@@ -343,7 +343,7 @@
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|کسب.?وکار|شرکت من/);
     if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(selfStudyIdentity(x)) actors.push('study');
-    add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
+    add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
     for(const actor of positiveSupportTargetActors(text)){if(!actors.includes(actor)) actors.push(actor)}
     return actors.filter(actor=>!explicitlyCorrectsActor(text,actor));
