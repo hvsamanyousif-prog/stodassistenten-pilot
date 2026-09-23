@@ -414,8 +414,10 @@
     return actors[0]||null;
   }
   function renderableFundingActor(text){
+    const previous=actorFromUrl();
     const clauseActor=affirmedFundingClauseActor(text);
-    return clauseActor||resolvedFundingActor(text);
+    if(!previous&&clauseActor) return clauseActor;
+    return resolvedFundingActor(text);
   }
   function helperFundingScope(text){
     const x=lower(text);
