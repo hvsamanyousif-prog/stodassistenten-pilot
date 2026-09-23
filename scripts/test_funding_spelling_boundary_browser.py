@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Focused browser regression for Swedish scholarship spelling boundaries.
 
-This reuses the existing shared start/search browser oracle. It checks that two
+This reuses the existing shared start/search browser oracle. It checks that
 bounded, common-looking misspellings still preserve scholarship intent while a
 role noun that merely starts with the same letters does not fabricate an
 application intent. This is browser/DOM/routing evidence only.
@@ -25,6 +25,15 @@ SCENARIOS = [
         "lang": "sv",
         "width": 390,
         "text": "stipedium att söka",
+        "expect_question": True,
+        "question_token": "stipendium",
+        "expect_intent": "scholarship",
+    },
+    {
+        "id": "sv-scholarship-missing-i-390",
+        "lang": "sv",
+        "width": 390,
+        "text": "stpendium att söka",
         "expect_question": True,
         "question_token": "stipendium",
         "expect_intent": "scholarship",
