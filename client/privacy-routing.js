@@ -180,7 +180,7 @@
     const ar=/(?:^|[\s])(?:و)?لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium)|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
-    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|يا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
@@ -198,7 +198,7 @@
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='ar'){
-      const matches=x.matchAll(/(?:^|[\s،])(?:(?:أنا\s+)?لا\s+أحتاج|(?:هو\s+لا\s+يحتاج|هي\s+لا\s+تحتاج))(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
+      const matches=x.matchAll(/(?:^|[\s،])(?:(?:أنا\s+)?لا\s+أحتاج|(?:هو\s+لا\s+يحتاج|هي\s+لا\s+تحتاج))(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|يا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='fa'){
@@ -337,7 +337,7 @@
     const add=(actor,pattern)=>{if(pattern.test(x)&&!actors.includes(actor)) actors.push(actor)};
     const propertyPattern=/\bbrf\b|bostadsrättsförening|fastighetsägare|hyresvärd|جمعية سكنية|مالك العقار|هیئت مدیره ساختمان|مالک ساختمان/;
     const propertyHit=propertyPattern.test(x);
-    const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي|طلبي[^.!؟\n]{0,80}(?:مالك العقار|جمعية سكنية))/u.test(x)||/(?:(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من|درخواست\s+من[^.!؟\n]{0,80}(?:مالک ساختمان|هیئت مدیره ساختمان))/u.test(x);
+    const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/\b(?:min|mitt|mina|vår|vårt|våra)\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|syster|bror|syskon|vän)\b[^.!?\n]{0,48}\b(?:är\s+)?(?:fastighetsägare|hyresvärd)\b/u.test(x)||/(?:^|[^\p{L}\p{N}])(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)[^.!؟\n]{0,48}مالك\s+العقار(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي|طلبي[^.!؟\n]{0,80}(?:مالك العقار|جمعية سكنية))/u.test(x)||/(?:(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من|درخواست\s+من[^.!؟\n]{0,80}(?:مالک ساختمان|هیئت مدیره ساختمان))/u.test(x);
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|أنا صاحبة شركة|کسب.?وکار|شرکت من/);
