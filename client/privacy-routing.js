@@ -6,6 +6,21 @@
     const fa=/(?:^|[^\p{L}\p{N}])(?:من\s+[^.!؟\n]{0,32})?دانشجو(?:\s+و\s+(?:کارمند|شاغل))?\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])(?:من\s+)?تحصیل\s+می(?:‌|\s)?کنم(?=$|[^\p{L}\p{N}])/u.test(x);
     return sv||ar||fa;
   }
+  function associationSelfMembership(text){
+    const x=String(text||'').toLocaleLowerCase();
+    const sv=/\b(?:jag\s+(?:är\s+)?(?:medlem\s+i|med\s+i)\s+(?:en\s+)?(?:ideell\s+)?förening(?:en)?|vår\s+förening)\b/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])أنا\s+عضو(?:ة|ًا|ا)?\s+في\s+(?:ال)?جمعية(?=$|[^\p{L}\p{N}])/u.test(x);
+    const fa=/(?:^|[^\p{L}\p{N}])من\s+عضو\s+انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
+    return sv||ar||fa;
+  }
+  function thirdPartyAssociationMembership(text){
+    const x=String(text||'').toLocaleLowerCase();
+    if(associationSelfMembership(x)) return false;
+    const sv=/\b(?:min|mitt|mina|hans|hennes|deras)\s+[\p{L}-]+(?:\s+[\p{L}-]+){0,2}\s+(?:är\s+)?(?:medlem\s+i|med\s+i)\s+(?:en\s+)?(?:ideell\s+)?förening(?:en)?\b/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])(?!أنا(?=$|[^\p{L}\p{N}]))[\p{L}]{2,}\s+عضو(?:ة|ًا|ا)?\s+في\s+(?:ال)?جمعية(?=$|[^\p{L}\p{N}])/u.test(x);
+    const fa=/(?:^|[^\p{L}\p{N}])(?!من(?=$|[^\p{L}\p{N}]))[\p{L}]{2,}\s+عضو\s+انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
+    return sv||ar||fa;
+  }
   function installGovernedRoutes(){
     let rerender=false;
     try{
@@ -13,6 +28,7 @@
         if(typeof score==='function'){
           score=function(text,key){
             const hay=String(text||'').toLocaleLowerCase();
+            if(key==='association'&&thirdPartyAssociationMembership(hay)) return 0;
             const terms=Array.isArray(KEYWORDS[key])?KEYWORDS[key]:[];
             return terms.reduce((count,term)=>{
               const needle=String(term||'').toLocaleLowerCase();
@@ -341,7 +357,7 @@
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
     add('company',/driver (?:ett |en |)företag|mitt företag|vårt företag|företagare|لدي شركة|لدينا شركة|شركتي|شركتنا|نحن شركة|أنا صاحب شركة|أنا صاحبة شركة|کسب.?وکار|شرکت من/);
-    if(!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
+    if(!thirdPartyAssociationMembership(x)&&!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
