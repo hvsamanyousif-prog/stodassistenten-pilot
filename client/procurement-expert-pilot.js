@@ -234,11 +234,11 @@ function relationLeadingUsageEvent(part){
 function forutomUsage(part){
  const t=normalized(part);
  if(!/^förutom\b/.test(t))return 'none';
- if(/^förutom\s+(?:när|om|vid|i de fall|i förekommande fall|för det fall(?: att)?|under förutsättning att)\b/.test(t))return 'exceptive';
+ if(/^förutom\s+(?:när|om|vid|i de fall|i det fall(?: att)?|i förekommande fall|för det fall(?: att)?|under förutsättning att)\b/.test(t))return 'exceptive';
  if(/^förutom\s+[^.;]{1,80}\s+(?:ska|skall|måste|kan|får)\s+(?:leverantören|leverantör|anbudsgivaren|anbudsgivare)\b/.test(t))return 'additive';
  return 'ambiguous';
 }
-const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i de fall\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|annars\b|vid användning av\b)/;
+const RELATION_LEADING=/^(?:men\b|dock\b|förutsatt att\b|för det fall(?: att)?\b|i det fall(?: att)?\b|om\b|undantag\b|alternativt\b|i de fall\b|i förekommande fall\b|i annat fall\b|gäller inte om\b|endast om\b|såvida inte\b|under förutsättning att\b|med undantag för\b|utom när\b|annars\b|vid användning av\b)/;
 function relationLeadingGroup(part,bindStandaloneOr=false){
  const t=normalized(part);
  const forutomKind=forutomUsage(t);
@@ -293,7 +293,7 @@ function structureFlags(line){
  const boundedEventUsageConditional=relationLeadingUsageEvent(t)||/\b(?:och|samt)\s+när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t)||/[.;]\s*när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t)||/(?:^|\s)(?:(?:[a-zåäö]|\d{1,2})[.)]|\((?:[a-zåäö]|\d{1,2})\)|•)\s+när\b[^.;]{0,80}(?:används|anlitas|åberopas)\b/.test(t);
  const forutomKind=forutomUsage(t);
  const boundedForutomRisk=forutomKind==='exceptive'||forutomKind==='ambiguous';
- if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|annars)\b/.test(t)||boundedForutomRisk||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
+ if(/\b(men|dock|förutsatt att|för det fall(?: att)?|i det fall(?: att)?|i de fall|om inte|undantag|alternativt|i förekommande fall|i annat fall|gäller inte om|endast om|såvida inte|under förutsättning att|med undantag för|utom när|annars)\b/.test(t)||boundedForutomRisk||boundedConditionalOm||boundedUsageConditional||boundedEventUsageConditional||/\bantingen\b.*\beller\b/.test(t))flags.push({code:'conditional_or_exception',label:'Villkor eller undantag i samma rad – kontrollera manuellt vad som faktiskt gäller.'});
  if(/\b(?:se|enligt|jfr|jämför med)\s+(?:punkt|avsnitt|kapitel)\s+\d+(?:[.:]\d+)*\b/.test(t))flags.push({code:'cross_reference',label:'Korshänvisning – kontrollera den hänvisade punkten i originalunderlaget; den är inte hämtad eller verifierad här.'});
  const purpose=deadlinePurpose(raw);
  if(purpose==='answer_publication')flags.push({code:'answer_publication_timing',label:'Tid för publicering av svar – en annan processhändelse än sista dag för frågor. Kontrollera originalkällan och senaste publicerade rättelser.'});
@@ -324,7 +324,7 @@ function addFlag(row,code,label){
  if(!row.flags.some(f=>f.code===code))row.flags.push({code,label});
 }
 function formalCrossLineCondition(part){
- return /^(?:i de fall\b|i förekommande fall\b|förutsatt att\b|för det fall(?: att)?\b|under förutsättning att\b)/.test(normalized(part));
+ return /^(?:i de fall\b|i det fall(?: att)?\b|i förekommande fall\b|förutsatt att\b|för det fall(?: att)?\b|under förutsättning att\b)/.test(normalized(part));
 }
 function materialBoundCrossLineCondition(part){
  const t=normalized(part);
