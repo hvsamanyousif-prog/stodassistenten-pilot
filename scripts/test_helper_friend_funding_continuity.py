@@ -41,6 +41,15 @@ ACTOR_TARGET_CASES = [
     {"id": "sv-helper-then-association-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper min mamma. Vår förening söker bidrag.", "actor_type": "association", "data_actor": "association"},
     {"id": "sv-helper-mother-funding-control-390", "lang": "sv", "width": 390, "text": "Jag hjälper min mamma att söka bidrag.", "actor_type": "relative", "data_actor": "relative"},
     {"id": "sv-helper-mother-funding-control-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper min mamma att söka bidrag.", "actor_type": "relative", "data_actor": "relative"},
+    {"id": "sv-stale-relative-vague-funding-390", "lang": "sv", "width": 390, "text": "pengar att söka", "actor_type": "relative", "data_actor": "relative", "previous_actor": "relative"},
+    {"id": "sv-stale-relative-mother-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper min mamma att söka bidrag.", "actor_type": "relative", "data_actor": "relative", "previous_actor": "relative"},
+    {"id": "sv-stale-relative-association-funding-390", "lang": "sv", "width": 390, "text": "Vår förening söker bidrag.", "actor_type": "association", "data_actor": "association", "previous_actor": "relative"},
+    {"id": "sv-stale-relative-association-funding-1280", "lang": "sv", "width": 1280, "text": "Vår förening söker bidrag.", "actor_type": "association", "data_actor": "association", "previous_actor": "relative"},
+]
+
+AMBIGUOUS_ACTOR_TARGET_CASES = [
+    {"id": "sv-stale-relative-two-funding-targets-390", "lang": "sv", "width": 390, "text": "Vår förening söker bidrag och mitt företag söker bidrag.", "previous_actor": "relative"},
+    {"id": "sv-stale-relative-two-funding-targets-1280", "lang": "sv", "width": 1280, "text": "Vår förening söker bidrag och mitt företag söker bidrag.", "previous_actor": "relative"},
 ]
 
 
@@ -80,7 +89,7 @@ def run_actor_target_case(browser, base_url: str, case: dict) -> dict:
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(relative.start_url(base_url, case["lang"]), wait_until="load")
+        page.goto(relative.start_url(base_url, case["lang"], case.get("previous_actor")), wait_until="load")
         page.locator("#situation").fill(case["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
@@ -96,11 +105,31 @@ def run_actor_target_case(browser, base_url: str, case: dict) -> dict:
         page.close()
 
 
+def run_ambiguous_actor_target_case(browser, base_url: str, case: dict) -> dict:
+    page = browser.new_page(viewport={"width": case["width"], "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(relative.start_url(base_url, case["lang"], case.get("previous_actor")), wait_until="load")
+        page.locator("#situation").fill(case["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        shared.require(results.is_visible(), f"{case['id']}: results missing")
+        shared.require(results.locator('[data-funding-question="true"]').count() == 1, f"{case['id']}: multiple current funding targets were silently collapsed")
+        hrefs = results.locator("a[href]").evaluate_all("els => els.map(el => el.getAttribute('href') || '')")
+        shared.require(all(case["text"] not in href for href in hrefs), f"{case['id']}: raw situation leaked into a route")
+        shared.require(not page_errors, f"{case['id']}: JavaScript error(s): {page_errors}")
+        shared.require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case['id']}: horizontal overflow")
+        return {"id": case["id"], "status": "passed", "lang": case["lang"], "width": case["width"], "question_count": 1}
+    finally:
+        page.close()
+
+
 def main() -> int:
     root = Path(".").resolve()
     engine_name = os.environ.get("BROWSER_ENGINE", "chromium")
     output = Path(os.environ.get("EVIDENCE_PATH", f"helper-friend-funding-{engine_name}.json"))
-    evidence = {"engine": engine_name, "scenario_count": len(CASES) + len(MIXED_TARGET_CASES) + len(ACTOR_TARGET_CASES), "passed": 0, "failed": 0, "results": []}
+    evidence = {"engine": engine_name, "scenario_count": len(CASES) + len(MIXED_TARGET_CASES) + len(ACTOR_TARGET_CASES) + len(AMBIGUOUS_ACTOR_TARGET_CASES), "passed": 0, "failed": 0, "results": []}
 
     with tempfile.TemporaryDirectory(prefix="stod-helper-friend-") as tmp:
         site = Path(tmp) / "site"
@@ -125,6 +154,13 @@ def main() -> int:
                 for case in ACTOR_TARGET_CASES:
                     try:
                         evidence["results"].append(run_actor_target_case(browser, base_url, case))
+                        evidence["passed"] += 1
+                    except Exception as exc:
+                        evidence["failed"] += 1
+                        evidence["results"].append({"id": case["id"], "status": "failed", "error": str(exc)})
+                for case in AMBIGUOUS_ACTOR_TARGET_CASES:
+                    try:
+                        evidence["results"].append(run_ambiguous_actor_target_case(browser, base_url, case))
                         evidence["passed"] += 1
                     except Exception as exc:
                         evidence["failed"] += 1
