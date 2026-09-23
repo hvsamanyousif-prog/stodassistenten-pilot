@@ -23,6 +23,12 @@ CASES = [
     {"id": "ar-helper-spouse-student-funding", "lang": "ar", "width": 390, "text": "أساعد زوجي وهو طالب في البحث عن دعم مالي."},
     {"id": "sv-helper-help-out-mother-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min mamma och söker bidrag."},
     {"id": "sv-helper-help-out-mother-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min mamma och söker bidrag."},
+    {"id": "sv-helper-help-out-sambo-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min sambo och söker bidrag."},
+    {"id": "sv-helper-help-out-sambo-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min sambo och söker bidrag."},
+    {"id": "sv-helper-help-out-make-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min make och söker bidrag."},
+    {"id": "sv-helper-help-out-make-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min make och söker bidrag."},
+    {"id": "sv-helper-help-out-maka-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min maka och söker bidrag."},
+    {"id": "sv-helper-help-out-maka-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min maka och söker bidrag."},
 ]
 
 
