@@ -383,11 +383,25 @@
     const langPatterns=patterns[currentLang()]||{};
     return Boolean(langPatterns[actor]&&langPatterns[actor].test(x));
   }
+  function affirmedFundingTargetActors(text){
+    const actors=[];
+    for(const clause of fundingClauses(text)){
+      const hasAffirmedIntent=FUNDING_INTENT_PATTERNS.some(([_intent,pattern])=>pattern.test(clause)&&!fundingPatternNegated(clause,pattern));
+      if(!hasAffirmedIntent) continue;
+      const supportTargets=positiveSupportTargetActors(clause).filter(actor=>!explicitlyCorrectsActor(text,actor));
+      for(const actor of supportTargets){
+        if(!actors.includes(actor)) actors.push(actor);
+      }
+      if(supportTargets.length===0&&helperFundingScope(clause)&&!explicitlyCorrectsActor(text,'relative')&&!actors.includes('relative')) actors.push('relative');
+    }
+    return actors;
+  }
   function resolvedFundingActor(text){
     const previous=actorFromUrl();
     const currentActors=actorCandidatesFromText(text);
-    const explicitTargets=positiveSupportTargetActors(text);
+    const explicitTargets=affirmedFundingTargetActors(text);
     if(explicitTargets.length===1) return explicitTargets[0];
+    if(explicitTargets.length>1) return null;
     if(!previous) return currentActors.length===1?currentActors[0]:null;
     if(explicitlyCorrectsActor(text,previous)){
       const replacements=currentActors.filter(actor=>actor!==previous);
@@ -398,12 +412,15 @@
     return null;
   }
   function affirmedFundingClauseActor(text){
+    const explicitTargets=affirmedFundingTargetActors(text);
+    if(explicitTargets.length===1) return explicitTargets[0];
+    if(explicitTargets.length>1) return null;
     const actors=[];
     let ambiguous=false;
     for(const clause of fundingClauses(text)){
       const hasAffirmedIntent=FUNDING_INTENT_PATTERNS.some(([_intent,pattern])=>pattern.test(clause)&&!fundingPatternNegated(clause,pattern));
       if(!hasAffirmedIntent) continue;
-      const candidates=actorCandidatesFromText(clause);
+      const candidates=actorCandidatesFromText(clause).filter(actor=>!explicitlyCorrectsActor(text,actor));
       if(candidates.length>1){
         ambiguous=true;
         continue;
