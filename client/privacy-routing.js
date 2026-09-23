@@ -312,7 +312,7 @@
   }
   function targetAwareSwedishHelpOut(text){
     const x=lower(text);
-    return /\bjag\s+hjälper\s+till\s+(?:(?:hemma\s+)?hos|med|för)\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)\b/u.test(x)&&!helperRoleNegated(x);
+    return /\bjag\s+hjälper\s+till\s+(?:(?:hemma\s+)?hos|med|för)\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|syster|bror|syskon|vän)|henne|honom)\b/u.test(x)&&!helperRoleNegated(x);
   }
   function currentHelperRole(text){
     const x=lower(text);
@@ -400,7 +400,7 @@
   function helperFundingScope(text){
     const x=lower(text);
     if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
-    return targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    return targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
   }
   function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
