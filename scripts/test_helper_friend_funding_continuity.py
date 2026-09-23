@@ -29,6 +29,10 @@ CASES = [
     {"id": "sv-helper-help-out-make-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min make och söker bidrag."},
     {"id": "sv-helper-help-out-maka-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min maka och söker bidrag."},
     {"id": "sv-helper-help-out-maka-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min maka och söker bidrag."},
+    {"id": "sv-helper-help-out-fru-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min fru och söker bidrag."},
+    {"id": "sv-helper-help-out-fru-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min fru och söker bidrag."},
+    {"id": "sv-helper-help-out-man-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min man och söker bidrag."},
+    {"id": "sv-helper-help-out-man-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min man och söker bidrag."},
 ]
 
 MIXED_TARGET_CASES = [
