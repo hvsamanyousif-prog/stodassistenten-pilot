@@ -21,6 +21,8 @@ CASES = [
     {"id": "ar-helper-friend-student-funding", "lang": "ar", "width": 390, "text": "أساعد صديقي وهو طالب في البحث عن دعم مالي"},
     {"id": "fa-helper-friend-student-funding", "lang": "fa", "width": 768, "text": "به دوستم که دانشجو است کمک می‌کنم برای کمک مالی"},
     {"id": "ar-helper-spouse-student-funding", "lang": "ar", "width": 390, "text": "أساعد زوجي وهو طالب في البحث عن دعم مالي."},
+    {"id": "sv-helper-help-out-mother-funding-390", "lang": "sv", "width": 390, "text": "Jag hjälper till hemma hos min mamma och söker bidrag."},
+    {"id": "sv-helper-help-out-mother-funding-1280", "lang": "sv", "width": 1280, "text": "Jag hjälper till hemma hos min mamma och söker bidrag."},
 ]
 
 
