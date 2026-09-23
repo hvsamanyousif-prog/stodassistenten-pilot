@@ -70,6 +70,20 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-helper-fru-vision-home-support",
+        "lang": "sv",
+        "text": "Jag hjälper min fru som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
+        "id": "sv-helper-man-vision-home-support",
+        "lang": "sv",
+        "text": "Jag hjälper min man som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
         "id": "sv-help-out-mother-vision-stays-relative",
         "lang": "sv",
         "text": "Jag hjälper till hemma hos min mamma som ser dåligt.",
