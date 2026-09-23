@@ -397,6 +397,26 @@
     if(currentActors.length===1&&currentActors[0]===previous) return previous;
     return null;
   }
+  function affirmedFundingClauseActor(text){
+    const actors=[];
+    let ambiguous=false;
+    for(const clause of fundingClauses(text)){
+      const hasAffirmedIntent=FUNDING_INTENT_PATTERNS.some(([_intent,pattern])=>pattern.test(clause)&&!fundingPatternNegated(clause,pattern));
+      if(!hasAffirmedIntent) continue;
+      const candidates=actorCandidatesFromText(clause);
+      if(candidates.length>1){
+        ambiguous=true;
+        continue;
+      }
+      if(candidates.length===1&&!actors.includes(candidates[0])) actors.push(candidates[0]);
+    }
+    if(ambiguous||actors.length>1) return null;
+    return actors[0]||null;
+  }
+  function renderableFundingActor(text){
+    const clauseActor=affirmedFundingClauseActor(text);
+    return clauseActor||resolvedFundingActor(text);
+  }
   function helperFundingScope(text){
     const x=lower(text);
     if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
@@ -429,7 +449,7 @@
     const intent=intents[0]||null;
     if(!intent) return false;
     const copy=FUNDING_COPY[lang];
-    const actor=helperFundingScope(text)?'relative':resolvedFundingActor(text);
+    const actor=renderableFundingActor(text);
     if(hasConcreteNeed(text)&&actor!=='relative') return false;
     if(actor){
       box.innerHTML=`<div class="interpret">${copy.known}</div>${routeHtmlForActor(actor,copy,lang,intent)}`;
