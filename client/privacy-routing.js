@@ -2,7 +2,7 @@
   function selfStudyIdentity(text){
     const x=String(text||'').toLocaleLowerCase();
     const sv=/\bjag\s+(?:är\s+student|studerar|studerande)\b/u.test(x)||/\bjag\s+är\s+anställd\s+och\s+studerar\b/u.test(x);
-    const ar=/(?:^|[^\p{L}\p{N}])أدرس(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])أنا\s+(?:(?:موظف|موظفة)\s+و)?طالب(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])أدرس(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])أنا\s+(?:(?:موظف|موظفة)\s+و)?طالب(?:ة)?(?!\s+اللجوء)(?=$|[^\p{L}\p{N}])/u.test(x);
     const fa=/(?:^|[^\p{L}\p{N}])(?:من\s+[^.!؟\n]{0,32})?دانشجو(?:\s+و\s+(?:کارمند|شاغل))?\s+هستم(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:^|[^\p{L}\p{N}])(?:من\s+)?تحصیل\s+می(?:‌|\s)?کنم(?=$|[^\p{L}\p{N}])/u.test(x);
     return sv||ar||fa;
   }
