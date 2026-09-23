@@ -50,7 +50,7 @@
             },0);
           };
         }
-        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت'&&term!=='شركة').concat(['شرکت من','لدي شركة','لدينا شركة','شركتي','شركتنا','نحن شركة','أنا صاحب شركة','أنا صاحبة شركة']);
+        if(Array.isArray(KEYWORDS.company)) KEYWORDS.company=KEYWORDS.company.filter(term=>term!=='شرکت'&&term!=='شركة').concat(['شرکت من','شرکت ما','لدي شركة','لدينا شركة','شركتي','شركتنا','نحن شركة','أنا صاحب شركة','أنا صاحبة شركة']);
         if(Array.isArray(KEYWORDS.work)) KEYWORDS.work=KEYWORDS.work.concat(['کارمند','کارگر','شغل','أعمل','وظيفة']);
         if(Array.isArray(KEYWORDS.vision)) KEYWORDS.vision=KEYWORDS.vision.filter(term=>term!=='syn'&&term!=='نظر').concat(['dålig syn','sämre syn','synproblem']);
         if(Array.isArray(KEYWORDS.economy)) KEYWORDS.economy=KEYWORDS.economy.filter(term=>term!=='إيجار'&&term!=='اجاره').concat([
@@ -356,7 +356,7 @@
     const thirdPartyProperty=/(?:^|[^\p{L}\p{N}])(?:min|vår)\s+(?:hyresvärd|fastighetsägare)(?=$|[^\p{L}\p{N}])/u.test(x)||/\b(?:min|mitt|mina|vår|vårt|våra)\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|syster|bror|syskon|vän)\b[^.!?\n]{0,48}\b(?:är\s+)?(?:fastighetsägare|hyresvärd)\b/u.test(x)||/(?:^|[^\p{L}\p{N}])(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)[^.!؟\n]{0,48}مالك\s+العقار(?=$|[^\p{L}\p{N}])/u.test(x)||/(?:(?:مالك العقار|جمعية سكنية)[^.!؟\n]{0,80}طلبي|طلبي[^.!؟\n]{0,80}(?:مالك العقار|جمعية سكنية))/u.test(x)||/(?:(?:مالک ساختمان|هیئت مدیره ساختمان)[^.!؟\n]{0,80}درخواست\s+من|درخواست\s+من[^.!؟\n]{0,80}(?:مالک ساختمان|هیئت مدیره ساختمان))/u.test(x);
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
-    add('company',/\b(?:jag\s+är\s+företagare|jag\s+driver\s+(?:ett\s+|en\s+)?företag|mitt\s+företag|vårt\s+företag)\b|(?:^|[.!?]\s*)driver\s+(?:ett\s+|en\s+)?företag\b|(?:^|[^\p{L}\p{N}])(?:لدي\s+شركة|لدينا\s+شركة|شركتي|شركتنا|لشركتي|لشركتنا|نحن\s+شركة|أنا\s+صاحب(?:ة)?\s+شركة)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:شرکت\s+من|کسب.?وکار\s+من|من\s+(?:یک\s+)?کسب.?وکار\s+دارم)(?=$|[^\p{L}\p{N}])/u);
+    add('company',/\b(?:jag\s+är\s+företagare|jag\s+driver\s+(?:ett\s+|en\s+)?företag|mitt\s+företag|vårt\s+företag)\b|(?:^|[.!?]\s*)driver\s+(?:ett\s+|en\s+)?företag\b|(?:^|[^\p{L}\p{N}])(?:لدي\s+شركة|لدينا\s+شركة|شركتي|شركتنا|لشركتي|لشركتنا|نحن\s+شركة|أنا\s+صاحب(?:ة)?\s+شركة)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:شرکت\s+(?:من|ما)|کسب.?وکار\s+من|من\s+(?:یک\s+)?کسب.?وکار\s+دارم)(?=$|[^\p{L}\p{N}])/u);
     if(!thirdPartyAssociationMembership(x)&&!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
@@ -392,7 +392,7 @@
       fa:{
         employee:/دیگر کارمند نیستم|کارمند نیستم|دیگر شاغل نیستم|نه برای کارم/,
         study:/دیگر دانشجو نیستم|دانشجو نیستم|نه برای تحصیلم/,
-        company:/دیگر صاحب شرکت نیستم|صاحب شرکت نیستم|نه برای شرکت من/,
+        company:/دیگر صاحب شرکت نیستم|صاحب شرکت نیستم|نه برای شرکت (?:من|ما)/,
         association:/دیگر (?:عضو )?انجمن نیستم|(?:عضو )?انجمن نیستم|نه برای انجمن من/,
         property_actor:/دیگر مالک ساختمان نیستم|مالک ساختمان نیستم|نه برای مالک ساختمان/,
         private:/درخواست\s+شخصی\s+نیست/
