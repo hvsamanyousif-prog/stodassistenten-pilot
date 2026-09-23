@@ -429,7 +429,7 @@
     if(explicitTargets.length===1) return explicitTargets[0];
     if(explicitTargets.length>1) return null;
     if(!previous) return currentActors.length===1?currentActors[0]:null;
-    if(explicitlyCorrectsActor(text,previous)){
+    if(explicitlyCorrectsActor(text,previous)||(previous==='association'&&associationFundingSourceMention(text))){
       const replacements=currentActors.filter(actor=>actor!==previous);
       return replacements.length===1?replacements[0]:null;
     }
