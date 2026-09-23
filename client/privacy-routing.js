@@ -21,6 +21,14 @@
     const fa=/(?:^|[^\p{L}\p{N}])(?!من(?=$|[^\p{L}\p{N}]))[\p{L}]{2,}\s+عضو\s+انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
     return sv||ar||fa;
   }
+  function associationFundingSourceMention(text){
+    const x=String(text||'').toLocaleLowerCase();
+    if(associationSelfMembership(x)) return false;
+    const sv=/\b(?:bidrag|stöd|finansiering|pengar)\b[^.!?\n]{0,48}\bfrån\s+(?:en\s+|den\s+)?(?:annan\s+)?(?:ideell\s+)?förening(?:en)?\b/u.test(x);
+    const ar=/(?:^|[^\p{L}\p{N}])(?:دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|تمويل|منحة)[^.!؟\n]{0,48}\s+من\s+(?:ال)?جمعية(?!\s+سكنية)(?=$|[^\p{L}\p{N}])/u.test(x);
+    const fa=/(?:^|[^\p{L}\p{N}])از\s+(?:یک\s+)?انجمن[^.!؟\n]{0,48}(?:کمک\s+مالی|حمایت\s+مالی|بودجه|بورسیه|وام)(?=$|[^\p{L}\p{N}])/u.test(x);
+    return sv||ar||fa;
+  }
   function installGovernedRoutes(){
     let rerender=false;
     try{
@@ -28,7 +36,7 @@
         if(typeof score==='function'){
           score=function(text,key){
             const hay=String(text||'').toLocaleLowerCase();
-            if(key==='association'&&thirdPartyAssociationMembership(hay)) return 0;
+            if(key==='association'&&(thirdPartyAssociationMembership(hay)||associationFundingSourceMention(hay))) return 0;
             const terms=Array.isArray(KEYWORDS[key])?KEYWORDS[key]:[];
             return terms.reduce((count,term)=>{
               const needle=String(term||'').toLocaleLowerCase();
@@ -357,7 +365,7 @@
     if(currentHelperRole(x)) actors.push('relative');
     if(!thirdPartyProperty) add('property_actor',propertyPattern);
     add('company',/\b(?:jag\s+är\s+företagare|jag\s+driver\s+(?:ett\s+|en\s+)?företag|mitt\s+företag|vårt\s+företag)\b|(?:^|[.!?]\s*)driver\s+(?:ett\s+|en\s+)?företag\b|(?:^|[^\p{L}\p{N}])(?:لدي\s+شركة|لدينا\s+شركة|شركتي|شركتنا|لشركتي|لشركتنا|نحن\s+شركة|أنا\s+صاحب(?:ة)?\s+شركة)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:شرکت\s+(?:من|ما)|کسب.?وکار\s+من|من\s+(?:یک\s+)?کسب.?وکار\s+دارم)(?=$|[^\p{L}\p{N}])/u);
-    if(!thirdPartyAssociationMembership(x)&&!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
+    if(!thirdPartyAssociationMembership(x)&&!associationFundingSourceMention(x)&&!(propertyHit&&/جمعية سكنية/.test(x))) add('association',/vår förening|föreningen|ideell förening|جمعية|انجمن/);
     if(selfStudyIdentity(x)) actors.push('study');
     add('employee',/jag är anställd|som anställd|anställd söker|jag jobbar|أنا\s+موظف|(?:^|[^\p{L}\p{N}])(?:من\s+)?کارمند(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:من\s+)?شاغل(?:\s+و\s+دانشجو)?(?:\s+هستم|\s+می(?:‌|\s)?باشم)(?=$|[^\p{L}\p{N}])/u);
     add('private',/jag är privatperson|privatperson|فرد|شخصی/);
