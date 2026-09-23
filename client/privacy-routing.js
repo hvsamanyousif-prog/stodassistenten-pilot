@@ -117,7 +117,7 @@
       }
     },
     ar:{
-      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر؟',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
+      questions:{funding:'حتى لا نخمن نوع الدعم: من يخص الأمر؟',scholarship:'أنت تبحث عن منحة. من يخص الأمر?',loan:'أنت تبحث عن قرض. من يخص الأمر?'},
       known:'أستخدم الفئة التي ظهرت بالفعل ولا أفترض دعماً محدداً.',
       actors:{
         private:['احتياج شخصي','دعم وتعويضات ومسارات أخرى للأفراد'],
@@ -310,9 +310,13 @@
     const x=lower(text);
     return /\bjag\s+hjälper\s+inte(?:\s+längre)?\b/u.test(x)||/لم\s+أعد\s+أساعد|لا\s+أساعد/u.test(x)||/کمک\s+نمی(?:‌|\s)?کنم/u.test(x);
   }
+  function targetAwareSwedishHelpOut(text){
+    const x=lower(text);
+    return /\bjag\s+hjälper\s+till\s+(?:(?:hemma\s+)?hos|med|för)\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)\b/u.test(x)&&!helperRoleNegated(x);
+  }
   function currentHelperRole(text){
     const x=lower(text);
-    const sv=/\bjag\s+hjälper(?!\s+(?:inte|till)\b)/u.test(x);
+    const sv=/\bjag\s+hjälper(?!\s+(?:inte|till)\b)/u.test(x)||targetAwareSwedishHelpOut(x);
     const ar=/(?:^|[^\p{L}\p{N}])أساعد(?=$|[^\p{L}\p{N}])/u.test(x.replace(/لم\s+أعد\s+أساعد|لا\s+أساعد/gu,' '));
     const fa=/کمک\s+می(?:‌|\s)?کنم/u.test(x);
     return sv||ar||fa;
@@ -396,7 +400,7 @@
   function helperFundingScope(text){
     const x=lower(text);
     if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
-    return /(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    return targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
   }
   function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
