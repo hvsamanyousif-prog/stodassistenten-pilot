@@ -49,6 +49,27 @@ CASES = [
         "reject": "actor_type=private_person",
     },
     {
+        "id": "sv-helper-sambo-vision-home-support",
+        "lang": "sv",
+        "text": "Jag hjälper min sambo som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
+        "id": "sv-helper-make-vision-home-support",
+        "lang": "sv",
+        "text": "Jag hjälper min make som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
+        "id": "sv-helper-maka-vision-home-support",
+        "lang": "sv",
+        "text": "Jag hjälper min maka som har svårt att se och klara sig hemma.",
+        "expect_first": "actor_type=relative",
+        "reject": "actor_type=private_person",
+    },
+    {
         "id": "sv-help-out-mother-vision-stays-relative",
         "lang": "sv",
         "text": "Jag hjälper till hemma hos min mamma som ser dåligt.",
