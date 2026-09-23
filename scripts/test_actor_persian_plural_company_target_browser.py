@@ -42,6 +42,27 @@ PLURAL_COMPANY_TARGET_SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "fa-company-plural-target-postfix-excluded-asks-once",
+        "lang": "fa",
+        "width": 390,
+        "text": "به دنبال حمایت مالی هستم، اما برای شرکت ما نیست.",
+        "expect_question": True,
+        "question_token": "چه کسی",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-company-plural-target-postfix-excluded-student-wins",
+        "lang": "fa",
+        "width": 1280,
+        "text": "به دنبال حمایت مالی هستم، اما برای شرکت ما نیست. من دانشجو هستم.",
+        "expect_question": False,
+        "expect_actor": "study",
+        "reject_actor": "company",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 
