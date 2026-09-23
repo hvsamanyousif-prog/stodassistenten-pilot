@@ -12,6 +12,7 @@ on:
       - 'scripts/test_actor_positive_target_scope_browser.py'
       - 'scripts/test_challenger_start_residuals_browser.py'
       - 'scripts/test_actor_simultaneous_persian_browser.py'
+      - 'scripts/test_actor_arabic_feminine_identity_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -25,6 +26,7 @@ on:
       - 'scripts/test_actor_positive_target_scope_browser.py'
       - 'scripts/test_challenger_start_residuals_browser.py'
       - 'scripts/test_actor_simultaneous_persian_browser.py'
+      - 'scripts/test_actor_arabic_feminine_identity_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -62,6 +64,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_simultaneous_persian_browser.py . actor-simultaneous-persian-webkit.json
+      - name: Arabic feminine current-role identity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_arabic_feminine_identity_browser.py . actor-arabic-feminine-chromium.json
+      - name: Arabic feminine current-role identity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_arabic_feminine_identity_browser.py . actor-arabic-feminine-webkit.json
       - name: Positive support-target actor scope — Chromium
         if: always()
         env:
@@ -94,6 +106,8 @@ jobs:
             actor-correction-company-webkit.json
             actor-simultaneous-persian-chromium.json
             actor-simultaneous-persian-webkit.json
+            actor-arabic-feminine-chromium.json
+            actor-arabic-feminine-webkit.json
             actor-positive-target-chromium.json
             actor-positive-target-webkit.json
             challenger-start-residuals-chromium.json
