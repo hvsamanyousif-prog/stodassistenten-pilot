@@ -103,6 +103,35 @@ EXTRA_SCENARIOS = [
         "expect_intent": "funding",
         "expect_rtl": True,
     },
+    {
+        "id": "sv-mixed-self-and-third-party-association-keeps-self-role",
+        "lang": "sv",
+        "width": 390,
+        "text": "Min syster är medlem i föreningen. Jag är också medlem i föreningen och söker bidrag.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+    },
+    {
+        "id": "ar-mixed-self-and-third-party-association-keeps-self-role",
+        "lang": "ar",
+        "width": 768,
+        "text": "أختي عضوة في جمعية وأنا أيضًا عضوة في الجمعية وأبحث عن تمويل.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
+    {
+        "id": "fa-mixed-self-and-third-party-association-keeps-self-role",
+        "lang": "fa",
+        "width": 1280,
+        "text": "خواهرم عضو انجمن است و من هم عضو انجمن هستم و به کمک مالی نیاز دارم.",
+        "expect_question": False,
+        "expect_actor": "association",
+        "expect_intent": "funding",
+        "expect_rtl": True,
+    },
 ]
 
 base.SCENARIOS.extend(EXTRA_SCENARIOS)
