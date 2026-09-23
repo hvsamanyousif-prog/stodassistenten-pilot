@@ -17,6 +17,7 @@ on:
       - 'scripts/test_actor_private_to_company_correction_browser.py'
       - 'scripts/test_actor_property_participant_scope_browser.py'
       - 'scripts/test_actor_arabic_plural_company_target_browser.py'
+      - 'scripts/test_actor_persian_plural_company_target_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -35,6 +36,7 @@ on:
       - 'scripts/test_actor_private_to_company_correction_browser.py'
       - 'scripts/test_actor_property_participant_scope_browser.py'
       - 'scripts/test_actor_arabic_plural_company_target_browser.py'
+      - 'scripts/test_actor_persian_plural_company_target_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -72,6 +74,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_arabic_plural_company_target_browser.py . actor-arabic-plural-company-target-webkit.json
+      - name: Persian plural company target polarity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_persian_plural_company_target_browser.py . actor-persian-plural-company-target-chromium.json
+      - name: Persian plural company target polarity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_persian_plural_company_target_browser.py . actor-persian-plural-company-target-webkit.json
       - name: Simultaneous Persian actor role — Chromium
         if: always()
         env:
@@ -154,6 +166,8 @@ jobs:
             actor-correction-company-webkit.json
             actor-arabic-plural-company-target-chromium.json
             actor-arabic-plural-company-target-webkit.json
+            actor-persian-plural-company-target-chromium.json
+            actor-persian-plural-company-target-webkit.json
             actor-simultaneous-persian-chromium.json
             actor-simultaneous-persian-webkit.json
             actor-arabic-feminine-chromium.json
