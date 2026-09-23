@@ -14,6 +14,7 @@ on:
       - 'scripts/test_actor_simultaneous_persian_browser.py'
       - 'scripts/test_actor_arabic_feminine_identity_browser.py'
       - 'scripts/test_actor_arabic_association_member_correction_browser.py'
+      - 'scripts/test_actor_private_to_company_correction_browser.py'
       - 'scripts/test_actor_property_participant_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
@@ -30,6 +31,7 @@ on:
       - 'scripts/test_actor_simultaneous_persian_browser.py'
       - 'scripts/test_actor_arabic_feminine_identity_browser.py'
       - 'scripts/test_actor_arabic_association_member_correction_browser.py'
+      - 'scripts/test_actor_private_to_company_correction_browser.py'
       - 'scripts/test_actor_property_participant_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
@@ -88,6 +90,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_arabic_association_member_correction_browser.py . actor-arabic-association-member-webkit.json
+      - name: Private-person target corrected to company — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_private_to_company_correction_browser.py . actor-private-to-company-chromium.json
+      - name: Private-person target corrected to company — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_private_to_company_correction_browser.py . actor-private-to-company-webkit.json
       - name: Positive support-target actor scope — Chromium
         if: always()
         env:
@@ -134,6 +146,8 @@ jobs:
             actor-arabic-feminine-webkit.json
             actor-arabic-association-member-chromium.json
             actor-arabic-association-member-webkit.json
+            actor-private-to-company-chromium.json
+            actor-private-to-company-webkit.json
             actor-positive-target-chromium.json
             actor-positive-target-webkit.json
             actor-property-participant-chromium.json
