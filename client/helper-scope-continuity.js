@@ -40,5 +40,21 @@
     results.hidden = false;
   }
 
-  analyzeButton.addEventListener('click', () => queueMicrotask(preserveMixedFactTargets));
+  function queuePreserveMixedFactTargets() {
+    queueMicrotask(preserveMixedFactTargets);
+  }
+
+  // The funding router intentionally stops propagation on the button itself.
+  // Observe the gesture earlier on document capture, then repair only this
+  // bounded mixed-target family after the synchronous router has rendered.
+  document.addEventListener('click', event => {
+    if (event.target instanceof Element && event.target.closest('#analyzeBtn')) {
+      queuePreserveMixedFactTargets();
+    }
+  }, true);
+  document.addEventListener('keydown', event => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && event.target === situation) {
+      queuePreserveMixedFactTargets();
+    }
+  }, true);
 })();
