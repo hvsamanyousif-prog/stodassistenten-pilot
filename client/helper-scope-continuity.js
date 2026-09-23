@@ -22,39 +22,44 @@
     return existingExplicitHelperRole(text) || boundedSwedishDirectSpouse(text) || boundedSwedishHelpOutClosePerson(text);
   };
 
-  const analyzeButton = document.getElementById('analyzeBtn');
   const situation = document.getElementById('situation');
   const results = document.getElementById('engineResults');
-  if (!analyzeButton || !situation || !results) return;
+  if (!situation || !results) return;
 
-  function preserveMixedFactTargets() {
+  function ensureMixedFactTargetStyles() {
+    if (document.getElementById('mixed-fact-target-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'mixed-fact-target-styles';
+    style.textContent = '.fact-target-route{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:48px;padding:13px 4px;border-bottom:1px solid #edf1ef;text-decoration:none;color:inherit}.fact-target-route:last-child{border-bottom:0}.fact-target-route strong{display:block;margin-bottom:3px}.fact-target-route small{display:block;color:var(--muted)}';
+    document.head.appendChild(style);
+  }
+
+  function renderMixedFactTargets() {
     const lang = String(document.documentElement.lang || 'sv').toLocaleLowerCase();
     const text = String(situation.value || '');
-    if (lang !== 'sv' || !boundedSwedishMixedFactTargets(text)) return;
+    if (lang !== 'sv' || !boundedSwedishMixedFactTargets(text)) return false;
 
+    ensureMixedFactTargetStyles();
     results.innerHTML = [
       '<div class="interpret" data-target-ownership-choice="true">Du nämner både ett behov som gäller dig och ett stipendium som gäller personen du hjälper. Välj vad du vill börja med – jag blandar inte ihop dem.</div>',
-      '<a class="route" data-fact-target="self-need" href="person-pilot.html?actor_type=private_person&need_context=essential_costs&lang=sv"><span><strong>Mitt eget behov</strong><small>Fortsätt med mat och andra nödvändiga vardagskostnader som gäller dig.</small></span><span class="arrow" aria-hidden="true">→</span></a>',
-      '<a class="route" data-fact-target="helped-person-funding" href="person-pilot.html?actor_type=relative&funding_intent=scholarship&lang=sv"><span><strong>Stipendium för personen jag hjälper</strong><small>Behåll hjälparrollen och fortsätt med stipendiespåret för henne, honom eller hen.</small></span><span class="arrow" aria-hidden="true">→</span></a>'
+      '<a class="fact-target-route" data-fact-target="self-need" href="person-pilot.html?actor_type=private_person&need_context=essential_costs&lang=sv"><span><strong>Mitt eget behov</strong><small>Fortsätt med mat och andra nödvändiga vardagskostnader som gäller dig.</small></span><span class="arrow" aria-hidden="true">→</span></a>',
+      '<a class="fact-target-route" data-fact-target="helped-person-funding" href="person-pilot.html?actor_type=relative&funding_intent=scholarship&lang=sv"><span><strong>Stipendium för personen jag hjälper</strong><small>Behåll hjälparrollen och fortsätt med stipendiespåret för henne, honom eller hen.</small></span><span class="arrow" aria-hidden="true">→</span></a>'
     ].join('');
     results.hidden = false;
+    results.scrollIntoView({behavior:'smooth', block:'nearest'});
+    return true;
   }
 
-  function queuePreserveMixedFactTargets() {
-    queueMicrotask(preserveMixedFactTargets);
+  function interceptMixedFactTargets(event) {
+    const click = event.type === 'click' && event.target instanceof Element && Boolean(event.target.closest('#analyzeBtn'));
+    const submitKey = event.type === 'keydown' && event.target === situation && (event.metaKey || event.ctrlKey) && event.key === 'Enter';
+    if ((!click && !submitKey) || !renderMixedFactTargets()) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
 
-  // The funding router intentionally stops propagation on the button itself.
-  // Observe the gesture earlier on document capture, then repair only this
-  // bounded mixed-target family after the synchronous router has rendered.
-  document.addEventListener('click', event => {
-    if (event.target instanceof Element && event.target.closest('#analyzeBtn')) {
-      queuePreserveMixedFactTargets();
-    }
-  }, true);
-  document.addEventListener('keydown', event => {
-    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && event.target === situation) {
-      queuePreserveMixedFactTargets();
-    }
-  }, true);
+  // Capture at document level so this bounded ownership case is resolved before
+  // the generic funding router can collapse every fact under the helper role.
+  document.addEventListener('click', interceptMixedFactTargets, true);
+  document.addEventListener('keydown', interceptMixedFactTargets, true);
 })();
