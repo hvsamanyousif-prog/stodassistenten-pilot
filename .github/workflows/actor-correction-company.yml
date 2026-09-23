@@ -13,6 +13,7 @@ on:
       - 'scripts/test_challenger_start_residuals_browser.py'
       - 'scripts/test_actor_simultaneous_persian_browser.py'
       - 'scripts/test_actor_arabic_feminine_identity_browser.py'
+      - 'scripts/test_actor_property_participant_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
   push:
     branches: ['main']
@@ -27,6 +28,7 @@ on:
       - 'scripts/test_challenger_start_residuals_browser.py'
       - 'scripts/test_actor_simultaneous_persian_browser.py'
       - 'scripts/test_actor_arabic_feminine_identity_browser.py'
+      - 'scripts/test_actor_property_participant_scope_browser.py'
       - '.github/workflows/actor-correction-company.yml'
 
 permissions:
@@ -84,6 +86,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-webkit.json
+      - name: Property participant ownership — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_property_participant_scope_browser.py . actor-property-participant-chromium.json
+      - name: Property participant ownership — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_property_participant_scope_browser.py . actor-property-participant-webkit.json
       - name: Challenger start residuals — Chromium
         if: always()
         env:
@@ -110,6 +122,8 @@ jobs:
             actor-arabic-feminine-webkit.json
             actor-positive-target-chromium.json
             actor-positive-target-webkit.json
+            actor-property-participant-chromium.json
+            actor-property-participant-webkit.json
             challenger-start-residuals-chromium.json
             challenger-start-residuals-webkit.json
           if-no-files-found: warn
