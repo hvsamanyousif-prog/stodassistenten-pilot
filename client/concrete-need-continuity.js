@@ -40,7 +40,7 @@ const RELATIVE_SUBJECTS=[
  {key:'father',explicit:/(?:\bmin pappa\b|\bmin far\b|أبي|والدي|پدرم)/i,pronoun:/(?:\bhan\b|(?:^|\s)هو(?:\s|$)|(?:^|\s)او(?:\s|$))/i},
  {key:'partner',explicit:/(?:\bmin partner\b|\bmin sambo\b|\bmin make\b|\bmin maka\b|زوجتي|زوجي|همسرم)/i,pronoun:/(?:\bhen\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'sibling',explicit:/(?:\bmin syster\b|\bmin bror\b|\bmitt syskon\b|أختي|أخي|خواهرم|برادرم)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
- {key:'neighbor',explicit:/(?:\bjag hjälper (?:min|en) granne\b|أساعد\s+جار(?:ي|تي)|به\s+همسایه(?:‌?ام))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
+ {key:'neighbor',explicit:/(?:\bjag hjälper (?:min|en) granne\b|أساعد\s+جار(?:ي|تي|ًا)|به\s+(?:همسایه(?:‌?ام)|یک\s+همسایه))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'friend',explicit:/(?:\bjag hjälper min vän\b|أساعد\s+صديق(?:ي|تي)|به\s+دوستم(?:\s|[،,.!?؟]|$))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'person',explicit:/(?:personen (?:som )?jag hjälper|jag hjälper (?:henne|honom)|(?:för|åt)\s+(?:henne|honom)|الشخص الذي (?:أنا )?أساعده|(?:بال)?نيابة عن(?: شخص|ها|ه)|فردی که (?:من )?کمک|برای او)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
 ];
@@ -273,6 +273,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.21',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.22',page});
 }
 })(window);
