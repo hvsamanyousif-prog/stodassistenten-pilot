@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Browser regression for bounded Arabic/Persian need-based funding negation.
+"""Browser regression for bounded multilingual need-based funding negation.
 
 An explicit statement that the user or helped target does not need a funding type
 must not become positive structured funding intent. A separately stated current
@@ -72,6 +72,30 @@ CASES = [
         "expect_need": None,
     },
     {
+        "id": "sv-helper-relative-rejected-funding-preserves-housing",
+        "lang": "sv",
+        "text": "Jag hjälper en närstående med hög hyra men vill inte söka bidrag.",
+        "expect_actor": "relative",
+        "expect_intent": None,
+        "expect_need": "need_context=housing",
+    },
+    {
+        "id": "ar-helper-relative-rejected-funding-preserves-housing",
+        "lang": "ar",
+        "text": "أنا أساعد شخصًا قريبًا مني لديه إيجار مرتفع. هو لا يحتاج إلى دعم مالي.",
+        "expect_actor": "relative",
+        "expect_intent": None,
+        "expect_need": "need_context=housing",
+    },
+    {
+        "id": "fa-helper-relative-rejected-funding-preserves-housing",
+        "lang": "fa",
+        "text": "من به یکی از نزدیکانم کمک می‌کنم که اجاره بالایی دارد. او به کمک مالی نیاز ندارد.",
+        "expect_actor": "relative",
+        "expect_intent": None,
+        "expect_need": "need_context=housing",
+    },
+    {
         "id": "ar-current-loan-search-remains-positive",
         "lang": "ar",
         "text": "أبحث عن قرض. الآن لدي إيجار مرتفع.",
@@ -122,7 +146,8 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
         page.goto(f"{base_url}/index.html?lang={case['lang']}", wait_until="load")
-        require(page.locator("html").get_attribute("dir") == "rtl", f"{case['id']}@{width}: RTL direction missing")
+        if case["lang"] in {"ar", "fa"}:
+            require(page.locator("html").get_attribute("dir") == "rtl", f"{case['id']}@{width}: RTL direction missing")
         page.locator("#situation").fill(case["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
@@ -140,7 +165,7 @@ def run_case(browser, base_url: str, case: dict, width: int) -> dict:
         if case["expect_intent"]:
             require(case["expect_intent"] in first_href, f"{case['id']}@{width}: expected funding intent missing: {first_href!r}")
         else:
-            require(all("funding_intent=" not in href for href in hrefs), f"{case['id']}@{width}: rejected loan became positive intent: {hrefs}")
+            require(all("funding_intent=" not in href for href in hrefs), f"{case['id']}@{width}: rejected funding became positive intent: {hrefs}")
         require(all(case["text"] not in href for href in hrefs), f"{case['id']}@{width}: raw situation leaked into URL")
         require(page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1"), f"{case['id']}@{width}: horizontal overflow")
         return {"id": case["id"], "lang": case["lang"], "width": width, "status": "passed", "first_href": first_href, "hrefs": hrefs}
