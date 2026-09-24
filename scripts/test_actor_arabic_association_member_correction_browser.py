@@ -239,6 +239,15 @@ EXTRA_SCENARIOS = [
         "expect_rtl": True,
     },
     {
+        "id": "sv-our-association-scholarship-source-is-not-applicant",
+        "lang": "sv",
+        "width": 390,
+        "text": "Jag söker stipendium från vår förening.",
+        "expect_question": True,
+        "question_token": "vem",
+        "expect_intent": "scholarship",
+    },
+    {
         "id": "sv-explicit-private-applicant-beats-association-funding-source",
         "lang": "sv",
         "width": 768,
