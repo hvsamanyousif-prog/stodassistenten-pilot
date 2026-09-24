@@ -27,7 +27,7 @@ function withoutBoundedSwedishNegatedNeedMentions(text){
 function detectNeeds(text){
  const value=withoutBoundedSwedishNegatedNeedMentions(text).toLocaleLowerCase();
  const needs=[];
- const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(value);
+ const housing=/(?:\bhyran\b|\b(?:hög|dyr)\s+hyra\b|\bhyra\b(?=\s*(?:och|,|\.|$))|\b(?:boende|bostads)kostnad(?:en|er|erna)?\b|\bbostad(?:en)?\b|\brent\b|(?:ال)?إيجار\s+(?:مرتفع|عال(?:ي|ية)?|غالي|غالية)|إيجار(?:ه|ها)\s+مرتفع|بعد\s+الإيجار|(?:تكلفة|تكاليف)\s+السكن|السكن|اجاره\s+(?:بالا(?:یی)?|زیاد|سنگین|گران)|اجاره(?:‌اش|\s+اش)\s+بالاست|(?:بعد|پس)\s+از\s+اجاره|مسکن)/.test(value);
  const essentialCosts=/(?:\bmat(?:en)?\b|livsmedel|läkemed|medicin|\b(?:elräkning(?:en|ar|arna)?|hushållsel|elkostnad(?:en|er|erna)?)\b|\bfood\b|medicine|دواء|طعام|(?:فاتورة|تكلفة|تكاليف)\s+الكهرباء|دارو|غذا|قبض\s+برق|هزینه(?:‌ی|ی)?\s*برق)/.test(value);
  if(housing)needs.push('housing');
  if(essentialCosts)needs.push('essential_costs');
@@ -42,7 +42,7 @@ const RELATIVE_SUBJECTS=[
  {key:'sibling',explicit:/(?:\bmin syster\b|\bmin bror\b|\bmitt syskon\b|أختي|أخي|خواهرم|برادرم)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'neighbor',explicit:/(?:\bjag hjälper (?:min|en) granne\b|أساعد\s+جار(?:ي|تي|ًا)|به\s+(?:همسایه(?:‌?ام)|یک\s+همسایه))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'friend',explicit:/(?:\bjag hjälper (?:min|en) vän\b|أساعد\s+صديق(?:ي|تي|ًا)|به\s+(?:دوستم|یک\s+دوست)(?:\s|[،,.!?؟]|$))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
- {key:'relative_generic',explicit:/(?:\bjag hjälper en (?:anhörig|närstående)\b|\bför en (?:anhörig|närstående)\b|أساعد\s+(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|ل(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|به\s+یکی\s+از\s+(?:بستگانم|نزدیکانم)\s+کمک|برای\s+یکی\s+از\s+(?:بستگانم|نزدیکانم))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او|لدي(?:ه|ها))(?=\s|$))/i},
+ {key:'relative_generic',explicit:/(?:\bjag hjälper en (?:anhörig|närstående)\b|\bför en (?:anhörig|närstående)\b|أساعد\s+(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|ل(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|به\s+یکی\s+از\s+(?:بستگانم|نزدیکانم)\s+کمک|برای\s+یکی\s+از\s+(?:بستگانم|نزدیکانم))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او|لدي(?:ه|ها)|إيجار(?:ه|ها)|اجاره(?:‌اش|\s+اش))(?=\s|$))/i},
  {key:'person',explicit:/(?:personen (?:som )?jag hjälper|jag hjälper (?:henne|honom)|(?:för|åt)\s+(?:henne|honom)|الشخص الذي (?:أنا )?أساعده|(?:بال)?نيابة عن(?: شخص|ها|ه)|فردی که (?:من )?کمک|برای او)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
 ];
 
@@ -274,6 +274,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.28',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.29',page});
 }
 })(window);
