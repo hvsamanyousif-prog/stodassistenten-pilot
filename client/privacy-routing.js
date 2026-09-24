@@ -188,7 +188,7 @@
   const FUNDING_INTENT_PATTERNS=[
     ['scholarship',/(?:^|[^\p{L}\p{N}])(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium|stpendium)(?=$|[^\p{L}\p{N}])|منحة|منح\s+دراسية|بورسیه/u],
     ['loan',/\blån(?:et|en)?\b|\bstudielån(?:et|en)?\b|\blåna\s+pengar\b|قرض|(?:^|[^\p{L}\p{N}])وام(?=$|[^\p{L}\p{N}])/u],
-    ['funding',/pengar\s+att\s+sök|pengar\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+pengar|(?:\bfond(?:er)?\b\s+att\s+sök|\bfonder\b\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+(?:en\s+)?fond(?:er)?\b)|bidrag\s+att\s+sök|bidrag\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
+    ['funding',/pengar\s+att\s+sök|pengar\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+pengar|(?:\bfond(?:er)?\b\s+att\s+sök|\bfonder\b\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+(?:en\s+)?fond(?:er)?\b)|bidrag\s+att\s+sök|bidrag\s+(?:kan\s+jag|jag\s+kan)\s+sök(?:a|er)?|sök(?:a|er)?\s+bidrag|finansiering\s+att\s+sök|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل|کمک مالی|حمایت مالی|بودجه/u]
   ];
 
   function currentLang(){
@@ -205,7 +205,7 @@
     const ar=/(?:^|[\s])(?:و)?لا\s+(?:أبحث|ابحث|أريد|اريد)(?:\s+عن)?(?=$|[\s])/u.test(x);
     const fa=/(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)[^.!؟،؛;\n]{0,24}نمی(?:‌|\s)?خواهم/u.test(x);
     const svBare=/^(?:inte|ej)\s+(?!bara\b)(?:(?:stipendium|stipendiet|stipendier(?:na)?|stipenium|stipedium|stpendium)|lån(?:et|en)?|studielån(?:et|en)?|bidrag|fond(?:er)?|finansiering|pengar)\b/u.test(x);
-    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
+    const arBare=/^ليس\s+(?:قرض|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل)/u.test(x);
     const faBare=/^نه\s+(?:وام|بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه)(?=$|[\s.!؟،؛;])/u.test(x);
     return sv||ar||fa||svBare||arBare||faBare;
   }
@@ -223,7 +223,7 @@
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='ar'){
-      const matches=x.matchAll(/(?:^|[\s،])(?:(?:أنا\s+)?لا\s+أحتاج|(?:هو\s+لا\s+يحتاج|هي\s+لا\s+تحتاج))(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
+      const matches=x.matchAll(/(?:^|[\s،])(?:(?:أنا\s+)?لا\s+أحتاج|(?:هو\s+لا\s+يحتاج|هي\s+لا\s+تحتاج))(?:\s+إلى)?\s+((?:قرض(?:اً|ًا|ا)?|منحة|منح\s+دراسية|دعم(?:اً|ًا|ا)?\s+مالي(?:اً|يًا|ا)?|(?:ال)?مساعد(?:ة|ات)\s+(?:ال)?مالية|تمويل))(?=$|[\s،.!؟؛;])/gu);
       return [...matches].some(match=>pattern.test(match[1]));
     }
     if(lang==='fa'){
@@ -466,8 +466,8 @@
     const x=lower(text);
     if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
     const swedishTarget=targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon)|(?:min|en)\s+(?:vän|granne)|en\s+(?:anhörig|närstående)|henne|honom)|\bjag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon)|(?:min|en)\s+(?:vän|granne)|en\s+(?:anhörig|närstående)|henne|honom)\b/u.test(x);
-    const arabicTarget=/(?:^|[^\p{L}\p{N}])أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي|جار(?:ي|تي|ًا|ا)|صديق(?:ي|تي|ًا|ا)|أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)(?=$|[^\p{L}\p{N}])|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن/u.test(x);
-    const persianTarget=/برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|همسایه(?:‌?ام)|یک\s+(?:دوست|همسایه)|یکی\s+از\s+(?:بستگانم|نزدیکانم))[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    const arabicTarget=/(?:^|[^\p{L}\p{N}])أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي|جار(?:ي|تي|ًا|ا)|صديق(?:ي|تي|ًا|ا)|أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)(?=$|[^\p{L}\p{N}])|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي|أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|نيابة\s+عن/u.test(x);
+    const persianTarget=/برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او|یکی\s+از\s+(?:بستگانم|نزدیکانم))|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|همسایه(?:‌?ام)|یک\s+(?:دوست|همسایه)|یکی\s+از\s+(?:بستگانم|نزدیکانم))[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
     return swedishTarget||arabicTarget||persianTarget;
   }
   function actorHref(actor,lang,intent){
