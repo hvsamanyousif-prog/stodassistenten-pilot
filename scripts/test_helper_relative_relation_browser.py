@@ -138,6 +138,48 @@ REJECTED_TARGET_SCENARIOS = [
         "actor_type": "relative",
         "need_context": {"housing"},
     },
+    {
+        "id": "ar-rejected-funding-possessive-his-rent-preserves-housing-need",
+        "lang": "ar",
+        "text": "لا أريد طلب دعم مالي لأحد أقاربي. إيجاره مرتفع.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "ar-rejected-funding-possessive-her-rent-preserves-housing-need",
+        "lang": "ar",
+        "text": "لا أريد طلب دعم مالي لأحد أقاربي. إيجارها مرتفع.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "fa-rejected-funding-possessive-rent-zwnj-preserves-housing-need",
+        "lang": "fa",
+        "text": "من برای یکی از نزدیکانم کمک مالی نمی‌خواهم. اجاره‌اش بالاست.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "fa-rejected-funding-possessive-rent-space-preserves-housing-need",
+        "lang": "fa",
+        "text": "من برای یکی از نزدیکانم کمک مالی نمی‌خواهم. اجاره اش بالاست.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "ar-rejected-funding-car-rental-remains-negative",
+        "lang": "ar",
+        "text": "لا أريد طلب دعم مالي لأحد أقاربي. إيجار سيارة مرتفع.",
+        "actor_type": "relative",
+        "need_context": set(),
+    },
+    {
+        "id": "fa-rejected-funding-car-rental-remains-negative",
+        "lang": "fa",
+        "text": "من برای یکی از نزدیکانم کمک مالی نمی‌خواهم. اجاره خودرو بالاست.",
+        "actor_type": "relative",
+        "need_context": set(),
+    },
 ]
 
 
@@ -213,7 +255,7 @@ def main() -> int:
             "privacy_routing_sha256": base.sha256(site / base.builder.SHELL_ROUTING_PATH),
             "concrete_need_continuity_sha256": base.sha256(site / base.builder.CONCRETE_NEED_CONTINUITY_PATH),
             "independent_semantic_cases": 3,
-            "language_parity_variants": 6,
+            "language_parity_variants": 12,
             "widths": list(base.WIDTHS),
             "checks": (len(SCENARIOS) + len(REJECTED_TARGET_SCENARIOS)) * len(base.WIDTHS),
             "passed": 0,
