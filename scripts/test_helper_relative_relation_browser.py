@@ -172,6 +172,7 @@ REJECTED_TARGET_SCENARIOS = [
         "text": "لا أريد طلب دعم مالي لأحد أقاربي. إيجار سيارة مرتفع.",
         "actor_type": "relative",
         "need_context": set(),
+        "expect_route": False,
     },
     {
         "id": "fa-rejected-funding-car-rental-remains-negative",
@@ -179,6 +180,7 @@ REJECTED_TARGET_SCENARIOS = [
         "text": "من برای یکی از نزدیکانم کمک مالی نمی‌خواهم. اجاره خودرو بالاست.",
         "actor_type": "relative",
         "need_context": set(),
+        "expect_route": False,
     },
 ]
 
@@ -204,6 +206,25 @@ def run_rejected_target_case(browser, base_url: str, scenario: dict, width: int)
         )
 
         target = results.locator(f'a.route[href*="actor_type={scenario["actor_type"]}"]').first
+        if not scenario.get("expect_route", True):
+            base.require(target.count() == 0, f"{case_id}: unsupported rental near-miss created a rejected-funding helper route")
+            for route in results.locator("a.route").all():
+                href = route.get_attribute("href") or ""
+                base.require("need_context=housing" not in href, f"{case_id}: rental near-miss fabricated housing context: {href}")
+                base.require("q=" not in href and "situation=" not in href, f"{case_id}: raw situation parameter leaked into route")
+            base.no_horizontal_overflow(page, case_id, "shared rejected-funding rental near-miss results")
+            return {
+                "id": case_id,
+                "semantic_case": scenario["id"],
+                "lang": lang,
+                "width": width,
+                "status": "passed",
+                "actor_type": None,
+                "funding_intent": None,
+                "need_context": [],
+                "route": None,
+            }
+
         base.require(target.count() == 1, f"{case_id}: rejected-funding helper route missing")
         base.require(
             target.get_attribute("data-rejected-funding-helper") == "true",
