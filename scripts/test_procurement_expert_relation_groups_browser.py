@@ -1,0 +1,379 @@
+"""Offline browser regression for bounded relation-leading procurement groups.
+
+This verifies DOM/user-flow behavior in Chromium/WebKit. It is not live Pages,
+physical Safari/iPhone/iPad, assistive-technology, legal or storage evidence.
+"""
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright, expect
+
+ROOT = Path(sys.argv[1]).resolve()
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path('procurement-relation-groups-browser.json')
+ENGINE = os.environ.get('BROWSER_ENGINE', 'chromium').strip().lower()
+VIEWPORTS = [
+    {'width': 390, 'height': 844},
+    {'width': 1280, 'height': 900},
+]
+
+RELATION_CASES = [
+    {
+        'id': 'repeated-modal-for-det-fall-att-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'repeated-modal-for-det-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och för det fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'semicolon-for-det-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'numbered-for-det-fall-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) för det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'repeated-modal-i-de-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'semicolon-i-de-fall-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'numbered-i-de-fall-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) i de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'repeated-modal-nar-aberopas-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'semicolon-nar-aberopas-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'numbered-nar-aberopas-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) när underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'repeated-modal-annars-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring och annars ska leverantören ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'semicolon-annars-stays-bound',
+        'text': 'Leverantören ska ha ansvarsförsäkring; annars ska leverantören ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'numbered-annars-stays-bound',
+        'text': '1) Leverantören ska ha ansvarsförsäkring 2) annars ska leverantören ha ISO 9001-certifikat.',
+    },
+]
+
+CROSS_LINE_CASES = [
+    {
+        'id': 'cross-line-nar-aberopas-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring och\nnär underleverantör åberopas ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nför det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-i-de-fall-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI de fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-i-forekommande-fall-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI förekommande fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-forutsatt-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutsatt att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-for-det-fall-no-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-under-forutsattning-att-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nUnder förutsättning att underleverantör används ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-vid-anvandning-av-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nVid användning av underleverantör ska underleverantören ha ansvarsförsäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-undantag-fran-kravet-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på ansvarsförsäkring gäller om leverantören kan visa likvärdig försäkring.',
+    },
+    {
+        'id': 'cross-line-semicolon-forutom-exceptive-remains-linked',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutom när ett likvärdigt försäkringsbevis godtas gäller kravet på ansvarsförsäkring.',
+        'right_conditional': True,
+    },
+]
+
+NEGATIVE_CONTROLS = [
+    {
+        'id': 'ordinary-temporal-context-still-segments',
+        'text': 'Leverantören ska ha ansvarsförsäkring när avtalet börjar och leverantören ska ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'independent-punctuation-still-segments',
+        'text': 'Leverantören ska ha ansvarsförsäkring; leverantören ska ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'descriptive-when-used-is-not-source-risk',
+        'text': 'Leverantören ska i säkerhetsbeskrivningen redovisa när systemet används i drift.',
+        'single': True,
+    },
+    {
+        'id': 'independent-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring.\nLeverantören ska ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'independent-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nLeverantören ska ha ISO 9001-certifikat.',
+    },
+    {
+        'id': 'independent-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nOm anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-exclusive-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nEndast om anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-usage-conditional-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nNär e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-vid-anvandning-av-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nVid användning av e-faktura ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-undantag-fran-kravet-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nUndantag från kravet på e-faktura gäller vid betalning med betalkort.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'additive-forutom-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutom e-faktura ska leverantören kunna skicka pappersfaktura vid behov.',
+    },
+    {
+        'id': 'independent-i-de-fall-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI de fall e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-i-forekommande-fall-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nI förekommande fall e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-forutsatt-att-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFörutsatt att anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-for-det-fall-att-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall att e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-for-det-fall-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nFör det fall e-faktura används ska fakturan följa Peppol BIS.',
+        'right_conditional': True,
+    },
+    {
+        'id': 'independent-under-forutsattning-att-semicolon-cross-line-stays-independent',
+        'text': 'Leverantören ska ha ansvarsförsäkring;\nUnder förutsättning att anbudet lämnas elektroniskt ska filformatet vara PDF.',
+        'right_conditional': True,
+    },
+]
+
+
+def check(ok, message):
+    if not ok:
+        raise AssertionError(message)
+
+
+def sha1_blob(path):
+    data = path.read_bytes()
+    return hashlib.sha1(f'blob {len(data)}\0'.encode() + data).hexdigest()
+
+
+def install_offline(page, context):
+    unexpected = []
+    errors = []
+    page.on('pageerror', lambda exc: errors.append(str(exc)))
+
+    def block(route):
+        unexpected.append(route.request.url)
+        route.abort()
+
+    context.route('**/*', block)
+    html = (ROOT / 'procurement-expert-pilot.html').read_text(encoding='utf-8')
+    html = html.replace('<script src="client/procurement-expert-pilot.js"></script>', '')
+    page.set_content(html)
+    page.evaluate("() => { window.fetch = () => Promise.reject(new Error('Network disabled in relation-group regression')); }")
+    page.add_script_tag(content=(ROOT / 'client/procurement-expert-pilot.js').read_text(encoding='utf-8'))
+    return unexpected, errors
+
+
+def start_case(page, text):
+    page.locator('#startBtn').click()
+    page.locator('[data-sector="construction"]').click()
+    page.locator('#sourceText').fill(text)
+    page.locator('#analyzeBtn').click()
+    expect(page.locator('#analysisCard')).to_be_visible()
+
+
+def run_relation_case(page, case):
+    start_case(page, case['text'])
+    check(page.locator('[data-ev]').count() == 1, f"{case['id']}: relation group was split into independent evidence controls")
+    overview = page.locator('#priorityOverview').inner_text().lower()
+    check('villkor eller undantag' in overview, f"{case['id']}: visible relation warning missing")
+    check('flera materiella krav' in overview, f"{case['id']}: composite risk missing")
+    check('källa rad 1' in overview, f"{case['id']}: source-line trace missing")
+    page.locator('#openReviewBtn').click()
+    full_review = page.locator('#requirements').inner_text().lower()
+    check('villkor eller undantag' in full_review, f"{case['id']}: full-review relation warning missing")
+    page.locator('[data-ev="1"]').select_option('yes')
+    after = page.locator('#priorityOverview').inner_text().lower()
+    check('villkor eller undantag' in after, f"{case['id']}: evidence=yes hid relation warning")
+    check('flera materiella krav' in after, f"{case['id']}: evidence=yes hid composite risk")
+    check('alla kravrader är genomgångna av dig' not in after, f"{case['id']}: false calm completion after evidence=yes")
+
+
+def run_cross_line_case(page, case):
+    start_case(page, case['text'])
+    check(page.locator('[data-ev]').count() == 2, f"{case['id']}: physical source lines were not preserved as two review rows")
+    overview = page.locator('#priorityOverview').inner_text().lower()
+    check('radbrytningen' in overview, f"{case['id']}: cross-line semantic warning missing")
+    check('källa rad 1' in overview and 'källa rad 2' in overview, f"{case['id']}: both physical source-line traces must remain visible")
+    page.locator('#openReviewBtn').click()
+    full_review = page.locator('#requirements').inner_text().lower()
+    check(full_review.count('radbrytningen') >= 2, f"{case['id']}: both review rows must carry cross-line warning")
+    if case.get('right_conditional'):
+        check('villkor eller undantag' in full_review, f"{case['id']}: exceptive right row must retain its own conditional warning")
+    page.locator('[data-ev="1"]').select_option('yes')
+    page.locator('[data-ev="2"]').select_option('yes')
+    after = page.locator('#priorityOverview').inner_text().lower()
+    check('radbrytningen' in after, f"{case['id']}: evidence=yes hid cross-line uncertainty")
+    check('alla kravrader är genomgångna av dig' not in after, f"{case['id']}: false calm completion after reviewing both cross-line rows")
+
+
+def run_negative_control(page, case):
+    start_case(page, case['text'])
+    expected_controls = 1 if case.get('single') else 2
+    check(page.locator('[data-ev]').count() == expected_controls, f"{case['id']}: safe ordinary requirement structure was mis-segmented")
+    overview = page.locator('#priorityOverview').inner_text().lower()
+    if case.get('right_conditional'):
+        check('villkor eller undantag' in overview, f"{case['id']}: right row must keep its own conditional warning")
+    else:
+        check('villkor eller undantag' not in overview, f"{case['id']}: ordinary content received a false relation warning")
+    check('radbrytningen' not in overview, f"{case['id']}: independent rows received a false cross-line warning")
+    check('flera materiella krav' not in overview, f"{case['id']}: safely segmented/ordinary rows retained composite warning")
+    page.locator('#openReviewBtn').click()
+    expect(page.locator('#requirements')).to_be_visible()
+    page.locator('[data-ev="1"]').select_option('yes')
+    after = page.locator('#priorityOverview').inner_text().lower()
+    if case.get('single'):
+        check('villkor eller undantag' not in after, f"{case['id']}: false relation warning remained after review")
+        check('alla kravrader är genomgångna av dig' in after, f"{case['id']}: reviewed ordinary requirement remained falsely blocked")
+    elif case.get('right_conditional'):
+        check('källa rad 1' not in after, f"{case['id']}: reviewed independent left row remained falsely prioritized")
+        check('källa rad 2' in after, f"{case['id']}: right conditional row disappeared from priority review")
+        check('villkor eller undantag' in after, f"{case['id']}: right conditional warning disappeared after left-row review")
+    else:
+        check(page.locator('[data-ev="2"]').input_value() == 'unknown', f"{case['id']}: first evidence mark leaked into sibling")
+
+
+def run_case(page, case, kind):
+    if kind == 'relation':
+        run_relation_case(page, case)
+    elif kind == 'cross_line':
+        run_cross_line_case(page, case)
+    else:
+        run_negative_control(page, case)
+    sizes = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')
+    check(sizes['content'] <= sizes['viewport'] + 1, f"{case['id']}: horizontal overflow {sizes}")
+
+
+results = []
+browser_version = None
+harness_error = None
+all_cases = (
+    [(case, 'relation') for case in RELATION_CASES]
+    + [(case, 'cross_line') for case in CROSS_LINE_CASES]
+    + [(case, 'negative') for case in NEGATIVE_CONTROLS]
+)
+expected_runs = len(VIEWPORTS) * len(all_cases)
+try:
+    with sync_playwright() as p:
+        browser_type = getattr(p, ENGINE, None)
+        if browser_type is None:
+            raise RuntimeError(f'Unsupported BROWSER_ENGINE={ENGINE}')
+        browser = browser_type.launch(headless=True)
+        browser_version = browser.version
+        try:
+            for viewport in VIEWPORTS:
+                for case, kind in all_cases:
+                    context = None
+                    try:
+                        context = browser.new_context(viewport=viewport, reduced_motion='reduce')
+                        page = context.new_page()
+                        page.set_default_timeout(3000)
+                        unexpected, errors = install_offline(page, context)
+                        run_case(page, case, kind)
+                        check(not errors, 'JavaScript errors: ' + str(errors))
+                        check(not unexpected, 'Unexpected external requests: ' + str(unexpected))
+                        results.append({'case': case['id'], 'width': viewport['width'], 'status': 'PASS'})
+                    except Exception as exc:
+                        results.append({'case': case['id'], 'width': viewport['width'], 'status': 'FAIL', 'error': str(exc).split('\n')[0]})
+                    finally:
+                        if context is not None:
+                            context.close()
+        finally:
+            browser.close()
+except Exception as exc:
+    harness_error = f'{type(exc).__name__}: {exc}'
+
+passed = sum(1 for row in results if row['status'] == 'PASS')
+failed = sum(1 for row in results if row['status'] == 'FAIL')
+report = {
+    'scope': 'Offline bounded relation-group semantic-segmentation regression',
+    'engine': ENGINE,
+    'browser_version': browser_version,
+    'viewports': [v['width'] for v in VIEWPORTS],
+    'relation_case_count': len(RELATION_CASES),
+    'cross_line_case_count': len(CROSS_LINE_CASES),
+    'negative_control_count': len(NEGATIVE_CONTROLS),
+    'expected_runs': expected_runs,
+    'executed_runs': len(results),
+    'passed': passed,
+    'failed': failed,
+    'harness_error': harness_error,
+    'network_mode': 'offline',
+    'product_blob_sha1': sha1_blob(ROOT / 'client/procurement-expert-pilot.js'),
+    'harness_blob_sha1': sha1_blob(Path(__file__)),
+    'results': results,
+}
+OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+print(json.dumps({k: report[k] for k in ('engine','browser_version','relation_case_count','cross_line_case_count','negative_control_count','expected_runs','executed_runs','passed','failed','harness_error')}, ensure_ascii=False))
+if harness_error or len(results) != expected_runs or failed:
+    raise SystemExit(1)

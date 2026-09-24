@@ -1,0 +1,305 @@
+"""Focused deadline/version source-truth browser regression.
+
+Exercises the existing procurement pilot offline in Chromium or Playwright WebKit.
+This is source-truth/UI evidence only: no network, storage, legal conclusion, live Pages,
+physical Safari/iPad/iPhone or assistive-technology claim.
+"""
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+
+from playwright.sync_api import sync_playwright, expect
+
+ROOT = Path(sys.argv[1]).resolve()
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("procurement-deadline-browser.json")
+ENGINE = os.environ.get("BROWSER_ENGINE", "chromium").strip().lower()
+VIEWPORTS = [
+    {"width": 320, "height": 800},
+    {"width": 1280, "height": 900},
+]
+
+# Independent source examples. Expected results are specified here rather than
+# derived from implementation output.
+CASES = [
+    {
+        "id": "equivalent-iso-and-swedish-date",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30.",
+            "Rättelse 2: Sista anbudsdag är 30 oktober 2026.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "cross-format-real-date-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30.",
+            "Rättelse 2: Sista anbudsdag är 31 oktober 2026.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "numeric-ddmmyyyy-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 31/10/2026 kl 23:59.",
+            "Rättelse 2: Sista anbudsdag är 07/11/2026 kl 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "same-date-different-explicit-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 klockan 12:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 klockan 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "same-date-different-bare-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 12:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "same-date-same-bare-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 23:59.",
+            "Rättelse 2: Sista anbudsdag är 30 oktober 2026 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "same-date-one-time-unspecified",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 klockan 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "same-date-same-explicit-time",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 klockan 23:59.",
+            "Rättelse 2: Sista anbudsdag är 30 oktober 2026 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "publication-date-does-not-create-false-bid-conflict",
+        "text": "\n".join([
+            "Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Rättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-30 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "publication-date-does-not-hide-real-bid-conflict",
+        "text": "\n".join([
+            "Rättelse 1 publicerad 2026-10-01: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Rättelse 2 publicerad 2026-10-05: Sista anbudsdag är 2026-10-31 kl 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "trailing-publication-date-does-not-create-false-bid-conflict",
+        "text": "\n".join([
+            "Sista anbudsdag är 2026-10-30 kl 23:59. Rättelse 1 publicerad 2026-10-01.",
+            "Sista anbudsdag är 2026-10-30 kl 23:59. Rättelse 2 publicerad 2026-10-05.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "trailing-publication-date-does-not-hide-real-bid-conflict",
+        "text": "\n".join([
+            "Sista anbudsdag är 2026-10-30 kl 23:59. Rättelse 1 publicerad 2026-10-01.",
+            "Sista anbudsdag är 2026-10-31 kl 23:59. Rättelse 2 publicerad 2026-10-05.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "trailing-nondeadline-times-do-not-create-false-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 08:00–16:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 09:00–17:00.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "trailing-nondeadline-times-do-not-hide-real-conflict",
+        "text": "\n".join([
+            "Rättelse 1: Sista anbudsdag är 2026-10-30 kl 12:00. Support öppet 08:00–16:00.",
+            "Rättelse 2: Sista anbudsdag är 2026-10-30 kl 23:59. Support öppet 08:00–16:00.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "different-lot-deadlines-are-not-version-conflict",
+        "text": "\n".join([
+            "Delområde A: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Delområde B: Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+    },
+    {
+        "id": "same-lot-deadline-change-is-version-conflict",
+        "text": "\n".join([
+            "Delområde A, version 1: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Delområde A, version 2 ersätter version 1: Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": True,
+    },
+    {
+        "id": "mixed-named-and-unscoped-deadline-fails-closed",
+        "text": "\n".join([
+            "Delområde A: Sista anbudsdag är 2026-10-30 kl 23:59.",
+            "Sista anbudsdag är 2026-11-06 kl 23:59.",
+        ]),
+        "expect_conflict": False,
+        "expect_scope_uncertain": True,
+    },
+    {
+        "id": "dated-qualification-condition-not-process-deadline",
+        "text": "Leverantören ska ha två referensuppdrag som ska vara slutförda senast den 1 september 2026.",
+        "expect_conflict": False,
+        "expected_row_count": 1,
+        "expected_category": "qualification",
+        "expected_question": "referensuppdrag",
+    },
+    {
+        "id": "same-row-explicit-bid-deadline-change",
+        "text": "Rättelse: Sista anbudsdag ändras från 2026-10-30 kl 12:00 till 2026-11-06 kl 23:59.",
+        "expect_conflict": False,
+        "expect_same_row_change": True,
+        "expected_row_count": 1,
+    },
+]
+
+
+def check(ok, message):
+    if not ok:
+        raise AssertionError(message)
+
+
+def sha1_blob(path):
+    data = path.read_bytes()
+    return hashlib.sha1(f"blob {len(data)}\0".encode() + data).hexdigest()
+
+
+def install_offline(page, context):
+    unexpected = []
+    errors = []
+    page.on("pageerror", lambda exc: errors.append(str(exc)))
+
+    def block(route):
+        unexpected.append(route.request.url)
+        route.abort()
+
+    context.route("**/*", block)
+    html = (ROOT / "procurement-expert-pilot.html").read_text(encoding="utf-8")
+    html = html.replace('<script src="client/procurement-expert-pilot.js"></script>', "")
+    page.set_content(html)
+    page.evaluate("() => { window.fetch = () => Promise.reject(new Error('Network disabled in deadline regression')); }")
+    page.add_script_tag(content=(ROOT / "client/procurement-expert-pilot.js").read_text(encoding="utf-8"))
+    return unexpected, errors
+
+
+def run_case(page, case):
+    page.locator("#startBtn").click()
+    page.locator('[data-sector="construction"]').click()
+    page.locator("#sourceText").fill(case["text"])
+    page.locator("#analyzeBtn").click()
+    expect(page.locator("#analysisCard")).to_be_visible()
+
+    page.locator("#openReviewBtn").click()
+    check(page.locator("#reviewDetails").get_attribute("open") is not None, f'{case["id"]}: full review did not open')
+    expected_row_count = case.get("expected_row_count", 2)
+    expected_category = case.get("expected_category", "deadline")
+    expect(page.locator("#requirements .req")).to_have_count(expected_row_count)
+    categories = [el.input_value() for el in page.locator("[data-cat]").all()]
+    check(categories == [expected_category] * expected_row_count, f'{case["id"]}: category recognition changed: {categories}')
+    sources = [el.inner_text() for el in page.locator("#requirements .source").all()]
+    expected_sources = [f"Källa rad {i}" for i in range(1, expected_row_count + 1)]
+    check(sources == expected_sources, f'{case["id"]}: source trace changed: {sources}')
+
+    overview = page.locator("#priorityOverview").inner_text().lower()
+    review = page.locator("#requirements").inner_text().lower()
+    if case.get("expected_question"):
+        check(case["expected_question"].lower() in review, f'{case["id"]}: expected category-specific control question missing')
+    has_conflict = "motstridiga anbudsdatum eller klockslag" in review
+    overview_conflict = "motstridiga anbudsdatum eller klockslag" in overview
+    if case.get("expect_same_row_change"):
+        check("ändrad anbudsdeadline" in review, f'{case["id"]}: same-row deadline change not visible in row review')
+        check("ändrad anbudsdeadline" in overview, f'{case["id"]}: same-row deadline change hidden from calm overview')
+    elif case["expect_conflict"]:
+        check(has_conflict, f'{case["id"]}: source conflict not visible in row review')
+        check(overview_conflict, f'{case["id"]}: source conflict hidden from calm overview')
+    else:
+        check(not has_conflict, f'{case["id"]}: equivalent/incomplete source detail created false conflict')
+        check(not overview_conflict, f'{case["id"]}: false conflict promoted into calm overview')
+
+    if case.get("expect_scope_uncertain"):
+        check("oklart delområdesscope" in review, f'{case["id"]}: missing fail-closed scope warning in row review')
+        check("oklart delområdesscope" in overview, f'{case["id"]}: scope uncertainty hidden from calm overview')
+
+    sizes = page.evaluate("({viewport:innerWidth,content:document.documentElement.scrollWidth})")
+    check(sizes["content"] <= sizes["viewport"] + 1, f'{case["id"]}: horizontal overflow {sizes}')
+
+
+results = []
+browser_version = None
+harness_error = None
+expected_runs = len(VIEWPORTS) * len(CASES)
+try:
+    with sync_playwright() as p:
+        browser_type = getattr(p, ENGINE, None)
+        if browser_type is None:
+            raise RuntimeError(f"Unsupported BROWSER_ENGINE={ENGINE}")
+        browser = browser_type.launch(headless=True)
+        browser_version = browser.version
+        try:
+            for viewport in VIEWPORTS:
+                for case in CASES:
+                    context = None
+                    try:
+                        context = browser.new_context(viewport=viewport, reduced_motion="reduce")
+                        page = context.new_page()
+                        page.set_default_timeout(3000)
+                        unexpected, errors = install_offline(page, context)
+                        run_case(page, case)
+                        check(not errors, "JavaScript errors: " + str(errors))
+                        check(not unexpected, "Unexpected external requests: " + str(unexpected))
+                        results.append({"case": case["id"], "width": viewport["width"], "status": "PASS"})
+                    except Exception as exc:
+                        results.append({"case": case["id"], "width": viewport["width"], "status": "FAIL", "error": str(exc).split("\n")[0]})
+                    finally:
+                        if context is not None:
+                            context.close()
+        finally:
+            browser.close()
+except Exception as exc:
+    harness_error = f"{type(exc).__name__}: {exc}"
+
+report = {
+    "scope": "Focused offline deadline/version source-truth browser regression. Network disabled; no live Pages, storage, legal, physical Safari/iPad/iPhone or assistive-technology claim.",
+    "engine": ENGINE,
+    "browser_version": browser_version,
+    "viewports": VIEWPORTS,
+    "independent_cases": len(CASES),
+    "expected_runs": expected_runs,
+    "executed_runs": len(results),
+    "harness_error": harness_error,
+    "passed": sum(x["status"] == "PASS" for x in results),
+    "failed": sum(x["status"] == "FAIL" for x in results),
+    "sources": {
+        "procurement-expert-pilot.html": sha1_blob(ROOT / "procurement-expert-pilot.html"),
+        "client/procurement-expert-pilot.js": sha1_blob(ROOT / "client/procurement-expert-pilot.js"),
+    },
+    "results": results,
+}
+OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+print(json.dumps(report, ensure_ascii=False, indent=2))
+if harness_error or len(results) != expected_runs or report["failed"]:
+    sys.exit(1)

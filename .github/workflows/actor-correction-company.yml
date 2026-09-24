@@ -1,0 +1,186 @@
+name: Validate company actor correction
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_shared_search_browser.py'
+      - 'scripts/test_actor_correction_company_browser.py'
+      - 'scripts/test_actor_target_scope_browser.py'
+      - 'scripts/test_actor_positive_target_scope_browser.py'
+      - 'scripts/test_challenger_start_residuals_browser.py'
+      - 'scripts/test_actor_simultaneous_persian_browser.py'
+      - 'scripts/test_actor_arabic_feminine_identity_browser.py'
+      - 'scripts/test_actor_arabic_association_member_correction_browser.py'
+      - 'scripts/test_actor_private_to_company_correction_browser.py'
+      - 'scripts/test_actor_property_participant_scope_browser.py'
+      - 'scripts/test_actor_arabic_plural_company_target_browser.py'
+      - 'scripts/test_actor_persian_plural_company_target_browser.py'
+      - '.github/workflows/actor-correction-company.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_shared_search_browser.py'
+      - 'scripts/test_actor_correction_company_browser.py'
+      - 'scripts/test_actor_target_scope_browser.py'
+      - 'scripts/test_actor_positive_target_scope_browser.py'
+      - 'scripts/test_challenger_start_residuals_browser.py'
+      - 'scripts/test_actor_simultaneous_persian_browser.py'
+      - 'scripts/test_actor_arabic_feminine_identity_browser.py'
+      - 'scripts/test_actor_arabic_association_member_correction_browser.py'
+      - 'scripts/test_actor_private_to_company_correction_browser.py'
+      - 'scripts/test_actor_property_participant_scope_browser.py'
+      - 'scripts/test_actor_arabic_plural_company_target_browser.py'
+      - 'scripts/test_actor_persian_plural_company_target_browser.py'
+      - '.github/workflows/actor-correction-company.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test tooling
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Company actor correction — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_target_scope_browser.py . actor-correction-company-chromium.json
+      - name: Company actor correction — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_target_scope_browser.py . actor-correction-company-webkit.json
+      - name: Arabic plural company target polarity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_arabic_plural_company_target_browser.py . actor-arabic-plural-company-target-chromium.json
+      - name: Arabic plural company target polarity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_arabic_plural_company_target_browser.py . actor-arabic-plural-company-target-webkit.json
+      - name: Persian plural company target polarity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_persian_plural_company_target_browser.py . actor-persian-plural-company-target-chromium.json
+      - name: Persian plural company target polarity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_persian_plural_company_target_browser.py . actor-persian-plural-company-target-webkit.json
+      - name: Simultaneous Persian actor role — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_simultaneous_persian_browser.py . actor-simultaneous-persian-chromium.json
+      - name: Simultaneous Persian actor role — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_simultaneous_persian_browser.py . actor-simultaneous-persian-webkit.json
+      - name: Arabic feminine current-role identity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_arabic_feminine_identity_browser.py . actor-arabic-feminine-chromium.json
+      - name: Arabic feminine current-role identity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_arabic_feminine_identity_browser.py . actor-arabic-feminine-webkit.json
+      - name: Arabic association-member correction — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_arabic_association_member_correction_browser.py . actor-arabic-association-member-chromium.json
+      - name: Arabic association-member correction — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_arabic_association_member_correction_browser.py . actor-arabic-association-member-webkit.json
+      - name: Private-person target corrected to company — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_private_to_company_correction_browser.py . actor-private-to-company-chromium.json
+      - name: Private-person target corrected to company — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_private_to_company_correction_browser.py . actor-private-to-company-webkit.json
+      - name: Positive support-target actor scope — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-chromium.json
+      - name: Positive support-target actor scope — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_positive_target_scope_browser.py . actor-positive-target-webkit.json
+      - name: Property participant ownership — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_actor_property_participant_scope_browser.py . actor-property-participant-chromium.json
+      - name: Property participant ownership — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_actor_property_participant_scope_browser.py . actor-property-participant-webkit.json
+      - name: Challenger start residuals — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: challenger-start-residuals-chromium.json
+        run: python scripts/test_challenger_start_residuals_browser.py
+      - name: Challenger start residuals — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: challenger-start-residuals-webkit.json
+        run: python scripts/test_challenger_start_residuals_browser.py
+      - name: Preserve company actor-correction evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: actor-correction-company-evidence
+          path: |
+            actor-correction-company-chromium.json
+            actor-correction-company-webkit.json
+            actor-arabic-plural-company-target-chromium.json
+            actor-arabic-plural-company-target-webkit.json
+            actor-persian-plural-company-target-chromium.json
+            actor-persian-plural-company-target-webkit.json
+            actor-simultaneous-persian-chromium.json
+            actor-simultaneous-persian-webkit.json
+            actor-arabic-feminine-chromium.json
+            actor-arabic-feminine-webkit.json
+            actor-arabic-association-member-chromium.json
+            actor-arabic-association-member-webkit.json
+            actor-private-to-company-chromium.json
+            actor-private-to-company-webkit.json
+            actor-positive-target-chromium.json
+            actor-positive-target-webkit.json
+            actor-property-participant-chromium.json
+            actor-property-participant-webkit.json
+            challenger-start-residuals-chromium.json
+            challenger-start-residuals-webkit.json
+          if-no-files-found: warn
+          retention-days: 14

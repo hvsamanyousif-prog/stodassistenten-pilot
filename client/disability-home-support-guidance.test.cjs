@@ -11,6 +11,49 @@ assert.equal(guidance.detect('معلولیت دارم و در خانه به کم
 assert.equal(guidance.detect('أحتاج مساعدة شخصية بسبب إعاقتي'), true);
 assert.equal(guidance.detect('به کمک شخصی به دلیل معلولیت نیاز دارم'), true);
 
+// Problem-first harm-prevention must reach the same governed route only when
+// paired with disability/psychological-function context. The user must not
+// need to know the support name.
+const harmPreventionSv = 'På grund av min psykiska funktionsnedsättning behöver jag hjälp för att inte skada mig själv eller andra. Jag vet inte vad stödet heter.';
+const harmPreventionAr = 'بسبب إعاقتي النفسية أحتاج إلى مساعدة حتى لا أؤذي نفسي أو الآخرين. لا أعرف اسم الدعم.';
+const harmPreventionFa = 'به دلیل معلولیت روانی‌ام به کمک نیاز دارم تا به خودم یا دیگران آسیب نزنم. اسم این حمایت را نمی‌دانم.';
+for (const text of [harmPreventionSv, harmPreventionAr, harmPreventionFa]) {
+  assert.equal(guidance.detect(text), true);
+  assert.equal(guidance.detectNeed(text), 'personal_assistance');
+}
+
+// Explicit denial of the harm-risk fact must not become positive evidence for
+// the harm-prevention basic-need family. A separately stated concrete need for
+// daily structure must remain route-authoritative in the same product.
+const deniedHarmWithStructure = [
+  'Jag har psykisk funktionsnedsättning men det finns ingen risk för fysisk skada. Jag behöver bara hjälp att planera vardagen.',
+  'لدي إعاقة نفسية لكن لا يوجد خطر ضرر جسدي. أحتاج فقط إلى مساعدة في تنظيم حياتي اليومية.',
+  'معلولیت روانی دارم اما هیچ خطری برای آسیب به خودم وجود ندارد. فقط برای برنامه‌ریزی زندگی روزمره به کمک نیاز دارم.',
+];
+for (const text of deniedHarmWithStructure) {
+  assert.equal(guidance.detect(text), true);
+  assert.equal(guidance.detectNeed(text), 'structure');
+}
+
+// Denying the need for harm-prevention support must also stay negative even
+// when the source-restricted phrase itself is present. A separate structure
+// need remains the bounded positive route.
+const deniedHarmSupportWithStructure = [
+  'Jag har psykisk funktionsnedsättning. Jag behöver inte stöd för att förebygga fysisk skada; jag behöver bara hjälp att planera vardagen.',
+  'لدي إعاقة نفسية. لا أحتاج إلى دعم لمنع ضرر جسدي؛ أحتاج فقط إلى مساعدة في تنظيم حياتي اليومية.',
+  'معلولیت روانی دارم. برای پیشگیری از آسیب به خودم کمک نمی‌خواهم؛ فقط برای برنامه‌ریزی زندگی روزمره به کمک نیاز دارم.',
+];
+for (const text of deniedHarmSupportWithStructure) {
+  assert.equal(guidance.detect(text), true);
+  assert.equal(guidance.detectNeed(text), 'structure');
+}
+
+// Generic fear/safety wording without disability context must not be promoted
+// into a statutory-assistance route.
+assert.equal(guidance.detect('Jag är rädd att jag kan skada mig själv eller andra och behöver hjälp.'), false);
+assert.equal(guidance.detect('أخاف أن أؤذي نفسي أو الآخرين وأحتاج إلى مساعدة.'), false);
+assert.equal(guidance.detect('می‌ترسم به خودم یا دیگران آسیب بزنم و کمک می‌خواهم.'), false);
+
 // Do not steal older-person, generic healthcare/home-help, professional or research stories.
 assert.equal(guidance.detect('Jag är 82 och behöver hemtjänst för att bo kvar hemma'), false);
 assert.equal(guidance.detect('Min äldre mamma behöver hemtjänst och trygghetslarm'), false);

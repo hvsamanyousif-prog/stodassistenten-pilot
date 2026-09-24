@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "artifact": {
+    "artifact_id": "artifact.synthetic.local-rule.001",
+    "artifact_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_registry_ref": null,
+    "source_owner": "Synthetic Municipality",
+    "source_url": "https://example.com/stodassistenten-synthetic-local-rule",
+    "jurisdiction": {
+      "country_code": "SE",
+      "level": "synthetic",
+      "region_code": null,
+      "municipality_code": null,
+      "service_area_code": null
+    },
+    "document_role": "OFFICIAL_GUIDANCE",
+    "document_stage": "guidance",
+    "artifact_type": "html",
+    "published_at": "2026-01-01T00:00:00+00:00",
+    "source_last_modified": "2026-01-01T00:00:00+00:00",
+    "retrieved_at": "2026-09-23T08:00:00+00:00",
+    "verification_status": "CAPTURED",
+    "access_policy_status": "APPROVED"
+  },
+  "fact_assertions": [
+    {
+      "fact_id": "fact.synthetic.local-threshold.001",
+      "artifact_id_ref": "artifact.synthetic.local-rule.001",
+      "fact_type": "synthetic_local_threshold",
+      "normalized_value": 1234,
+      "unit": "SEK/month",
+      "jurisdiction": {
+        "country_code": "SE",
+        "level": "synthetic",
+        "region_code": null,
+        "municipality_code": null,
+        "service_area_code": null
+      },
+      "scope": "Synthetic example only; not a real support rule.",
+      "locator": "section[data-example='local-threshold']",
+      "evidence_excerpt_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "extraction_method": "deterministic_parser",
+      "extractor_version": "evidence-contract-example-1",
+      "validation_result": "PASS",
+      "conflict_set_ids": [],
+      "supersedes_fact_id": null,
+      "status": "VALIDATED",
+      "promotion_mode": "NONE",
+      "review_decision_id": null,
+      "promotion_gate": {
+        "authority_verified": false,
+        "jurisdiction_verified": true,
+        "controlling_scope_verified": false,
+        "effective_version_verified": true,
+        "unresolved_conflict": false,
+        "deterministic_extraction": true,
+        "deterministic_validation_passed": true,
+        "access_policy_approved": true,
+        "evidence_reproducible": true,
+        "sensitive_data_absent": true,
+        "source_class_zero_touch_approved": false
+      }
+    }
+  ],
+  "conflict_sets": [],
+  "review_decisions": []
+}
