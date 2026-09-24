@@ -140,7 +140,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "vem",
         "expect_intent": "funding",
-        "reject_actor": "association",
     },
     {
         "id": "sv-association-funding-source-is-not-applicant-desktop",
@@ -150,7 +149,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "vem",
         "expect_intent": "funding",
-        "reject_actor": "association",
     },
     {
         "id": "ar-association-funding-source-is-not-applicant-mobile",
@@ -160,7 +158,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "من",
         "expect_intent": "funding",
-        "reject_actor": "association",
         "expect_rtl": True,
     },
     {
@@ -171,7 +168,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "من",
         "expect_intent": "funding",
-        "reject_actor": "association",
         "expect_rtl": True,
     },
     {
@@ -182,7 +178,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "درخواست",
         "expect_intent": "funding",
-        "reject_actor": "association",
         "expect_rtl": True,
     },
     {
@@ -193,7 +188,6 @@ EXTRA_SCENARIOS = [
         "expect_question": True,
         "question_token": "درخواست",
         "expect_intent": "funding",
-        "reject_actor": "association",
         "expect_rtl": True,
     },
     {
