@@ -42,7 +42,7 @@ const RELATIVE_SUBJECTS=[
  {key:'sibling',explicit:/(?:\bmin syster\b|\bmin bror\b|\bmitt syskon\b|أختي|أخي|خواهرم|برادرم)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'neighbor',explicit:/(?:\bjag hjälper (?:min|en) granne\b|أساعد\s+جار(?:ي|تي|ًا)|به\s+(?:همسایه(?:‌?ام)|یک\s+همسایه))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'friend',explicit:/(?:\bjag hjälper (?:min|en) vän\b|أساعد\s+صديق(?:ي|تي|ًا)|به\s+(?:دوستم|یک\s+دوست)(?:\s|[،,.!?؟]|$))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
- {key:'relative_generic',explicit:/(?:\bjag hjälper en (?:anhörig|närstående)\b|\bför en (?:anhörig|närstående)\b|أساعد\s+(?:أحد\s+أقاربي|شخصًا\s+قريبًا\s+مني)|به\s+یکی\s+از\s+(?:بستگانم|نزدیکانم)\s+کمک)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
+ {key:'relative_generic',explicit:/(?:\bjag hjälper en (?:anhörig|närstående)\b|\bför en (?:anhörig|närstående)\b|أساعد\s+(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|ل(?:أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)|به\s+یکی\s+از\s+(?:بستگانم|نزدیکانم)\s+کمک|برای\s+یکی\s+از\s+(?:بستگانم|نزدیکانم))/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i},
  {key:'person',explicit:/(?:personen (?:som )?jag hjälper|jag hjälper (?:henne|honom)|(?:för|åt)\s+(?:henne|honom)|الشخص الذي (?:أنا )?أساعده|(?:بال)?نيابة عن(?: شخص|ها|ه)|فردی که (?:من )?کمک|برای او)/i,pronoun:/(?:\b(?:hen|hon|han)\b|(?:^|\s)(?:هي|هو|او)(?:\s|$))/i}
 ];
 
@@ -274,6 +274,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.26',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.27',page});
 }
 })(window);
