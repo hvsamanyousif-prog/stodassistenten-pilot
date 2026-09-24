@@ -4,6 +4,11 @@
 Reuses the existing helped-person browser harness. This is browser/DOM/routing/
 privacy evidence only: raw situation text must not cross the route, and only the
 existing bounded need_context token may survive.
+
+The same governed helper target must remain ownable when it is established by a
+supported target phrase even if funding is explicitly rejected. That regression
+stays bounded to the target grammar already accepted by the shared routing layer;
+it is not a general coreference claim.
 """
 
 from __future__ import annotations
@@ -111,6 +116,63 @@ SCENARIOS = [
 ]
 
 
+REJECTED_TARGET_SCENARIOS = [
+    {
+        "id": "sv-rejected-funding-for-narstaende-preserves-housing-need",
+        "text": "Jag vill inte söka bidrag för en närstående. Hon har hög hyra.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+]
+
+
+def run_rejected_target_case(browser, base_url: str, scenario: dict, width: int) -> dict:
+    case_id = f"{scenario['id']}-{width}"
+    page = browser.new_page(viewport={"width": width, "height": 900})
+    page_errors: list[str] = []
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    try:
+        page.goto(f"{base_url}/index.html?lang=sv", wait_until="load")
+        page.locator("#situation").fill(scenario["text"])
+        page.locator("#analyzeBtn").click()
+        results = page.locator("#engineResults")
+        base.require(results.is_visible(), f"{case_id}: results did not become visible")
+        base.require(not page_errors, f"{case_id}: JavaScript error(s): {page_errors}")
+        base.require(
+            results.locator('[data-funding-question="true"]').count() == 0,
+            f"{case_id}: governed helper target triggered an unnecessary funding/actor clarification",
+        )
+
+        target = results.locator(f'a.route[href*="actor_type={scenario["actor_type"]}"]').first
+        base.require(target.count() == 1, f"{case_id}: rejected-funding helper route missing")
+        base.require(
+            target.get_attribute("data-rejected-funding-helper") == "true",
+            f"{case_id}: route was not marked as the governed rejected-funding helper path",
+        )
+        href = target.get_attribute("href") or ""
+        base.require("funding_intent=" not in href, f"{case_id}: rejected funding fabricated a funding intent: {href}")
+        base.require(
+            base.need_context_from_url(href) == scenario["need_context"],
+            f"{case_id}: helped person's bounded need was lost or fabricated: {href}",
+        )
+        base.require("q=" not in href and "situation=" not in href, f"{case_id}: raw situation parameter leaked into route")
+        base.require(scenario["text"] not in href, f"{case_id}: raw situation text leaked into route")
+        base.no_horizontal_overflow(page, case_id, "shared rejected-funding helper results")
+        return {
+            "id": case_id,
+            "semantic_case": scenario["id"],
+            "lang": "sv",
+            "width": width,
+            "status": "passed",
+            "actor_type": scenario["actor_type"],
+            "funding_intent": None,
+            "need_context": sorted(scenario["need_context"]),
+            "route": href,
+        }
+    finally:
+        page.close()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("root", nargs="?", default=".")
@@ -132,10 +194,10 @@ def main() -> int:
             "built_index_sha256": base.sha256(index_path),
             "privacy_routing_sha256": base.sha256(site / base.builder.SHELL_ROUTING_PATH),
             "concrete_need_continuity_sha256": base.sha256(site / base.builder.CONCRETE_NEED_CONTINUITY_PATH),
-            "independent_semantic_cases": 2,
+            "independent_semantic_cases": 3,
             "language_parity_variants": 4,
             "widths": list(base.WIDTHS),
-            "checks": len(SCENARIOS) * len(base.WIDTHS),
+            "checks": (len(SCENARIOS) + len(REJECTED_TARGET_SCENARIOS)) * len(base.WIDTHS),
             "passed": 0,
             "failed": 0,
             "results": [],
@@ -158,6 +220,21 @@ def main() -> int:
                                 "id": f"{scenario['id']}-{width}",
                                 "semantic_case": scenario["id"],
                                 "lang": scenario.get("lang", "sv"),
+                                "width": width,
+                                "status": "failed",
+                                "error": str(exc),
+                            })
+                for scenario in REJECTED_TARGET_SCENARIOS:
+                    for width in base.WIDTHS:
+                        try:
+                            evidence["results"].append(run_rejected_target_case(browser, base_url, scenario, width))
+                            evidence["passed"] += 1
+                        except Exception as exc:
+                            evidence["failed"] += 1
+                            evidence["results"].append({
+                                "id": f"{scenario['id']}-{width}",
+                                "semantic_case": scenario["id"],
+                                "lang": "sv",
                                 "width": width,
                                 "status": "failed",
                                 "error": str(exc),
