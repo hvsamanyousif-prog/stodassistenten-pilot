@@ -99,6 +99,11 @@ function detectRelativeNeeds(text){
  // Fail closed rather than silently assigning one person's need to another.
  if(explicitKeys.length!==1)return [];
  const target=explicitKeys[0];
+ const genericSubject=RELATIVE_SUBJECTS.find(item=>item.key==='person');
+ const targetSubject=RELATIVE_SUBJECTS.find(item=>item.key===target);
+ const genericMatch=genericSubject?genericSubject.explicit.exec(value):null;
+ const targetMatch=targetSubject?targetSubject.explicit.exec(value):null;
+ if(target!=='person'&&genericMatch&&targetMatch&&genericMatch.index<targetMatch.index&&/[.!?؟;\n]/.test(value.slice(genericMatch.index+genericMatch[0].length,targetMatch.index)))return [];
  const parts=value.split(/(?:[.!?؟;\n]+|\bmen\b|لكن|اما|ولی)/i).filter(part=>part.trim());
  const needs=[];
  let established=false;
@@ -268,6 +273,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.19',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.20',page});
 }
 })(window);
