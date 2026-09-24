@@ -119,7 +119,22 @@ SCENARIOS = [
 REJECTED_TARGET_SCENARIOS = [
     {
         "id": "sv-rejected-funding-for-narstaende-preserves-housing-need",
+        "lang": "sv",
         "text": "Jag vill inte söka bidrag för en närstående. Hon har hög hyra.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "ar-rejected-funding-for-relative-preserves-housing-need",
+        "lang": "ar",
+        "text": "لا أريد طلب دعم مالي لأحد أقاربي. لديه إيجار مرتفع.",
+        "actor_type": "relative",
+        "need_context": {"housing"},
+    },
+    {
+        "id": "fa-rejected-funding-for-relative-preserves-housing-need",
+        "lang": "fa",
+        "text": "من برای یکی از نزدیکانم کمک مالی نمی‌خواهم. او اجاره بالایی دارد.",
         "actor_type": "relative",
         "need_context": {"housing"},
     },
@@ -132,7 +147,10 @@ def run_rejected_target_case(browser, base_url: str, scenario: dict, width: int)
     page_errors: list[str] = []
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     try:
-        page.goto(f"{base_url}/index.html?lang=sv", wait_until="load")
+        lang = scenario.get("lang", "sv")
+        page.goto(f"{base_url}/index.html?lang={lang}", wait_until="load")
+        if lang in {"ar", "fa"}:
+            base.require(page.locator("html").get_attribute("dir") == "rtl", f"{case_id}: RTL direction missing")
         page.locator("#situation").fill(scenario["text"])
         page.locator("#analyzeBtn").click()
         results = page.locator("#engineResults")
@@ -161,7 +179,7 @@ def run_rejected_target_case(browser, base_url: str, scenario: dict, width: int)
         return {
             "id": case_id,
             "semantic_case": scenario["id"],
-            "lang": "sv",
+            "lang": lang,
             "width": width,
             "status": "passed",
             "actor_type": scenario["actor_type"],
@@ -195,7 +213,7 @@ def main() -> int:
             "privacy_routing_sha256": base.sha256(site / base.builder.SHELL_ROUTING_PATH),
             "concrete_need_continuity_sha256": base.sha256(site / base.builder.CONCRETE_NEED_CONTINUITY_PATH),
             "independent_semantic_cases": 3,
-            "language_parity_variants": 4,
+            "language_parity_variants": 6,
             "widths": list(base.WIDTHS),
             "checks": (len(SCENARIOS) + len(REJECTED_TARGET_SCENARIOS)) * len(base.WIDTHS),
             "passed": 0,
@@ -234,7 +252,7 @@ def main() -> int:
                             evidence["results"].append({
                                 "id": f"{scenario['id']}-{width}",
                                 "semantic_case": scenario["id"],
-                                "lang": "sv",
+                                "lang": scenario.get("lang", "sv"),
                                 "width": width,
                                 "status": "failed",
                                 "error": str(exc),
