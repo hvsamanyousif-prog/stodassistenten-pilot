@@ -24,9 +24,9 @@
   function associationFundingSourceMention(text){
     const x=String(text||'').toLocaleLowerCase();
     if(associationSelfMembership(x)) return false;
-    const sv=/\b(?:bidrag|stöd|finansiering|pengar)\b[^.!?\n]{0,48}\bfrån\s+(?:en\s+|den\s+)?(?:annan\s+)?(?:ideell\s+)?förening(?:en)?\b|\bföreningens\s+(?:stipendium|stipendiet|stipendier(?:na)?)\b/u.test(x);
+    const sv=/\b(?:bidrag|stöd|finansiering|pengar|stipendium|stipendiet|stipendier(?:na)?)\b[^.!?\n]{0,48}\bfrån\s+(?:en\s+|den\s+)?(?:annan\s+)?(?:ideell\s+)?förening(?:en)?\b|\bföreningens\s+(?:stipendium|stipendiet|stipendier(?:na)?)\b/u.test(x);
     const ar=/(?:^|[^\p{L}\p{N}])(?:دعم(?:اً|ًا|ا)?\s+مالي(?:اً|ًا|ا)?|تمويل|منحة)[^.!؟\n]{0,48}\s+من\s+(?:ال)?جمعية(?!\s+سكنية)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])منحة\s+(?:ال)?جمعية(?!\s+سكنية)(?=$|[^\p{L}\p{N}])/u.test(x);
-    const fa=/(?:^|[^\p{L}\p{N}])از\s+(?:یک\s+)?انجمن[^.!؟\n]{0,48}(?:کمک\s+مالی|حمایت\s+مالی|بودجه|بورسیه|وام)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه|وام)\s+(?:یک\s+)?انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
+    const fa=/(?:^|[^\p{L}\p{N}])از\s+(?:یک\s+)?انجمن[^.!؟\n]{0,48}(?:کمک\s+مالی|حمایت\s+مالی|بودجه|بورسیه|وام)(?=$|[^\p{L}\p{N}])|(?:^|[^\p{L}\p{N}])(?:بورسیه|کمک\s+مالی|حمایت\s+مالی|بودجه|وام)\s+(?:از\s+)?(?:یک\s+)?انجمن(?=$|[^\p{L}\p{N}])/u.test(x);
     return sv||ar||fa;
   }
   function installGovernedRoutes(){
