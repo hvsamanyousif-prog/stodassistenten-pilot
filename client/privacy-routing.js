@@ -465,7 +465,10 @@
   function helperFundingScope(text){
     const x=lower(text);
     if(helperRoleNegated(x)&&!currentHelperRole(x)) return false;
-    return targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon|vän)|henne|honom)|jag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon|vän)|henne|honom)|أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن|برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم)[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    const swedishTarget=targetAwareSwedishHelpOut(x)||/(?:åt|för)\s+(?:barnet|mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon)|(?:min|en)\s+(?:vän|granne)|en\s+(?:anhörig|närstående)|henne|honom)|\bjag\s+hjälper\s+(?:mitt\s+barn|min\s+(?:barn|son|dotter|mamma|pappa|mor|far|partner|sambo|make|maka|fru|man|syster|bror|syskon)|(?:min|en)\s+(?:vän|granne)|en\s+(?:anhörig|närstående)|henne|honom)\b/u.test(x);
+    const arabicTarget=/(?:^|[^\p{L}\p{N}])أساعد\s+(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي|جار(?:ي|تي|ًا|ا)|صديق(?:ي|تي|ًا|ا)|أحد\s+أقاربي|شخص(?:ًا|ا)?\s+قريب(?:ًا|ا)?\s+مني)(?=$|[^\p{L}\p{N}])|ل(?:طفلي|ابني|ابنتي|أمي|أبي|أخي|أختي|صديقي|صديقتي|زوجي|زوجتي)|نيابة\s+عن/u.test(x);
+    const persianTarget=/برای\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|او)|به\s+(?:فرزندم|پسرم|دخترم|مادرم|پدرم|همسرم|خواهرم|برادرم|دوستم|همسایه(?:‌?ام)|یک\s+(?:دوست|همسایه)|یکی\s+از\s+(?:بستگانم|نزدیکانم))[^.!؟\n]{0,80}کمک\s+می(?:‌|\s)?کنم/u.test(x);
+    return swedishTarget||arabicTarget||persianTarget;
   }
   function actorHref(actor,lang,intent){
     const url=new URL(ACTOR_ROUTES[actor],location.href);
