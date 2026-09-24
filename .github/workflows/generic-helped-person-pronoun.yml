@@ -11,6 +11,7 @@ on:
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
       - 'scripts/test_direct_helped_person_pronoun_browser.py'
+      - 'scripts/test_friend_helped_person_pronoun_browser.py'
       - 'scripts/test_partner_gendered_pronoun_browser.py'
       - '.github/workflows/generic-helped-person-pronoun.yml'
   push:
@@ -24,6 +25,7 @@ on:
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
       - 'scripts/test_direct_helped_person_pronoun_browser.py'
+      - 'scripts/test_friend_helped_person_pronoun_browser.py'
       - 'scripts/test_partner_gendered_pronoun_browser.py'
       - '.github/workflows/generic-helped-person-pronoun.yml'
 
@@ -62,6 +64,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_direct_helped_person_pronoun_browser.py . direct-helped-person-pronoun-webkit.json
+      - name: Friend helped-person target continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_friend_helped_person_pronoun_browser.py . friend-helped-person-pronoun-chromium.json
+      - name: Friend helped-person target continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_friend_helped_person_pronoun_browser.py . friend-helped-person-pronoun-webkit.json
       - name: Gendered spouse pronoun continuity — Chromium
         if: always()
         env:
@@ -82,6 +94,8 @@ jobs:
             generic-helped-person-pronoun-webkit.json
             direct-helped-person-pronoun-chromium.json
             direct-helped-person-pronoun-webkit.json
+            friend-helped-person-pronoun-chromium.json
+            friend-helped-person-pronoun-webkit.json
             partner-gendered-pronoun-chromium.json
             partner-gendered-pronoun-webkit.json
           if-no-files-found: warn
