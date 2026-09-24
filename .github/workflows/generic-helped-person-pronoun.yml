@@ -10,6 +10,7 @@ on:
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_helper_relative_relation_browser.py'
       - 'scripts/test_direct_helped_person_pronoun_browser.py'
       - 'scripts/test_friend_helped_person_pronoun_browser.py'
       - 'scripts/test_partner_gendered_pronoun_browser.py'
@@ -24,6 +25,7 @@ on:
       - 'scripts/test_combined_need_funding_browser.py'
       - 'scripts/test_relative_pronoun_need_browser.py'
       - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_helper_relative_relation_browser.py'
       - 'scripts/test_direct_helped_person_pronoun_browser.py'
       - 'scripts/test_friend_helped_person_pronoun_browser.py'
       - 'scripts/test_partner_gendered_pronoun_browser.py'
@@ -54,6 +56,16 @@ jobs:
         env:
           BROWSER_ENGINE: webkit
         run: python scripts/test_generic_helped_person_pronoun_browser.py . generic-helped-person-pronoun-webkit.json
+      - name: Generic relative helper continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_helper_relative_relation_browser.py . helper-relative-relation-chromium.json
+      - name: Generic relative helper continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_helper_relative_relation_browser.py . helper-relative-relation-webkit.json
       - name: Direct helped-person target continuity — Chromium
         if: always()
         env:
@@ -92,6 +104,8 @@ jobs:
           path: |
             generic-helped-person-pronoun-chromium.json
             generic-helped-person-pronoun-webkit.json
+            helper-relative-relation-chromium.json
+            helper-relative-relation-webkit.json
             direct-helped-person-pronoun-chromium.json
             direct-helped-person-pronoun-webkit.json
             friend-helped-person-pronoun-chromium.json
