@@ -50,6 +50,7 @@ function relativeSubjectKeys(text){
  for(const subject of RELATIVE_SUBJECTS){
   if(subject.explicit.test(String(text||''))&&!keys.includes(subject.key))keys.push(subject.key);
  }
+ if(keys.length>1&&keys.includes('person'))return keys.filter(key=>key!=='person');
  return keys;
 }
 
@@ -267,6 +268,6 @@ function installPerson(){
 
 const installed=installSharedShell()||installPerson();
 if(installed){
- root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.18',page});
+ root.StodConcreteNeedContinuity=Object.freeze({version:'1.3.19',page});
 }
 })(window);
