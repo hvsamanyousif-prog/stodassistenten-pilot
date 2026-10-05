@@ -9,21 +9,82 @@
 
   const originalChooseAnswer = chooseAnswer;
 
+  function resetResultState() {
+    if (typeof matchRatings !== 'undefined') matchRatings = {};
+    if (typeof finalFeedback !== 'undefined') finalFeedback = {};
+    if (typeof submitState !== 'undefined') submitState = 'idle';
+  }
+
+  function unknownCopy() {
+    const current = typeof lang !== 'undefined' ? lang : 'sv';
+    const copy = {
+      sv: {
+        title: 'Vi behöver veta barnets ålder',
+        body: 'Åldern kan ändra vilka stöd och regler som är relevanta. Vi gissar därför inte och behandlar inte ”vet inte” som ett nej.',
+        change: 'Ändra svar',
+        continue: 'Fortsätt utan barnspecifik matchning'
+      },
+      ar: {
+        title: 'نحتاج إلى معرفة عمر الطفل',
+        body: 'قد يغيّر العمر أنواع الدعم والقواعد ذات الصلة. لذلك لا نخمن ولا نتعامل مع «لا أعرف» كأنها «لا».',
+        change: 'غيّر الإجابة',
+        continue: 'تابع من دون مطابقة خاصة بالطفل'
+      },
+      fa: {
+        title: 'باید سن کودک را بدانیم',
+        body: 'سن می‌تواند حمایت‌ها و قواعد مرتبط را تغییر دهد. بنابراین حدس نمی‌زنیم و «نمی‌دانم» را به معنی «نه» در نظر نمی‌گیریم.',
+        change: 'پاسخ را تغییر بده',
+        continue: 'بدون تطبیق ویژه کودک ادامه بده'
+      }
+    };
+    return copy[current] || copy.sv;
+  }
+
+  function renderFamilyAgeUnknown() {
+    const host = document.getElementById('main');
+    if (!host) return;
+    const c = unknownCopy();
+    const arrow = (typeof lang !== 'undefined' && (lang === 'ar' || lang === 'fa')) ? '→' : '←';
+    host.innerHTML = `
+      <button class="back" data-family-age-action="change" onclick="go('family1')">${arrow} ${c.change}</button>
+      <section class="card" data-family-age-unknown="true">
+        <div class="progress">1 / 2</div>
+        <h2>${c.title}</h2>
+        <p class="muted">${c.body}</p>
+        <button class="choice" data-family-age-action="continue-general" onclick="continueWithoutFamilyAge()">${c.continue}</button>
+      </section>
+    `;
+  }
+
+  window.continueWithoutFamilyAge = function continueWithoutFamilyAge() {
+    if (typeof scenario !== 'undefined') scenario = 'general';
+    resetResultState();
+    go('general1');
+  };
+
   chooseAnswer = function guardedChooseAnswer(key, val, next) {
     if (
       key === 'child' &&
       typeof scenario !== 'undefined' &&
-      scenario === 'family' &&
-      val !== 'yes'
+      scenario === 'family'
     ) {
-      if (typeof answers !== 'undefined') answers[key] = val;
-      scenario = 'general';
-      if (typeof matchRatings !== 'undefined') matchRatings = {};
-      if (typeof finalFeedback !== 'undefined') finalFeedback = {};
-      if (typeof submitState !== 'undefined') submitState = 'idle';
-      go('general1');
-      return;
+      if (val === 'no') {
+        if (typeof answers !== 'undefined') answers[key] = val;
+        scenario = 'general';
+        resetResultState();
+        go('general1');
+        return;
+      }
+
+      if (val === 'unsure') {
+        if (typeof answers !== 'undefined') answers[key] = val;
+        resetResultState();
+        go('familyAgeUnknown');
+        renderFamilyAgeUnknown();
+        return;
+      }
     }
+
     return originalChooseAnswer(key, val, next);
   };
 
