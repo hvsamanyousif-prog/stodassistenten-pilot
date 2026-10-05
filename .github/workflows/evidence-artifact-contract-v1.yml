@@ -1,0 +1,24 @@
+name: Evidence artifact contract v1
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate evidence/truth promotion boundary
+        run: |
+          python scripts/validate_evidence_artifact_contract.py
+          python scripts/validate_data.py
+          python scripts/validate_source_universe_v73.py
+          python scripts/validate_public_repo_boundary.py

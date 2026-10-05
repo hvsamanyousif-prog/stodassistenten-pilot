@@ -11,7 +11,7 @@ company = Path('company-pilot.html').read_text(encoding='utf-8')
 quick = Path('quick-help.html').read_text(encoding='utf-8')
 
 require('id="situation"' in index and 'function classify(text)' in index, 'shared shell must start from the situation and interpret it')
-require('Nästa steg, inte bara information' in index, 'shared shell must explain the action-oriented product journey')
+require("trust3:'Få ett tydligt nästa steg'" in index and 'vad de kan hjälpa med och vart du går vidare' in index, 'shared shell must explain the action-oriented product journey')
 require('quick-help.html?mode=dental' in index and 'quick-help.html?mode=vision' in index, 'shared shell must expose guided concrete-need routes')
 require('Finns ett konkret behov av tandvård?' not in quick, 'dental flow must not use the old binary gate')
 require("cost:['Jag är orolig för kostnaden'" in quick and "care:['Jag har besvär och behöver tandvård'" in quick, 'dental flow must guide by actual need')

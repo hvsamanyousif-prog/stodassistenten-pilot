@@ -1,0 +1,116 @@
+name: Validate generic helped-person pronoun continuity
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'client/concrete-need-continuity.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_combined_need_funding_browser.py'
+      - 'scripts/test_relative_pronoun_need_browser.py'
+      - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_helper_relative_relation_browser.py'
+      - 'scripts/test_direct_helped_person_pronoun_browser.py'
+      - 'scripts/test_friend_helped_person_pronoun_browser.py'
+      - 'scripts/test_partner_gendered_pronoun_browser.py'
+      - '.github/workflows/generic-helped-person-pronoun.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'client/concrete-need-continuity.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_combined_need_funding_browser.py'
+      - 'scripts/test_relative_pronoun_need_browser.py'
+      - 'scripts/test_generic_helped_person_pronoun_browser.py'
+      - 'scripts/test_helper_relative_relation_browser.py'
+      - 'scripts/test_direct_helped_person_pronoun_browser.py'
+      - 'scripts/test_friend_helped_person_pronoun_browser.py'
+      - 'scripts/test_partner_gendered_pronoun_browser.py'
+      - '.github/workflows/generic-helped-person-pronoun.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test tooling
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Generic helped-person pronoun continuity — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_generic_helped_person_pronoun_browser.py . generic-helped-person-pronoun-chromium.json
+      - name: Generic helped-person pronoun continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_generic_helped_person_pronoun_browser.py . generic-helped-person-pronoun-webkit.json
+      - name: Generic relative helper continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_helper_relative_relation_browser.py . helper-relative-relation-chromium.json
+      - name: Generic relative helper continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_helper_relative_relation_browser.py . helper-relative-relation-webkit.json
+      - name: Direct helped-person target continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_direct_helped_person_pronoun_browser.py . direct-helped-person-pronoun-chromium.json
+      - name: Direct helped-person target continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_direct_helped_person_pronoun_browser.py . direct-helped-person-pronoun-webkit.json
+      - name: Friend helped-person target continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_friend_helped_person_pronoun_browser.py . friend-helped-person-pronoun-chromium.json
+      - name: Friend helped-person target continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_friend_helped_person_pronoun_browser.py . friend-helped-person-pronoun-webkit.json
+      - name: Gendered spouse pronoun continuity — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+        run: python scripts/test_partner_gendered_pronoun_browser.py . partner-gendered-pronoun-chromium.json
+      - name: Gendered spouse pronoun continuity — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+        run: python scripts/test_partner_gendered_pronoun_browser.py . partner-gendered-pronoun-webkit.json
+      - name: Preserve generic helped-person pronoun evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generic-helped-person-pronoun-evidence
+          path: |
+            generic-helped-person-pronoun-chromium.json
+            generic-helped-person-pronoun-webkit.json
+            helper-relative-relation-chromium.json
+            helper-relative-relation-webkit.json
+            direct-helped-person-pronoun-chromium.json
+            direct-helped-person-pronoun-webkit.json
+            friend-helped-person-pronoun-chromium.json
+            friend-helped-person-pronoun-webkit.json
+            partner-gendered-pronoun-chromium.json
+            partner-gendered-pronoun-webkit.json
+          if-no-files-found: warn
+          retention-days: 14

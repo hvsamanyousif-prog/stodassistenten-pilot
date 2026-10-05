@@ -1,0 +1,39 @@
+name: Validate procurement i det fall relation
+
+on:
+  pull_request:
+    paths:
+      - 'client/procurement-expert-pilot.js'
+      - 'scripts/test_procurement_expert_i_det_fall.py'
+      - '.github/workflows/procurement-i-det-fall.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'client/procurement-expert-pilot.js'
+      - 'scripts/test_procurement_expert_i_det_fall.py'
+      - '.github/workflows/procurement-i-det-fall.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate bounded i det fall relation semantics
+        run: python scripts/test_procurement_expert_i_det_fall.py
+      - name: Preserve bounded evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: procurement-i-det-fall-evidence
+          path: procurement-i-det-fall-evidence.json
+          if-no-files-found: warn

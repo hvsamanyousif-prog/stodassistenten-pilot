@@ -16,7 +16,8 @@ required = [
     'En Stödassistenten – flera ingångar',
     'id="situation"',
     'function classify(text)',
-    'Situationsmotor',
+    "ae:'Börja här'",
+    "at:'Vad behöver du hjälp med?'",
     'Tandvård',
     'Synnedsättning',
     'Studier & ung vuxen',
@@ -26,11 +27,21 @@ required = [
     'company-pilot.html?actor_type=company',
     'quick-help.html?mode=dental',
     'quick-help.html?mode=vision',
-    'En produkt. En intelligens. Ett sanningslager. Ett lärsystem.',
+    'Pilotversion: Stödassistenten hjälper dig hitta och förstå nästa steg.',
 ]
 for marker in required:
     if marker not in text:
         print(f'missing unified-shell marker: {marker}', file=sys.stderr)
+        raise SystemExit(1)
+
+for marker in (
+    "ae:'Situationsmotor'",
+    "badge:'Pilotmotor'",
+    'samma sannings- och lärlager',
+    'En produkt. En intelligens. Ett sanningslager. Ett lärsystem.',
+):
+    if marker in text:
+        print(f'internal architecture copy leaked onto unified shell: {marker}', file=sys.stderr)
         raise SystemExit(1)
 
 for actor in ('private_person','relative','student','employee','company','association','other'):
