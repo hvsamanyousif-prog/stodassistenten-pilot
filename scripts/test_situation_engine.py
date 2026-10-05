@@ -30,6 +30,11 @@ family_age_syntax = subprocess.run(
     check=False,
 )
 
+# Explicit no may leave the family route. Unknown must instead remain a
+# distinct recoverable state, as required by validate_v17_family_vab.py and
+# the existing Chromium/WebKit unknown-age browser regression. Requiring the
+# old `val !== 'yes'` implementation would require the very conflation those
+# behavioural tests reject. Keep both branches and their recovery controls.
 checks = [
     ('situation composer', 'id="situation"' in index and 'function classify(text)' in index),
     ('local privacy promise', 'analyseras lokalt' in index and 'skickas inte' in index),
@@ -54,7 +59,8 @@ checks = [
     ('assistance stays in same person module', 'ASSISTANCE_FOCUS_PATH = "client/assistance-focus.js"' in builder and 'ASSISTANCE_FOCUS_PATH,' in builder),
     ('family source flow contains a real age question', "if(screen==='family1')" in person and "'childAge'" in person and "'child','no'" in person and "'child','unsure'" in person),
     ('family age guard javascript syntax', family_age_syntax.returncode == 0),
-    ('family age gate changes the route', "key === 'child'" in family_age and "scenario === 'family'" in family_age and "val !== 'yes'" in family_age and "scenario = 'general'" in family_age and "go('general1')" in family_age),
+    ('family age explicit no changes the route', "key === 'child'" in family_age and "scenario === 'family'" in family_age and "val === 'no'" in family_age and "scenario = 'general'" in family_age and "go('general1')" in family_age),
+    ('family age unknown stays distinct with recovery', "val === 'unsure'" in family_age and "go('familyAgeUnknown')" in family_age and 'data-family-age-unknown' in family_age and 'data-family-age-action="change"' in family_age and 'data-family-age-action="continue-general"' in family_age),
     ('family age gate preserves answer but blocks child results', "answers[key] = val" in family_age and "return originalChooseAnswer(key, val, next)" in family_age),
     ('family age guard stays in same person module', 'FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"' in builder and 'FAMILY_AGE_ROUTING_PATH,' in builder),
     ('family age permanent regression remains locked', any(case.get('case_id') == 'lab-family-age-gate-v15-01' for case in v15.get('cases', []))),
