@@ -66,4 +66,32 @@ assert 'answers' not in person_context and 'situationText' not in person_context
 assert "pilot.textContent!==actorLabel" in person_context, 'actor label patch must not self-trigger endlessly'
 assert "actorEyebrow.textContent!==heading" in person_context, 'localized eyebrow patch must be idempotent'
 
-print('feedback coverage + privacy routing + canonical actor context incl property_actor + accessible completion: OK')
+
+rating_contract=json.loads(Path('config/feedback_rating_contract.json').read_text(encoding='utf-8'))
+expected_rating_keys={
+    'm1','m2','m3','m4',
+    'category_match','requirement_extraction','requirement_classification',
+    'evidence_checklist','followup_questions','draft_fidelity',
+    'deadline_process','source_trace','false_confidence',
+}
+allowed_rating_keys=set(rating_contract['allowed_rating_keys'])
+assert allowed_rating_keys==expected_rating_keys, 'feedback rating allow-list drifted without a reviewed client contract'
+server_requirement=rating_contract['server_requirement']
+assert server_requirement['unknown_rating_key_action']=='reject'
+assert server_requirement['value_type']=='integer'
+assert server_requirement['min_value']==1 and server_requirement['max_value']==5
+assert server_requirement['max_keys']==20
+
+procurement=Path('client/procurement-expert-pilot.js').read_text(encoding='utf-8')
+for key in sorted(expected_rating_keys-{'m1','m2','m3','m4'}):
+    assert f"['{key}'" in procurement, f'procurement feedback dimension missing from client: {key}'
+assert 'const allowed=new Set(SCORE_DIMS.map(([key])=>key));' in procurement, 'procurement client must reject unknown rating dimensions before POST'
+
+assert "return rows.slice(0,4)" in person, 'person module rating contract assumes at most four result ratings'
+assert "matchRatings['m'+(i+1)]" in person, 'person module must use bounded m1..m4 rating keys'
+assert "ratingRow('m'+(n++)," in company, 'company module must use bounded m-series rating keys'
+assert company.count("ratingRow('m'+(n++),")==2, 'company module rating contract assumes exactly two optional rating rows'
+assert 'ratings:{}' in shell_feedback, 'shared situation engine must not invent rating keys'
+assert 'ratings:{}' in quick_feedback, 'quick-help feedback must not invent rating keys'
+
+print('feedback coverage + privacy routing + finite rating-key contract + canonical actor context incl property_actor + accessible completion: OK')
