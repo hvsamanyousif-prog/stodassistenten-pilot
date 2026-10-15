@@ -231,7 +231,7 @@
         const payload = {
           app_version: 'v52', language: lang, flow: 'employee_sick',
           learned_new: get('learned_new'), useful: get('useful'), next_step_clear: get('next_step_clear'),
-          ratings: { route: nextStep(state), agreement_area: collectiveMode ? state.agreementArea || 'unknown' : 'not_asked' }
+          ratings: {}
         };
         const status = main.querySelector('[data-feedback-status]');
         try {
