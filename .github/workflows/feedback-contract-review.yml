@@ -1,0 +1,45 @@
+name: Feedback contract review bundle
+
+on:
+  pull_request:
+    paths:
+      - 'client/**'
+      - 'config/feedback_rating_contract.json'
+      - 'scripts/validate_feedback_coverage.py'
+      - '.github/workflows/feedback-contract-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  feedback-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preserve tracked review source and exact integration identity
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          mkdir -p review-artifact
+          git archive --format=tar HEAD > review-artifact/tracked-source.tar
+          python -c 'import json,os,subprocess; from pathlib import Path; Path("review-artifact/identity.json").write_text(json.dumps({"head_sha":os.environ["PR_HEAD"],"base_sha":os.environ["PR_BASE"],"tested_integration_sha":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),"level":"offline_review_build_not_publication","network_submission":False},indent=2))'
+      - name: Validate current feedback contract
+        run: python scripts/validate_feedback_coverage.py
+      - name: Build existing public pilot for offline review only
+        if: always()
+        run: python scripts/build_public_pilot.py --source . --output review-artifact/site
+      - name: Preserve reproducible review inputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feedback-contract-review
+          path: review-artifact/
+          retention-days: 7
+          if-no-files-found: error

@@ -231,7 +231,7 @@
         const payload = {
           app_version: 'v64', language: lang, flow: 'employee_sick',
           learned_new: get('learned_new'), useful: get('useful'), next_step_clear: get('next_step_clear'),
-          ratings: { route: nextStep(state), work_context: state.workContext, business_form: state.businessForm || 'unknown' }
+          ratings: {}
         };
         const status = main.querySelector('[data-work-context-feedback-status]');
         try {
