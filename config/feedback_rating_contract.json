@@ -1,0 +1,5 @@
+{
+  "schema_version": "1.0.0",
+  "allowed_rating_keys": ["m1","m2","m3","m4","category_match","requirement_extraction","requirement_classification","evidence_checklist","followup_questions","draft_fidelity","deadline_process","source_trace","false_confidence"],
+  "server_requirement": {"unknown_rating_key_action":"reject","value_type":"integer","min_value":1,"max_value":5,"max_keys":20}
+}

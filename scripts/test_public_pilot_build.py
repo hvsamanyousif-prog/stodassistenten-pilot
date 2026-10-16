@@ -17,7 +17,7 @@ def require(condition: bool, message: str) -> None:
 
 def make_fixture(root: Path) -> None:
     (root / "index.html").write_text(
-        '<!doctype html><html lang="sv"><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar id="situation" function classify(text)</main></body></html>',
+        '<!doctype html><html lang="sv"><head></head><body><main>shell quick-help.html actor_type= person-pilot.html company-pilot.html En Stödassistenten – flera ingångar id="situation" function classify(text)</main></body></html>',
         encoding="utf-8",
     )
     (root / builder.PERSON_PILOT_PATH).write_text(
@@ -45,7 +45,7 @@ def make_fixture(root: Path) -> None:
 
 
 def test_injection_is_exact() -> None:
-    source = '<html><body><script>window.keep="exact";</script></body></html>'
+    source = '<html><head></head><body><script>window.keep="exact";</script></body></html>'
     built = builder.inject_wiring(source)
     block = builder.wiring_block() + "\n"
     require(built.replace(block, "", 1) == source, "managed block must be the only person-pilot HTML mutation")
@@ -58,11 +58,25 @@ def test_injection_is_exact() -> None:
     require(shell.count(builder.SHELL_LEARNING_START) == 1, "shell learning start marker must occur once")
     require(shell.count(builder.SHELL_LEARNING_END) == 1, "shell learning end marker must occur once")
 
+    reflow = builder.inject_shell_reflow(source)
+    reflow_block = builder.shell_reflow_block() + "\n"
+    require(reflow.replace(reflow_block, "", 1) == source, "shell reflow guard must be the only head mutation")
+    require(reflow.count(builder.SHELL_REFLOW_START) == 1, "shell reflow start marker must occur once")
+    require(reflow.count(builder.SHELL_REFLOW_END) == 1, "shell reflow end marker must occur once")
+    require('min-width:44px;min-height:44px' in reflow, "narrow shell must retain 44px language touch-target guard")
+
     quick = builder.inject_quick_learning(source)
     quick_block = builder.quick_learning_block() + "\n"
     require(quick.replace(quick_block, "", 1) == source, "quick learning block must be the only quick-help HTML mutation")
     require(quick.count(builder.QUICK_LEARNING_START) == 1, "quick learning start marker must occur once")
     require(quick.count(builder.QUICK_LEARNING_END) == 1, "quick learning end marker must occur once")
+
+    company = builder.inject_company_continuity(source)
+    company_block = builder.company_continuity_block() + "\n"
+    require(company.replace(company_block, "", 1) == source, "company continuity block must be the only company HTML mutation")
+    require(company.count(builder.COMPANY_CONTINUITY_START) == 1, "company continuity start marker must occur once")
+    require(company.count(builder.COMPANY_CONTINUITY_END) == 1, "company continuity end marker must occur once")
+    require(f'<script src="{builder.FUNDING_INTENT_CONTINUITY_PATH}"></script>' in company, "company continuity runtime must be wired")
 
     positions = [built.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
     require(positions == sorted(positions), "capability scripts must remain in dependency order")
@@ -73,6 +87,8 @@ def test_injection_is_exact() -> None:
     require(positions[-1] < built.index("</body>"), "capability scripts must load before </body>")
     require(shell_positions[-1] < shell.index('</body>'), 'shell runtime must load before </body>')
     require(quick_positions[-1] < quick.index('</body>'), 'quick-help runtimes must load before </body>')
+    require(company.index(f'<script src="{builder.FUNDING_INTENT_CONTINUITY_PATH}"></script>') < company.index('</body>'), 'company continuity runtime must load before </body>')
+    require(reflow.index(builder.SHELL_REFLOW_START) < reflow.index('</head>'), 'shell reflow guard must load before </head>')
 
 
 def test_fail_closed_source_validation() -> None:
@@ -90,6 +106,8 @@ def test_fail_closed_source_validation() -> None:
     for fn,source in (
         (builder.inject_shell_learning,f'<html><body>{builder.SHELL_LEARNING_START}</body></html>'),
         (builder.inject_quick_learning,f'<html><body>{builder.QUICK_LEARNING_START}</body></html>'),
+        (builder.inject_company_continuity,f'<html><body>{builder.COMPANY_CONTINUITY_START}</body></html>'),
+        (builder.inject_shell_reflow,f'<html><head>{builder.SHELL_REFLOW_START}</head><body></body></html>'),
     ):
         try:
             fn(source)
@@ -97,6 +115,16 @@ def test_fail_closed_source_validation() -> None:
             pass
         else:
             raise AssertionError('pre-wired public surface must fail closed')
+    for source in (
+        '<html><body></body></html>',
+        '<html><head></head><head></head><body></body></html>',
+    ):
+        try:
+            builder.inject_shell_reflow(source)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('shell reflow source must contain exactly one </head>')
 
 
 def test_minimal_artifact() -> None:
@@ -132,8 +160,12 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     expected_shell_source = builder.repair_known_inline_syntax(source_shell, "index.html")
     built_shell = (site_root / "index.html").read_text(encoding="utf-8")
     shell_block = builder.shell_learning_block() + "\n"
-    require(built_shell.replace(shell_block, "", 1) == expected_shell_source, "shared shell build changed HTML outside governed runtime wiring/hotfix")
+    reflow_block = builder.shell_reflow_block() + "\n"
+    stripped_shell = built_shell.replace(shell_block, "", 1).replace(reflow_block, "", 1)
+    require(stripped_shell == expected_shell_source, "shared shell build changed HTML outside governed runtime wiring/reflow/hotfix")
     require(built_shell.count(builder.SHELL_LEARNING_START) == 1, 'shared shell must contain exactly one learning block')
+    require(built_shell.count(builder.SHELL_REFLOW_START) == 1, 'shared shell must contain exactly one reflow guard')
+    require('min-width:44px;min-height:44px' in built_shell, 'built shared shell must preserve narrow language touch-target guard')
     for token in (
         "En Stödassistenten – flera ingångar",
         "person-pilot.html",
@@ -167,8 +199,14 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
     positions = [built_person.index(f'<script src="{path}"></script>') for path in builder.SCRIPT_PATHS]
     require(positions == sorted(positions), "person pilot script order drifted")
     require(built_person.count(builder.MANAGED_START) == 1, "person pilot must contain exactly one managed wiring block")
+    require(f'<script src="{builder.FUNDING_INTENT_CONTINUITY_PATH}"></script>' in built_person, "person pilot must receive funding-intent continuity runtime")
 
-    require((site_root / "company-pilot.html").read_bytes() == (source_root / "company-pilot.html").read_bytes(), "company module must deploy byte-for-byte")
+    source_company = (source_root / "company-pilot.html").read_text(encoding="utf-8")
+    built_company = (site_root / "company-pilot.html").read_text(encoding="utf-8")
+    company_block = builder.company_continuity_block() + "\n"
+    require(built_company.replace(company_block, "", 1) == source_company, "company build changed HTML outside governed funding-continuity wiring")
+    require(built_company.count(builder.COMPANY_CONTINUITY_START) == 1, "company pilot must contain exactly one continuity block")
+    require(f'<script src="{builder.FUNDING_INTENT_CONTINUITY_PATH}"></script>' in built_company, "company pilot must receive funding-intent continuity runtime")
 
     source_quick = (source_root / "quick-help.html").read_text(encoding="utf-8")
     expected_quick_source = builder.repair_known_inline_syntax(source_quick, "quick-help.html")
@@ -179,6 +217,7 @@ def verify_repository_build(source_root: Path, site_root: Path) -> None:
 
     for path in (*builder.SHELL_RUNTIME_PATHS, *builder.QUICK_RUNTIME_PATHS):
         require((site_root / path).read_bytes() == (source_root / path).read_bytes(), f'runtime must deploy byte-for-byte: {path}')
+    require((site_root / builder.FUNDING_INTENT_CONTINUITY_PATH).read_bytes() == (source_root / builder.FUNDING_INTENT_CONTINUITY_PATH).read_bytes(), "funding continuity runtime must deploy byte-for-byte")
 
     for token in (
         'id="main" tabindex="-1" aria-live="polite"',

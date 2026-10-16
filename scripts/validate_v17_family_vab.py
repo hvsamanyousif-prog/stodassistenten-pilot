@@ -39,11 +39,15 @@ assert "'barn'" not in family_keyword_block, 'bare barn must not be a family-foc
 assert 'vab' not in family_keyword_block, 'ordinary VAB must not be routed into extra-support family flow'
 assert 'searchParams.set(\'q\'' not in privacy, 'raw scenario text must not be written into URL by governed routing'
 
-# The handoff must reuse the already-guarded person family flow.
+# The handoff must reuse the already-guarded person family flow. Explicit no may
+# leave the child-specific branch, but unknown must remain a distinct state and
+# may not be silently treated as no or as confirmed child status.
 assert "params.get('focus')" in family
 assert "focus === 'family'" in family
 assert "start('family')" in family
-assert "val !== 'yes'" in family and "go('general1')" in family
+assert "val === 'no'" in family and "go('general1')" in family
+assert "val === 'unsure'" in family and "go('familyAgeUnknown')" in family
+assert 'data-family-age-unknown' in family
 assert 'FAMILY_AGE_ROUTING_PATH = "client/family-age-routing.js"' in builder
 assert 'SHELL_ROUTING_PATH = "client/privacy-routing.js"' in builder
 

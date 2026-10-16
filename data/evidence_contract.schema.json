@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stodassistenten.example/schemas/evidence-contract-1.0.0.json",
+  "title": "Stödassistenten Evidence Contract",
+  "description": "Public, synthetic-only contract for immutable source evidence, fact assertions, conflicts and review decisions. It contains no user case data, secrets or production decisions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact", "fact_assertions", "conflict_sets", "review_decisions"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "artifact": {"$ref": "#/$defs/artifact"},
+    "fact_assertions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/factAssertion"}
+    },
+    "conflict_sets": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/conflictSet"}
+    },
+    "review_decisions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/reviewDecision"}
+    }
+  },
+  "$defs": {
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country_code", "level"],
+      "properties": {
+        "country_code": {"const": "SE"},
+        "level": {"enum": ["national", "region", "municipality", "multi_area", "synthetic"]},
+        "region_code": {"type": ["string", "null"], "maxLength": 32},
+        "municipality_code": {"type": ["string", "null"], "maxLength": 32},
+        "service_area_code": {"type": ["string", "null"], "maxLength": 64}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "artifact_hash",
+        "source_owner",
+        "source_url",
+        "jurisdiction",
+        "document_role",
+        "document_stage",
+        "artifact_type",
+        "retrieved_at",
+        "verification_status",
+        "access_policy_status"
+      ],
+      "properties": {
+        "artifact_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "artifact_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "source_registry_ref": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "source_owner": {"type": "string", "minLength": 2, "maxLength": 200},
+        "source_url": {"type": "string", "format": "uri", "pattern": "^https://", "maxLength": 1200},
+        "jurisdiction": {"$ref": "#/$defs/jurisdiction"},
+        "document_role": {
+          "enum": [
+            "CONTROLLING_RULE",
+            "ADOPTED_DECISION",
+            "OFFICIAL_GUIDANCE",
+            "APPLICATION_INSTRUCTION",
+            "APPLICATION_PORTAL",
+            "ANNOUNCEMENT",
+            "PROPOSAL",
+            "MOTION",
+            "MINUTES",
+            "HISTORICAL_ARCHIVE",
+            "SECONDARY_OFFICIAL",
+            "THIRD_PARTY",
+            "UNKNOWN"
+          ]
+        },
+        "document_stage": {
+          "enum": [
+            "controlling",
+            "adopted",
+            "guidance",
+            "application",
+            "announcement",
+            "proposal",
+            "historical",
+            "unknown"
+          ]
+        },
+        "artifact_type": {"enum": ["html", "json", "xml", "pdf", "docx", "plaintext", "other"]},
+        "published_at": {"type": ["string", "null"], "format": "date-time"},
+        "source_last_modified": {"type": ["string", "null"], "format": "date-time"},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "verification_status": {
+          "enum": ["SOURCE_IDENTIFIED", "CAPTURED", "NEEDS_REVIEW", "SUPERSEDED", "REJECTED"]
+        },
+        "access_policy_status": {
+          "enum": ["NOT_REVIEWED", "APPROVED", "BLOCKED", "SPECIAL_HANDLING_REQUIRED"]
+        }
+      }
+    },
+    "promotionGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_verified",
+        "jurisdiction_verified",
+        "controlling_scope_verified",
+        "effective_version_verified",
+        "unresolved_conflict",
+        "deterministic_extraction",
+        "deterministic_validation_passed",
+        "access_policy_approved",
+        "evidence_reproducible",
+        "sensitive_data_absent",
+        "source_class_zero_touch_approved"
+      ],
+      "properties": {
+        "authority_verified": {"type": "boolean"},
+        "jurisdiction_verified": {"type": "boolean"},
+        "controlling_scope_verified": {"type": "boolean"},
+        "effective_version_verified": {"type": "boolean"},
+        "unresolved_conflict": {"type": "boolean"},
+        "deterministic_extraction": {"type": "boolean"},
+        "deterministic_validation_passed": {"type": "boolean"},
+        "access_policy_approved": {"type": "boolean"},
+        "evidence_reproducible": {"type": "boolean"},
+        "sensitive_data_absent": {"const": true},
+        "source_class_zero_touch_approved": {"type": "boolean"}
+      }
+    },
+    "factAssertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_id",
+        "artifact_id_ref",
+        "fact_type",
+        "normalized_value",
+        "jurisdiction",
+        "scope",
+        "locator",
+        "extraction_method",
+        "extractor_version",
+        "validation_result",
+        "status",
+        "promotion_mode",
+        "promotion_gate"
+      ],
+      "properties": {
+        "fact_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "artifact_id_ref": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "fact_type": {"type": "string", "pattern": "^[a-z][a-z0-9._-]{2,159}$"},
+        "normalized_value": {},
+        "unit": {"type": ["string", "null"], "maxLength": 80},
+        "jurisdiction": {"$ref": "#/$defs/jurisdiction"},
+        "scope": {"type": "string", "minLength": 1, "maxLength": 300},
+        "locator": {"type": "string", "minLength": 1, "maxLength": 500},
+        "evidence_excerpt_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "effective_from": {"type": ["string", "null"], "format": "date"},
+        "effective_to": {"type": ["string", "null"], "format": "date"},
+        "extraction_method": {"enum": ["deterministic_parser", "bounded_model_extraction", "human_entry"]},
+        "extractor_version": {"type": "string", "minLength": 1, "maxLength": 120},
+        "validation_result": {"enum": ["PASS", "FAIL", "NEEDS_REVIEW"]},
+        "conflict_set_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"}
+        },
+        "supersedes_fact_id": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "status": {
+          "enum": [
+            "SOURCE_IDENTIFIED",
+            "EXTRACTED",
+            "VALIDATED",
+            "VERIFIED",
+            "CONFLICTING",
+            "SUPERSEDED",
+            "NEEDS_REVIEW",
+            "PRODUCTION_TRUTH"
+          ]
+        },
+        "promotion_mode": {"enum": ["NONE", "ZERO_TOUCH", "HUMAN_REVIEW"]},
+        "review_decision_id": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "promotion_gate": {"$ref": "#/$defs/promotionGate"}
+      }
+    },
+    "conflictSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conflict_id", "fact_ids", "status", "reason_code", "created_at"],
+      "properties": {
+        "conflict_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "fact_ids": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"}
+        },
+        "status": {
+          "enum": [
+            "POSSIBLE_CONFLICT",
+            "CONFIRMED_CONFLICT",
+            "UNRESOLVED",
+            "HUMAN_REVIEW_REQUIRED",
+            "RESOLVED"
+          ]
+        },
+        "reason_code": {
+          "enum": [
+            "VALUE_MISMATCH",
+            "DATE_MISMATCH",
+            "JURISDICTION_MISMATCH",
+            "DOCUMENT_STAGE_MISMATCH",
+            "SCOPE_MISMATCH",
+            "SOURCE_AUTHORITY_MISMATCH",
+            "DUPLICATE_ARTIFACT",
+            "OTHER"
+          ]
+        },
+        "created_at": {"type": "string", "format": "date-time"},
+        "resolved_by_review_id": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"}
+      }
+    },
+    "reviewDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_id", "decision", "reviewer_type", "reviewed_at", "reason_code"],
+      "properties": {
+        "review_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "conflict_id": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "fact_id": {"type": ["string", "null"], "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+        "decision": {"enum": ["APPROVE_FACT", "REJECT_FACT", "REJECT_ALL", "MARK_SUPERSEDED", "DEFER"]},
+        "reviewer_type": {"enum": ["human_reviewer"]},
+        "reviewed_at": {"type": "string", "format": "date-time"},
+        "reason_code": {
+          "enum": [
+            "AUTHORITY_CONFIRMED",
+            "CURRENT_VERSION_CONFIRMED",
+            "CONFLICT_RESOLVED",
+            "SOURCE_REJECTED",
+            "SUPERSEDED",
+            "INSUFFICIENT_EVIDENCE",
+            "OTHER"
+          ]
+        },
+        "notes": {"type": ["string", "null"], "maxLength": 500}
+      }
+    }
+  }
+}

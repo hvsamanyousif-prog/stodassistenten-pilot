@@ -1,0 +1,59 @@
+name: Validate friend helper funding continuity
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'person-pilot.html'
+      - 'client/privacy-routing.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_relative_funding_continuity.py'
+      - 'scripts/test_helper_friend_funding_continuity.py'
+      - '.github/workflows/helper-friend-funding.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'index.html'
+      - 'person-pilot.html'
+      - 'client/privacy-routing.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_relative_funding_continuity.py'
+      - 'scripts/test_helper_friend_funding_continuity.py'
+      - '.github/workflows/helper-friend-funding.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser tooling
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Friend helper funding — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: helper-friend-funding-chromium.json
+        run: python scripts/test_helper_friend_funding_continuity.py
+      - name: Friend helper funding — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: helper-friend-funding-webkit.json
+        run: python scripts/test_helper_friend_funding_continuity.py
+      - name: Preserve friend-helper evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: helper-friend-funding-evidence
+          path: |
+            helper-friend-funding-chromium.json
+            helper-friend-funding-webkit.json
+          if-no-files-found: warn

@@ -4,27 +4,45 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
+      - 'client/assistance-focus.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
+      - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_harm_support_denial_browser.py'
+      - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
   pull_request:
     paths:
       - 'index.html'
+      - 'person-pilot.html'
+      - 'company-pilot.html'
       - 'config/public_pilot_capabilities.json'
       - 'client/capabilities.js'
       - 'client/pilot-surface.js'
       - 'client/public-pilot-ui-gate.js'
       - 'client/public-pilot-wiring.js'
+      - 'client/privacy-routing.js'
+      - 'client/funding-intent-continuity.js'
+      - 'client/assistance-focus.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
+      - 'scripts/test_landing_clarity.py'
+      - 'scripts/test_assistance_focus_source_boundary_browser.py'
+      - 'scripts/test_assistance_harm_support_denial_browser.py'
+      - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
       - '.github/workflows/public-pilot-build.yml'
       - '.github/workflows/pages.yml'
 
@@ -34,7 +52,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -46,6 +64,8 @@ jobs:
         run: python scripts/build_public_pilot.py --output _site
       - name: Verify build mutation, script order and multilingual invariants
         run: python scripts/test_public_pilot_build.py --site _site
+      - name: Verify plain-language shared entry contract
+        run: python scripts/test_landing_clarity.py --site _site
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -56,6 +76,9 @@ jobs:
           node --check client/pilot-surface.js
           node --check client/public-pilot-ui-gate.js
           node --check client/public-pilot-wiring.js
+          node --check client/privacy-routing.js
+          node --check client/funding-intent-continuity.js
+          node --check client/assistance-focus.js
       - name: Re-run capability runtime tests used by deployed artifact
         run: |
           node client/capabilities.test.cjs
@@ -63,3 +86,55 @@ jobs:
           node client/public-pilot-resolution.test.cjs
           node client/public-pilot-ui-gate.test.cjs
           node client/public-pilot-wiring.test.cjs
+      - name: Install isolated browser test tooling
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Assistance source-boundary journey — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: assistance-source-boundary-chromium.json
+        run: python scripts/test_assistance_focus_source_boundary_browser.py
+      - name: Assistance source-boundary journey — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: assistance-source-boundary-webkit.json
+        run: python scripts/test_assistance_focus_source_boundary_browser.py
+      - name: Assistance negated harm-support holdout — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: assistance-harm-support-denial-chromium.json
+        run: python scripts/test_assistance_harm_support_denial_browser.py
+      - name: Assistance negated harm-support holdout — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: assistance-harm-support-denial-webkit.json
+        run: python scripts/test_assistance_harm_support_denial_browser.py
+      - name: Assistance unsure-target source-boundary holdout — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: assistance-unsure-source-boundary-chromium.json
+        run: python scripts/test_assistance_focus_unsure_source_boundary_browser.py
+      - name: Assistance unsure-target source-boundary holdout — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: assistance-unsure-source-boundary-webkit.json
+        run: python scripts/test_assistance_focus_unsure_source_boundary_browser.py
+      - name: Preserve assistance source-boundary evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: assistance-source-boundary-browser-evidence
+          path: |
+            assistance-source-boundary-chromium.json
+            assistance-source-boundary-webkit.json
+            assistance-harm-support-denial-chromium.json
+            assistance-harm-support-denial-webkit.json
+            assistance-unsure-source-boundary-chromium.json
+            assistance-unsure-source-boundary-webkit.json
+          if-no-files-found: warn

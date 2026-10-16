@@ -1,0 +1,122 @@
+name: Validate funding concrete-need lexical boundary
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'client/concrete-need-continuity.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_funding_concrete_need_boundary_browser.py'
+      - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
+      - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
+      - 'scripts/test_multilingual_funding_need_negation_browser.py'
+      - 'scripts/test_relative_need_negation_browser.py'
+      - '.github/workflows/funding-concrete-need-boundary.yml'
+  push:
+    branches: ['main']
+    paths:
+      - 'index.html'
+      - 'client/privacy-routing.js'
+      - 'client/concrete-need-continuity.js'
+      - 'scripts/build_public_pilot.py'
+      - 'scripts/test_funding_concrete_need_boundary_browser.py'
+      - 'scripts/test_multilingual_existing_loan_boundary_browser.py'
+      - 'scripts/test_multilingual_past_scholarship_boundary_browser.py'
+      - 'scripts/test_multilingual_funding_need_negation_browser.py'
+      - 'scripts/test_relative_need_negation_browser.py'
+      - '.github/workflows/funding-concrete-need-boundary.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test tooling
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Funding concrete-need boundary — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: funding-concrete-need-boundary-chromium.json
+        run: python scripts/test_funding_concrete_need_boundary_browser.py
+      - name: Funding concrete-need boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: funding-concrete-need-boundary-webkit.json
+        run: python scripts/test_funding_concrete_need_boundary_browser.py
+      - name: Existing-loan repayment boundary — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: multilingual-existing-loan-boundary-chromium.json
+        run: python scripts/test_multilingual_existing_loan_boundary_browser.py
+      - name: Existing-loan repayment boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: multilingual-existing-loan-boundary-webkit.json
+        run: python scripts/test_multilingual_existing_loan_boundary_browser.py
+      - name: Past-scholarship boundary — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: multilingual-past-scholarship-boundary-chromium.json
+        run: python scripts/test_multilingual_past_scholarship_boundary_browser.py
+      - name: Past-scholarship boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: multilingual-past-scholarship-boundary-webkit.json
+        run: python scripts/test_multilingual_past_scholarship_boundary_browser.py
+      - name: Funding need-negation boundary — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: multilingual-funding-need-negation-chromium.json
+        run: python scripts/test_multilingual_funding_need_negation_browser.py
+      - name: Funding need-negation boundary — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: multilingual-funding-need-negation-webkit.json
+        run: python scripts/test_multilingual_funding_need_negation_browser.py
+      - name: Relative need negation — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          EVIDENCE_PATH: relative-need-negation-chromium.json
+        run: python scripts/test_relative_need_negation_browser.py
+      - name: Relative need negation — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          EVIDENCE_PATH: relative-need-negation-webkit.json
+        run: python scripts/test_relative_need_negation_browser.py
+      - name: Preserve funding concrete-need boundary evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-concrete-need-boundary-evidence
+          path: |
+            funding-concrete-need-boundary-chromium.json
+            funding-concrete-need-boundary-webkit.json
+            multilingual-existing-loan-boundary-chromium.json
+            multilingual-existing-loan-boundary-webkit.json
+            multilingual-past-scholarship-boundary-chromium.json
+            multilingual-past-scholarship-boundary-webkit.json
+            multilingual-funding-need-negation-chromium.json
+            multilingual-funding-need-negation-webkit.json
+            relative-need-negation-chromium.json
+            relative-need-negation-webkit.json
+          if-no-files-found: warn
+          retention-days: 14
