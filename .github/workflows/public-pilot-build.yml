@@ -14,10 +14,12 @@ on:
       - 'client/privacy-routing.js'
       - 'client/funding-intent-continuity.js'
       - 'client/assistance-focus.js'
+      - 'client/experience-learning.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
+      - 'scripts/test_experience_feedback_browser.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
       - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
@@ -36,10 +38,12 @@ on:
       - 'client/privacy-routing.js'
       - 'client/funding-intent-continuity.js'
       - 'client/assistance-focus.js'
+      - 'client/experience-learning.js'
       - 'client/*.test.cjs'
       - 'scripts/build_public_pilot.py'
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
+      - 'scripts/test_experience_feedback_browser.py'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
       - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
@@ -90,6 +94,29 @@ jobs:
         run: |
           python -m pip install playwright==1.57.0
           python -m playwright install --with-deps chromium webkit
+      - name: Start-page feedback component — Chromium
+        env:
+          BROWSER_ENGINE: chromium
+          PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python scripts/test_experience_feedback_browser.py . experience-feedback-chromium.json
+      - name: Start-page feedback component — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python scripts/test_experience_feedback_browser.py . experience-feedback-webkit.json
+      - name: Preserve start-page feedback component evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: experience-feedback-browser-evidence
+          path: |
+            experience-feedback-chromium.json
+            experience-feedback-webkit.json
+          retention-days: 30
+          if-no-files-found: error
       - name: Assistance source-boundary journey — Chromium
         env:
           BROWSER_ENGINE: chromium
@@ -138,3 +165,4 @@ jobs:
             assistance-unsure-source-boundary-chromium.json
             assistance-unsure-source-boundary-webkit.json
           if-no-files-found: warn
+
