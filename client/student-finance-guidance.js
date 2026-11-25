@@ -378,7 +378,7 @@
           const res = await win.fetch(FEEDBACK_URL, {
             method: 'POST', mode: 'cors', credentials: 'omit', cache: 'no-store', referrerPolicy: 'no-referrer',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ app_version:'0.5.0', language:lang, flow:'student_csn', learned_new:feedback.learned_new, useful:feedback.useful, next_step_clear:feedback.next_step_clear, ratings:{ route:'student_csn', topic } }),
+            body: JSON.stringify({ app_version:'0.5.0', language:lang, flow:'student_csn', learned_new:feedback.learned_new, useful:feedback.useful, next_step_clear:feedback.next_step_clear, ratings: {} }),
           });
           if (!res.ok) throw new Error('feedback');
           status.textContent = c.sent; status.className = 'status ok';

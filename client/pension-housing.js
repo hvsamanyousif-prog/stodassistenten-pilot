@@ -212,7 +212,7 @@
         const status = win.document.getElementById('pensionFbStatus');
         if (!['learned_new','useful','next_step_clear'].every(k => typeof fb[k] === 'boolean')) { status.textContent = c().sendError; return; }
         try {
-          const res = await win.fetch(FEEDBACK_URL, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ app_version:'0.5.0', language:lang, flow:'pension_housing', learned_new:fb.learned_new, useful:fb.useful, next_step_clear:fb.next_step_clear, ratings:{ route:'pension_housing' } }) });
+          const res = await win.fetch(FEEDBACK_URL, { method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({ app_version:'0.5.0', language:lang, flow:'pension_housing', learned_new:fb.learned_new, useful:fb.useful, next_step_clear:fb.next_step_clear, ratings: {} }) });
           if (!res.ok) throw new Error('feedback'); status.textContent = c().sent; status.className = 'status ok';
         } catch (_) { status.textContent = c().sendError; status.className = 'status err'; }
       });

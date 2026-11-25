@@ -1,7 +1,7 @@
 (() => {
   // Shared product correction: refine the existing org flow instead of creating a new association engine.
   // This runtime only changes ranking/next-action rows from already-selected coarse answers.
-  if (typeof getRows !== 'function' || typeof start !== 'function') return;
+  if (typeof getRows !== 'function' || typeof start !== 'function' || typeof render !== 'function') return;
 
   const MUCF_URL='https://www.mucf.se/bidrag';
   const MUNICIPALITY_URL='https://skr.se/kommunerochregioner/kommunerlista.8288.html';
@@ -10,6 +10,8 @@
   const RF_LOKAL_URL='https://www.rf.se/bidrag-och-stod/stod-till-anlaggningar-och-idrottsmiljoer';
   const PROCUREMENT_URL='https://www.upphandlingsmyndigheten.se/foretagare/';
   const COMPANY_URL='company-pilot.html?actor_type=company';
+  const VERKSAMT_FINANCE_URL='https://verksamt.se/finansiering-radgivning';
+  const FI_REGISTER_URL='https://www.fi.se/sv/vara-register/foretagsregistret/';
 
   const ROWS={
     sv:{
@@ -28,7 +30,7 @@
         ],
         procurement:[
           ['Offentliga affärer – leverantörsvägen','En ideell organisation som vill leverera till offentlig sektor behöver kontrollera den konkreta affären, krav och upphandlingsform. Organisationsformen i sig garanterar inte att ett anbud kan eller bör lämnas.',PROCUREMENT_URL],
-          ['Den offentliga köparen','Om behovet gäller en viss kommun eller annan offentlig aktör: gå till den aktörens officiella upphandlingsinformation och verifiera aktuell väg. Använd kommunlistan bara för att hitta rätt officiell webbplats.',MUNICIPALITY_URL]
+          ['Den offentliga köparen','Om behovet gäller en viss kommun eller annan offentlig aktör: gå till den aktörens officiella upphandlingsinformation och verifiera aktuell väg. Använd kommunlistan bara för att hitta rätt officiella webbplats.',MUNICIPALITY_URL]
         ]
       },
       company:{
@@ -89,8 +91,48 @@
     }
   };
 
+  const ASSOCIATION_SCHOLARSHIP_COPY={
+    sv:{
+      row:['Föreningsbidrag kräver en aktuell utlysning','MUCF listar stats- och EU-bidrag för civilsamhälle och organisationer, men en listning är inte bevis på att just er förening får söka eller att en viss ansökningsomgång är öppen. Öppna den konkreta utlysningen och kontrollera målgrupp, organisationsform, villkor, status, sista ansökningsdag och ansökningsväg i originalkällan.',MUCF_URL],
+      planTitle:'Din handlingsplan',
+      action:'1. Öppna MUCF:s aktuella bidrag, välj en relevant utlysning och kontrollera målgrupp, organisationsform, villkor, status, sista ansökningsdag och ansökningsväg hos MUCF innan ni går vidare.'
+    },
+    ar:{
+      row:['منح الجمعيات تتطلب دعوة حالية للتقديم','تعرض MUCF منحاً حكومية وأوروبية للمجتمع المدني والمنظمات، لكن ظهور منحة في القائمة لا يثبت أن جمعيتكم يحق لها التقديم أو أن جولة تقديم معينة مفتوحة. افتحوا الدعوة المحددة وتحققوا من الفئة المستهدفة وشكل المنظمة والشروط والحالة والموعد النهائي وطريقة التقديم في المصدر الأصلي.',MUCF_URL],
+      planTitle:'خطة العمل التالية',
+      action:'1. افتحوا منح MUCF الحالية، اختاروا دعوة ذات صلة وتحققوا لدى MUCF من الفئة المستهدفة وشكل المنظمة والشروط والحالة والموعد النهائي وطريقة التقديم قبل المتابعة.'
+    },
+    fa:{
+      row:['کمک انجمن به فراخوان جاری نیاز دارد','MUCF کمک‌های دولتی و اتحادیه اروپا برای جامعه مدنی و سازمان‌ها را فهرست می‌کند، اما بودن یک مورد در فهرست ثابت نمی‌کند انجمن شما مجاز به درخواست است یا یک دوره مشخص اکنون باز است. فراخوان مشخص را باز کنید و گروه هدف، نوع سازمان، شرایط، وضعیت، مهلت و مسیر درخواست را در منبع اصلی بررسی کنید.',MUCF_URL],
+      planTitle:'برنامه اقدام بعدی',
+      action:'1. کمک‌های فعلی MUCF را باز کنید، یک فراخوان مرتبط را انتخاب کنید و گروه هدف، نوع سازمان، شرایط، وضعیت، مهلت نهایی و مسیر درخواست را در MUCF بررسی کنید؛ سپس ادامه دهید.'
+    }
+  };
+
+  const ASSOCIATION_LOAN_COPY={
+    sv:{
+      row:['Föreningslån är ännu inte verifierat i piloten','Stödassistenten har ingen verifierad generell lånelista för föreningar och väljer därför inte långivare eller avgör om ett lån kan beviljas. Verksamt.se:s finansieringsväg är generell och bevisar inte att ett visst lån passar en förening. Om ni redan överväger en namngiven kreditgivare behöver aktörens status och den konkreta låneprodukten verifieras separat.',VERKSAMT_FINANCE_URL],
+      planTitle:'Din handlingsplan',
+      action:'1. Identifiera först vilken lånetyp eller kreditgivare ni faktiskt överväger. Kontrollera kreditgivaren i Finansinspektionens företagsregister och verifiera därefter ränta, avgifter, återbetalning, säkerheter eller garantier, krav på organisationsform och avtalsvillkor direkt hos kreditgivaren. En träff i registret är inte ett lämplighets- eller beviljandebesked. Om ingen verifierad lånekälla kan fastställas stannar resan här i stället för att gå över till bidrag.',
+      fiLabel:'↗ Originalkälla: Finansinspektionen – Företagsregistret'
+    },
+    ar:{
+      row:['لم يتم التحقق بعد من مسار قرض عام للجمعيات','لا يملك Stödassistenten قائمة عامة موثقة لقروض الجمعيات، ولذلك لا يختار مقرضاً ولا يقرر إمكانية منح قرض. مسار التمويل في verksamt.se عام ولا يثبت أن قرضاً معيناً مناسب للجمعية. إذا كنتم تفكرون بالفعل في جهة ائتمان محددة فيجب التحقق من وضع الجهة ومن منتج القرض نفسه بصورة منفصلة.',VERKSAMT_FINANCE_URL],
+      planTitle:'خطة العمل التالية',
+      action:'1. حددوا أولاً نوع القرض أو جهة الائتمان التي تفكرون فيها فعلياً. تحققوا من الجهة في سجل الشركات لدى Finansinspektionen، ثم تحققوا مباشرة من الفائدة والرسوم والسداد والضمانات ومتطلبات الشكل التنظيمي وشروط العقد لدى الجهة نفسها. الظهور في السجل ليس دليلاً على الملاءمة أو الموافقة. إذا لم يمكن إثبات مصدر قرض موثوق يتوقف المسار هنا بدلاً من التحول إلى مسار المنح.',
+      fiLabel:'↗ المصدر الأصلي: Finansinspektionen – سجل الشركات'
+    },
+    fa:{
+      row:['مسیر عمومی وام انجمن هنوز در پایلوت تأیید نشده است','Stödassistenten فهرست عمومی و تأییدشده‌ای برای وام انجمن‌ها ندارد و بنابراین وام‌دهنده انتخاب نمی‌کند و درباره اعطای وام تصمیم نمی‌گیرد. مسیر تأمین مالی verksamt.se عمومی است و ثابت نمی‌کند یک وام مشخص برای انجمن مناسب است. اگر از قبل یک اعتباردهنده مشخص را در نظر دارید، وضعیت آن نهاد و خود محصول وام باید جداگانه بررسی شود.',VERKSAMT_FINANCE_URL],
+      planTitle:'برنامه اقدام بعدی',
+      action:'1. ابتدا نوع وام یا اعتباردهنده‌ای را که واقعاً در نظر دارید مشخص کنید. اعتباردهنده را در ثبت شرکت‌های Finansinspektionen بررسی کنید و سپس نرخ بهره، کارمزدها، بازپرداخت، وثیقه یا تضمین، الزامات نوع سازمان و شرایط قرارداد را مستقیماً نزد همان اعتباردهنده تأیید کنید. وجود در ثبت به معنی مناسب بودن یا تصویب وام نیست. اگر هیچ منبع وام تأییدشده‌ای مشخص نشود، مسیر همین‌جا متوقف می‌شود و به مسیر کمک‌هزینه تبدیل نمی‌شود.',
+      fiLabel:'↗ منبع اصلی: Finansinspektionen – ثبت شرکت‌ها'
+    }
+  };
+
   const originalGetRows=getRows;
   const originalStart=start;
+  const originalRender=render;
 
   // If the user explicitly entered as an association, do not ask again whether they are an association or company.
   start=function(kind){
@@ -111,10 +153,108 @@
       const locale=(typeof lang!=='undefined' && ROWS[lang])?lang:'sv';
       const kind=answers.orgType;
       const need=answers.orgNeed;
+      if(kind==='association' && need==='funding' && answers.fundingIntent==='loan'){
+        return [ASSOCIATION_LOAN_COPY[locale].row.slice()];
+      }
+      if(kind==='association' && need==='funding' && answers.fundingIntent==='scholarship'){
+        const rows=ROWS[locale].association.funding.map(row=>row.slice());
+        rows[0]=ASSOCIATION_SCHOLARSHIP_COPY[locale].row.slice();
+        return rows;
+      }
       if((kind==='association'||kind==='company') && ROWS[locale][kind] && ROWS[locale][kind][need]){
         return ROWS[locale][kind][need];
       }
     }
     return originalGetRows();
   };
+
+  function continueKnownAssociationLoan(){
+    if(typeof scenario==='undefined'||scenario!=='org'||typeof answers==='undefined')return false;
+    if(answers.orgType!=='association'||answers.fundingIntent!=='loan'||answers.orgNeed)return false;
+    let currentScreen='';
+    try{currentScreen=screen;}catch(_){return false;}
+    if(currentScreen!=='org2')return false;
+    answers.orgNeed='funding';
+    go('orgR');
+    return true;
+  }
+
+  function decorateAssociationScholarship(){
+    if(typeof scenario==='undefined'||scenario!=='org'||typeof answers==='undefined')return;
+    if(answers.orgType!=='association'||answers.orgNeed!=='funding'||answers.fundingIntent!=='scholarship')return;
+    let currentScreen='';
+    try{currentScreen=screen;}catch(_){return;}
+    if(currentScreen!=='orgR')return;
+    const host=document.getElementById('main');
+    if(!host)return;
+    const locale=(typeof lang!=='undefined'&&ASSOCIATION_SCHOLARSHIP_COPY[lang])?lang:'sv';
+    const copy=ASSOCIATION_SCHOLARSHIP_COPY[locale];
+    const article=host.querySelector('article.result');
+    if(!article){console.error('association scholarship result failed closed: result missing');return;}
+    const source=article.querySelector('a.source');
+    if(!source||!String(source.href||'').includes('mucf.se/bidrag')){
+      console.error('association scholarship result failed closed: MUCF primary route missing');
+      return;
+    }
+    article.dataset.fundingIntentResult='scholarship';
+    let actionPlan=null;
+    for(const section of host.querySelectorAll('section.card')){
+      const title=section.querySelector('h2');
+      if(title&&String(title.textContent||'').trim()===copy.planTitle){actionPlan=section;break;}
+    }
+    if(!actionPlan){console.error('association scholarship action failed closed: action plan missing');return;}
+    actionPlan.dataset.fundingIntentActionPlan='scholarship';
+    const firstStep=actionPlan.querySelector('.info');
+    if(firstStep)firstStep.textContent=copy.action;
+    else console.error('association scholarship action failed closed: first step missing');
+  }
+
+  function decorateAssociationLoan(){
+    if(typeof scenario==='undefined'||scenario!=='org'||typeof answers==='undefined')return;
+    if(answers.orgType!=='association'||answers.orgNeed!=='funding'||answers.fundingIntent!=='loan')return;
+    let currentScreen='';
+    try{currentScreen=screen;}catch(_){return;}
+    if(currentScreen!=='orgR')return;
+    const host=document.getElementById('main');
+    if(!host)return;
+    const locale=(typeof lang!=='undefined'&&ASSOCIATION_LOAN_COPY[lang])?lang:'sv';
+    const copy=ASSOCIATION_LOAN_COPY[locale];
+    const article=host.querySelector('article.result');
+    if(!article){console.error('association loan result failed closed: result missing');return;}
+    const source=article.querySelector('a.source');
+    if(!source||!String(source.href||'').includes('verksamt.se/finansiering-radgivning')){
+      console.error('association loan result failed closed: general finance source missing');
+      return;
+    }
+    article.dataset.fundingIntentResult='loan';
+    if(!article.querySelector('a[data-fi-register-source="true"]')){
+      const fiSource=document.createElement('a');
+      fiSource.className='source';
+      fiSource.target='_blank';
+      fiSource.rel='noopener';
+      fiSource.href=FI_REGISTER_URL;
+      fiSource.dataset.fiRegisterSource='true';
+      fiSource.textContent=copy.fiLabel;
+      article.append(fiSource);
+    }
+    let actionPlan=null;
+    for(const section of host.querySelectorAll('section.card')){
+      const title=section.querySelector('h2');
+      if(title&&String(title.textContent||'').trim()===copy.planTitle){actionPlan=section;break;}
+    }
+    if(!actionPlan){console.error('association loan action failed closed: action plan missing');return;}
+    actionPlan.dataset.fundingIntentActionPlan='loan';
+    const firstStep=actionPlan.querySelector('.info');
+    if(firstStep)firstStep.textContent=copy.action;
+    else console.error('association loan action failed closed: first step missing');
+  }
+
+  render=function(){
+    originalRender();
+    if(continueKnownAssociationLoan())return;
+    decorateAssociationScholarship();
+    decorateAssociationLoan();
+  };
+  decorateAssociationScholarship();
+  decorateAssociationLoan();
 })();

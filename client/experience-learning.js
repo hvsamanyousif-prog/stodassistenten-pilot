@@ -105,14 +105,21 @@
     wrap.style.cssText='margin-top:16px;padding:16px;border:1px solid #dce6e1;border-radius:16px;background:#f8fbf9';
     wrap.innerHTML=`<strong>${c('title')}</strong><div data-q="useful" style="margin-top:10px"><span>${c('useful')}</span> <button type="button" data-v="true" aria-pressed="false">${c('yes')}</button> <button type="button" data-v="false" aria-pressed="false">${c('no')}</button></div><div data-q="clear" style="margin-top:8px"><span>${c('clear')}</span> <button type="button" data-v="true" aria-pressed="false">${c('yes')}</button> <button type="button" data-v="false" aria-pressed="false">${c('no')}</button></div><div data-q="learned_new" style="margin-top:8px"><span>${c('newq')}</span> <button type="button" data-v="true" aria-pressed="false">${c('yes')}</button> <button type="button" data-v="false" aria-pressed="false">${c('no')}</button></div><div style="margin-top:10px;font-size:12px;color:#5f706a">🔒 ${c('note')}</div><button type="button" data-send style="margin-top:10px">${c('send')}</button><div data-status role="status" aria-live="polite" style="margin-top:8px"></div>`;
     const state={};
+    let phase='idle';
     const status=wrap.querySelector('[data-status]');
+    const send=wrap.querySelector('[data-send]');
+    const controls=wrap.querySelectorAll('button');
+    const active=()=>box.contains(wrap)&&!box.hidden;
+    const disableControls=disabled=>controls.forEach(button=>{button.disabled=disabled});
     wrap.querySelectorAll('[data-q] button').forEach(btn=>btn.addEventListener('click',()=>{
+      if(phase!=='idle'||!active()) return;
       const q=btn.closest('[data-q]').dataset.q;
       state[q]=btn.dataset.v==='true';
       btn.parentElement.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
       status.textContent='';
     }));
-    wrap.querySelector('[data-send]').addEventListener('click',async()=>{
+    send.addEventListener('click',async()=>{
+      if(phase!=='idle'||!active()) return;
       if(typeof state.useful!=='boolean'||typeof state.clear!=='boolean'||typeof state.learned_new!=='boolean'){
         status.textContent=c('needAnswers');
         const firstMissing=['useful','clear','learned_new'].find(q=>typeof state[q]!=='boolean');
@@ -121,11 +128,25 @@
         return;
       }
       const payload={app_version:APP_VERSION,language:lang(),flow:`situation_engine_${route()}`.slice(0,64),learned_new:state.learned_new,useful:state.useful,next_step_clear:state.clear,ratings:{}};
+      phase='pending';
+      disableControls(true);
+      status.textContent='';
+      wrap.setAttribute('aria-busy','true');
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),10000);
       try{
-        const res=await fetch(ENDPOINT,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        const res=await fetch(ENDPOINT,{method:'POST',mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});
         if(!res.ok) throw new Error('HTTP '+res.status);
-        status.textContent=c('sent');
-      }catch(e){status.textContent=c('error')}
+        phase='sent';
+        if(active()) status.textContent=c('sent');
+      }catch(e){
+        phase='idle';
+        if(active()) status.textContent=c('error');
+      }finally{
+        clearTimeout(timeout);
+        wrap.setAttribute('aria-busy','false');
+        disableControls(phase!=='idle');
+      }
     });
     box.appendChild(wrap);
   }

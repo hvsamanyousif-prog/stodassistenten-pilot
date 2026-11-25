@@ -66,9 +66,11 @@ for token in [
     "assistansersattning-for-vuxna",
     "NON_PERSONAL_ASSISTANCE",
     "flow:'disability_home_support'",
-    "ratings:{route:'disability_home_support',support_need:need||'unsure'}",
+    "ratings: {}",
 ]:
     assert token in client, f"v70 public route token missing: {token}"
+
+assert "ratings:{route:" not in client, "categorical route/need must not be stored as feedback scores"
 
 for forbidden in [
     "diagnosis=",

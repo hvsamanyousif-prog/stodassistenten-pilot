@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import json
+import subprocess
 from pathlib import Path
+
+from build_public_pilot import repair_known_inline_syntax
 
 ROOT = Path(__file__).resolve().parents[1]
 V76 = ROOT / "data/evals/scenario_lab_websignals_v76.json"
@@ -19,6 +22,28 @@ def load(path):
 def require(condition, message):
     if not condition:
         raise AssertionError(message)
+
+
+def classified_routes(index, stories):
+    # Use the build's existing syntax normalization, then run the actual classifier.
+    index = repair_known_inline_syntax(index, "index.html")
+    script = r"""
+const fs = require('node:fs');
+const vm = require('node:vm');
+const {index, stories} = JSON.parse(fs.readFileSync(0, 'utf8'));
+const scripts = [...index.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+if (scripts.length !== 1) throw new Error('expected one inline shell script');
+const parts = scripts[0][1].split("\ndocument.querySelectorAll('.lang')");
+if (parts.length !== 2) throw new Error('shell initialization boundary changed');
+const routes = vm.runInNewContext(parts[0] + '\nstories.map(classify)',
+  {stories, URL, URLSearchParams, location: {search: '?lang=sv'}}, {timeout: 1000});
+process.stdout.write(JSON.stringify(routes));
+"""
+    result = subprocess.run(
+        ["node", "-e", script], input=json.dumps({"index": index, "stories": stories}),
+        text=True, capture_output=True, check=True, timeout=5,
+    )
+    return json.loads(result.stdout)
 
 
 def main():
@@ -70,7 +95,11 @@ def main():
 
     require("healthTitle:" in shell and "تكاليف الرعاية" in shell and "هزینه درمان" in shell, "sv/ar/fa shell copy missing")
     require("HEALTH_COPY" in quick and "تكاليف الرعاية" in quick and "هزینه درمان" in quick, "sv/ar/fa healthcare quick-help copy missing")
-    require("economy:['pengar','ekonomi','hyra'" in index, "existing economy route must remain available for basic-needs overlap")
+    basic_needs = next(c["story"] for c in v76["cases"] if c["case_id"] == "lab-health-cost-basic-needs-overlap-v76-05")
+    routes = classified_routes(index, [basic_needs, "Jag behöver hjälp att betala hyran.", "Jag vill hyra en bil."])
+    require("economy" in routes[0], "existing economy route must remain available for basic-needs overlap")
+    require("economy" in routes[1], "explicit rent need must keep the economy route")
+    require("economy" not in routes[2], "generic hire intent must not trigger the economy route")
 
     require('SHELL_LEARNING_PATH = "client/experience-learning.js"' in build, "same-shell experience runtime wiring missing")
     require('QUICK_GUIDANCE_PATH = "client/quick-help-guidance.js"' in build, "same quick-help runtime wiring missing")

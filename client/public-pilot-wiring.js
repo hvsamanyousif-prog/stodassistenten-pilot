@@ -12,6 +12,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (uiGateApi) {
   "use strict";
 
+  const DEFAULT_PROFILE_URL = "config/public_pilot_capabilities.json";
+
   const SOURCE_LINK_RE = /<a class="source"[\s\S]*?<\/a>/;
   const FALLBACK = Object.freeze({
     sv: "Stödmatchningen kunde inte laddas säkert just nu. Försök igen om en stund.",
@@ -19,17 +21,42 @@
     fa: "تطبیق حمایت در حال حاضر به‌صورت امن بارگذاری نشد. کمی بعد دوباره تلاش کنید.",
   });
 
+  function disabledResult() {
+    return Object.freeze({ executed: false, value: undefined });
+  }
+
+  function closedSurface() {
+    return Object.freeze({
+      valid: false,
+      matchBasicEnabled: false,
+      sourceDetailsEnabled: false,
+      runMatchBasic: disabledResult,
+      runSourceDetails: disabledResult,
+    });
+  }
+
+  function focusedModuleOwnsDom(rootObject) {
+    try {
+      const search = rootObject && rootObject.location && typeof rootObject.location.search === "string"
+        ? rootObject.location.search
+        : "";
+      return String(new URLSearchParams(search).get("focus") || "").toLowerCase() === "disability_home_support";
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function fallbackHtml(language) {
+    const text = FALLBACK[languageCode(language)];
+    return `<section class="card"><div class="notice" role="status">${text}</div></section>`;
+  }
+
   function languageCode(value) {
     if (typeof value !== "string") {
       return "sv";
     }
     const normalized = value.toLowerCase().split("-")[0];
     return Object.prototype.hasOwnProperty.call(FALLBACK, normalized) ? normalized : "sv";
-  }
-
-  function fallbackHtml(language) {
-    const text = FALLBACK[languageCode(language)];
-    return `<section class="card"><div class="notice" role="status">${text}</div></section>`;
   }
 
   function splitSourceLink(cardHtml) {
@@ -121,7 +148,12 @@
 
     const started = runtime.start().then(function () {
       try {
-        root.render();
+        // The disability/home-support module owns #main for its focused route.
+        // Re-running the legacy inline render after capability loading races that
+        // focused UI and can erase its verified source/next-action card.
+        if (!focusedModuleOwnsDom(root)) {
+          root.render();
+        }
       } catch (_error) {
         // Capability loading must not break the already rendered public pilot.
       }
@@ -132,9 +164,11 @@
   }
 
   return Object.freeze({
+    DEFAULT_PROFILE_URL,
     fallbackHtml,
     splitSourceLink,
     createBindings,
+    focusedModuleOwnsDom,
     wireBrowser,
   });
 });

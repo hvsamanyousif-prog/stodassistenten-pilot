@@ -97,7 +97,8 @@ for forbidden in [
 
 for language in ["sv", "ar", "fa"]:
     assert f"{language}:" in client
-assert "ratings:{route:'job_premium'}" in client
+assert "ratings: {}" in client, "numeric-only feedback may contain no ratings if none were collected"
+assert "ratings:{route:'job_premium'}" not in client, "categorical routing must never be submitted as a numeric score"
 assert "JOB_PREMIUM_GUIDANCE_PATH = \"client/job-premium-guidance.js\"" in build
 assert build.count("JOB_PREMIUM_GUIDANCE_PATH,") >= 2, "job-premium guidance must ship to shell and person surface"
 assert "job-premium-guidance.test.cjs" in test or "job premium guidance" in test.lower()
