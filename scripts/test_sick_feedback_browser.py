@@ -10,6 +10,8 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from playwright.sync_api import sync_playwright, expect
 
+expect.set_options(timeout=2500)
+
 SITE = Path(sys.argv[1]).resolve()
 OUT = Path(sys.argv[2])
 ENGINE = os.environ.get('BROWSER_ENGINE', 'chromium')
@@ -37,6 +39,9 @@ STUB = """(() => {
   };
 })();"""
 
+class SetupError(Exception):
+    pass
+
 class Quiet(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
@@ -57,7 +62,9 @@ def run_case(page, base, row, lang, case):
     def start():
         page.goto(f'{base}/person-pilot.html?focus={focus}&lang={lang}', wait_until='load')
         if question:
-            page.locator(f'input[name="{question}"][value="unsure"]').check()
+            # Route choice re-renders the radio; click rather than check a detached node.
+            value = 'yes' if case == 'stale_panel' else 'unsure'
+            page.locator(f'input[name="{question}"][value="{value}"]').click()
         expect(send).to_be_visible()
         require(page.locator('html').get_attribute('lang') == lang, 'language not selected')
         require(page.locator('html').get_attribute('dir') == ('ltr' if lang == 'sv' else 'rtl'), 'direction not selected')
@@ -74,7 +81,10 @@ def run_case(page, base, row, lang, case):
                 **dict(zip(KEYS, [v == 'yes' for v in values])), 'ratings':{}}}
     def one(values):
         require(calls() == [expected(values)], 'not exactly one minimal explicit-boolean payload')
-    start()
+    try:
+        start()
+    except Exception as exc:
+        raise SetupError(str(exc)) from exc
     mixed = ('no', 'yes', 'no')
     if case == 'empty':
         send.click()
@@ -87,7 +97,7 @@ def run_case(page, base, row, lang, case):
         values = ('no', 'no', 'no')
         answer(values); send.click(); one(values)
         expect(status).to_have_text(sent)
-    elif case == 'pending_and_terminal':
+    elif case == 'pending':
         answer(mixed); mode('pending')
         send.evaluate('(b) => {b.click(); b.click()}')
         one(mixed)
@@ -98,8 +108,11 @@ def run_case(page, base, row, lang, case):
         expect(status).not_to_have_text(sent)
         page.evaluate('feedbackAudit.pending[0]({ok:true,status:200})')
         expect(status).to_have_text(sent)
-        send.evaluate('(b) => b.click()')
-        one(mixed)
+        expect(send).to_be_disabled()
+    elif case == 'terminal':
+        answer(mixed); send.click(); one(mixed)
+        expect(status).to_have_text(sent)
+        send.evaluate('(b) => b.click()'); one(mixed)
         expect(send).to_be_disabled()
     elif case in ('http_error_retry', 'rejection_retry'):
         answer(mixed); mode('error' if case == 'http_error_retry' else 'reject')
@@ -119,10 +132,24 @@ def run_case(page, base, row, lang, case):
         for key in KEYS:
             require(page.locator(f'input[name="{key}"]:checked').count() == 0, 'reset retained answer')
         send.click(); require(calls() == [], 'reset sent unanswered POST')
+    elif case == 'stale_panel':
+        # The existing unemployed programme flow replaces its feedback panel in-place.
+        answer(mixed); mode('pending'); send.click(); one(mixed)
+        page.locator('[data-long-program-check]').click()
+        page.locator('input[name="longProgramSick"][value="unsure"]').click()
+        expect(send).to_be_visible(); expect(send).to_be_enabled()
+        expect(status).to_be_empty()
+        page.evaluate('feedbackAudit.pending[0]({ok:true,status:200})')
+        expect(status).to_be_empty()
+        for key in KEYS:
+            require(page.locator(f'input[name="{key}"]:checked').count() == 0, 'replacement retained answers')
+        mode('ok'); answer(mixed); send.click()
+        expect(status).to_have_text(sent)
+        require(calls() == [expected(mixed), expected(mixed)], 'replacement cannot submit its own answers')
     else:
         raise AssertionError('unknown scenario')
 
-CASES = ('empty', 'partial', 'all_false', 'pending_and_terminal', 'http_error_retry', 'rejection_retry', 'reset')
+CASES = ('empty', 'partial', 'all_false', 'pending', 'terminal', 'http_error_retry', 'rejection_retry', 'reset')
 server = ThreadingHTTPServer(('127.0.0.1', 0), lambda *a, **kw: Quiet(*a, directory=str(SITE), **kw))
 threading.Thread(target=server.serve_forever, daemon=True).start()
 base = f'http://127.0.0.1:{server.server_port}'
@@ -133,7 +160,7 @@ try:
         browser_version = browser.version
         for row in FLOWS:
             for lang in ('sv', 'ar', 'fa'):
-                for case in CASES:
+                for case in CASES + (('stale_panel',) if row[0] == 'unemployed_sick' else ()):
                     ctx = browser.new_context(viewport={'width':390,'height':900}, service_workers='block')
                     ctx.add_init_script(STUB)
                     ctx.route('**/*', lambda route: route.continue_() if urlsplit(route.request.url).netloc == urlsplit(base).netloc else route.abort())
@@ -145,9 +172,16 @@ try:
                         run_case(page, base, row, lang, case)
                         require(not errors, 'uncaught JS error: ' + str(errors))
                         result['status'] = 'PASS'
+                    except SetupError as exc:
+                        result.update(status='SETUP_ERROR', detail=str(exc)[:1000])
                     except Exception as exc:
                         result.update(status='FAIL', detail=str(exc)[:1000])
                     finally:
+                        try:
+                            result['captured_calls'] = page.evaluate('window.feedbackAudit?.calls || []')
+                        except Exception:
+                            result['captured_calls'] = None
+                        result['page_errors'] = errors
                         ctx.close(); results.append(result)
         browser.close()
 finally:
@@ -157,7 +191,8 @@ report = {'scope':'built full page, real browser, controlled fetch; no real HTTP
           'tested_checkout_sha':subprocess.check_output(['git','rev-parse','HEAD'], text=True).strip(),
           'engine':ENGINE, 'browser_version':browser_version,
           'built_sha256':{row[4]:hashlib.sha256((SITE/'client'/row[4]).read_bytes()).hexdigest() for row in FLOWS},
-          'expected':len(FLOWS)*3*len(CASES), 'executed':len(results),
+          'expected':len(FLOWS)*3*len(CASES)+3, 'executed':len(results),
+          'setup_errors':sum(r['status']=='SETUP_ERROR' for r in results),
           'passed':sum(r['status']=='PASS' for r in results), 'results':results}
 OUT.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n')
 print(json.dumps(report, ensure_ascii=False, indent=2))
