@@ -20,6 +20,10 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_experience_feedback_browser.py'
+      - 'scripts/test_sick_feedback_browser.py'
+      - 'client/employee-sick-guidance.js'
+      - 'client/unemployed-sick-guidance.js'
+      - 'client/employee-sick-work-context-extension.js'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
       - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
@@ -44,6 +48,10 @@ on:
       - 'scripts/test_public_pilot_build.py'
       - 'scripts/test_landing_clarity.py'
       - 'scripts/test_experience_feedback_browser.py'
+      - 'scripts/test_sick_feedback_browser.py'
+      - 'client/employee-sick-guidance.js'
+      - 'client/unemployed-sick-guidance.js'
+      - 'client/employee-sick-work-context-extension.js'
       - 'scripts/test_assistance_focus_source_boundary_browser.py'
       - 'scripts/test_assistance_harm_support_denial_browser.py'
       - 'scripts/test_assistance_focus_unsure_source_boundary_browser.py'
@@ -166,4 +174,27 @@ jobs:
             assistance-unsure-source-boundary-chromium.json
             assistance-unsure-source-boundary-webkit.json
           if-no-files-found: warn
-
+      - name: Sickness client feedback full-page — Chromium
+        if: always()
+        env:
+          BROWSER_ENGINE: chromium
+          PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python scripts/test_sick_feedback_browser.py _site sick-feedback-chromium.json
+      - name: Sickness client feedback full-page — Playwright WebKit
+        if: always()
+        env:
+          BROWSER_ENGINE: webkit
+          PR_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: python scripts/test_sick_feedback_browser.py _site sick-feedback-webkit.json
+      - name: Preserve sickness client feedback evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sick-feedback-browser-evidence
+          path: |
+            sick-feedback-chromium.json
+            sick-feedback-webkit.json
+          retention-days: 30
+          if-no-files-found: error
