@@ -227,6 +227,7 @@
       main.querySelectorAll('input[name="businessForm"]').forEach((el) => el.addEventListener('change', function () { state.businessForm = el.value; render(); }));
       const send = main.querySelector('[data-send-work-context-feedback]');
       if (send) send.addEventListener('click', async function () {
+        if (send.disabled) return;
         const get = (name) => { const picked = main.querySelector(`input[name="${name}"]:checked`); return picked ? picked.value === 'yes' : null; };
         const payload = {
           app_version: 'v64', language: lang, flow: 'employee_sick',
@@ -234,11 +235,19 @@
           ratings: {}
         };
         const status = main.querySelector('[data-work-context-feedback-status]');
+        if (![payload.learned_new, payload.useful, payload.next_step_clear].every(value => typeof value === 'boolean')) { status.textContent = c.error; return; }
+        const answers = main.querySelectorAll('input[name="learned_new"], input[name="useful"], input[name="next_step_clear"]');
+        send.disabled = true;
+        answers.forEach(input => { input.disabled = true; });
         try {
           const res = await win.fetch(FEEDBACK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
           if (!res.ok) throw new Error('feedback');
           status.textContent = c.sent;
-        } catch (_) { status.textContent = c.error; }
+        } catch (_) {
+          status.textContent = c.error;
+          send.disabled = false;
+          answers.forEach(input => { input.disabled = false; });
+        }
       });
     }
     render();
