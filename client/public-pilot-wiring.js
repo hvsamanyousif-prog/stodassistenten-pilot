@@ -40,7 +40,8 @@
       const search = rootObject && rootObject.location && typeof rootObject.location.search === "string"
         ? rootObject.location.search
         : "";
-      return String(new URLSearchParams(search).get("focus") || "").toLowerCase() === "disability_home_support";
+      const focus = String(new URLSearchParams(search).get("focus") || "");
+      return focus.toLowerCase() === "disability_home_support" || focus === "employee_sick" || focus === "unemployed_sick";
     } catch (_error) {
       return false;
     }
@@ -148,7 +149,7 @@
 
     const started = runtime.start().then(function () {
       try {
-        // The disability/home-support module owns #main for its focused route.
+        // These focused modules own #main for their focused routes.
         // Re-running the legacy inline render after capability loading races that
         // focused UI and can erase its verified source/next-action card.
         if (!focusedModuleOwnsDom(root)) {
