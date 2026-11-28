@@ -102,8 +102,14 @@ def run_case(page, base, row, lang, case):
     def mode(value):
         page.evaluate('(v) => {feedbackAudit.mode=v}', value)
     def expected(values):
+        # The actual full-page transport is wrapped by person-context-learning.js.
+        # Assert exact allowlisted actor + route tokens for the canonical handoffs,
+        # not just the unprefixed local handler value.
+        transport_flow = {'employee_sick':'employee_employee_sick',
+                          'unemployed_sick':'private_person_unemployed_sick',
+                          'work_context':'private_person_employee_sick'}[name]
         return {'method':'POST', 'payload':{'app_version':version, 'language':lang,
-                'flow':'unemployed_sick' if name == 'unemployed_sick' else 'employee_sick',
+                'flow':transport_flow,
                 **dict(zip(KEYS, [v == 'yes' for v in values])), 'ratings':{}}}
     def one(values):
         require(calls() == [expected(values)], 'not exactly one minimal explicit-boolean payload')
