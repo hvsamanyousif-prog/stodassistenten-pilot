@@ -107,4 +107,50 @@ function sourceDisabledSurface() {
   });
 })();
 
-console.log("public-pilot-wiring tests: OK");
+// Drive the actual browser wiring with a deferred capability load, not just
+// the ownership predicate. Generic match and source gates must still fail closed.
+async function testLateCapabilityLoadPreservesOnlyFocusedModules() {
+  const fs = require("node:fs");
+  const vm = require("node:vm");
+  const source = fs.readFileSync(require.resolve("./public-pilot-wiring.js"), "utf8");
+  const routes = [
+    ["?actor_type=employee&focus=employee_sick&lang=sv", true],
+    ["?actor_type=private_person&focus=unemployed_sick&lang=ar", true],
+    ["?actor_type=private_person&focus=employee_sick&work_context=invoiced_worker&lang=fa", true],
+    ["?focus=disability_home_support&support_need=personal_assistance", true],
+    ["?focus=EMPLOYEE_SICK", false], ["?focus=assistance", false],
+    ["?focus=unknown", false], ["", false],
+  ];
+  for (const [search, owns] of routes) {
+    for (const valid of [true, false]) {
+      let release, calls = 0, renders = 0, main = "focused-panel";
+      const pending = new Promise(resolve => { release = resolve; });
+      const disabled = () => ({ executed: false, value: undefined });
+      const surface = {
+        runMatchBasic: valid ? callback => ({ executed: true, value: callback() }) : disabled,
+        runSourceDetails: disabled,
+      };
+      const sandbox = {
+        URLSearchParams, location: { search }, document: { documentElement: { lang: "sv" } },
+        results: () => "<section>generic match</section>",
+        resultCard: () => '<a class="source" href="https://example.test">Source</a>',
+        render() { renders++; main = "legacy-render"; },
+        StodPublicPilotUiGate: { createRuntime: () => ({
+          start() { calls++; return pending; }, getSurface: () => surface, getStatus: () => ({ valid }),
+        }) },
+      };
+      vm.runInNewContext(source, sandbox);
+      release();
+      await sandbox.StodPublicPilotWiringState.started;
+      assert.equal(calls, 1, search);
+      assert.equal(renders, owns ? 0 : 1, search);
+      assert.equal(main, owns ? "focused-panel" : "legacy-render", search);
+      assert.match(sandbox.results(), valid ? /generic match/ : /Stödmatchningen kunde inte laddas säkert/);
+      assert.doesNotMatch(sandbox.resultCard(), /class="source"/);
+    }
+  }
+}
+testLateCapabilityLoadPreservesOnlyFocusedModules().then(
+  () => console.log("public-pilot-wiring tests: OK (16 late-load contrasts)"),
+  error => { console.error(error); process.exitCode = 1; }
+);

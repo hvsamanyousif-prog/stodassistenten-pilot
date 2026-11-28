@@ -30,8 +30,16 @@ STUB = """(() => {
   const original = window.fetch.bind(window);
   window.feedbackAudit = {mode:'ok', calls:[], pending:[]};
   window.fetch = (url, options) => {
-    if (!String(url).endsWith('/functions/v1/pilot-feedback')) return original(url, options);
     const a = window.feedbackAudit;
+    // Delay only the real local capability-profile response, not its contents.
+    // Release it after the focused module has mounted to exercise late legacy render.
+    if (new URL(url, location.href).pathname.endsWith('/config/public_pilot_capabilities.json')) {
+      const response = original(url, options);
+      return new Promise((resolve, reject) => {
+        a.releaseProfile = () => response.then(resolve, reject);
+      });
+    }
+    if (!String(url).endsWith('/functions/v1/pilot-feedback')) return original(url, options);
     a.calls.push({method:options.method, payload:JSON.parse(options.body)});
     if (a.mode === 'pending') return new Promise(resolve => a.pending.push(resolve));
     if (a.mode === 'reject') return Promise.reject(new Error('synthetic offline failure'));
@@ -60,11 +68,29 @@ def run_case(page, base, row, lang, case):
         if lang == 'fa':
             error = 'فعلاً ارسال بازخورد ممکن نیست.'
     def start():
-        page.goto(f'{base}/person-pilot.html?focus={focus}&lang={lang}', wait_until='load')
+        actor = 'employee' if name == 'employee_sick' else 'private_person'
+        value = 'yes' if case == 'stale_panel' else 'unsure'
+        entry = page.locator(f'input[name="{question}"][value="{value}"]') if question else send
+        try:
+            page.goto(f'{base}/person-pilot.html?actor_type={actor}&focus={focus}&lang={lang}', wait_until='load')
+            expect(entry).to_be_visible()
+            gate = page.evaluate("""async () => {
+                const a = window.feedbackAudit, w = window.StodPublicPilotWiringState;
+                if (typeof a.releaseProfile !== 'function' || !w?.wired || !w.started) {
+                    throw new Error('real local capability load was not captured');
+                }
+                a.releaseProfile();
+                return await Promise.race([w.started, new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('capability load timed out')), 4000))]);
+            }""")
+            require(gate.get('ready') and gate.get('valid'), 'real local capability profile not ready/valid')
+        except Exception as exc:
+            raise SetupError(str(exc)) from exc
+        # The focused entry was observed before the real gate settled. Losing it
+        # now is a product assertion, not a setup failure or a missing locator.
+        require(entry.count() == 1 and entry.is_visible(), 'focused entry erased by late capability load')
         if question:
-            # Route choice re-renders the radio; click rather than check a detached node.
-            value = 'yes' if case == 'stale_panel' else 'unsure'
-            page.locator(f'input[name="{question}"][value="{value}"]').click()
+            entry.click()
         expect(send).to_be_visible()
         require(page.locator('html').get_attribute('lang') == lang, 'language not selected')
         require(page.locator('html').get_attribute('dir') == ('ltr' if lang == 'sv' else 'rtl'), 'direction not selected')
@@ -81,10 +107,7 @@ def run_case(page, base, row, lang, case):
                 **dict(zip(KEYS, [v == 'yes' for v in values])), 'ratings':{}}}
     def one(values):
         require(calls() == [expected(values)], 'not exactly one minimal explicit-boolean payload')
-    try:
-        start()
-    except Exception as exc:
-        raise SetupError(str(exc)) from exc
+    start()
     mixed = ('no', 'yes', 'no')
     if case == 'empty':
         send.click()
@@ -182,6 +205,16 @@ try:
                         except Exception:
                             result['captured_calls'] = None
                         result['page_errors'] = errors
+                        if result['status'] != 'PASS':
+                            try:
+                                result['route_state'] = page.evaluate("""() => ({
+                                    path: location.pathname, query: location.search,
+                                    headings: [...document.querySelectorAll('#main h1, #main h2')].map(e => e.textContent),
+                                    gate: window.StodPublicPilotWiringState?.runtime?.getStatus(),
+                                    focusedInputs: [...document.querySelectorAll('#main input')].map(e => e.name)
+                                })""")
+                            except Exception:
+                                result['route_state'] = None
                         ctx.close(); results.append(result)
         browser.close()
 finally:
